@@ -1,0 +1,11 @@
+.vscode/
+
+# === OS and tooling ===
+*.bak
+*.tmp
+*.old
+
+# === Misc ===
+.env
+.env.*
+!.env.example
