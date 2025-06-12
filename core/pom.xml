@@ -33,6 +33,13 @@
 
   <dependencies>
    
+
+    <dependency>
+      <groupId>io.micronaut</groupId>
+      <artifactId>micronaut-core-processor</artifactId>
+      <version>4.8.18</version>
+    </dependency>
+
     <dependency>
       <groupId>io.reactivex.rxjava3</groupId>
       <artifactId>rxjava</artifactId>
@@ -115,6 +122,7 @@
   <build>
     <plugins>
       <plugin>
+        <?m2e ignore?>
         <groupId>io.micronaut.maven</groupId>
         <artifactId>micronaut-maven-plugin</artifactId>
         <configuration>
