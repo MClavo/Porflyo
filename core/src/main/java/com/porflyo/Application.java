@@ -19,8 +19,8 @@ public class Application {
         }
     }
     public static void main(String[] args) {
-        // por alguna razon, busca el env dentro de /target,
-        // por lo que hay que indicarle el directorio anterior
+        // for some reason, it looks for the env inside /target,
+        // so we need to specify the parent directory
         Dotenv dotenv = Dotenv.configure()
         .directory(Paths.get("").toAbsolutePath().toString()+"/../")
         .ignoreIfMalformed()

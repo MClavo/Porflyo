@@ -1,11 +1,13 @@
 package com.porflyo.web.controller;
 
+import static io.micronaut.security.oauth2.endpoint.token.response.OauthAuthenticationMapper.ACCESS_TOKEN_KEY;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import com.porflyo.domain.model.GithubRepo;
-import com.porflyo.infraestructure.github.GithubApiClient;
+import com.porflyo.infrastructure.github.GithubApiClient;
 
 import io.micronaut.http.HttpHeaderValues;
 import io.micronaut.http.annotation.Controller;
@@ -15,8 +17,6 @@ import io.micronaut.scheduling.annotation.ExecuteOn;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.authentication.Authentication;
 import io.micronaut.security.rules.SecurityRule;
-
-import static io.micronaut.security.oauth2.endpoint.token.response.OauthAuthenticationMapper.ACCESS_TOKEN_KEY;
 
 @Controller("/repos") 
 public class ReposController {
@@ -31,8 +31,8 @@ public class ReposController {
     }
 
     @Get
-    @Secured(SecurityRule.IS_AUTHENTICATED)
     @ExecuteOn(TaskExecutors.BLOCKING)
+    @Secured(SecurityRule.IS_AUTHENTICATED)
     Map<String, Object> index(Authentication authentication) {
         List<GithubRepo> repos = githubApiClient.repos(CREATED, DESC, authorizationValue(authentication));
         Map<String, Object> model = new HashMap<>();

@@ -1,4 +1,11 @@
-package com.porflyo.infraestructure.github;
+package com.porflyo.infrastructure.github;
+
+import java.util.List;
+
+import org.reactivestreams.Publisher;
+
+import com.porflyo.domain.model.GithubRepo;
+import com.porflyo.domain.model.GithubUser;
 
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpHeaders;
@@ -6,13 +13,7 @@ import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Header;
 import io.micronaut.http.annotation.QueryValue;
 import io.micronaut.http.client.annotation.Client;
-import org.reactivestreams.Publisher;
-
-import com.porflyo.domain.model.GithubRepo;
-import com.porflyo.domain.model.GithubUser;
-
 import jakarta.validation.constraints.Pattern;
-import java.util.List;
 
 @Header(name = "User-Agent", value = "https://micronautguides.com")
 @Header(name = "Accept", value = "application/vnd.github.v3+json, application/json") 
