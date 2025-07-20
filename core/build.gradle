@@ -1,0 +1,159 @@
+plugins {
+    id('io.micronaut.application') version '4.5.4'
+    id('com.gradleup.shadow') version '8.3.7'
+    id("io.micronaut.aot") version "4.5.4"
+}
+
+version = '0.1'
+group = 'com.porflyo'
+
+repositories {
+    mavenCentral()
+/*     maven { 
+        url "https://s01.oss.sonatype.org/content/repositories/snapshots/"
+        mavenContent { snapshotsOnly() }
+    }
+    maven { 
+        url "https://central.sonatype.com/repository/maven-snapshots/"
+        mavenContent { snapshotsOnly() }
+    } */
+}
+
+configurations {
+    all {
+        exclude group: 'io.micronaut.aws', module: 'micronaut-function-aws-api-proxy'
+        // Exclude all Netty dependencies to reduce Lambda size and avoid conflicts
+        exclude group: 'io.netty'
+        exclude group: 'io.micronaut', module: 'micronaut-http-netty'
+        exclude group: 'io.micronaut', module: 'micronaut-buffer-netty'
+    }
+}
+
+dependencies {
+    annotationProcessor('io.micronaut:micronaut-http-validation')
+    annotationProcessor('io.micronaut.security:micronaut-security-annotations')
+    annotationProcessor('io.micronaut.serde:micronaut-serde-processor')
+    
+    implementation('io.micronaut.aws:micronaut-function-aws')
+    implementation('com.amazonaws:aws-lambda-java-events:3.14.0')
+    implementation('com.amazonaws:aws-lambda-java-core:1.2.3')
+    
+    implementation 'io.micronaut:micronaut-router'
+    // Exclude Netty from HTTP client - using native Java HTTP client instead
+    implementation('io.micronaut:micronaut-http-client') {
+        exclude group: 'io.micronaut', module: 'micronaut-http-netty'
+        exclude group: 'io.netty'
+    }
+    implementation('io.micronaut.reactor:micronaut-reactor')
+    implementation('io.micronaut.security:micronaut-security-jwt')
+    implementation('io.micronaut.security:micronaut-security-oauth2')
+    implementation('io.micronaut.serde:micronaut-serde-jackson')
+    implementation('io.github.cdimascio:dotenv-java:3.2.0')
+    
+    runtimeOnly('ch.qos.logback:logback-classic')
+    runtimeOnly('org.yaml:snakeyaml')
+    
+    testImplementation('io.micronaut.test:micronaut-test-junit5')
+    testImplementation('io.micronaut:micronaut-http-client') {
+        exclude group: 'io.micronaut', module: 'micronaut-http-netty'
+        exclude group: 'io.netty'
+    }
+    testImplementation ('org.junit.jupiter:junit-jupiter-api')
+    testRuntimeOnly ('org.junit.jupiter:junit-jupiter-engine')
+}
+
+application {
+    mainClass = 'com.porflyo.MainLambdaHandler'
+}
+
+java {
+    sourceCompatibility = JavaVersion.toVersion("21")
+    targetCompatibility = JavaVersion.toVersion("21")
+}
+
+micronaut {
+    runtime 'lambda_java'
+    testRuntime 'junit5'
+
+    aot {
+        optimizeServiceLoading = false
+        convertYamlToJava = false
+        precomputeOperations = true
+        cacheEnvironment = true
+        optimizeClassLoading = true
+        deduceEnvironment = true
+        optimizeNetty = false
+        replaceLogbackXml = false  // Disabled to avoid AOT issues
+    }
+}
+
+/**
+ * JAR Configuration for AWS Lambda and Native Images
+ * 
+ * This build generates multiple JARs for different deployment scenarios:
+ * 
+ * GENERATED JARS:
+ *  - core-0.1.jar                      : Basic JAR (classes only, NO dependencies) - Required by AOT tasks
+ *  - core-0.1-all.jar                  : Fat JAR (all dependencies) - Lambda compatible  
+ *  - core-0.1-all-optimized.jar        : Fat JAR + AOT optimizations - BEST for Lambda (used by SAM)
+ *  - core-0.1-jit.jar                  : JIT optimized JAR - For local JIT compilation
+ *  - core-0.1-native.jar               : Native compilation ready JAR - For GraalVM native images
+ * 
+ * SELECTED JARS FOR DEPLOYMENT:
+ *  core-0.1-all-optimized.jar          : Primary choice for AWS Lambda (SAM uses this)
+ *  core-0.1-native.jar                 : For future native image builds with GraalVM
+ * 
+ * DISABLED JARS (not needed for our use case):
+ *  core-0.1-runner.jar                 : Local runner (we use Lambda)
+ *  optimized runner JARs               : Optimized local runners (we use Lambda)
+ */
+
+// Keep basic JAR enabled (required by AOT optimization tasks)
+jar {
+    enabled = true
+}
+
+// Disable local runner JARs (we deploy to Lambda, not local execution)
+tasks.named('runnerJar') {
+    enabled = false
+}
+
+tasks.named('optimizedRunnerJitJar') {
+    enabled = false
+}
+
+tasks.named('optimizedRunnerNativeJar') {
+    enabled = false
+}
+
+// Keep JIT JAR for development/testing (smaller, faster builds)
+tasks.named('optimizedJitJar') {
+    enabled = true
+}
+
+// Keep native JAR enabled for future GraalVM native image builds
+tasks.named('optimizedNativeJar') {
+    enabled = true
+}
+
+// Configure Shadow JAR for Lambda deployment - this creates the "all-optimized" JAR
+shadowJar {
+    mergeServiceFiles()
+    archiveClassifier = 'all'
+    
+    // Optimize for Lambda deployment
+    minimize {
+        // Keep essential services that might be loaded dynamically
+        exclude(dependency('io.micronaut:.*'))
+        exclude(dependency('io.micronaut.aws:.*'))
+        exclude(dependency('com.amazonaws:.*'))
+    }
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+test {
+    useJUnitPlatform()
+}

@@ -1,0 +1,55 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+# SAM Configuration for Micronaut Lambda with AOT Optimizations
+# Uses the optimized JAR: build/libs/core-0.1-all-optimized.jar
+# This JAR includes all dependencies + Micronaut AOT optimizations for faster cold starts
+
+Globals:
+  Function:
+    Timeout: 30
+    Environment:
+      Variables:
+        # Optimize JVM for Lambda cold start
+        JAVA_TOOL_OPTIONS: "-XX:+TieredCompilation -XX:TieredStopAtLevel=1 -XX:+UseSerialGC -Xms256m -Xmx512m -XX:+OptimizeStringConcat -XX:+UseStringDeduplication -XX:+UseCompressedOops"
+        # Micronaut Lambda optimizations  
+        MICRONAUT_ENVIRONMENTS: "lambda"
+        MICRONAUT_CONTEXT_EAGER_INIT: "true"
+        MICRONAUT_SERVER_NETTY_ENABLED: "false"
+
+Resources:
+  PorflyoApi:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: .
+      Handler: com.porflyo.StreamLambdaHandler::handleRequest
+      Runtime: java21
+      MemorySize: 512
+      Environment:
+        Variables:
+          OAUTH_CLIENT_ID: REPLACE_WITH_YOUR_CLIENT_ID
+          OAUTH_CLIENT_SECRET: REPLACE_WITH_YOUR_CLIENT_SECRET
+          JWT_GENERATOR_SIGNATURE_SECRET: REPLACE_WITH_YOUR_JWT_SECRET
+          OAUTH_REDIRECT_URI: !Sub REPLACE_WITH_YOUR_REDIRECT_URI
+          FRONTEND_URL: REPLACE_WITH_YOUR_FRONTEND_URL
+      Events:
+        # Handle all HTTP requests
+        HttpApi:
+          Type: HttpApi
+          Properties:
+            Path: /{proxy+}
+            Method: ANY
+        # Handle root path
+        HttpApiRoot:
+          Type: HttpApi
+          Properties:
+            Path: /
+            Method: ANY
+
+Outputs:
+  PorflyoApiUrl:
+    Description: "API Gateway endpoint URL"
+    Value: !Sub BackendUrl
+  OAuthLoginUrl:
+    Description: "GitHub OAuth login URL"
+    Value: !Sub  OauthLoginUrl

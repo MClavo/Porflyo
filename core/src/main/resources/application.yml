@@ -1,0 +1,58 @@
+micronaut:
+  application:
+    name: porflyo-api
+    
+  # Environment Configuration  
+  environments:
+    deduction: false
+    
+  # HTTP Configuration
+  http:
+    client:
+      read-timeout: 30s
+      pool:
+        enabled: true
+        max-connections: 10
+        
+  # Security Configuration (simplified for our custom implementation)
+  security:
+    enabled: false
+    
+  # Jackson Configuration
+  jackson:
+    serialization:
+      indent-output: true
+      write-dates-as-timestamps: false
+      
+  # Function Configuration for AWS Lambda
+  function:
+    enabled: true
+    
+# Custom OAuth Configuration (using environment variables)
+oauth:
+  github:
+    client-id: '${OAUTH_CLIENT_ID:your-github-client-id}'
+    client-secret: '${OAUTH_CLIENT_SECRET:your-github-client-secret}'
+    redirect-uri: '${OAUTH_REDIRECT_URI:https://your-domain.com/oauth/callback/github}'
+    
+# JWT Configuration    
+jwt:
+  secret: '${JWT_SECRET:porflyo-jwt-secret-key-change-in-production}'
+  
+# Frontend Configuration
+frontend:
+  url: '${FRONTEND_URL:http://localhost:5173}'
+  
+# Logging Configuration
+logger:
+  levels:
+    com.porflyo: INFO
+    io.micronaut.http: DEBUG
+    root: INFO 
+    # Removed redirect section that was causing conflicts
+    
+  http:
+    services:
+      githubv3:
+        url: "https://api.github.com"
+ 
