@@ -1,16 +1,15 @@
 package com.porflyo.application.ports.input;
 
-import com.porflyo.domain.model.AuthResult;
 import com.porflyo.domain.model.UserSession;
 
 public interface AuthUseCase {
     
     /**
-     * Initiates the GitHub authentication process.
+     * Builds the OAuth login URL for GitHub authentication.
      *
-     * @return An AuthResult indicating the success or failure of the authentication initiation.
+     * @return The OAuth login URL as a string.
      */
-    AuthResult initiateGithubAuth();
+    String buildOAuthLoginUrl();
 
     /**
      * Handles the OAuth callback from GitHub after user authentication.
@@ -18,7 +17,7 @@ public interface AuthUseCase {
      * @param code The authorization code received from GitHub.
      * @return A UserSession containing user data and access token if authentication is successful.
      */
-    UserSession handleOauthCallback(String code);
+    UserSession handleOAuthCallback(String code);
 
     /**
      * Validates the provided JWT token and returns the associated user session.

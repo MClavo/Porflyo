@@ -28,6 +28,13 @@ public interface ConfigurationPort {
     String getOAuthRedirectUri();
 
     /**
+     * Retrieves the OAuth scope for GitHub authentication.
+     *
+     * @return The OAuth scope.
+     */
+    String getOAuthScope();
+
+    /**
      * Retrieves the JWT secret used for signing tokens.
      *
      * @return The JWT secret.
@@ -40,5 +47,4 @@ public interface ConfigurationPort {
      * @return The frontend URL.
      */
     String getFrontendUrl();
-    
 }
