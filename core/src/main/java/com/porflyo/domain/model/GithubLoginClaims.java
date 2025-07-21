@@ -30,28 +30,26 @@ public class GithubLoginClaims {
      * @param exp The expiration time
      * @param accessToken The access token
      */
-    protected GithubLoginClaims(String sub, Instant iat, Instant exp, String accessToken) {
+    public GithubLoginClaims(String sub, Instant iat, Instant exp, String accessToken) {
         this.sub = sub;
         this.iat = iat;
         this.exp = exp;
         this.accessToken = accessToken;
     }
 
-    // Constructor with subject and expiration, iat is set to now
-    public GithubLoginClaims(String sub, Instant exp) {
-        this(sub, Instant.now(), exp, null);
+    /*
+     * Constructor with subject and expiration, iat is set to now
+     * @param sub The subject (user ID)
+     * @param exp The expiration time
+     * 
+     * @returns A GithubLoginClaims object with the provided subject and expiration,
+     */
+    public GithubLoginClaims(String sub,long tokenLifetime, String accessToken) {
+        this.sub = sub;
+        this.iat = Instant.now();
+        this.exp = iat.plusSeconds(tokenLifetime);
+        this.accessToken = accessToken;
     }
-
-    // Constructor with subject only, iat is set to now, exp and accessToken are null
-    public GithubLoginClaims(String sub) {
-        this(sub, Instant.now(), null, null);
-    }
-
-    // CRITICAL: DELETE THIS METHOD WHEN PERSISTENCE IS IMPLEMENTED
-    public GithubLoginClaims(String sub, String accessToken) {
-        this(sub, Instant.now(), Instant.now().plusSeconds(3600), accessToken);
-    }
-
     
     public String getSub() {
         return sub;

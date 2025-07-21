@@ -18,12 +18,4 @@ public interface AuthUseCase {
      * @return A UserSession containing user data and access token if authentication is successful.
      */
     UserSession handleOAuthCallback(String code);
-
-    /**
-     * Validates the provided JWT token and returns the associated user session.
-     *
-     * @param jwtToken The JWT token to validate.
-     * @return A UserSession if the token is valid, null otherwise.
-     */
-    UserSession validateSession(String jwtToken);
 }

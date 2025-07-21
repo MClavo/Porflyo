@@ -14,15 +14,5 @@ import io.micronaut.serde.annotation.Serdeable;
 public record UserSession(
     String jwtToken,
     String githubAccessToken,
-    GithubUser githubUser,
-    long expirationTime
-) {
-    /**
-     * Checks if the session is expired based on the current time.
-     *
-     * @return true if the session is expired, false otherwise.
-     */
-    public boolean isExpired() {
-        return System.currentTimeMillis() / 1000 > expirationTime;
-    }
-}
+    GithubUser githubUser
+) { }

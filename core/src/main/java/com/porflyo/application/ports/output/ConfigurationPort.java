@@ -47,4 +47,11 @@ public interface ConfigurationPort {
      * @return The frontend URL.
      */
     String getFrontendUrl();
+
+    /**
+     * Retrieves the JWT expiration time in seconds.
+     *
+     * @return The JWT expiration time in seconds.
+     */
+    long getJwtExpirationSeconds();
 }
