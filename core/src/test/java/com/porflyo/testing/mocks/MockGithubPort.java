@@ -82,7 +82,7 @@ public record MockGithubPort(
     }
 
     public static class Builder {
-        private Supplier<String> accessTokenSupplier = () -> "ghp_test_token_1234567890";
+        private Supplier<String> accessTokenSupplier = () -> TestData.DEFAULT_ACCESS_TOKEN;
         private Supplier<GithubUser> userSupplier = () -> TestData.DEFAULT_USER;
         private Supplier<List<GithubRepo>> repositoriesSupplier = () -> TestData.DEFAULT_REPOS;
 
