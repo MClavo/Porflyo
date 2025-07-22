@@ -33,10 +33,10 @@ import java.util.function.Supplier;
  * <ul>
  *   <li>{@code accessTokenSupplier} - Supplies the access token to return from {@link #exchangeCodeForAccessToken(String)}.</li>
  *   <li>{@code userSupplier} - Supplies the {@link GithubUser} to return from {@link #getUserData(String)}.</li>
- *   <li>{@code repositoriesSupplier} - Supplies the list of {@link GithubRepo} to return from {@link #getUserRepositories(String)}.</li>
+ *   <li>{@code repositoriesSupplier} - Supplies the list of {@link GithubRepo} to return from {@link #getUserRepos(String)}.</li>
  *   <li>{@code exchangeExceptionSupplier} - Supplies an exception to throw from {@link #exchangeCodeForAccessToken(String)}, or {@code null} for none.</li>
  *   <li>{@code userDataExceptionSupplier} - Supplies an exception to throw from {@link #getUserData(String)}, or {@code null} for none.</li>
- *   <li>{@code repositoriesExceptionSupplier} - Supplies an exception to throw from {@link #getUserRepositories(String)}, or {@code null} for none.</li>
+ *   <li>{@code repositoriesExceptionSupplier} - Supplies an exception to throw from {@link #getUserRepos(String)}, or {@code null} for none.</li>
  * </ul>
  *
  * <p>
@@ -76,7 +76,7 @@ public record MockGithubPort(
     }
 
     @Override
-    public List<GithubRepo> getUserRepositories(String accessToken) {
+    public List<GithubRepo> getUserRepos(String accessToken) {
         if (repositoriesExceptionSupplier.get() != null) throw repositoriesExceptionSupplier.get();
         return repositoriesSupplier.get();
     }

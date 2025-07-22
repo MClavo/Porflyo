@@ -33,6 +33,6 @@ public interface GithubPort {
      * @param accessToken The access token for GitHub API.
      * @return A list of GitHub repositories.
      */
-    List<GithubRepo> getUserRepositories(String accessToken);
+    List<GithubRepo> getUserRepos(String accessToken);
     
 }
