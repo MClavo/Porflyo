@@ -14,6 +14,34 @@ import com.porflyo.domain.model.UserSession;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 
+/**
+ * Service responsible for handling authentication logic using GitHub OAuth.
+ * <p>
+ * This service provides methods to build the GitHub OAuth login URL and handle the OAuth callback,
+ * exchanging the authorization code for an access token, retrieving user data, and generating a JWT token for session management.
+ * </p>
+ *
+ * <p>
+ * Dependencies:
+ * <ul>
+ *   <li>{@link ConfigurationPort} - Provides configuration values such as OAuth client ID, redirect URI, scope, and JWT expiration.</li>
+ *   <li>{@link GithubPort} - Handles communication with GitHub for exchanging codes and fetching user data.</li>
+ *   <li>{@link JwtPort} - Responsible for generating JWT tokens based on user claims.</li>
+ * </ul>
+ * </p>
+ *
+ * <p>
+ * Main methods:
+ * <ul>
+ *   <li>{@link #buildOAuthLoginUrl()} - Constructs the GitHub OAuth login URL with required parameters.</li>
+ *   <li>{@link #handleOAuthCallback(String)} - Handles the OAuth callback by exchanging the code for an access token, retrieving user data, and generating a JWT token.</li>
+ * </ul>
+ * </p>
+ *
+ * <p>
+ * This class is annotated with {@code @Singleton} to ensure a single instance is used throughout the application.
+ * </p>
+ */
 @Singleton
 public class AuthService implements AuthUseCase {
     private final ConfigurationPort config;
