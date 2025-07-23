@@ -51,7 +51,7 @@ public final class TestData {
     public static final String DEFAULT_CLIENT_SECRET = "test-client-secret";
     public static final String DEFAULT_REDIRECT_URI = "http://localhost:3000/auth/callback";
     public static final String DEFAULT_SCOPE = "user:email,read:user,public_repo";
-    public static final String DEFAULT_JWT_SECRET = "test-jwt-secret-key";
+    public static final String DEFAULT_JWT_SECRET = "test-jwt-secret-key-that-is-long-enough-for-hs256-algorithm-requirements";
     public static final String DEFAULT_FRONTEND_URL = "http://localhost:3000";
     public static final long DEFAULT_JWT_EXPIRATION = 3600L;
 
