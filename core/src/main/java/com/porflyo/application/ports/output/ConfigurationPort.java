@@ -49,6 +49,13 @@ public interface ConfigurationPort {
     String getFrontendUrl();
 
     /**
+     * Retrieves the User-Agent header value for outgoing requests.
+     *
+     * @return The User-Agent header value.
+     */
+    String getUserAgent();
+
+    /**
      * Retrieves the JWT expiration time in seconds.
      *
      * @return The JWT expiration time in seconds.

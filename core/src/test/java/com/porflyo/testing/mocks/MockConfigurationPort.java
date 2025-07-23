@@ -32,6 +32,7 @@ import java.util.function.Supplier;
  * @param oAuthScope            Supplier for the OAuth scope.
  * @param jwtSecret             Supplier for the JWT secret key.
  * @param frontendUrl           Supplier for the frontend URL.
+ * @param userAgent             Supplier for the User-Agent header value.
  * @param jwtExpirationSeconds  Supplier for the JWT expiration time in seconds.
  */
 public record MockConfigurationPort(
@@ -41,6 +42,7 @@ public record MockConfigurationPort(
         Supplier<String> oAuthScope,
         Supplier<String> jwtSecret,
         Supplier<String> frontendUrl,
+        Supplier<String> userAgent,
         Supplier<Long> jwtExpirationSeconds
 ) implements ConfigurationPort {
 
@@ -58,6 +60,7 @@ public record MockConfigurationPort(
     @Override public String getOAuthScope()            { return oAuthScope.get(); }
     @Override public String getJWTSecret()             { return jwtSecret.get(); }
     @Override public String getFrontendUrl()           { return frontendUrl.get(); }
+    @Override public String getUserAgent()             { return userAgent.get(); }
     @Override public long getJwtExpirationSeconds()    { return jwtExpirationSeconds.get(); }
 
     public static class Builder {
@@ -67,6 +70,7 @@ public record MockConfigurationPort(
         private Supplier<String> oAuthScope = () -> TestData.DEFAULT_SCOPE;
         private Supplier<String> jwtSecret = () -> TestData.DEFAULT_JWT_SECRET;
         private Supplier<String> frontendUrl = () -> TestData.DEFAULT_FRONTEND_URL;
+        private Supplier<String> userAgent = () -> TestData.DEFAULT_USER_AGENT;
         private Supplier<Long> jwtExpirationSeconds = () -> TestData.DEFAULT_JWT_EXPIRATION;
 
         public Builder oAuthClientId(String value) {
@@ -98,6 +102,11 @@ public record MockConfigurationPort(
             this.frontendUrl = () -> value;
             return this;
         }
+        
+        public Builder userAgent(String value) {
+            this.userAgent = () -> value;
+            return this;
+        }
 
         public Builder jwtExpirationSeconds(long value) {
             this.jwtExpirationSeconds = () -> value;
@@ -112,6 +121,7 @@ public record MockConfigurationPort(
                     oAuthScope,
                     jwtSecret,
                     frontendUrl,
+                    userAgent,
                     jwtExpirationSeconds
             );
         }
