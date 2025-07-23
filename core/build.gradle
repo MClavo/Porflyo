@@ -35,6 +35,8 @@ dependencies {
     annotationProcessor('io.micronaut.security:micronaut-security-annotations')
     annotationProcessor('io.micronaut.serde:micronaut-serde-processor')
     
+    compileOnly('io.micronaut:micronaut-core-processor')
+
     implementation('io.micronaut.aws:micronaut-function-aws')
     implementation('com.amazonaws:aws-lambda-java-events:3.14.0')
     implementation('com.amazonaws:aws-lambda-java-core:1.2.3')
