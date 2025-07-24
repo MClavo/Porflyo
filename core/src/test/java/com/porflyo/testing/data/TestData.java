@@ -2,9 +2,7 @@ package com.porflyo.testing.data;
 
 import java.time.Instant;
 import java.util.List;
-import java.util.Map;
 
-import com.amazonaws.services.lambda.runtime.events.APIGatewayV2HTTPEvent;
 import com.porflyo.domain.model.GithubLoginClaims;
 import com.porflyo.domain.model.GithubRepo;
 import com.porflyo.domain.model.GithubUser;
