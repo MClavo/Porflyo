@@ -1,11 +1,14 @@
-package com.porflyo.testing;
+package com.porflyo.testing.data;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Map;
 
+import com.amazonaws.services.lambda.runtime.events.APIGatewayV2HTTPEvent;
 import com.porflyo.domain.model.GithubLoginClaims;
 import com.porflyo.domain.model.GithubRepo;
 import com.porflyo.domain.model.GithubUser;
+import com.porflyo.domain.model.UserSession;
 
 
 
@@ -44,6 +47,7 @@ public final class TestData {
     public static final String DEFAULT_CODE = "test-auth-code-1234567890";
     public static final String DEFAULT_ACCESS_TOKEN = "ghp_test_token_1234567890";
     public static final String DEFAULT_JWT_TOKEN = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.test.token";
+    public static final String DEFAULT_LOGIN_URL = "https://github.com/login/oauth/authorize?client_id=test-client-id&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fauth%2Fcallback&scope=user%3Aemail%2Cread%3Auser%2Cpublic_repo&response_type=code";
 
 
     // Default values for ConfigurationPort
@@ -83,5 +87,11 @@ public final class TestData {
         Instant.now(),
         Instant.now().plusSeconds(3600),
         TestData.DEFAULT_ACCESS_TOKEN
+    );
+
+    public static final UserSession DEFAULT_USER_SESSION = new UserSession(
+        DEFAULT_JWT_TOKEN,
+        DEFAULT_ACCESS_TOKEN,
+        DEFAULT_USER
     );
 }

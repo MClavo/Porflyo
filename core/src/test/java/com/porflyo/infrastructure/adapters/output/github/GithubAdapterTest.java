@@ -27,8 +27,8 @@ import com.porflyo.domain.model.GithubUser;
 import com.porflyo.infrastructure.adapters.output.github.dto.GithubAccessTokenResponseDto;
 import com.porflyo.infrastructure.adapters.output.github.dto.GithubRepoResponseDto;
 import com.porflyo.infrastructure.adapters.output.github.dto.GithubUserResponseDto;
-import com.porflyo.testing.TestData;
-import com.porflyo.testing.mocks.MockConfigurationPort;
+import com.porflyo.testing.data.TestData;
+import com.porflyo.testing.mocks.ports.MockConfigurationPort;
 
 import io.micronaut.json.JsonMapper;
 

@@ -22,10 +22,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.porflyo.domain.model.GithubUser;
 import com.porflyo.domain.model.UserSession;
-import com.porflyo.testing.TestData;
-import com.porflyo.testing.mocks.MockConfigurationPort;
-import com.porflyo.testing.mocks.MockGithubPort;
-import com.porflyo.testing.mocks.MockJwtPort;
+import com.porflyo.testing.data.TestData;
+import com.porflyo.testing.mocks.ports.MockConfigurationPort;
+import com.porflyo.testing.mocks.ports.MockGithubPort;
+import com.porflyo.testing.mocks.ports.MockJwtPort;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("AuthService Tests")

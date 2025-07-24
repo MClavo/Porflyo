@@ -17,8 +17,8 @@ import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import com.porflyo.domain.model.GithubLoginClaims;
-import com.porflyo.testing.TestData;
-import com.porflyo.testing.mocks.MockConfigurationPort;
+import com.porflyo.testing.data.TestData;
+import com.porflyo.testing.mocks.ports.MockConfigurationPort;
 
 @DisplayName("JwtAdapter Tests")
 class JwtAdapterTest {
