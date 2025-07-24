@@ -34,11 +34,14 @@ oauth:
     client-id: '${OAUTH_CLIENT_ID:your-github-client-id}'
     client-secret: '${OAUTH_CLIENT_SECRET:your-github-client-secret}'
     redirect-uri: '${OAUTH_REDIRECT_URI:https://your-domain.com/oauth/callback/github}'
-    
-# JWT Configuration    
+    scope: '${OAUTH_SCOPE:user:email,read:user,public_repo}'      # Read-only scopes for GitHub API access
+    user-agent: '${OAUTH_USER_AGENT:porflyo-app}'
+
+# JWT Configuration
 jwt:
   secret: '${JWT_SECRET:porflyo-jwt-secret-key-change-in-production}'
-  
+  expiration: '${JWT_EXPIRATION:3600}'
+
 # Frontend Configuration
 frontend:
   url: '${FRONTEND_URL:http://localhost:5173}'
