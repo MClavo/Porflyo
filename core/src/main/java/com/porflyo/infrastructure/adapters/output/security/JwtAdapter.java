@@ -1,4 +1,4 @@
-package com.porflyo.infraestructure.adapters.output.security;
+package com.porflyo.infrastructure.adapters.output.security;
 
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
