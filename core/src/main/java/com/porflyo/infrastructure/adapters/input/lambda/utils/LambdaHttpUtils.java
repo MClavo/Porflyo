@@ -7,19 +7,17 @@ import java.util.Map;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayV2HTTPEvent;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayV2HTTPResponse;
 
-
-
 /**
  * Utility class for creating and handling HTTP responses and cookies
  * in AWS Lambda functions using API Gateway v2 events.
  * <p>
  * Provides helper methods to:
  * <ul>
- *     <li>Create standard JSON HTTP responses with appropriate headers</li>
- *     <li>Create error responses with JSON-formatted error messages</li>
- *     <li>Create HTTP redirect responses, with or without cookies</li>
- *     <li>Extract cookie values from incoming API Gateway events</li>
- *     <li>Format cookies and escape JSON strings for safe output</li>
+ * <li>Create standard JSON HTTP responses with appropriate headers</li>
+ * <li>Create error responses with JSON-formatted error messages</li>
+ * <li>Create HTTP redirect responses, with or without cookies</li>
+ * <li>Extract cookie values from incoming API Gateway events</li>
+ * <li>Format cookies and escape JSON strings for safe output</li>
  * </ul>
  * <p>
  * This class is not intended to be instantiated.
@@ -30,7 +28,7 @@ public final class LambdaHttpUtils {
      * Creates a standard JSON HTTP response for AWS API Gateway HTTP APIs.
      *
      * @param statusCode the HTTP status code to be set in the response
-     * @param body      the JSON-formatted body of the response
+     * @param body       the JSON-formatted body of the response
      * @return an {@link APIGatewayV2HTTPResponse} representing the HTTP response
      */
     public static APIGatewayV2HTTPResponse createResponse(int statusCode, String body) {
@@ -42,11 +40,14 @@ public final class LambdaHttpUtils {
     }
 
     /**
-     * Creates an error response for AWS API Gateway HTTP APIs with the specified status code and error message.
+     * Creates an error response for AWS API Gateway HTTP APIs with the specified
+     * status code and error message.
      *
      * @param statusCode   the HTTP status code to be set in the response
-     * @param errorMessage the error message to include in the response body; will be JSON-escaped
-     * @return an {@link APIGatewayV2HTTPResponse} containing the error message in JSON format
+     * @param errorMessage the error message to include in the response body; will
+     *                     be JSON-escaped
+     * @return an {@link APIGatewayV2HTTPResponse} containing the error message in
+     *         JSON format
      */
     public static APIGatewayV2HTTPResponse createErrorResponse(int statusCode, String errorMessage) {
         String message = String.format("{\"error\": \"%s\"}", escapeJson(errorMessage));
@@ -54,10 +55,12 @@ public final class LambdaHttpUtils {
     }
 
     /**
-     * Creates a redirect response for AWS API Gateway HTTP APIs with the specified location.
+     * Creates a redirect response for AWS API Gateway HTTP APIs with the specified
+     * location.
      *
      * @param location the URL to redirect to
-     * @return an {@link APIGatewayV2HTTPResponse} representing the redirect response
+     * @return an {@link APIGatewayV2HTTPResponse} representing the redirect
+     *         response
      */
     public static APIGatewayV2HTTPResponse createRedirectResponse(String location) {
         return APIGatewayV2HTTPResponse.builder()
@@ -67,16 +70,19 @@ public final class LambdaHttpUtils {
     }
 
     /**
-     * Creates a redirect response for AWS API Gateway HTTP APIs with the specified location and a cookie.
+     * Creates a redirect response for AWS API Gateway HTTP APIs with the specified
+     * location and a cookie.
      *
-     * @param location   the URL to redirect to
-     * @param cookieName the name of the cookie to set
+     * @param location    the URL to redirect to
+     * @param cookieName  the name of the cookie to set
      * @param cookieValue the value of the cookie to set
-     * @param maxAge    the maximum age of the cookie in seconds
-     * @return an {@link APIGatewayV2HTTPResponse} representing the redirect response with the cookie
+     * @param maxAge      the maximum age of the cookie in seconds
+     * @return an {@link APIGatewayV2HTTPResponse} representing the redirect
+     *         response with the cookie
      */
     public static APIGatewayV2HTTPResponse createRedirectResponseWithCookie(
             String location,
+            String body,
             String cookieName,
             String cookieValue,
             long maxAge) {
@@ -88,13 +94,36 @@ public final class LambdaHttpUtils {
                 .withHeaders(Map.of(
                         "Location", location,
                         "Set-Cookie", cookie))
+                .withBody(body)
+                .build();
+    }
+
+    /**
+     * Creates an error redirect response for AWS API Gateway HTTP APIs with the specified
+     * location and error message.
+     *
+     * @param code        the HTTP status code to be set in the response
+     * @param location    the URL to redirect to
+     * @param errorMessage the error message to include in the response body; will
+     *                     be JSON-escaped
+     * @return an {@link APIGatewayV2HTTPResponse} representing the error redirect response
+     */
+    public static APIGatewayV2HTTPResponse createErrorRedirectResponse(
+            int code,
+            String location,
+            String errorMessage) {
+
+        return APIGatewayV2HTTPResponse.builder()
+                .withStatusCode(code)
+                .withHeaders(Map.of("Location", location))
+                .withBody(String.format("{\"error\": \"%s\"}", escapeJson(errorMessage)))
                 .build();
     }
 
     /**
      * Extracts the value of a cookie from the incoming API Gateway event.
      *
-     * @param input     the API Gateway event
+     * @param input      the API Gateway event
      * @param cookieName the name of the cookie to extract
      * @return the value of the cookie, or null if not found
      */
@@ -103,7 +132,7 @@ public final class LambdaHttpUtils {
                 ? null
                 : extractFromHeader(input.getHeaders().get("Cookie"), cookieName);
     }
-    
+
     private static String extractFromHeader(String cookieHeader, String cookieName) {
         if (cookieHeader == null) {
             return null;
