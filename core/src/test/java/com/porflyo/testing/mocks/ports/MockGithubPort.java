@@ -1,9 +1,9 @@
-package com.porflyo.testing.mocks;
+package com.porflyo.testing.mocks.ports;
 
 import com.porflyo.application.ports.output.GithubPort;
 import com.porflyo.domain.model.GithubRepo;
 import com.porflyo.domain.model.GithubUser;
-import com.porflyo.testing.TestData;
+import com.porflyo.testing.data.TestData;
 
 import java.util.List;
 import java.util.function.Supplier;

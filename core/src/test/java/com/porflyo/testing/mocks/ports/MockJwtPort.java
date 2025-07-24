@@ -1,10 +1,10 @@
-package com.porflyo.testing.mocks;
+package com.porflyo.testing.mocks.ports;
 
 import java.util.function.Supplier;
 
 import com.porflyo.application.ports.output.JwtPort;
 import com.porflyo.domain.model.GithubLoginClaims;
-import com.porflyo.testing.TestData;
+import com.porflyo.testing.data.TestData;
 
 /**
  * A mock implementation of the {@link JwtPort} interface for testing purposes.

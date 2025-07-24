@@ -1,7 +1,7 @@
-package com.porflyo.testing.mocks;
+package com.porflyo.testing.mocks.ports;
 
 import com.porflyo.application.ports.output.ConfigurationPort;
-import com.porflyo.testing.TestData;
+import com.porflyo.testing.data.TestData;
 
 import java.util.function.Supplier;
 
