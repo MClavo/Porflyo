@@ -75,6 +75,17 @@ public class AuthLambdaHandler {
         }
     }
 
+    /**
+     * Validates the session token present in the incoming API Gateway V2 HTTP event.
+     * <p>
+     * This method extracts the session token from the cookies of the incoming HTTP event,
+     * validates it using the JWT service, and returns an appropriate response.
+     * If the token is missing or invalid, it returns a 401 error response.
+     * </p>
+     *
+     * @param input the incoming API Gateway V2 HTTP event
+     * @return an {@code APIGatewayV2HTTPResponse} indicating the result of the token validation
+     */
     public APIGatewayV2HTTPResponse handleTokenValidation(APIGatewayV2HTTPEvent input) {
         try {
             String token = LambdaHttpUtils.extractCookieValue(input, "session");
