@@ -1,5 +1,8 @@
 package com.porflyo.infrastructure.adapters.input.lambda.auth;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.amazonaws.services.lambda.runtime.events.APIGatewayV2HTTPEvent;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayV2HTTPResponse;
 import com.porflyo.application.ports.input.AuthUseCase;
@@ -40,7 +43,7 @@ import jakarta.inject.Singleton;
  */
 @Singleton
 public class AuthLambdaHandler {
-
+    private static final Logger log = LoggerFactory.getLogger(AuthLambdaHandler.class);
     private final AuthUseCase authService;
     private final ConfigurationPort config;
     private final JwtPort jwtService;
@@ -121,8 +124,10 @@ public class AuthLambdaHandler {
      */
     public APIGatewayV2HTTPResponse handleOAuthCallback (APIGatewayV2HTTPEvent input){
         try {
-            String code = input.getQueryStringParameters() != null ? 
-                input.getQueryStringParameters().get("code") : null;
+            log.debug("Received OAuth callback with input: {}", input);
+            String code = LambdaHttpUtils.extractQueryParameter(input, "code");
+            log.debug("Extracted OAuth code: {}", code);
+
             String frontend = config.getFrontendUrl();
             long expiration = config.getJwtExpirationSeconds();
             

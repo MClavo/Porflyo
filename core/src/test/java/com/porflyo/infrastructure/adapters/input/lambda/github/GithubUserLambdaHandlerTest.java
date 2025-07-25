@@ -17,6 +17,11 @@ import com.amazonaws.services.lambda.runtime.events.APIGatewayV2HTTPEvent;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayV2HTTPResponse;
 import com.porflyo.domain.model.GithubLoginClaims;
 import com.porflyo.domain.model.GithubUser;
+
+import io.micronaut.json.JsonMapper;
+import org.mockito.Mockito;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 import com.porflyo.testing.data.LambdaTestData;
 import com.porflyo.testing.data.TestData;
 import com.porflyo.testing.mocks.ports.MockJwtPort;
@@ -29,11 +34,36 @@ class GithubUserLambdaHandlerTest {
     private MockJwtPort jwtPort;
     private GithubUserLambdaHandler githubUserLambdaHandler;
 
+    // Helper method to create a mock JsonMapper
+    private JsonMapper createMockJsonMapper() {
+        JsonMapper mockMapper = Mockito.mock(JsonMapper.class);
+        try {
+            when(mockMapper.writeValueAsString(any())).thenAnswer(invocation -> {
+                Object arg = invocation.getArgument(0);
+                if (arg instanceof GithubUser user) {
+                    return String.format(
+                        "{\"login\":\"%s\",\"id\":\"%s\",\"name\":\"%s\",\"email\":\"%s\",\"avatar_url\":\"%s\"}",
+                        user.login(), user.id(), user.name(), user.email(), user.avatar_url()
+                    );
+                }
+                return "{}";
+            });
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return mockMapper;
+    }
+
+    // Helper method to create handler with mocked JsonMapper
+    private GithubUserLambdaHandler createHandler(MockUserUseCase userUseCase, MockJwtPort jwtPort) {
+        return new GithubUserLambdaHandler(createMockJsonMapper(), userUseCase, jwtPort);
+    }
+
     @BeforeEach
     void setUp() {
         userUseCase = MockUserUseCase.withDefaults();
         jwtPort = MockJwtPort.withDefaults();
-        githubUserLambdaHandler = new GithubUserLambdaHandler(userUseCase, jwtPort);
+        githubUserLambdaHandler = createHandler(userUseCase, jwtPort);
     }
 
     // Helper methods for common assertions
@@ -94,7 +124,7 @@ class GithubUserLambdaHandlerTest {
                     return customUser;
                 })
                 .build();
-            githubUserLambdaHandler = new GithubUserLambdaHandler(userUseCase, jwtPort);
+            githubUserLambdaHandler = createHandler(userUseCase, jwtPort);
             
             // When
             APIGatewayV2HTTPResponse response = githubUserLambdaHandler.handleUserRequest(
@@ -111,7 +141,7 @@ class GithubUserLambdaHandlerTest {
             GithubUser specialUser = createTestUser("user-with.special_chars", "99999", 
                 "山田 太郎", "yamada.taro@example.com");
             userUseCase = MockUserUseCase.builder().getUserData(specialUser).build();
-            githubUserLambdaHandler = new GithubUserLambdaHandler(userUseCase, jwtPort);
+            githubUserLambdaHandler = createHandler(userUseCase, jwtPort);
             
             // When
             APIGatewayV2HTTPResponse response = githubUserLambdaHandler.handleUserRequest(
@@ -153,7 +183,7 @@ class GithubUserLambdaHandlerTest {
             jwtPort = MockJwtPort.builder()
                 .throwOnExtract(new RuntimeException("Invalid JWT token"))
                 .build();
-            githubUserLambdaHandler = new GithubUserLambdaHandler(userUseCase, jwtPort);
+            githubUserLambdaHandler = createHandler(userUseCase, jwtPort);
             
             APIGatewayV2HTTPEvent input = invalidToken == null ? 
                 LambdaTestData.createEventWithNoCookies() :
@@ -178,7 +208,7 @@ class GithubUserLambdaHandlerTest {
             userUseCase = MockUserUseCase.builder()
                 .getUserDataThrows(new RuntimeException(errorMessage))
                 .build();
-            githubUserLambdaHandler = new GithubUserLambdaHandler(userUseCase, jwtPort);
+            githubUserLambdaHandler = createHandler(userUseCase, jwtPort);
             
             // When
             APIGatewayV2HTTPResponse response = githubUserLambdaHandler.handleUserRequest(
@@ -195,7 +225,7 @@ class GithubUserLambdaHandlerTest {
             userUseCase = MockUserUseCase.builder()
                 .getUserDataThrows(new NullPointerException("Null value encountered"))
                 .build();
-            githubUserLambdaHandler = new GithubUserLambdaHandler(userUseCase, jwtPort);
+            githubUserLambdaHandler = createHandler(userUseCase, jwtPort);
             
             // When
             APIGatewayV2HTTPResponse response = githubUserLambdaHandler.handleUserRequest(
@@ -237,7 +267,7 @@ class GithubUserLambdaHandlerTest {
             userUseCase = MockUserUseCase.builder()
                 .getUserDataThrows(new RuntimeException("Test error"))
                 .build();
-            githubUserLambdaHandler = new GithubUserLambdaHandler(userUseCase, jwtPort);
+            githubUserLambdaHandler = createHandler(userUseCase, jwtPort);
             
             // When
             APIGatewayV2HTTPResponse response = githubUserLambdaHandler.handleUserRequest(
@@ -266,7 +296,7 @@ class GithubUserLambdaHandlerTest {
                     return integrationUser;
                 })
                 .build();
-            githubUserLambdaHandler = new GithubUserLambdaHandler(userUseCase, jwtPort);
+            githubUserLambdaHandler = createHandler(userUseCase, jwtPort);
             
             // When
             APIGatewayV2HTTPResponse response = githubUserLambdaHandler.handleUserRequest(

@@ -133,6 +133,22 @@ public final class LambdaHttpUtils {
                 : extractFromHeader(input.getHeaders().get("Cookie"), cookieName);
     }
 
+
+    /**
+     * Extracts the value of a query parameter from the incoming API Gateway event.
+     *
+     * @param input      the API Gateway event
+     * @param paramName  the name of the query parameter to extract
+     * @return the value of the query parameter, or null if not found
+     */
+    public static String extractQueryParameter(APIGatewayV2HTTPEvent input, String paramName) {
+        if (input.getQueryStringParameters() == null) {
+            return null;
+        }
+
+        return input.getQueryStringParameters().get(paramName);
+    }
+
     private static String extractFromHeader(String cookieHeader, String cookieName) {
         if (cookieHeader == null) {
             return null;

@@ -23,6 +23,11 @@ import com.porflyo.testing.data.TestData;
 import com.porflyo.testing.mocks.ports.MockJwtPort;
 import com.porflyo.testing.mocks.useCase.MockRepoUseCase;
 
+import io.micronaut.json.JsonMapper;
+import org.mockito.Mockito;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+
 @DisplayName("GithubRepoLambdaHandler Tests")
 class GithubRepoLambdaHandlerTest {
 
@@ -30,11 +35,48 @@ class GithubRepoLambdaHandlerTest {
     private MockJwtPort jwtPort;
     private GithubRepoLambdaHandler githubRepoLambdaHandler;
 
+    // Helper method to create a mock JsonMapper
+    private JsonMapper createMockJsonMapper() {
+        JsonMapper mockMapper = Mockito.mock(JsonMapper.class);
+        try {
+            when(mockMapper.writeValueAsString(any())).thenAnswer(invocation -> {
+                Object arg = invocation.getArgument(0);
+                if (arg instanceof List<?> list) {
+                    if (list.isEmpty()) {
+                        return "[]";
+                    }
+                    // Simple JSON serialization for test repos
+                    StringBuilder sb = new StringBuilder("[");
+                    for (int i = 0; i < list.size(); i++) {
+                        if (i > 0) sb.append(",");
+                        if (list.get(i) instanceof GithubRepo repo) {
+                            sb.append(String.format(
+                                "{\"name\":\"%s\",\"description\":\"%s\",\"html_url\":\"%s\"}",
+                                repo.name(), repo.description(), repo.html_url()
+                            ));
+                        }
+                    }
+                    sb.append("]");
+                    return sb.toString();
+                }
+                return "{}";
+            });
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return mockMapper;
+    }
+
+    // Helper method to create handler with mocked JsonMapper
+    private GithubRepoLambdaHandler createHandler(MockRepoUseCase repoUseCase, MockJwtPort jwtPort) {
+        return new GithubRepoLambdaHandler(repoUseCase, jwtPort, createMockJsonMapper());
+    }
+
     @BeforeEach
     void setUp() {
         repoUseCase = MockRepoUseCase.withDefaults();
         jwtPort = MockJwtPort.withDefaults();
-        githubRepoLambdaHandler = new GithubRepoLambdaHandler(repoUseCase, jwtPort);
+        githubRepoLambdaHandler = createHandler(repoUseCase, jwtPort);
     }
 
     // Helper methods for common assertions
@@ -98,7 +140,7 @@ class GithubRepoLambdaHandlerTest {
                     return customRepos;
                 })
                 .build();
-            githubRepoLambdaHandler = new GithubRepoLambdaHandler(repoUseCase, jwtPort);
+            githubRepoLambdaHandler = createHandler(repoUseCase, jwtPort);
             
             // When
             APIGatewayV2HTTPResponse response = githubRepoLambdaHandler.handleUserRequest(
@@ -114,7 +156,7 @@ class GithubRepoLambdaHandlerTest {
             // Given
             List<GithubRepo> emptyRepos = List.of();
             repoUseCase = MockRepoUseCase.builder().getUserRepos(emptyRepos).build();
-            githubRepoLambdaHandler = new GithubRepoLambdaHandler(repoUseCase, jwtPort);
+            githubRepoLambdaHandler = createHandler(repoUseCase, jwtPort);
             
             // When
             APIGatewayV2HTTPResponse response = githubRepoLambdaHandler.handleUserRequest(
@@ -135,7 +177,7 @@ class GithubRepoLambdaHandlerTest {
                 new GithubRepo("repo_with_underscores", "Descripción con caracteres especiales", "https://github.com/user/repo_with_underscores")
             );
             repoUseCase = MockRepoUseCase.builder().getUserRepos(specialRepos).build();
-            githubRepoLambdaHandler = new GithubRepoLambdaHandler(repoUseCase, jwtPort);
+            githubRepoLambdaHandler = createHandler(repoUseCase, jwtPort);
             
             // When
             APIGatewayV2HTTPResponse response = githubRepoLambdaHandler.handleUserRequest(
@@ -177,7 +219,7 @@ class GithubRepoLambdaHandlerTest {
             jwtPort = MockJwtPort.builder()
                 .throwOnExtract(new RuntimeException("Invalid JWT token"))
                 .build();
-            githubRepoLambdaHandler = new GithubRepoLambdaHandler(repoUseCase, jwtPort);
+            githubRepoLambdaHandler = createHandler(repoUseCase, jwtPort);
             
             APIGatewayV2HTTPEvent input = invalidToken == null ? 
                 LambdaTestData.createEventWithNoCookies() :
@@ -203,7 +245,7 @@ class GithubRepoLambdaHandlerTest {
             repoUseCase = MockRepoUseCase.builder()
                 .getUserReposThrows(new RuntimeException(errorMessage))
                 .build();
-            githubRepoLambdaHandler = new GithubRepoLambdaHandler(repoUseCase, jwtPort);
+            githubRepoLambdaHandler = createHandler(repoUseCase, jwtPort);
             
             // When
             APIGatewayV2HTTPResponse response = githubRepoLambdaHandler.handleUserRequest(
@@ -220,7 +262,7 @@ class GithubRepoLambdaHandlerTest {
             repoUseCase = MockRepoUseCase.builder()
                 .getUserReposThrows(new NullPointerException("Null value encountered"))
                 .build();
-            githubRepoLambdaHandler = new GithubRepoLambdaHandler(repoUseCase, jwtPort);
+            githubRepoLambdaHandler = createHandler(repoUseCase, jwtPort);
             
             // When
             APIGatewayV2HTTPResponse response = githubRepoLambdaHandler.handleUserRequest(
@@ -262,7 +304,7 @@ class GithubRepoLambdaHandlerTest {
             repoUseCase = MockRepoUseCase.builder()
                 .getUserReposThrows(new RuntimeException("Test error"))
                 .build();
-            githubRepoLambdaHandler = new GithubRepoLambdaHandler(repoUseCase, jwtPort);
+            githubRepoLambdaHandler = createHandler(repoUseCase, jwtPort);
             
             // When
             APIGatewayV2HTTPResponse response = githubRepoLambdaHandler.handleUserRequest(
@@ -290,7 +332,7 @@ class GithubRepoLambdaHandlerTest {
                     return integrationRepos;
                 })
                 .build();
-            githubRepoLambdaHandler = new GithubRepoLambdaHandler(repoUseCase, jwtPort);
+            githubRepoLambdaHandler = createHandler(repoUseCase, jwtPort);
             
             // When
             APIGatewayV2HTTPResponse response = githubRepoLambdaHandler.handleUserRequest(
@@ -312,7 +354,7 @@ class GithubRepoLambdaHandlerTest {
                 .toList();
             
             repoUseCase = MockRepoUseCase.builder().getUserRepos(manyRepos).build();
-            githubRepoLambdaHandler = new GithubRepoLambdaHandler(repoUseCase, jwtPort);
+            githubRepoLambdaHandler = createHandler(repoUseCase, jwtPort);
             
             // When
             APIGatewayV2HTTPResponse response = githubRepoLambdaHandler.handleUserRequest(

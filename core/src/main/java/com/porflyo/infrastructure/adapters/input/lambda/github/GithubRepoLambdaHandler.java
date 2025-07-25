@@ -10,18 +10,21 @@ import com.porflyo.domain.model.GithubLoginClaims;
 import com.porflyo.domain.model.GithubRepo;
 import com.porflyo.infrastructure.adapters.input.lambda.utils.LambdaHttpUtils;
 
+import io.micronaut.json.JsonMapper;
 import jakarta.inject.Inject;
 
 public class GithubRepoLambdaHandler {
 
     private final RepoUseCase repoService;
     private final JwtPort jwtService;
+    private final JsonMapper jsonMapper;
 
     @Inject
-    public GithubRepoLambdaHandler(RepoUseCase repoService, JwtPort jwtService) {
+    public GithubRepoLambdaHandler(RepoUseCase repoService, JwtPort jwtService, JsonMapper jsonMapper) {
         this.repoService = repoService;
         this.jwtService = jwtService;
-    }
+        this.jsonMapper = jsonMapper;
+    }    
 
     public APIGatewayV2HTTPResponse handleUserRequest(APIGatewayV2HTTPEvent input) {
         try {
@@ -31,7 +34,7 @@ public class GithubRepoLambdaHandler {
 
             // Get user data
             List<GithubRepo> repos = repoService.getUserRepos(claims.getAccessToken());
-            return LambdaHttpUtils.createResponse(200, repos.toString());
+            return LambdaHttpUtils.createResponse(200, jsonMapper.writeValueAsString(repos));
 
         } catch (Exception e) {
             return LambdaHttpUtils.createErrorResponse(500, e.getMessage());
