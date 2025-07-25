@@ -15,3 +15,5 @@ out/
 .classpath
 .factorypath
 bin/
+
+env.json
