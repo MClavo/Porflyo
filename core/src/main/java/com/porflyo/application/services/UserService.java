@@ -5,8 +5,10 @@ import com.porflyo.application.ports.output.GithubPort;
 import com.porflyo.domain.model.GithubUser;
 
 import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 
 // TODO: Implement user management when persistence is available
+@Singleton
 public class UserService implements UserUseCase{
 
     private final GithubPort githubPort;

@@ -7,8 +7,10 @@ import com.porflyo.application.ports.output.GithubPort;
 import com.porflyo.domain.model.GithubRepo;
 
 import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 
 // TODO: Implement repository management when persistence is available
+@Singleton
 public class RepoService implements RepoUseCase {
 
     private final GithubPort githubPort;
