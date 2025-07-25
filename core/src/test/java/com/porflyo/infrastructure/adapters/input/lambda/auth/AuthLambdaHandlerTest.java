@@ -21,6 +21,7 @@ import com.porflyo.domain.model.UserSession;
 import com.porflyo.testing.data.LambdaTestData;
 import com.porflyo.testing.data.TestData;
 import com.porflyo.testing.mocks.ports.MockConfigurationPort;
+import com.porflyo.testing.mocks.ports.MockJwtPort;
 import com.porflyo.testing.mocks.useCase.MockAuthUseCase;
 
 @DisplayName("AuthLambdaHandler Tests")
@@ -28,6 +29,7 @@ class AuthLambdaHandlerTest {
 
     private MockAuthUseCase authUseCase;
     private MockConfigurationPort configurationPort;
+    private MockJwtPort jwtPort;
     private AuthLambdaHandler authLambdaHandler;
     private APIGatewayV2HTTPEvent input;
 
@@ -35,8 +37,9 @@ class AuthLambdaHandlerTest {
     void setUp() {
         authUseCase = MockAuthUseCase.withDefaults();
         configurationPort = MockConfigurationPort.withDefaults();
+        jwtPort = MockJwtPort.withDefaults();
         input = LambdaTestData.createBasicApiGatewayEvent();
-        authLambdaHandler = new AuthLambdaHandler(authUseCase, configurationPort);
+        authLambdaHandler = new AuthLambdaHandler(authUseCase, configurationPort, jwtPort);
     }
 
     @Nested
@@ -66,7 +69,7 @@ class AuthLambdaHandlerTest {
             authUseCase = MockAuthUseCase.builder()
                 .buildOAuthLoginUrl(customLoginUrl)
                 .build();
-            authLambdaHandler = new AuthLambdaHandler(authUseCase, configurationPort);
+            authLambdaHandler = new AuthLambdaHandler(authUseCase, configurationPort, jwtPort);
 
             // When
             APIGatewayV2HTTPResponse response = authLambdaHandler.handleOauthLogin(input);
@@ -85,7 +88,7 @@ class AuthLambdaHandlerTest {
             authUseCase = MockAuthUseCase.builder()
                 .buildOAuthLoginUrlThrows(exception)
                 .build();
-            authLambdaHandler = new AuthLambdaHandler(authUseCase, configurationPort);
+            authLambdaHandler = new AuthLambdaHandler(authUseCase, configurationPort, jwtPort);
 
             // When
             APIGatewayV2HTTPResponse response = authLambdaHandler.handleOauthLogin(input);
@@ -96,6 +99,42 @@ class AuthLambdaHandlerTest {
             assertTrue(response.getBody().contains("error"));
             assertTrue(response.getBody().contains("OAuth configuration error"));
         }
+    }
+
+    @Nested
+    @DisplayName("Token Validation Tests")
+    class TokenValidationTests {
+        @Test
+        @DisplayName("Should validate JWT token successfully")
+        void shouldValidateJwtTokenSuccessfully() {
+            // Given
+            String validToken = TestData.DEFAULT_JWT_TOKEN;
+            APIGatewayV2HTTPEvent input = LambdaTestData.createEventWithSessionCookie(validToken);
+
+            // When
+            APIGatewayV2HTTPResponse response = authLambdaHandler.handleTokenValidation(input);
+
+            // Then
+            assertNotNull(response);
+            assertEquals(200, response.getStatusCode());
+            assertTrue(response.getBody().contains("Token is valid"));
+        }
+
+        @Test
+        @DisplayName("Should return error when jwt Token is missing")
+        void shouldReturnErrorWhenJwtTokenIsMissing() {
+            // Given
+            String token = "";
+            APIGatewayV2HTTPEvent input = LambdaTestData.createEventWithSessionCookie(token);
+
+            // When
+            APIGatewayV2HTTPResponse response = authLambdaHandler.handleTokenValidation(input);
+
+            // Then
+            assertNotNull(response);
+            assertEquals(401, response.getStatusCode());
+        }
+
     }
 
     @Nested
@@ -144,7 +183,7 @@ class AuthLambdaHandlerTest {
             authUseCase = MockAuthUseCase.builder()
                 .handleOAuthCallback(customSession)
                 .build();
-            authLambdaHandler = new AuthLambdaHandler(authUseCase, configurationPort);
+            authLambdaHandler = new AuthLambdaHandler(authUseCase, configurationPort, jwtPort);
 
             APIGatewayV2HTTPEvent input = LambdaTestData.createOAuthCallbackEvent(customCode);
 
@@ -171,7 +210,7 @@ class AuthLambdaHandlerTest {
                 .frontendUrl(customFrontendUrl)
                 .jwtExpirationSeconds(customExpiration)
                 .build();
-            authLambdaHandler = new AuthLambdaHandler(authUseCase, configurationPort);
+            authLambdaHandler = new AuthLambdaHandler(authUseCase, configurationPort, jwtPort);
 
             APIGatewayV2HTTPEvent input = LambdaTestData.createOAuthCallbackEvent(TestData.DEFAULT_CODE);
 
@@ -232,7 +271,7 @@ class AuthLambdaHandlerTest {
             authUseCase = MockAuthUseCase.builder()
                 .handleOAuthCallbackThrows(exception)
                 .build();
-            authLambdaHandler = new AuthLambdaHandler(authUseCase, configurationPort);
+            authLambdaHandler = new AuthLambdaHandler(authUseCase, configurationPort, jwtPort);
 
             APIGatewayV2HTTPEvent input = LambdaTestData.createOAuthCallbackEvent(TestData.DEFAULT_CODE);
 
@@ -272,7 +311,7 @@ class AuthLambdaHandlerTest {
     class IntegrationTests {
 
         @Test
-        @DisplayName("Should complete full OAuth flow from login to callback")
+        @DisplayName("Should complete full OAuth flow from login to callback and finally validate token")
         void shouldCompleteFullOAuthFlow() {
             // Given - Custom configuration and user session
             String customClientId = "integration-client-id";
@@ -302,9 +341,9 @@ class AuthLambdaHandlerTest {
                 .buildOAuthLoginUrl("https://github.com/login/oauth/authorize?client_id=" + customClientId)
                 .handleOAuthCallback(integrationSession)
                 .build();
-            
-            authLambdaHandler = new AuthLambdaHandler(authUseCase, configurationPort);
-            
+
+            authLambdaHandler = new AuthLambdaHandler(authUseCase, configurationPort, jwtPort);
+
             // When - Step 1: Get OAuth login URL
             APIGatewayV2HTTPEvent loginInput = LambdaTestData.createBasicApiGatewayEvent();
             APIGatewayV2HTTPResponse loginResponse = authLambdaHandler.handleOauthLogin(loginInput);
@@ -324,6 +363,13 @@ class AuthLambdaHandlerTest {
             String setCookieHeader = callbackResponse.getHeaders().get("Set-Cookie");
             assertTrue(setCookieHeader.contains("session=" + customJwtToken));
             assertTrue(setCookieHeader.contains("Max-Age=" + customExpiration));
+
+            // When - Step 3: Validate the JWT token
+            APIGatewayV2HTTPEvent validationInput = LambdaTestData.createEventWithSessionCookie(customJwtToken);
+            APIGatewayV2HTTPResponse validationResponse = authLambdaHandler.handleTokenValidation(validationInput);
+
+            // Then - Verify token validation response
+            assertEquals(200, validationResponse.getStatusCode());
         }
     }
 }

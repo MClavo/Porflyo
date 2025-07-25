@@ -4,6 +4,7 @@ import com.amazonaws.services.lambda.runtime.events.APIGatewayV2HTTPEvent;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayV2HTTPResponse;
 import com.porflyo.application.ports.input.AuthUseCase;
 import com.porflyo.application.ports.output.ConfigurationPort;
+import com.porflyo.application.ports.output.JwtPort;
 import com.porflyo.domain.model.UserSession;
 import com.porflyo.infrastructure.adapters.input.lambda.utils.LambdaHttpUtils;
 
@@ -42,11 +43,13 @@ public class AuthLambdaHandler {
 
     private final AuthUseCase authService;
     private final ConfigurationPort config;
+    private final JwtPort jwtService;
 
     @Inject
-    public AuthLambdaHandler(AuthUseCase authUseCase, ConfigurationPort configurationPort) {
+    public AuthLambdaHandler(AuthUseCase authUseCase, ConfigurationPort configurationPort, JwtPort jwtPort) {
         this.authService = authUseCase;
         this.config = configurationPort;
+        this.jwtService = jwtPort;
     }
 
     /**
@@ -66,6 +69,26 @@ public class AuthLambdaHandler {
             String loginUrl = authService.buildOAuthLoginUrl();
 
             return LambdaHttpUtils.createRedirectResponse(loginUrl);
+
+        } catch (Exception e) {
+            return LambdaHttpUtils.createErrorResponse(500, e.getMessage());
+        }
+    }
+
+    public APIGatewayV2HTTPResponse handleTokenValidation(APIGatewayV2HTTPEvent input) {
+        try {
+            String token = LambdaHttpUtils.extractCookieValue(input, "session");
+
+            if (token == null || token.trim().isEmpty()) {
+                return LambdaHttpUtils.createErrorResponse(401, "Missing or invalid token");
+            }
+
+            boolean isValid = jwtService.validateToken(token);
+            if (!isValid) {
+                return LambdaHttpUtils.createErrorResponse(401, "Invalid token");
+            }
+
+            return LambdaHttpUtils.createResponse(200, "Token is valid");
 
         } catch (Exception e) {
             return LambdaHttpUtils.createErrorResponse(500, e.getMessage());

@@ -16,6 +16,7 @@ import com.amazonaws.services.lambda.runtime.events.APIGatewayV2HTTPResponse;
 import com.porflyo.testing.data.LambdaTestData;
 import com.porflyo.testing.data.TestData;
 import com.porflyo.testing.mocks.ports.MockConfigurationPort;
+import com.porflyo.testing.mocks.ports.MockJwtPort;
 import com.porflyo.testing.mocks.useCase.MockAuthUseCase;
 
 @DisplayName("AuthLambdaHandler Edge Cases and Error Scenarios")
@@ -23,6 +24,7 @@ class AuthLambdaHandlerEdgeCasesTest {
 
     private MockAuthUseCase authUseCase;
     private MockConfigurationPort configurationPort;
+    private MockJwtPort jwtPort;
     private AuthLambdaHandler authLambdaHandler;
     private APIGatewayV2HTTPEvent input;
 
@@ -30,7 +32,8 @@ class AuthLambdaHandlerEdgeCasesTest {
     void setUp() {
         authUseCase = MockAuthUseCase.withDefaults();
         configurationPort = MockConfigurationPort.withDefaults();
-        authLambdaHandler = new AuthLambdaHandler(authUseCase, configurationPort);
+        jwtPort = MockJwtPort.withDefaults();
+        authLambdaHandler = new AuthLambdaHandler(authUseCase, configurationPort, jwtPort);
         input = LambdaTestData.createBasicApiGatewayEvent();
     }
 
@@ -77,7 +80,7 @@ class AuthLambdaHandlerEdgeCasesTest {
             authUseCase = MockAuthUseCase.builder()
                 .buildOAuthLoginUrl(longUrl)
                 .build();
-            authLambdaHandler = new AuthLambdaHandler(authUseCase, configurationPort);
+            authLambdaHandler = new AuthLambdaHandler(authUseCase, configurationPort, jwtPort);
 
             // When
             APIGatewayV2HTTPResponse response = authLambdaHandler.handleOauthLogin(input);
@@ -97,7 +100,7 @@ class AuthLambdaHandlerEdgeCasesTest {
             authUseCase = MockAuthUseCase.builder()
                 .buildOAuthLoginUrl(specialUrl)
                 .build();
-            authLambdaHandler = new AuthLambdaHandler(authUseCase, configurationPort);
+            authLambdaHandler = new AuthLambdaHandler(authUseCase, configurationPort, jwtPort);
 
             // When
             APIGatewayV2HTTPResponse response = authLambdaHandler.handleOauthLogin(input);
@@ -198,7 +201,7 @@ class AuthLambdaHandlerEdgeCasesTest {
                 .frontendUrl("")
                 .jwtExpirationSeconds(0L)
                 .build();
-            authLambdaHandler = new AuthLambdaHandler(authUseCase, configurationPort);
+            authLambdaHandler = new AuthLambdaHandler(authUseCase, configurationPort, jwtPort);
 
             APIGatewayV2HTTPEvent input = LambdaTestData.createOAuthCallbackEvent(TestData.DEFAULT_CODE);
 
@@ -222,7 +225,7 @@ class AuthLambdaHandlerEdgeCasesTest {
             configurationPort = MockConfigurationPort.builder()
                 .jwtExpirationSeconds(veryLargeExpiration)
                 .build();
-            authLambdaHandler = new AuthLambdaHandler(authUseCase, configurationPort);
+            authLambdaHandler = new AuthLambdaHandler(authUseCase, configurationPort, jwtPort);
 
             APIGatewayV2HTTPEvent input = LambdaTestData.createOAuthCallbackEvent(TestData.DEFAULT_CODE);
 
@@ -245,7 +248,7 @@ class AuthLambdaHandlerEdgeCasesTest {
             authUseCase = MockAuthUseCase.builder()
                 .handleOAuthCallbackThrows(exception)
                 .build();
-            authLambdaHandler = new AuthLambdaHandler(authUseCase, configurationPort);
+            authLambdaHandler = new AuthLambdaHandler(authUseCase, configurationPort, jwtPort);
 
             APIGatewayV2HTTPEvent input = LambdaTestData.createOAuthCallbackEvent(TestData.DEFAULT_CODE);
 
@@ -267,7 +270,7 @@ class AuthLambdaHandlerEdgeCasesTest {
             authUseCase = MockAuthUseCase.builder()
                 .handleOAuthCallbackThrows(exception)
                 .build();
-            authLambdaHandler = new AuthLambdaHandler(authUseCase, configurationPort);
+            authLambdaHandler = new AuthLambdaHandler(authUseCase, configurationPort, jwtPort);
 
             APIGatewayV2HTTPEvent input = LambdaTestData.createOAuthCallbackEvent(TestData.DEFAULT_CODE);
 
@@ -307,7 +310,7 @@ class AuthLambdaHandlerEdgeCasesTest {
             authUseCase = MockAuthUseCase.builder()
                 .buildOAuthLoginUrlThrows(exception)
                 .build();
-            authLambdaHandler = new AuthLambdaHandler(authUseCase, configurationPort);
+            authLambdaHandler = new AuthLambdaHandler(authUseCase, configurationPort, jwtPort);
 
             // When
             APIGatewayV2HTTPResponse response = authLambdaHandler.handleOauthLogin(input);
