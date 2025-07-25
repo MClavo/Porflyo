@@ -99,6 +99,7 @@ class GithubAdapterTest {
     // Helper methods for common mock setups
     private void mockSuccessfulHttpResponse(String responseBody) throws Exception {
         when(httpClient.send(any(HttpRequest.class), eq(BodyHandlers.ofString()))).thenReturn(httpResponse);
+        when(httpResponse.statusCode()).thenReturn(200); // Mock successful status code
         when(httpResponse.body()).thenReturn(responseBody);
     }
     
@@ -127,8 +128,8 @@ class GithubAdapterTest {
             String code = TestData.DEFAULT_CODE;
             String requestBodyJson = String.format(
                 """
-                {"client_id":"%s","client_secret":"%s","code":"%s"}""",
-                TestData.DEFAULT_CLIENT_ID, TestData.DEFAULT_CLIENT_SECRET, TestData.DEFAULT_CODE);
+                {"client_id":"%s","client_secret":"%s","code":"%s","redirect_uri":"%s"}""",
+                TestData.DEFAULT_CLIENT_ID, TestData.DEFAULT_CLIENT_SECRET, TestData.DEFAULT_CODE, TestData.DEFAULT_REDIRECT_URI);
 
             // Setup mocks
             mockJsonSerialization(requestBodyJson);
@@ -158,10 +159,10 @@ class GithubAdapterTest {
         }
 
         @Test
-        @DisplayName("Should throw exception when JSON mapping fails")
-        void shouldThrowExceptionWhenJsonMappingFails() throws Exception {
+        @DisplayName("Should throw exception when JSON serialization fails")
+        void shouldThrowExceptionWhenJsonSerializationFails() throws Exception {
             // Given
-            when(jsonMapper.writeValueAsString(any())).thenThrow(new RuntimeException("JSON error"));
+            when(jsonMapper.writeValueAsString(any())).thenThrow(new RuntimeException("JSON serialization error"));
 
             // When & Then
             RuntimeException exception = assertThrows(RuntimeException.class, 

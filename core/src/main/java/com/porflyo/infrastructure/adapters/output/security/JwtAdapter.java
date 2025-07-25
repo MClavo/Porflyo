@@ -1,10 +1,12 @@
 package com.porflyo.infrastructure.adapters.output.security;
 
 import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.time.Instant;
 import java.util.Date;
 
 import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 
 import com.porflyo.application.ports.output.ConfigurationPort;
 import com.porflyo.application.ports.output.JwtPort;
@@ -13,7 +15,6 @@ import com.porflyo.domain.model.GithubLoginClaims;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.security.Keys;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 
@@ -29,7 +30,21 @@ public class JwtAdapter implements JwtPort {
     @Inject
     public JwtAdapter(ConfigurationPort configurationPort) {
         this.config = configurationPort;
-        KEY = Keys.hmacShaKeyFor(config.getJWTSecret().getBytes(StandardCharsets.UTF_8));
+        KEY = createSecureKey(config.getJWTSecret());
+    }
+
+    /**
+     * Creates a secure 256-bit key from the provided secret using SHA-256 hashing.
+     * This ensures the key meets JWT HMAC-SHA256 requirements regardless of input length.
+     */
+    private SecretKey createSecureKey(String secret) {
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            byte[] hash = digest.digest(secret.getBytes(StandardCharsets.UTF_8));
+            return new SecretKeySpec(hash, "HmacSHA256");
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to create secure JWT key", e);
+        }
     }
 
     /**
