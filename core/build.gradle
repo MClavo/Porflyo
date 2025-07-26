@@ -35,13 +35,17 @@ dependencies {
     annotationProcessor('io.micronaut.security:micronaut-security-annotations')
     annotationProcessor('io.micronaut.serde:micronaut-serde-processor')
     
-    compileOnly('io.micronaut:micronaut-core-processor')
+    implementation('io.micronaut:micronaut-core-processor')
 
     implementation('io.micronaut.aws:micronaut-function-aws')
     implementation('com.amazonaws:aws-lambda-java-events:3.14.0')
     implementation('com.amazonaws:aws-lambda-java-core:1.2.3')
     
     implementation 'io.micronaut:micronaut-router'
+    implementation('io.micronaut:micronaut-context')
+    implementation("io.micronaut:micronaut-inject")
+
+
     // Exclude Netty from HTTP client - using native Java HTTP client instead
     implementation('io.micronaut:micronaut-http-client') {
         exclude group: 'io.micronaut', module: 'micronaut-http-netty'
@@ -56,6 +60,7 @@ dependencies {
     
     runtimeOnly('io.jsonwebtoken:jjwt-impl:0.12.6')
     runtimeOnly('io.jsonwebtoken:jjwt-jackson:0.12.6')
+    runtimeOnly('io.micronaut:micronaut-runtime')
     runtimeOnly('ch.qos.logback:logback-classic')
     runtimeOnly('org.yaml:snakeyaml')
     
@@ -90,7 +95,7 @@ micronaut {
         convertYamlToJava = false
         precomputeOperations = true
         cacheEnvironment = true
-        optimizeClassLoading = true
+        optimizeClassLoading = false
         deduceEnvironment = true
         optimizeNetty = false
         replaceLogbackXml = false  // Disabled to avoid AOT issues
@@ -157,6 +162,9 @@ shadowJar {
         exclude(dependency('io.micronaut:.*'))
         exclude(dependency('io.micronaut.aws:.*'))
         exclude(dependency('com.amazonaws:.*'))
+        exclude(dependency('ch.qos.logback:.*'))
+        exclude(dependency('org.yaml:.*'))
+        exclude(dependency('io.jsonwebtoken:.*'))
     }
 }
 

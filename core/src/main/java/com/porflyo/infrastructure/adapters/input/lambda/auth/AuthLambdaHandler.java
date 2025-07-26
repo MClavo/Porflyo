@@ -102,7 +102,7 @@ public class AuthLambdaHandler {
                 return LambdaHttpUtils.createErrorResponse(401, "Invalid token");
             }
 
-            return LambdaHttpUtils.createResponse(200, "Token is valid");
+            return LambdaHttpUtils.createResponse(200, "Valid token");
 
         } catch (Exception e) {
             return LambdaHttpUtils.createErrorResponse(500, e.getMessage());
@@ -146,7 +146,6 @@ public class AuthLambdaHandler {
                 session.jwtToken(), // Cookie value
                 expiration);        // Max-Age
 
-            
         } catch (Exception e) {
             return LambdaHttpUtils.createErrorResponse(500, e.getMessage());
         }

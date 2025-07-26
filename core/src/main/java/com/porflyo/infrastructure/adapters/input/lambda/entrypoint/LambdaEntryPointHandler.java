@@ -36,13 +36,17 @@ public class LambdaEntryPointHandler implements RequestHandler<APIGatewayV2HTTPE
     }
 
     private APIGatewayV2HTTPResponse oauthHandler(String path, APIGatewayV2HTTPEvent input){
+        
         if(path.equals("/oauth/login/github"))
             return authLambdaHandler.handleOauthLogin(input);
         else
             return authLambdaHandler.handleOAuthCallback(input);
+
     }
 
     private APIGatewayV2HTTPResponse apiHandler(String path, APIGatewayV2HTTPEvent input){
+
+        // Simulate API Gateway token validation
         APIGatewayV2HTTPResponse validation = authLambdaHandler.handleTokenValidation(input);
 
         if(validation.getStatusCode() != 200)
@@ -61,7 +65,6 @@ public class LambdaEntryPointHandler implements RequestHandler<APIGatewayV2HTTPE
     }
 
 
-
     @Override
     public APIGatewayV2HTTPResponse handleRequest(APIGatewayV2HTTPEvent input, Context context) {
         try {
@@ -75,27 +78,23 @@ public class LambdaEntryPointHandler implements RequestHandler<APIGatewayV2HTTPE
             }
 
             String[] pathParts = path.split("/");
-            // Handle edge case where path doesn't have enough parts
-            if (pathParts.length < 2) {
-                log.warn("Path does not have enough parts: {}", path);
-                return LambdaHttpUtils.createErrorResponse(404, "Not Found");
-            }
 
             String startingRoute = pathParts[1];
             log.debug("Starting route: {}", startingRoute);
 
             // Route the request to the appropriate handlers based on path
-            if (startingRoute.equals("oauth")) {
-                return oauthHandler(path, input);
+            switch (startingRoute) {
+                case "oauth":
+                    return oauthHandler(path, input);
 
-            } else if(startingRoute.equals("api")) {
-                return apiHandler(path, input);
+                case "api":
+                    return apiHandler(path, input);
 
-            } else {
-                log.warn("No handler found for path: {}", path);
-                return LambdaHttpUtils.createErrorResponse(404, "Not Found");
+                default:
+                    log.warn("No handler found for path: {}", path);
+                    return LambdaHttpUtils.createErrorResponse(404, "Not Found");
             }
-                
+
         } catch (Exception e){
             log.error("Error processing request for path: {}, error: {}", input.getRawPath(), e.getMessage(), e);
             return LambdaHttpUtils.createErrorResponse(500, e.getMessage());
