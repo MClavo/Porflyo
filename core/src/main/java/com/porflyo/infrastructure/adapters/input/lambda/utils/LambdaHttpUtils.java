@@ -7,20 +7,24 @@ import java.util.Map;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayV2HTTPEvent;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayV2HTTPResponse;
 
+
 /**
- * Utility class for creating and handling HTTP responses and cookies
- * in AWS Lambda functions using API Gateway v2 events.
+ * Utility class for creating and handling HTTP responses and extracting parameters
+ * for AWS Lambda functions integrated with API Gateway HTTP APIs.
  * <p>
- * Provides helper methods to:
+ * Provides methods to:
  * <ul>
- * <li>Create standard JSON HTTP responses with appropriate headers</li>
- * <li>Create error responses with JSON-formatted error messages</li>
- * <li>Create HTTP redirect responses, with or without cookies</li>
- * <li>Extract cookie values from incoming API Gateway events</li>
- * <li>Format cookies and escape JSON strings for safe output</li>
+ *   <li>Create standard JSON HTTP responses with customizable status codes and bodies.</li>
+ *   <li>Create error responses with JSON-escaped error messages.</li>
+ *   <li>Create redirect responses, including support for setting cookies.</li>
+ *   <li>Extract cookie values and query parameters from incoming API Gateway events.</li>
  * </ul>
+ * All responses are compatible with {@link APIGatewayV2HTTPResponse} and include
+ * appropriate headers for CORS and content type.
+ * </p>
  * <p>
  * This class is not intended to be instantiated.
+ * </p>
  */
 public final class LambdaHttpUtils {
 

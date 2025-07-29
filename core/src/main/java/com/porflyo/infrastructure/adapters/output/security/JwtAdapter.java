@@ -1,87 +1,91 @@
 package com.porflyo.infrastructure.adapters.output.security;
 
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
 import java.time.Instant;
-import java.util.Date;
 
-import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
-
+import com.nimbusds.jose.JWSAlgorithm;
+import com.nimbusds.jose.JWSHeader;
+import com.nimbusds.jose.JWSSigner;
+import com.nimbusds.jose.JWSVerifier;
+import com.nimbusds.jose.crypto.MACSigner;
+import com.nimbusds.jose.crypto.MACVerifier;
+import com.nimbusds.jwt.JWTClaimsSet;
+import com.nimbusds.jwt.SignedJWT;
 import com.porflyo.application.ports.output.ConfigurationPort;
 import com.porflyo.application.ports.output.JwtPort;
 import com.porflyo.domain.model.GithubLoginClaims;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtParser;
-import io.jsonwebtoken.Jwts;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 
 @Singleton
 public class JwtAdapter implements JwtPort {
 
-    // Generate a secret key for signing the JWT
     private final ConfigurationPort config;
     private final static String ISSUER = "Porflyo";
-
-    private final SecretKey KEY;
 
     @Inject
     public JwtAdapter(ConfigurationPort configurationPort) {
         this.config = configurationPort;
-        KEY = createSecureKey(config.getJWTSecret());
-    }
-
-    /**
-     * Creates a secure 256-bit key from the provided secret using SHA-256 hashing.
-     * This ensures the key meets JWT HMAC-SHA256 requirements regardless of input length.
-     */
-    private SecretKey createSecureKey(String secret) {
-        try {
-            MessageDigest digest = MessageDigest.getInstance("SHA-256");
-            byte[] hash = digest.digest(secret.getBytes(StandardCharsets.UTF_8));
-            return new SecretKeySpec(hash, "HmacSHA256");
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to create secure JWT key", e);
-        }
-    }
-
-    /**
-     * Creates a JWT parser with the correct key and algorithm verification
-     */
-    private JwtParser createParser() {
-        return Jwts.parser()
-            .verifyWith(KEY)
-            .requireIssuer(ISSUER)
-            .build();
     }
 
     @Override
     public String generateToken(GithubLoginClaims claims) {
         try {
-            String token = Jwts.builder()
+            // Create HMAC signer
+            JWSSigner signer = new MACSigner(config.getJWTSecret());
+
+            // Create JWT claims set
+            JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
                 .issuer(ISSUER)
                 .subject(claims.getSub())
-                .issuedAt(Date.from(claims.getIat()))
-                .expiration(Date.from(claims.getExp()))
+                .issueTime(java.util.Date.from(claims.getIat()))
+                .expirationTime(java.util.Date.from(claims.getExp()))
                 // CRITICAL: REMOVE "access_token" when persistence is implemented
                 .claim("access_token", claims.getAccessToken())
-                .signWith(KEY, Jwts.SIG.HS256)
-                .compact();
-            
-            return token;
+                .build();
+
+            // Create signed JWT
+            SignedJWT signedJWT = new SignedJWT(
+                new JWSHeader(JWSAlgorithm.HS256),
+                claimsSet
+            );
+
+            // Sign the JWT
+            signedJWT.sign(signer);
+
+            return signedJWT.serialize();
 
         } catch (Exception e) {
             throw new RuntimeException("Failed to generate JWT token", e);
         }
-
     }
 
     @Override
     public boolean validateToken(String token) {
         try {
-            createParser().parseSignedClaims(token);
+            // Parse the signed JWT
+            SignedJWT signedJWT = SignedJWT.parse(token);
+
+            // Create HMAC verifier
+            JWSVerifier verifier = new MACVerifier(config.getJWTSecret());
+
+            // Verify the signature
+            if (!signedJWT.verify(verifier)) {
+                return false;
+            }
+
+            // Check issuer
+            JWTClaimsSet claims = signedJWT.getJWTClaimsSet();
+            if (!ISSUER.equals(claims.getIssuer())) {
+                return false;
+            }
+
+            // Check expiration
+            if (claims.getExpirationTime() != null && 
+                claims.getExpirationTime().before(new java.util.Date())) {
+                return false;
+            }
+
             return true;
 
         } catch (Exception e) {
@@ -92,16 +96,26 @@ public class JwtAdapter implements JwtPort {
     @Override
     public GithubLoginClaims extractClaims(String token) {
         try {
-            Claims claims = createParser()
-                .parseSignedClaims(token)
-                .getPayload();
+            // Parse the signed JWT
+            SignedJWT signedJWT = SignedJWT.parse(token);
+
+            // Create HMAC verifier
+            JWSVerifier verifier = new MACVerifier(config.getJWTSecret());
+
+            // Verify the signature
+            if (!signedJWT.verify(verifier)) {
+                throw new RuntimeException("Invalid JWT signature");
+            }
+
+            // Extract claims
+            JWTClaimsSet claims = signedJWT.getJWTClaimsSet();
             
             String sub = claims.getSubject();
-            Instant iat = claims.getIssuedAt().toInstant();
-            Instant exp = claims.getExpiration().toInstant();
+            Instant iat = claims.getIssueTime().toInstant();
+            Instant exp = claims.getExpirationTime().toInstant();
 
             // CRITICAL: REMOVE "access_token" when persistence is implemented
-            String accessToken = claims.get("access_token", String.class);
+            String accessToken = (String) claims.getClaim("access_token");
             
             return new GithubLoginClaims(sub, iat, exp, accessToken);
 

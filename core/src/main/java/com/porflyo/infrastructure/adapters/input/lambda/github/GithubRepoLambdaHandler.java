@@ -12,6 +12,7 @@ import com.porflyo.infrastructure.adapters.input.lambda.utils.LambdaHttpUtils;
 
 import io.micronaut.json.JsonMapper;
 import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 
 /**
  * Handler for AWS Lambda requests related to GitHub repositories.
@@ -30,10 +31,9 @@ import jakarta.inject.Inject;
  * </ul>
  * </p>
  *
- * <p>
- * Example usage: This handler is typically invoked by AWS Lambda in response to HTTP events.
- * </p>
+ * @since 1.0
  */
+@Singleton
 public class GithubRepoLambdaHandler {
 
     private final RepoUseCase repoService;

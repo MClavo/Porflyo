@@ -11,7 +11,7 @@ Globals:
     Environment:
       Variables:
         # Optimize JVM for Lambda cold start
-        JAVA_TOOL_OPTIONS: "-XX:+TieredCompilation -XX:TieredStopAtLevel=1 -XX:+UseSerialGC -Xms256m -Xmx512m -XX:+OptimizeStringConcat -XX:+UseStringDeduplication -XX:+UseCompressedOops"
+        JAVA_TOOL_OPTIONS: "-XX:+TieredCompilation -XX:TieredStopAtLevel=1 -XX:+UseSerialGC -Xms128m -Xmx256m -XX:+OptimizeStringConcat -XX:+UseStringDeduplication -XX:+UseCompressedOops"
         # Micronaut Lambda optimizations  
         MICRONAUT_ENVIRONMENTS: "lambda"
         MICRONAUT_CONTEXT_EAGER_INIT: "true"
@@ -22,16 +22,16 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: .
-      Handler: com.porflyo.infrastructure.adapters.input.lambda.entrypoint.LambdaEntryPointHandler::handleRequest
+      Handler: com.porflyo.infrastructure.adapters.input.lambda.entrypoint.LambdaEntryPointHandler::execute
       Runtime: java21
-      MemorySize: 512
+      MemorySize: 256
       Environment:
         Variables:
-          OAUTH_CLIENT_ID: !Ref OAUTH_CLIENT_ID
-          OAUTH_CLIENT_SECRET: !Ref OAUTH_CLIENT_SECRET
-          OAUTH_REDIRECT_URI: !Ref OAUTH_REDIRECT_URI
-          OAUTH_SCOPE: !Ref OAUTH_SCOPE
-          OAUTH_USER_AGENT: !Ref OAUTH_USER_AGENT
+          OAUTH_GITHUB_CLIENT_ID: !Ref OAUTH_CLIENT_ID
+          OAUTH_GITHUB_CLIENT_SECRET: !Ref OAUTH_CLIENT_SECRET
+          OAUTH_GITHUB_REDIRECT_URI: !Ref OAUTH_REDIRECT_URI
+          OAUTH_GITHUB_SCOPE: !Ref OAUTH_SCOPE
+          OAUTH_GITHUB_USER_AGENT: !Ref OAUTH_USER_AGENT
           JWT_SECRET: !Ref JWT_SECRET
           JWT_EXPIRATION: !Ref JWT_EXPIRATION
           FRONTEND_URL: !Ref FRONTEND_URL
