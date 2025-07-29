@@ -4,6 +4,7 @@ Thumbs.db
 build/
 target/
 out/
+.aws-sam/
 .micronaut/
 .idea
 *.iml
@@ -13,3 +14,6 @@ out/
 .settings
 .classpath
 .factorypath
+bin/
+
+env.json

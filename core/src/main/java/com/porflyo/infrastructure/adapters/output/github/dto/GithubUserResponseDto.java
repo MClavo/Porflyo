@@ -1,0 +1,12 @@
+package com.porflyo.infrastructure.adapters.output.github.dto;
+
+import io.micronaut.serde.annotation.Serdeable;
+
+@Serdeable
+public record GithubUserResponseDto(
+    String login,
+    String id,
+    String name,
+    String email,
+    String avatar_url
+) {}

@@ -2,35 +2,22 @@ package com.porflyo.domain.model;
 
 import io.micronaut.serde.annotation.Serdeable;
 
+
+
+/**
+ * Represents a GitHub user with basic profile information.
+ *
+ * @param login      The username of the GitHub user.
+ * @param id         The unique identifier of the GitHub user.
+ * @param name       The display name of the GitHub user.
+ * @param email      The email address of the GitHub user.
+ * @param avatar_url The URL to the user's avatar image.
+ */
 @Serdeable
-public class GithubUser {
-
-    private final String login;
-    private final String name;
-    private final String email;
-    private final String avatar_url;
-
-    public GithubUser(String login, String name, String email, String avatar_url) {
-        this.login = login;
-        this.name = name;
-        this.email = email;
-        this.avatar_url = avatar_url;
-    }
-
-    public String getLogin() {
-        return login;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public String getAvatar_url() {
-        return avatar_url;
-    }
-    
-}
+public record GithubUser(
+    String login,
+    String id,
+    String name,
+    String email,
+    String avatar_url
+) {}

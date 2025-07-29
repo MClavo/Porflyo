@@ -1,34 +1,61 @@
 micronaut:
+  application:
+    name: porflyo-api
+    
+  # Environment Configuration  
+  environments:
+    deduction: false
+    
+  # HTTP Configuration
+  http:
+    client:
+      read-timeout: 30s
+      pool:
+        enabled: true
+        max-connections: 10
+        
+  # Security Configuration (simplified for our custom implementation)
   security:
-    authentication: cookie 
-    token:
-      jwt:
-        signatures:
-          secret:
-            generator: 
-              secret: '"${JWT_GENERATOR_SIGNATURE_SECRET}"' 
-    oauth2:
-      clients:
-        github: 
-          service-id: githubv3
-          client-id:  '${OAUTH_CLIENT_ID}' 
-          client-secret: '${OAUTH_CLIENT_SECRET}' 
-          redirect-uri: 'http://localhost:8080/oauth/callback/github'
-          scopes: 
-            - user:email
-            - read:user
-            - public_repo
-          authorization:
-            url: 'https://github.com/login/oauth/authorize' 
-          token:
-            url: 'https://github.com/login/oauth/access_token' 
-            auth-method: CLIENT_SECRET_POST
-    endpoints:
-      logout:
-        get-allowed: true 
+    enabled: false
+    
+  # Jackson Configuration
+  jackson:
+    serialization:
+      indent-output: true
+      write-dates-as-timestamps: false
+      
+  # Function Configuration for AWS Lambda
+  function:
+    enabled: true
+    
+# Custom OAuth Configuration (using environment variables)
+oauth:
+  github:
+    client-id: '${OAUTH_CLIENT_ID:your-github-client-id}'
+    client-secret: '${OAUTH_CLIENT_SECRET:your-github-client-secret}'
+    redirect-uri: '${OAUTH_REDIRECT_URI:https://your-domain.com/oauth/callback/github}'
+    scope: '${OAUTH_SCOPE:user:email,read:user,public_repo}'      # Read-only scopes for GitHub API access
+    user-agent: '${OAUTH_USER_AGENT:porflyo-app}'
 
-micronaut:
+# JWT Configuration
+jwt:
+  secret: '${JWT_SECRET:porflyo-default-jwt-secret-key-change-in-production-for-security}'
+  expiration: '${JWT_EXPIRATION:3600}'
+
+# Frontend Configuration
+frontend:
+  url: '${FRONTEND_URL:http://localhost:5173}'
+  
+# Logging Configuration
+logger:
+  levels:
+    com.porflyo: DEBUG
+    io.micronaut.http: DEBUG
+    root: INFO 
+    # Removed redirect section that was causing conflicts
+    
   http:
     services:
       githubv3:
         url: "https://api.github.com"
+ 
