@@ -1,5 +1,6 @@
 package com.porflyo.domain.model;
 
+import io.micronaut.core.annotation.Introspected;
 import io.micronaut.serde.annotation.Serdeable;
 
 /**
@@ -11,6 +12,7 @@ import io.micronaut.serde.annotation.Serdeable;
  * @param expirationTime    The time in milliseconds when the session expires.
  */
 @Serdeable
+@Introspected
 public record UserSession(
     String jwtToken,
     String githubAccessToken,

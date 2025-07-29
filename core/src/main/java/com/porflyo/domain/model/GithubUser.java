@@ -1,5 +1,6 @@
 package com.porflyo.domain.model;
 
+import io.micronaut.core.annotation.Introspected;
 import io.micronaut.serde.annotation.Serdeable;
 
 
@@ -14,6 +15,7 @@ import io.micronaut.serde.annotation.Serdeable;
  * @param avatar_url The URL to the user's avatar image.
  */
 @Serdeable
+@Introspected
 public record GithubUser(
     String login,
     String id,

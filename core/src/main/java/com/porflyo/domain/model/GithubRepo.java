@@ -1,5 +1,6 @@
 package com.porflyo.domain.model;
 
+import io.micronaut.core.annotation.Introspected;
 import io.micronaut.serde.annotation.Serdeable;
 
 
@@ -11,6 +12,7 @@ import io.micronaut.serde.annotation.Serdeable;
  * @param html_url    The URL to the repository on GitHub.
  */
 @Serdeable
+@Introspected
 public record GithubRepo(
     String name,
     String description,
