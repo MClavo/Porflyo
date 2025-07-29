@@ -1,8 +1,10 @@
 package com.porflyo.infrastructure.adapters.output.github.dto;
 
+import io.micronaut.core.annotation.Introspected;
 import io.micronaut.serde.annotation.Serdeable;
 
 @Serdeable
+@Introspected
 public record GithubUserResponseDto(
     String login,
     String id,

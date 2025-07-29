@@ -34,7 +34,6 @@ import jakarta.inject.Singleton;
  * which processes the request and returns an {@link APIGatewayV2HTTPResponse}.
  * </p>
  *
- * @author YourName
  * @since 1.0
  */
 @Singleton

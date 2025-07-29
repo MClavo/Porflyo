@@ -37,9 +37,7 @@ import jakarta.inject.Singleton;
  * </ul>
  * </p>
  *
- * <p>
- * All responses are formatted as {@link APIGatewayV2HTTPResponse} for AWS Lambda compatibility.
- * </p>
+ * @since 1.0
  */
 @Singleton
 public class AuthLambdaHandler {

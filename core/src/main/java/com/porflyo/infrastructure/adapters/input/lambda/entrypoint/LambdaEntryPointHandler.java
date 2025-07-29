@@ -3,8 +3,6 @@ package com.porflyo.infrastructure.adapters.input.lambda.entrypoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.amazonaws.services.lambda.runtime.Context;
-import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayV2HTTPEvent;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayV2HTTPResponse;
 import com.porflyo.infrastructure.adapters.input.lambda.auth.AuthLambdaHandler;
@@ -15,11 +13,23 @@ import com.porflyo.infrastructure.adapters.output.github.GithubAdapter;
 
 import io.micronaut.context.ApplicationContext;
 import io.micronaut.context.env.Environment;
-import io.micronaut.core.annotation.Introspected;
+import io.micronaut.function.aws.MicronautRequestHandler;
 import jakarta.inject.Inject;
 
-@Introspected
-public class LambdaEntryPointHandler implements RequestHandler<APIGatewayV2HTTPEvent, APIGatewayV2HTTPResponse>{
+
+/**
+ * DEVis entry point for AWS Lambda requests in a Micronaut-based application.
+ * It extends {@link MicronautRequestHandler} to process {@link APIGatewayV2HTTPEvent} events and produce {@link APIGatewayV2HTTPResponse} responses.
+ * <p>
+ * The handler routes incoming HTTP requests based on their path to appropriate sub-handlers:
+ * <ul>
+ *   <li><b>OAuth endpoints</b> (e.g., <code>/oauth/login/github</code>, <code>/oauth/callback/github</code>) are handled by {@link AuthLambdaHandler}.</li>
+ *   <li><b>API endpoints</b> (e.g., <code>/api/user</code>, <code>/api/repos</code>) are handled by {@link GithubUserLambdaHandler} and {@link GithubRepoLambdaHandler}.</li>
+ * </ul>
+ * <p>
+ * Token validation is performed for API endpoints before delegating to user or repo handlers.
+ */
+public class LambdaEntryPointHandler extends MicronautRequestHandler<APIGatewayV2HTTPEvent, APIGatewayV2HTTPResponse>{
     private static final Logger log = LoggerFactory.getLogger(GithubAdapter.class);
     
     private final ApplicationContext applicationContext;
@@ -29,7 +39,10 @@ public class LambdaEntryPointHandler implements RequestHandler<APIGatewayV2HTTPE
 
     @Inject
     public LambdaEntryPointHandler() {
-        this.applicationContext = ApplicationContext.builder(Environment.FUNCTION).start();
+        this.applicationContext = ApplicationContext.
+            builder(Environment.FUNCTION)
+            .deduceEnvironment(false)
+            .start();
         this.authLambdaHandler = applicationContext.getBean(AuthLambdaHandler.class);
         this.userLambdaHandler = applicationContext.getBean(GithubUserLambdaHandler.class);
         this.repoLambdaHandler = applicationContext.getBean(GithubRepoLambdaHandler.class);
@@ -46,7 +59,8 @@ public class LambdaEntryPointHandler implements RequestHandler<APIGatewayV2HTTPE
 
     private APIGatewayV2HTTPResponse apiHandler(String path, APIGatewayV2HTTPEvent input){
 
-        // Simulate API Gateway token validation
+        // Simulate API Gateway token validation,
+        // SAM can not replicate the API Gateway's token validation process
         APIGatewayV2HTTPResponse validation = authLambdaHandler.handleTokenValidation(input);
 
         if(validation.getStatusCode() != 200)
@@ -66,7 +80,7 @@ public class LambdaEntryPointHandler implements RequestHandler<APIGatewayV2HTTPE
 
 
     @Override
-    public APIGatewayV2HTTPResponse handleRequest(APIGatewayV2HTTPEvent input, Context context) {
+    public APIGatewayV2HTTPResponse execute(APIGatewayV2HTTPEvent input) {
         try {
             String path = input.getRawPath();
             log.debug("Received request for path: {}", path);
@@ -78,9 +92,7 @@ public class LambdaEntryPointHandler implements RequestHandler<APIGatewayV2HTTPE
             }
 
             String[] pathParts = path.split("/");
-
             String startingRoute = pathParts[1];
-            log.debug("Starting route: {}", startingRoute);
 
             // Route the request to the appropriate handlers based on path
             switch (startingRoute) {
