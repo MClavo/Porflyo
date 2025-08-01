@@ -22,13 +22,14 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import com.porflyo.application.configuration.GithubOAuthConfig;
 import com.porflyo.domain.model.GithubRepo;
 import com.porflyo.domain.model.GithubUser;
 import com.porflyo.infrastructure.adapters.output.github.dto.GithubAccessTokenResponseDto;
 import com.porflyo.infrastructure.adapters.output.github.dto.GithubRepoResponseDto;
 import com.porflyo.infrastructure.adapters.output.github.dto.GithubUserResponseDto;
 import com.porflyo.testing.data.TestData;
-import com.porflyo.testing.mocks.ports.MockConfigurationPort;
+import com.porflyo.testing.mocks.ports.MockGithubOAuthConfig;
 
 import io.micronaut.json.JsonMapper;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
@@ -37,7 +38,7 @@ import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 @DisplayName("GithubAdapter Tests")
 class GithubAdapterTest {
 
-    private MockConfigurationPort configPort;
+    private GithubOAuthConfig oauthConfig;
     @Mock private JsonMapper jsonMapper;
     @Mock private HttpClient httpClient;
     @Mock private HttpResponse<String> httpResponse;
@@ -94,8 +95,8 @@ class GithubAdapterTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        configPort = MockConfigurationPort.withDefaults();
-        githubAdapter = new GithubAdapter(configPort, jsonMapper, httpClient);
+        oauthConfig = MockGithubOAuthConfig.withDefaults();
+        githubAdapter = new GithubAdapter(oauthConfig, jsonMapper, httpClient);
     }
 
     // Helper methods for common mock setups

@@ -3,8 +3,9 @@ package com.porflyo.application.services;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
+import com.porflyo.application.configuration.GithubOAuthConfig;
+import com.porflyo.application.configuration.JwtConfig;
 import com.porflyo.application.ports.input.AuthUseCase;
-import com.porflyo.application.ports.output.ConfigurationPort;
 import com.porflyo.application.ports.output.GithubPort;
 import com.porflyo.application.ports.output.JwtPort;
 import com.porflyo.domain.model.GithubLoginClaims;
@@ -44,22 +45,24 @@ import jakarta.inject.Singleton;
  */
 @Singleton
 public class AuthService implements AuthUseCase {
-    private final ConfigurationPort config;
+    private final GithubOAuthConfig oauthconfig;
+    private final JwtConfig jwtConfig;
     private final GithubPort github;
     private final JwtPort jwt;
 
     @Inject
-    public AuthService(ConfigurationPort configurationPort, GithubPort githubPort, JwtPort jwtPort) {
-        this.config = configurationPort;
+    public AuthService(GithubPort githubPort, JwtPort jwtPort, GithubOAuthConfig Oauthconfig, JwtConfig jwtConfig) {
         this.github = githubPort;
         this.jwt = jwtPort;
+        this.oauthconfig = Oauthconfig;
+        this.jwtConfig = jwtConfig;
     }
 
     @Override
     public String buildOAuthLoginUrl() {
-        String clientId = config.getOAuthClientId();
-        String redirectUri = config.getOAuthRedirectUri();
-        String scope = config.getOAuthScope();
+        String clientId = oauthconfig.clientId();
+        String redirectUri = oauthconfig.redirectUri();
+        String scope = oauthconfig.scope();
 
         String loginUrl = String.format(
             "https://github.com/login/oauth/authorize?client_id=%s&redirect_uri=%s&scope=%s&response_type=code",
@@ -80,7 +83,7 @@ public class AuthService implements AuthUseCase {
 
             GithubLoginClaims claims = new GithubLoginClaims(
                 user.id(),
-                config.getJwtExpirationSeconds(),
+                jwtConfig.expiration(),
                 accessToken
             );
 

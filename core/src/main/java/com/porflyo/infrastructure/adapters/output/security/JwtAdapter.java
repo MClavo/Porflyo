@@ -10,7 +10,7 @@ import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
-import com.porflyo.application.ports.output.ConfigurationPort;
+import com.porflyo.application.configuration.JwtConfig;
 import com.porflyo.application.ports.output.JwtPort;
 import com.porflyo.domain.model.GithubLoginClaims;
 
@@ -20,19 +20,19 @@ import jakarta.inject.Singleton;
 @Singleton
 public class JwtAdapter implements JwtPort {
 
-    private final ConfigurationPort config;
+    private final JwtConfig jwtConfig;
     private final static String ISSUER = "Porflyo";
 
     @Inject
-    public JwtAdapter(ConfigurationPort configurationPort) {
-        this.config = configurationPort;
+    public JwtAdapter(JwtConfig jwtConfig) {
+        this.jwtConfig = jwtConfig;
     }
 
     @Override
     public String generateToken(GithubLoginClaims claims) {
         try {
             // Create HMAC signer
-            JWSSigner signer = new MACSigner(config.getJWTSecret());
+            JWSSigner signer = new MACSigner(jwtConfig.secret());
 
             // Create JWT claims set
             JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
@@ -67,7 +67,7 @@ public class JwtAdapter implements JwtPort {
             SignedJWT signedJWT = SignedJWT.parse(token);
 
             // Create HMAC verifier
-            JWSVerifier verifier = new MACVerifier(config.getJWTSecret());
+            JWSVerifier verifier = new MACVerifier(jwtConfig.secret());
 
             // Verify the signature
             if (!signedJWT.verify(verifier)) {
@@ -100,7 +100,7 @@ public class JwtAdapter implements JwtPort {
             SignedJWT signedJWT = SignedJWT.parse(token);
 
             // Create HMAC verifier
-            JWSVerifier verifier = new MACVerifier(config.getJWTSecret());
+            JWSVerifier verifier = new MACVerifier(jwtConfig.secret());
 
             // Verify the signature
             if (!signedJWT.verify(verifier)) {

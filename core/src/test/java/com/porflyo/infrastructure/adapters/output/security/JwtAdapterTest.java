@@ -16,9 +16,10 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import com.porflyo.application.configuration.JwtConfig;
 import com.porflyo.domain.model.GithubLoginClaims;
 import com.porflyo.testing.data.TestData;
-import com.porflyo.testing.mocks.ports.MockConfigurationPort;
+import com.porflyo.testing.mocks.ports.MockJwtConfig;
 
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 
@@ -26,13 +27,13 @@ import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 @DisplayName("JwtAdapter Tests")
 class JwtAdapterTest {
 
-    private MockConfigurationPort configPort;
     private JwtAdapter jwtAdapter;
+    private JwtConfig jwtConfig;
 
     @BeforeEach
     void setUp() {
-        configPort = MockConfigurationPort.withDefaults();
-        jwtAdapter = new JwtAdapter(configPort);
+        jwtConfig = MockJwtConfig.withDefaults();
+        jwtAdapter = new JwtAdapter(jwtConfig);
     }
 
     @Nested
@@ -134,8 +135,8 @@ class JwtAdapterTest {
         @DisplayName("Should return false for token with wrong issuer")
         void shouldReturnFalseForTokenWithWrongIssuer() {
             // Given - Create adapter with different secret to simulate wrong issuer
-            MockConfigurationPort differentConfig = MockConfigurationPort.builder()
-                .jwtSecret("different-secret-key-that-is-long-enough-for-hs256-algorithm")
+            JwtConfig differentConfig = MockJwtConfig.builder()
+                .secret("different-secret-key-that-is-long-enough-for-hs256-algorithm")
                 .build();
             JwtAdapter differentAdapter = new JwtAdapter(differentConfig);
             
@@ -223,8 +224,8 @@ class JwtAdapterTest {
         @DisplayName("Should throw exception for token with wrong signature")
         void shouldThrowExceptionForTokenWithWrongSignature() {
             // Given - Token from different adapter (different secret)
-            MockConfigurationPort differentConfig = MockConfigurationPort.builder()
-                .jwtSecret("completely-different-secret-that-is-long-enough-for-hs256")
+            JwtConfig differentConfig = MockJwtConfig.builder()
+                .secret("completely-different-secret-that-is-long-enough-for-hs256")
                 .build();
             JwtAdapter differentAdapter = new JwtAdapter(differentConfig);
             String tokenFromDifferentAdapter = differentAdapter.generateToken(TestData.DEFAULT_CLAIMS);
@@ -266,8 +267,8 @@ class JwtAdapterTest {
         void shouldWorkWithDifferentJwtSecrets() {
             // Given
             String customSecret = "my-super-secret-jwt-key-for-testing-purposes-that-is-long-enough";
-            MockConfigurationPort customConfig = MockConfigurationPort.builder()
-                .jwtSecret(customSecret)
+            JwtConfig customConfig = MockJwtConfig.builder()
+                .secret(customSecret)
                 .build();
             JwtAdapter customAdapter = new JwtAdapter(customConfig);
 

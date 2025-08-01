@@ -1,4 +1,4 @@
-package com.porflyo.infrastructure.adapters.output.configuration;
+package com.porflyo.application.configuration;
 
 import io.micronaut.context.annotation.ConfigurationProperties;
 

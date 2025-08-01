@@ -18,11 +18,14 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import com.porflyo.application.configuration.GithubOAuthConfig;
+import com.porflyo.application.configuration.JwtConfig;
 import com.porflyo.domain.model.GithubUser;
 import com.porflyo.domain.model.UserSession;
 import com.porflyo.testing.data.TestData;
-import com.porflyo.testing.mocks.ports.MockConfigurationPort;
+import com.porflyo.testing.mocks.ports.MockGithubOAuthConfig;
 import com.porflyo.testing.mocks.ports.MockGithubPort;
+import com.porflyo.testing.mocks.ports.MockJwtConfig;
 import com.porflyo.testing.mocks.ports.MockJwtPort;
 
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
@@ -31,21 +34,24 @@ import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 @DisplayName("AuthService Tests")
 class AuthServiceTest {
 
-    private MockConfigurationPort configPort;
     private MockGithubPort githubPort;
     private MockJwtPort jwtPort;
     private AuthService authService;
 
+    private GithubOAuthConfig oauthConfig;
+    private JwtConfig jwtConfig;
+
     @BeforeEach
     void setUp() {
-        configPort = MockConfigurationPort.withDefaults();
+        oauthConfig = MockGithubOAuthConfig.withDefaults();
+        jwtConfig = MockJwtConfig.withDefaults();
         githubPort = MockGithubPort.withDefaults();
         jwtPort = MockJwtPort.withDefaults();
         recreateAuthService();
     }
 
     private AuthService recreateAuthService() {
-        return authService = new AuthService(configPort, githubPort, jwtPort);
+        return authService = new AuthService(githubPort, jwtPort, oauthConfig, jwtConfig);
     }
 
     @Nested
@@ -74,10 +80,10 @@ class AuthServiceTest {
         @DisplayName("Should build OAuth login URL with custom configuration")
         void shouldBuildOAuthLoginUrlWithCustomConfiguration() {
             // Given
-            configPort = MockConfigurationPort.builder()
-                .oAuthClientId("custom-client-id")
-                .oAuthRedirectUri("https://example.com/callback")
-                .oAuthScope("user")
+            oauthConfig = MockGithubOAuthConfig.builder()
+                .clientId("custom-client-id")
+                .redirectUri("https://example.com/callback")
+                .scope("user")
                 .build();
             recreateAuthService();
 
@@ -96,10 +102,10 @@ class AuthServiceTest {
         @DisplayName("Should handle special characters in OAuth parameters")
         void shouldHandleSpecialCharactersInOAuthParameters() {
             // Given
-            configPort = MockConfigurationPort.builder()
-                .oAuthClientId("client+with=special&chars")
-                .oAuthRedirectUri("https://example.com/path?param=value")
-                .oAuthScope("user:email repo:public_repo")
+            oauthConfig = MockGithubOAuthConfig.builder()
+                .clientId("client+with=special&chars")
+                .redirectUri("https://example.com/path?param=value")
+                .scope("user:email repo:public_repo")
                 .build();
             recreateAuthService();
 
@@ -254,11 +260,14 @@ class AuthServiceTest {
                 "https://avatars.githubusercontent.com/u/integration123"
             );
 
-            configPort = MockConfigurationPort.builder()
-                .oAuthClientId(customClientId)
-                .oAuthRedirectUri(customRedirectUri)
-                .oAuthScope(customScope)
-                .jwtExpirationSeconds(7200L)
+            oauthConfig = MockGithubOAuthConfig.builder()
+                .clientId(customClientId)
+                .redirectUri(customRedirectUri)
+                .scope(customScope)
+                .build();
+            
+            jwtConfig = MockJwtConfig.builder()
+                .expiration(3600) // 1 hour expiration for integration tests
                 .build();
 
             githubPort = MockGithubPort.builder()
