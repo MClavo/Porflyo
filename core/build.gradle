@@ -20,23 +20,25 @@ repositories {
 
 dependencies {
     annotationProcessor("io.micronaut.serde:micronaut-serde-processor")
+    annotationProcessor("io.micronaut.validation:micronaut-validation-processor")
 
     implementation('io.micronaut:micronaut-core-processor')
-    implementation("com.amazonaws:aws-lambda-java-events")
-    implementation("io.micronaut:micronaut-http-client-jdk") {
-        exclude group: 'io.netty' 
-    }
+    implementation("io.micronaut.validation:micronaut-validation")
     implementation("io.micronaut.serde:micronaut-serde-jackson")
-    
-    // Considerar reemplazar nimbus-jose-jwt con algo más ligero
-    implementation("com.nimbusds:nimbus-jose-jwt:9.37.3")
-    
-    runtimeOnly("org.yaml:snakeyaml")
-
+    // AWS Lambda dependencies
     implementation("io.micronaut.aws:micronaut-aws-lambda-events-serde")
     implementation("io.micronaut.aws:micronaut-function-aws") 
     implementation("io.micronaut.aws:micronaut-function-aws-custom-runtime")
+    implementation("io.micronaut:micronaut-http-client-jdk") {
+        exclude group: 'io.netty' 
+    }
+    implementation("com.amazonaws:aws-lambda-java-events")
+    
 
+    implementation("com.github.ksuid:ksuid:1.1.3")
+    implementation("jakarta.validation:jakarta.validation-api")
+    implementation("com.nimbusds:nimbus-jose-jwt:9.37.3")
+    runtimeOnly("org.yaml:snakeyaml")
 
     runtimeOnly("ch.qos.logback:logback-classic")
 
