@@ -1,4 +1,4 @@
-package com.porflyo.testing.mocks.useCase;
+package com.porflyo.testing.mocks.input;
 
 import com.porflyo.application.ports.input.RepoUseCase;
 import com.porflyo.domain.model.GithubRepo;
