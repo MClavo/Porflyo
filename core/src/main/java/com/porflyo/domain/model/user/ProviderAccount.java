@@ -18,5 +18,5 @@ public record ProviderAccount(
     @NotBlank String providerUserId,
     @NotBlank String providerUserName,
     @NotBlank URI providerAvatarUrl,
-    @NotBlank String ProviderAccessToken          // stored but never exposed to frontend
+    @NotBlank String providerAccessToken          // stored but never exposed to frontend
 ) { }
