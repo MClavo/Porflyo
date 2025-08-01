@@ -12,10 +12,10 @@ import jakarta.validation.constraints.NotBlank;
  */
 @Serdeable
 @Introspected
-public record EntityId(@NotBlank String id) {
+public record EntityId(@NotBlank String value) {
 
     public EntityId {
-        if (id == null || id.isBlank()) {
+        if (value == null || value.isBlank()) {
             throw new IllegalArgumentException("EntityId cannot be null or blank");
         }
     }

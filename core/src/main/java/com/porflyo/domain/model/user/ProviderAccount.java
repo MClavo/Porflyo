@@ -17,6 +17,6 @@ import jakarta.validation.constraints.NotBlank;
 public record ProviderAccount(
     @NotBlank String providerUserId,
     @NotBlank String providerUserName,
-    @NotBlank URI avatarUrl,
-    @NotBlank String accessToken          // stored but never exposed to frontend
+    @NotBlank URI providerAvatarUrl,
+    @NotBlank String ProviderAccessToken          // stored but never exposed to frontend
 ) { }
