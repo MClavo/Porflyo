@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 
 import java.time.Instant;
 import java.util.Map;
+import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -23,8 +24,8 @@ import com.porflyo.domain.model.GithubLoginClaims;
 import com.porflyo.domain.model.GithubUser;
 import com.porflyo.testing.data.LambdaTestData;
 import com.porflyo.testing.data.TestData;
+import com.porflyo.testing.mocks.input.MockUserUseCase;
 import com.porflyo.testing.mocks.ports.MockJwtPort;
-import com.porflyo.testing.mocks.useCase.MockUserUseCase;
 
 import io.micronaut.json.JsonMapper;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
@@ -141,7 +142,7 @@ class GithubUserLambdaHandlerEdgeCasesTest {
             GithubLoginClaims nullTokenClaims = new GithubLoginClaims("user", Instant.now(), 
                 Instant.now().plusSeconds(3600), null);
             jwtPort = MockJwtPort.builder().extractedClaims(nullTokenClaims).build();
-            userUseCase = MockUserUseCase.builder().getUserDataThrows(new RuntimeException("Access token is null")).build();
+            userUseCase = MockUserUseCase.builder().onFind(id -> { throw new RuntimeException("Access token is null"); }).build();
             githubUserLambdaHandler = createHandler(userUseCase, jwtPort);
 
             // When
@@ -173,9 +174,9 @@ class GithubUserLambdaHandlerEdgeCasesTest {
             
             jwtPort = MockJwtPort.builder().extractedClaims(longTokenClaims).build();
             userUseCase = MockUserUseCase.builder()
-                .getUserDataFunction(token -> {
-                    assertEquals(longToken, token);
-                    return TestData.DEFAULT_USER;
+                .onFind(id -> {
+                    assertEquals(longToken, id);
+                    return Optional.of(TestData.DEFAULT_USER);
                 })
                 .build();
             githubUserLambdaHandler = createHandler(userUseCase, jwtPort);
@@ -209,7 +210,7 @@ class GithubUserLambdaHandlerEdgeCasesTest {
         void shouldHandleUserDataWithNullAndExtremeValues() {
             // Given - user with null values
             GithubUser userWithNulls = new GithubUser(null, "12345", null, null, null);
-            userUseCase = MockUserUseCase.builder().getUserData(userWithNulls).build();
+            userUseCase = MockUserUseCase.builder().onFind(id -> Optional.of(userWithNulls)).build();
             githubUserLambdaHandler = createHandler(userUseCase, jwtPort);
 
             // When
@@ -221,7 +222,7 @@ class GithubUserLambdaHandlerEdgeCasesTest {
             String longEmail = "user@" + "a".repeat(1000) + ".com";
             GithubUser userWithLongValues = new GithubUser("shortuser", "12345", longName, longEmail, 
                 "https://avatar.example.com");
-            userUseCase = MockUserUseCase.builder().getUserData(userWithLongValues).build();
+            userUseCase = MockUserUseCase.builder().onFind(id -> Optional.of(userWithLongValues)).build();
             githubUserLambdaHandler = createHandler(userUseCase, jwtPort);
 
             // When
@@ -241,7 +242,7 @@ class GithubUserLambdaHandlerEdgeCasesTest {
             // Given
             GithubUser unicodeUser = new GithubUser("用户名", "12345", "测试用户 🚀", "用户@测试.com", 
                 "https://avatar.example.com/测试");
-            userUseCase = MockUserUseCase.builder().getUserData(unicodeUser).build();
+            userUseCase = MockUserUseCase.builder().onFind(id -> Optional.of(unicodeUser)).build();
             githubUserLambdaHandler = createHandler(userUseCase, jwtPort);
 
             // When
@@ -297,8 +298,8 @@ class GithubUserLambdaHandlerEdgeCasesTest {
             // Given
             RuntimeException exception = errorMessage.contains("Invalid state") ? 
                 new IllegalStateException(errorMessage) : new RuntimeException(errorMessage);
-            
-            userUseCase = MockUserUseCase.builder().getUserDataThrows(exception).build();
+
+            userUseCase = MockUserUseCase.builder().onFind(id -> { throw exception; }).build();
             githubUserLambdaHandler = createHandler(userUseCase, jwtPort);
 
             // When
@@ -314,7 +315,7 @@ class GithubUserLambdaHandlerEdgeCasesTest {
         void shouldHandleConcurrentExceptionsGracefully() {
             // Given - both JWT and user service failing
             jwtPort = MockJwtPort.builder().throwOnExtract(new RuntimeException("JWT processing failed")).build();
-            userUseCase = MockUserUseCase.builder().getUserDataThrows(new RuntimeException("User service failed")).build();
+            userUseCase = MockUserUseCase.builder().onFind(id -> { throw new RuntimeException("User service failed"); }).build();
             githubUserLambdaHandler = createHandler(userUseCase, jwtPort);
 
             // When

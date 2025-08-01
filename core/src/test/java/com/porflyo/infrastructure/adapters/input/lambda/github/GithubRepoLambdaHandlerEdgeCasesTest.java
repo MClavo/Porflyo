@@ -24,8 +24,8 @@ import com.porflyo.domain.model.GithubLoginClaims;
 import com.porflyo.domain.model.GithubRepo;
 import com.porflyo.testing.data.LambdaTestData;
 import com.porflyo.testing.data.TestData;
+import com.porflyo.testing.mocks.input.MockRepoUseCase;
 import com.porflyo.testing.mocks.ports.MockJwtPort;
-import com.porflyo.testing.mocks.useCase.MockRepoUseCase;
 
 import io.micronaut.json.JsonMapper;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;

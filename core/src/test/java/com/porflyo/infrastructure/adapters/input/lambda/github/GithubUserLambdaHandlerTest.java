@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 
 import java.time.Instant;
 import java.util.Map;
+import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -24,8 +25,8 @@ import com.porflyo.domain.model.GithubLoginClaims;
 import com.porflyo.domain.model.GithubUser;
 import com.porflyo.testing.data.LambdaTestData;
 import com.porflyo.testing.data.TestData;
+import com.porflyo.testing.mocks.input.MockUserUseCase;
 import com.porflyo.testing.mocks.ports.MockJwtPort;
-import com.porflyo.testing.mocks.useCase.MockUserUseCase;
 
 import io.micronaut.json.JsonMapper;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
@@ -123,9 +124,9 @@ class GithubUserLambdaHandlerTest {
             
             jwtPort = MockJwtPort.builder().extractedClaims(claims).build();
             userUseCase = MockUserUseCase.builder()
-                .getUserDataFunction(token -> {
-                    assertEquals(accessToken, token);
-                    return customUser;
+                .onFind(id -> {
+                    assertEquals(accessToken, id.toString());
+                    return Optional.of(customUser);
                 })
                 .build();
             githubUserLambdaHandler = createHandler(userUseCase, jwtPort);
@@ -144,7 +145,9 @@ class GithubUserLambdaHandlerTest {
             // Given
             GithubUser specialUser = createTestUser("user-with.special_chars", "99999", 
                 "山田 太郎", "yamada.taro@example.com");
-            userUseCase = MockUserUseCase.builder().getUserData(specialUser).build();
+            userUseCase = MockUserUseCase.builder()
+                .onFind(id -> Optional.of(specialUser))
+                .build();
             githubUserLambdaHandler = createHandler(userUseCase, jwtPort);
             
             // When
@@ -210,7 +213,7 @@ class GithubUserLambdaHandlerTest {
         void shouldHandleUserServiceErrors(String errorMessage) {
             // Given
             userUseCase = MockUserUseCase.builder()
-                .getUserDataThrows(new RuntimeException(errorMessage))
+                .onFind(id -> { throw new RuntimeException(errorMessage); })
                 .build();
             githubUserLambdaHandler = createHandler(userUseCase, jwtPort);
             
@@ -227,7 +230,7 @@ class GithubUserLambdaHandlerTest {
         void shouldHandleNullPointerExceptionsGracefully() {
             // Given
             userUseCase = MockUserUseCase.builder()
-                .getUserDataThrows(new NullPointerException("Null value encountered"))
+                .onFind(id -> { throw new NullPointerException("Null value encountered"); })
                 .build();
             githubUserLambdaHandler = createHandler(userUseCase, jwtPort);
             
@@ -269,7 +272,7 @@ class GithubUserLambdaHandlerTest {
         void shouldReturnProperlyFormattedErrorResponse() {
             // Given
             userUseCase = MockUserUseCase.builder()
-                .getUserDataThrows(new RuntimeException("Test error"))
+                .onFind(id -> { throw new RuntimeException("Test error"); })
                 .build();
             githubUserLambdaHandler = createHandler(userUseCase, jwtPort);
             
@@ -295,9 +298,9 @@ class GithubUserLambdaHandlerTest {
             
             jwtPort = MockJwtPort.builder().extractedClaims(integrationClaims).build();
             userUseCase = MockUserUseCase.builder()
-                .getUserDataFunction(accessToken -> {
-                    assertEquals(integrationAccessToken, accessToken);
-                    return integrationUser;
+                .onFind(id -> {
+                    assertEquals("88888", id);
+                    return Optional.of(integrationUser);
                 })
                 .build();
             githubUserLambdaHandler = createHandler(userUseCase, jwtPort);
