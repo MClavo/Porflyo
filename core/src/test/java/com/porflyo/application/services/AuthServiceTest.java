@@ -27,7 +27,9 @@ import com.porflyo.testing.mocks.ports.MockConfigurationPort;
 import com.porflyo.testing.mocks.ports.MockGithubPort;
 import com.porflyo.testing.mocks.ports.MockJwtPort;
 
-@ExtendWith(MockitoExtension.class)
+import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
+
+@MicronautTest
 @DisplayName("AuthService Tests")
 class AuthServiceTest {
 

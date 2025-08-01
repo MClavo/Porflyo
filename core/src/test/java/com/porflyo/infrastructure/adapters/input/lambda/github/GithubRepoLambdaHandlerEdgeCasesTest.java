@@ -1,6 +1,8 @@
 package com.porflyo.infrastructure.adapters.input.lambda.github;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -26,7 +28,9 @@ import com.porflyo.testing.mocks.ports.MockJwtPort;
 import com.porflyo.testing.mocks.useCase.MockRepoUseCase;
 
 import io.micronaut.json.JsonMapper;
+import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 
+@MicronautTest
 @DisplayName("GithubRepoLambdaHandler Edge Cases and Error Scenarios")
 class GithubRepoLambdaHandlerEdgeCasesTest {
 

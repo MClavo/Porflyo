@@ -1,6 +1,10 @@
 package com.porflyo.infrastructure.adapters.input.lambda.github;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 import java.time.Instant;
 import java.util.Map;
@@ -12,21 +16,21 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.Mockito;
 
 import com.amazonaws.services.lambda.runtime.events.APIGatewayV2HTTPEvent;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayV2HTTPResponse;
 import com.porflyo.domain.model.GithubLoginClaims;
 import com.porflyo.domain.model.GithubUser;
-
-import io.micronaut.json.JsonMapper;
-import org.mockito.Mockito;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
 import com.porflyo.testing.data.LambdaTestData;
 import com.porflyo.testing.data.TestData;
 import com.porflyo.testing.mocks.ports.MockJwtPort;
 import com.porflyo.testing.mocks.useCase.MockUserUseCase;
 
+import io.micronaut.json.JsonMapper;
+import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
+
+@MicronautTest
 @DisplayName("GithubUserLambdaHandler Tests")
 class GithubUserLambdaHandlerTest {
 

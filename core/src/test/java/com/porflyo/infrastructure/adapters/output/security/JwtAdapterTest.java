@@ -20,6 +20,9 @@ import com.porflyo.domain.model.GithubLoginClaims;
 import com.porflyo.testing.data.TestData;
 import com.porflyo.testing.mocks.ports.MockConfigurationPort;
 
+import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
+
+@MicronautTest
 @DisplayName("JwtAdapter Tests")
 class JwtAdapterTest {
 

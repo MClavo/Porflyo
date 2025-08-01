@@ -1,6 +1,10 @@
 package com.porflyo.infrastructure.adapters.input.lambda.github;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 import java.time.Instant;
 import java.util.List;
@@ -13,6 +17,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.Mockito;
 
 import com.amazonaws.services.lambda.runtime.events.APIGatewayV2HTTPEvent;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayV2HTTPResponse;
@@ -24,10 +29,9 @@ import com.porflyo.testing.mocks.ports.MockJwtPort;
 import com.porflyo.testing.mocks.useCase.MockRepoUseCase;
 
 import io.micronaut.json.JsonMapper;
-import org.mockito.Mockito;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 
+@MicronautTest
 @DisplayName("GithubRepoLambdaHandler Tests")
 class GithubRepoLambdaHandlerTest {
 
