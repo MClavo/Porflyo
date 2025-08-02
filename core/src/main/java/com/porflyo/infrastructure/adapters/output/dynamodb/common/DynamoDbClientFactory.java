@@ -7,6 +7,7 @@ import com.porflyo.infrastructure.configuration.DynamoDbConfig;
 import io.micronaut.context.annotation.Factory;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
+import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 
@@ -26,7 +27,7 @@ public class DynamoDbClientFactory {
     
 
     @Singleton
-    DynamoDbClient dynamoDbClient() {
+    DynamoDbClient lowClient() {
         String endpoint = dynamoDbConfig.endpoint().orElse(null);
         Region region = Region.of(dynamoDbConfig.region());
 
@@ -35,5 +36,12 @@ public class DynamoDbClientFactory {
             builder.endpointOverride(URI.create(endpoint));
         }
         return builder.build();
+    }
+
+    @Singleton
+    DynamoDbEnhancedClient enhanced(DynamoDbClient low) {
+        return DynamoDbEnhancedClient.builder()
+                                     .dynamoDbClient(low)
+                                     .build();
     }
 }

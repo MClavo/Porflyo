@@ -4,23 +4,33 @@ import java.util.Map;
 
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.serde.annotation.Serdeable;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
  * Raw representation of the User item as stored in DynamoDB.
- * <p>All fields are simple types or maps – no domain logic.</p>
+ * <p>
+ * All fields are simple types or maps – no domain logic.
+ * </p>
  */
+@Getter
+@Setter
 @Serdeable
 @Introspected
-public record DynamoUserDto(
-        String pk,
-        String sk,
-        String name,
-        String email,
-        String description,
-        String providerUserId,
-        String providerUserName,
-        String providerAvatarUrl,
-        String providerAccessToken,
-        String avatarUrl,
-        Map<String, String> socials     // Map<platform, url>
-) { }
+@NoArgsConstructor
+@AllArgsConstructor
+public class DynamoUserDto {
+    private String pk;
+    private String sk;
+    private String name;
+    private String email;
+    private String description;
+    private String avatarUrl;
+    private Map<String, String> socials; // Map<platform, url>
+    private String providerUserId;
+    private String providerUserName;
+    private String providerAvatarUrl;
+    private String providerAccessToken;
+}
