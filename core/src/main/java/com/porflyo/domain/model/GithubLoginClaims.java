@@ -2,11 +2,14 @@ package com.porflyo.domain.model;
 
 import java.time.Instant;
 
+import lombok.Getter;
+
 /**
  * UserSessionClaims represents the claims associated with GitHub OAuth login.
  * It contains information such as the user ID (sub), issued at time (iat)
  * and expiration time (exp)
  */
+@Getter
 public class GithubLoginClaims {
 
     private final String sub;       // Subject - User ID
@@ -19,22 +22,16 @@ public class GithubLoginClaims {
     // If needs an inmediate logout or session invalidation:
     //private final String jti;         // JWT ID - unique token identifier
 
-    // CRITICAL: DELETE THIS FIELD WHEN PERSISTENCE IS IMPLEMENTED
-    private final String accessToken;   // Access Token
-    
-
     /*
      * Constructor with all fields for testing purposes.
      * @param sub The subject (user ID)
      * @param iat The issued at time
      * @param exp The expiration time
-     * @param accessToken The access token
      */
-    public GithubLoginClaims(String sub, Instant iat, Instant exp, String accessToken) {
+    public GithubLoginClaims(String sub, Instant iat, Instant exp) {
         this.sub = sub;
         this.iat = iat;
         this.exp = exp;
-        this.accessToken = accessToken;
     }
 
     /*
@@ -44,26 +41,9 @@ public class GithubLoginClaims {
      * 
      * @returns A GithubLoginClaims object with the provided subject and expiration,
      */
-    public GithubLoginClaims(String sub,long tokenLifetime, String accessToken) {
+    public GithubLoginClaims(String sub,long tokenLifetime) {
         this.sub = sub;
         this.iat = Instant.now();
         this.exp = iat.plusSeconds(tokenLifetime);
-        this.accessToken = accessToken;
-    }
-    
-    public String getSub() {
-        return sub;
-    }
-
-    public Instant getIat() {
-        return iat;
-    }
-
-    public Instant getExp() {
-        return exp;
-    }
-
-    public String getAccessToken() {
-        return accessToken;
     }
 }
