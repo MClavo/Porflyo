@@ -31,7 +31,6 @@ public class JwtAdapter implements JwtPort {
     @Override
     public String generateToken(GithubLoginClaims claims) {
         try {
-            // Create HMAC signer
             JWSSigner signer = new MACSigner(jwtConfig.secret());
 
             // Create JWT claims set
@@ -40,17 +39,14 @@ public class JwtAdapter implements JwtPort {
                 .subject(claims.getSub())
                 .issueTime(java.util.Date.from(claims.getIat()))
                 .expirationTime(java.util.Date.from(claims.getExp()))
-                // CRITICAL: REMOVE "access_token" when persistence is implemented
-                .claim("access_token", claims.getAccessToken())
                 .build();
 
-            // Create signed JWT
+            // Create signed JWT with HS 256 algorithm
             SignedJWT signedJWT = new SignedJWT(
                 new JWSHeader(JWSAlgorithm.HS256),
                 claimsSet
             );
 
-            // Sign the JWT
             signedJWT.sign(signer);
 
             return signedJWT.serialize();
@@ -96,13 +92,10 @@ public class JwtAdapter implements JwtPort {
     @Override
     public GithubLoginClaims extractClaims(String token) {
         try {
-            // Parse the signed JWT
-            SignedJWT signedJWT = SignedJWT.parse(token);
 
-            // Create HMAC verifier
+            SignedJWT signedJWT = SignedJWT.parse(token);
             JWSVerifier verifier = new MACVerifier(jwtConfig.secret());
 
-            // Verify the signature
             if (!signedJWT.verify(verifier)) {
                 throw new RuntimeException("Invalid JWT signature");
             }
@@ -114,10 +107,7 @@ public class JwtAdapter implements JwtPort {
             Instant iat = claims.getIssueTime().toInstant();
             Instant exp = claims.getExpirationTime().toInstant();
 
-            // CRITICAL: REMOVE "access_token" when persistence is implemented
-            String accessToken = (String) claims.getClaim("access_token");
-            
-            return new GithubLoginClaims(sub, iat, exp, accessToken);
+            return new GithubLoginClaims(sub, iat, exp);
 
         } catch (Exception e) {
             throw new RuntimeException("Invalid JWT token", e);
