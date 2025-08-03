@@ -32,7 +32,6 @@ import com.porflyo.testing.data.TestData;
 import com.porflyo.testing.mocks.ports.MockGithubOAuthConfig;
 
 import io.micronaut.json.JsonMapper;
-import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 
 @DisplayName("GithubAdapter Tests")
 class GithubAdapterTest {

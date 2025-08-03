@@ -4,8 +4,6 @@ import com.porflyo.infrastructure.adapters.output.dynamodb.dto.DynamoUserDto;
 
 import software.amazon.awssdk.enhanced.dynamodb.EnhancedType;
 import software.amazon.awssdk.enhanced.dynamodb.TableSchema;
-import software.amazon.awssdk.enhanced.dynamodb.internal.converter.attribute.MapAttributeConverter;
-import software.amazon.awssdk.enhanced.dynamodb.internal.converter.attribute.StringAttributeConverter;
 import software.amazon.awssdk.enhanced.dynamodb.mapper.StaticAttributeTags;
 
 /**

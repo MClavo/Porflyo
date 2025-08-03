@@ -4,7 +4,6 @@ import com.porflyo.infrastructure.adapters.output.dynamodb.schema.UserTableSchem
 import com.porflyo.infrastructure.configuration.DynamoDbConfig;
 
 import io.micronaut.context.annotation.Requires;
-import io.micronaut.context.annotation.Value;
 import io.micronaut.context.env.Environment;
 import io.micronaut.context.event.ApplicationEventListener;
 import io.micronaut.context.event.StartupEvent;

@@ -17,8 +17,6 @@ import org.mockito.Mockito;
 
 import com.porflyo.domain.model.shared.EntityId;
 
-import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
-
 @DisplayName("User Tests")
 class UserTest {
 
