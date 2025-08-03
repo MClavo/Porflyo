@@ -3,7 +3,7 @@ plugins {
     id("com.gradleup.shadow") version "8.3.7"
     //id("com.diffplug.spotless") version "6.23.3"
     id("io.micronaut.aot") version "4.5.4"
-    id("io.micronaut.test-resources") version "4.5.4"
+    //id("io.micronaut.test-resources") version "4.5.4"
 }
 
 version = "0.1"
@@ -107,10 +107,6 @@ micronaut {
         replaceLogbackXml = true
     }
 }
-
-/* test {
-    systemProperty "micronaut.test.resources.enabled", "false";
-} */
 
 tasks.named("dockerfileNative") {
     jdkVersion = "21"
