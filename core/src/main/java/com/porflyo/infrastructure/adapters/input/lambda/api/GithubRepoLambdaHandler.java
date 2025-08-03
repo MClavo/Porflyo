@@ -1,4 +1,4 @@
-package com.porflyo.infrastructure.adapters.input.lambda.github;
+package com.porflyo.infrastructure.adapters.input.lambda.api;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package com.porflyo.infrastructure.adapters.input.lambda.github;
+package com.porflyo.infrastructure.adapters.input.lambda.api;
 
 import com.amazonaws.services.lambda.runtime.events.APIGatewayV2HTTPEvent;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayV2HTTPResponse;
@@ -37,13 +37,13 @@ import jakarta.inject.Singleton;
  * @since 1.0
  */
 @Singleton
-public class GithubUserLambdaHandler {
+public class UserLambdaHandler {
     private final JsonMapper jsonMapper;
     private final UserUseCase userService;
     private final JwtPort jwtService;
 
     @Inject
-    public GithubUserLambdaHandler(JsonMapper jsonMapper, UserUseCase userService, JwtPort jwtService) {
+    public UserLambdaHandler(JsonMapper jsonMapper, UserUseCase userService, JwtPort jwtService) {
         this.jsonMapper = jsonMapper;
         this.userService = userService;
         this.jwtService = jwtService;
@@ -66,9 +66,10 @@ public class GithubUserLambdaHandler {
             String cookie = LambdaHttpUtils.extractCookieValue(input, "session");
             GithubLoginClaims claims = jwtService.extractClaims(cookie);
 
+            
+
             // Get user data
-            GithubUser user = userService.getUserData(claims.getAccessToken());
-            return LambdaHttpUtils.createResponse(200, jsonMapper.writeValueAsString(user));
+            return null;//LambdaHttpUtils.createResponse(200, jsonMapper.writeValueAsString(user));
 
         } catch (Exception e) {
             return LambdaHttpUtils.createErrorResponse(500, e.getMessage());

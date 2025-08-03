@@ -2,7 +2,10 @@ package com.porflyo.infrastructure.adapters.output.dynamodb.schema;
 
 import com.porflyo.infrastructure.adapters.output.dynamodb.dto.DynamoUserDto;
 
+import software.amazon.awssdk.enhanced.dynamodb.EnhancedType;
 import software.amazon.awssdk.enhanced.dynamodb.TableSchema;
+import software.amazon.awssdk.enhanced.dynamodb.internal.converter.attribute.MapAttributeConverter;
+import software.amazon.awssdk.enhanced.dynamodb.internal.converter.attribute.StringAttributeConverter;
 import software.amazon.awssdk.enhanced.dynamodb.mapper.StaticAttributeTags;
 
 /**
@@ -70,8 +73,11 @@ public final class UserTableSchema {
             .addAttribute(String.class, a -> a.name("accessToken")
                     .getter(DynamoUserDto::getProviderAccessToken)
                     .setter(DynamoUserDto::setProviderAccessToken))
-            .addAttribute(java.util.Map.class, a -> a.name("socials")
+            .addAttribute(
+                EnhancedType.mapOf(String.class, String.class),
+                a -> a.name("socials")
                     .getter(DynamoUserDto::getSocials)
-                    .setter(DynamoUserDto::setSocials))
+                    .setter(DynamoUserDto::setSocials)
+            )
             .build();
 }

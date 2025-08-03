@@ -30,7 +30,6 @@ import com.porflyo.testing.mocks.ports.MockJwtPort;
 
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 
-@MicronautTest
 @DisplayName("AuthService Tests")
 class AuthServiceTest {
 

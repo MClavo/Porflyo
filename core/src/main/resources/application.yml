@@ -1,4 +1,5 @@
 micronaut:
+
   application:
     name: porflyo-api
     
@@ -27,7 +28,6 @@ micronaut:
   # Function Configuration for AWS Lambda
   function:
     enabled: true
-    
 # Custom OAuth Configuration (using environment variables)
 oauth:
   github:
@@ -59,3 +59,17 @@ logger:
       githubv3:
         url: "https://api.github.com"
  
+aws:
+  region: us-east-1
+  #dynamodb:
+    #endpoint: http://localhost:8000
+    #region: us-east-1
+
+test-resources:
+  containers:
+    dynamodb:
+      image-name: amazon/dynamodb-local # <1>
+      hostnames:
+        - dynamodb-local.host # <2>
+      exposed-ports:
+        - dynamodb-local.port: 8000 # <3>

@@ -23,15 +23,14 @@ import com.amazonaws.services.lambda.runtime.events.APIGatewayV2HTTPEvent;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayV2HTTPResponse;
 import com.porflyo.domain.model.GithubLoginClaims;
 import com.porflyo.domain.model.GithubRepo;
+import com.porflyo.infrastructure.adapters.input.lambda.api.GithubRepoLambdaHandler;
 import com.porflyo.testing.data.LambdaTestData;
 import com.porflyo.testing.data.TestData;
 import com.porflyo.testing.mocks.input.MockRepoUseCase;
 import com.porflyo.testing.mocks.ports.MockJwtPort;
 
 import io.micronaut.json.JsonMapper;
-import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 
-@MicronautTest
 @DisplayName("GithubRepoLambdaHandler Tests")
 class GithubRepoLambdaHandlerTest {
 

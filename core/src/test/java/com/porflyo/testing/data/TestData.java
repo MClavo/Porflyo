@@ -1,12 +1,17 @@
 package com.porflyo.testing.data;
 
+import java.net.URI;
 import java.time.Instant;
 import java.util.List;
+import java.util.Map;
 
 import com.porflyo.domain.model.GithubLoginClaims;
 import com.porflyo.domain.model.GithubRepo;
 import com.porflyo.domain.model.GithubUser;
 import com.porflyo.domain.model.UserSession;
+import com.porflyo.domain.model.shared.EntityId;
+import com.porflyo.domain.model.user.ProviderAccount;
+import com.porflyo.domain.model.user.User;
 
 
 
@@ -64,6 +69,23 @@ public final class TestData {
         "Test User",
         "test@example.com",
         "https://avatars.githubusercontent.com/u/12345"
+    );
+
+    public static final ProviderAccount DEFAULT_PROVIDER_ACCOUNT = new ProviderAccount(
+        "12345",
+        "testuser",
+        URI.create("https://avatars.githubusercontent.com/u/12345"),
+        DEFAULT_ACCESS_TOKEN
+    );
+
+    public static final User DEFAULT_DOMAIN_USER = new User(
+        new EntityId("12345"),
+        DEFAULT_PROVIDER_ACCOUNT,
+        "Test User",
+        "test@example.com",
+        "Test Description",
+        URI.create("https://avatars.githubusercontent.com/u/12345"),
+        Map.of("github", "https://github.com/testuser")
     );
 
     public static final GithubRepo REPO_1 = new GithubRepo(

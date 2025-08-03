@@ -23,7 +23,7 @@ import com.porflyo.testing.mocks.ports.MockJwtConfig;
 
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 
-@MicronautTest
+
 @DisplayName("JwtAdapter Tests")
 class JwtAdapterTest {
 

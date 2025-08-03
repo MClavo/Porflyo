@@ -56,7 +56,7 @@ public class UserDynamoRepository implements UserRepository {
     public void patch(@NonNull EntityId id, @NonNull Map<String, Object> attrs) {
         if (attrs.isEmpty()) return;
 
-        // Dto with null fields for attributes except those in attrs
+        // Dto with null fields except for the attributes in attrs
         DynamoUserDto updateItem = UserDynamoMapper.createPatchDto(attrs);
 
         UpdateItemEnhancedRequest<DynamoUserDto> request =
@@ -77,6 +77,7 @@ public class UserDynamoRepository implements UserRepository {
     }
 
     @Deprecated
+    @SuppressWarnings("unused")
     private AttributeValue toAttributeValue(Object value) {
         return switch (value) {
             case String s -> AttributeValue.builder().s(s).build();

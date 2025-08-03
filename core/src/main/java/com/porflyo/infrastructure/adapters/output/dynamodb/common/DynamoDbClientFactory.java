@@ -6,7 +6,10 @@ import com.porflyo.infrastructure.configuration.DynamoDbConfig;
 
 import io.micronaut.context.annotation.Factory;
 import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import jakarta.inject.Singleton;
+import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
+import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
@@ -27,19 +30,25 @@ public class DynamoDbClientFactory {
     
 
     @Singleton
-    DynamoDbClient lowClient() {
-        String endpoint = dynamoDbConfig.endpoint().orElse(null);
+    @Named("lowClient")
+     DynamoDbClient lowClient() {
+
+        String endpoint = dynamoDbConfig.endpoint();
         Region region = Region.of(dynamoDbConfig.region());
 
-        var builder = DynamoDbClient.builder().region(region);
-        if (endpoint != null && !endpoint.equals("null")) {
-            builder.endpointOverride(URI.create(endpoint));
-        }
-        return builder.build();
+        // TODO: Change this in production to use real credentials
+        // Fake credentials for local testing
+        AwsBasicCredentials fakeCreds = AwsBasicCredentials.create("test", "test");
+
+        return DynamoDbClient.builder()
+                             .region(region)
+                             .endpointOverride(URI.create(endpoint))
+                             .credentialsProvider(StaticCredentialsProvider.create(fakeCreds))
+                             .build();
     }
 
     @Singleton
-    DynamoDbEnhancedClient enhanced(DynamoDbClient low) {
+    DynamoDbEnhancedClient enhanced(@Named("lowClient") DynamoDbClient low) {
         return DynamoDbEnhancedClient.builder()
                                      .dynamoDbClient(low)
                                      .build();

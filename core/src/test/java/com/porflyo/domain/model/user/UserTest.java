@@ -19,7 +19,6 @@ import com.porflyo.domain.model.shared.EntityId;
 
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 
-@MicronautTest
 @DisplayName("User Tests")
 class UserTest {
 
