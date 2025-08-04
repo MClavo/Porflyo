@@ -58,19 +58,21 @@ public class LambdaEntryPointHandler extends MicronautRequestHandler<APIGatewayV
     }
 
     private APIGatewayV2HTTPResponse apiHandler(String path, APIGatewayV2HTTPEvent input){
-
         // Simulate API Gateway token validation,
         // SAM can not replicate the API Gateway's token validation process
         APIGatewayV2HTTPResponse validation = authLambdaHandler.handleTokenValidation(input);
 
         if(validation.getStatusCode() != 200)
             return validation;
-        
-        switch (path) {
-            case "/api/user":
+
+        // Extract the route from the path
+        String route = LambdaHttpUtils.extractPathSegment(input, 1); // Extracts {segment} of /api/{segment}/whatever
+
+        switch (route) {
+            case "user":
                 return userLambdaHandler.handleUserRequest(input);
-            
-            case "/api/repos":
+
+            case "repos":
                 return repoLambdaHandler.handleUserRequest(input);
         
             default:
