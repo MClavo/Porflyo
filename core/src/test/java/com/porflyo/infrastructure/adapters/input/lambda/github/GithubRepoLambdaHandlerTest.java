@@ -1,6 +1,10 @@
 package com.porflyo.infrastructure.adapters.input.lambda.github;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 import java.time.Instant;
 import java.util.List;
@@ -13,20 +17,19 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.Mockito;
 
 import com.amazonaws.services.lambda.runtime.events.APIGatewayV2HTTPEvent;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayV2HTTPResponse;
 import com.porflyo.domain.model.GithubLoginClaims;
 import com.porflyo.domain.model.GithubRepo;
+import com.porflyo.infrastructure.adapters.input.lambda.api.GithubRepoLambdaHandler;
 import com.porflyo.testing.data.LambdaTestData;
 import com.porflyo.testing.data.TestData;
+import com.porflyo.testing.mocks.input.MockRepoUseCase;
 import com.porflyo.testing.mocks.ports.MockJwtPort;
-import com.porflyo.testing.mocks.useCase.MockRepoUseCase;
 
 import io.micronaut.json.JsonMapper;
-import org.mockito.Mockito;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
 
 @DisplayName("GithubRepoLambdaHandler Tests")
 class GithubRepoLambdaHandlerTest {
@@ -105,7 +108,7 @@ class GithubRepoLambdaHandlerTest {
     }
 
     private GithubLoginClaims createTestClaims(String userId, String accessToken) {
-        return new GithubLoginClaims(userId, Instant.now(), Instant.now().plusSeconds(3600), accessToken);
+        return new GithubLoginClaims(userId, Instant.now(), Instant.now().plusSeconds(3600));
     }
 
     @Nested
@@ -135,10 +138,7 @@ class GithubRepoLambdaHandlerTest {
             
             jwtPort = MockJwtPort.builder().extractedClaims(claims).build();
             repoUseCase = MockRepoUseCase.builder()
-                .getUserReposFunction(token -> {
-                    assertEquals(accessToken, token);
-                    return customRepos;
-                })
+                .getUserRepos(customRepos)
                 .build();
             githubRepoLambdaHandler = createHandler(repoUseCase, jwtPort);
             
@@ -327,10 +327,7 @@ class GithubRepoLambdaHandlerTest {
             
             jwtPort = MockJwtPort.builder().extractedClaims(integrationClaims).build();
             repoUseCase = MockRepoUseCase.builder()
-                .getUserReposFunction(accessToken -> {
-                    assertEquals(integrationAccessToken, accessToken);
-                    return integrationRepos;
-                })
+                .getUserRepos(integrationRepos)
                 .build();
             githubRepoLambdaHandler = createHandler(repoUseCase, jwtPort);
             

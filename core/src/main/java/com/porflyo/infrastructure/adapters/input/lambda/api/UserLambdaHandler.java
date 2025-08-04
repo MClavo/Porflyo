@@ -1,11 +1,18 @@
-package com.porflyo.infrastructure.adapters.input.lambda.github;
+package com.porflyo.infrastructure.adapters.input.lambda.api;
+
+import java.util.Optional;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.amazonaws.services.lambda.runtime.events.APIGatewayV2HTTPEvent;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayV2HTTPResponse;
 import com.porflyo.application.ports.input.UserUseCase;
 import com.porflyo.application.ports.output.JwtPort;
 import com.porflyo.domain.model.GithubLoginClaims;
-import com.porflyo.domain.model.GithubUser;
+import com.porflyo.domain.model.shared.EntityId;
+import com.porflyo.domain.model.user.User;
+import com.porflyo.infrastructure.adapters.input.lambda.api.dto.PublicUserDto;
 import com.porflyo.infrastructure.adapters.input.lambda.utils.LambdaHttpUtils;
 
 import io.micronaut.json.JsonMapper;
@@ -37,13 +44,14 @@ import jakarta.inject.Singleton;
  * @since 1.0
  */
 @Singleton
-public class GithubUserLambdaHandler {
+public class UserLambdaHandler {
+    private static final Logger log = LoggerFactory.getLogger(UserLambdaHandler.class);
     private final JsonMapper jsonMapper;
     private final UserUseCase userService;
     private final JwtPort jwtService;
 
     @Inject
-    public GithubUserLambdaHandler(JsonMapper jsonMapper, UserUseCase userService, JwtPort jwtService) {
+    public UserLambdaHandler(JsonMapper jsonMapper, UserUseCase userService, JwtPort jwtService) {
         this.jsonMapper = jsonMapper;
         this.userService = userService;
         this.jwtService = jwtService;
@@ -65,12 +73,25 @@ public class GithubUserLambdaHandler {
             // Extract cookie and claims
             String cookie = LambdaHttpUtils.extractCookieValue(input, "session");
             GithubLoginClaims claims = jwtService.extractClaims(cookie);
+            EntityId userId = new EntityId(claims.getSub());
+            log.debug("Handling user request for user ID: {}", userId);
+
 
             // Get user data
-            GithubUser user = userService.getUserData(claims.getAccessToken());
-            return LambdaHttpUtils.createResponse(200, jsonMapper.writeValueAsString(user));
+            Optional<User> userOpt = userService.findById(userId);
+
+            log.debug("User found: {}", userOpt.isPresent() ? userOpt.get().name() : "not found");
+
+
+            if (userOpt.isEmpty()) 
+                return LambdaHttpUtils.createErrorResponse(404, "User not found");
+            
+            PublicUserDto dto = PublicUserDto.from(userOpt.get());
+
+            return LambdaHttpUtils.createResponse(200, jsonMapper.writeValueAsString(dto));
 
         } catch (Exception e) {
+            log.error("Error handling user request: {}", e.getMessage(), e);
             return LambdaHttpUtils.createErrorResponse(500, e.getMessage());
         }
     }

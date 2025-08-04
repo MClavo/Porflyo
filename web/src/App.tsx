@@ -8,7 +8,7 @@ function App() {
   const [user, setUser] = useState<null | {
     login: string;
     name: string;
-    avatar_url: string;
+    avatarUrl: string;
     id: string;
     email: string;
   }>(null);

@@ -1,6 +1,8 @@
 package com.porflyo.infrastructure.adapters.input.lambda.github;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -20,10 +22,11 @@ import com.amazonaws.services.lambda.runtime.events.APIGatewayV2HTTPEvent;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayV2HTTPResponse;
 import com.porflyo.domain.model.GithubLoginClaims;
 import com.porflyo.domain.model.GithubRepo;
+import com.porflyo.infrastructure.adapters.input.lambda.api.GithubRepoLambdaHandler;
 import com.porflyo.testing.data.LambdaTestData;
 import com.porflyo.testing.data.TestData;
+import com.porflyo.testing.mocks.input.MockRepoUseCase;
 import com.porflyo.testing.mocks.ports.MockJwtPort;
-import com.porflyo.testing.mocks.useCase.MockRepoUseCase;
 
 import io.micronaut.json.JsonMapper;
 
@@ -99,7 +102,7 @@ class GithubRepoLambdaHandlerEdgeCasesTest {
     }
 
     private GithubLoginClaims createClaimsWithToken(String token) {
-        return new GithubLoginClaims("user", Instant.now(), Instant.now().plusSeconds(3600), token);
+        return new GithubLoginClaims("user", Instant.now(), Instant.now().plusSeconds(3600));
     }
 
     @Nested
@@ -160,10 +163,7 @@ class GithubRepoLambdaHandlerEdgeCasesTest {
             // Given - very long access token  
             String longToken = "ghp_" + "a".repeat(500);
             jwtPort = MockJwtPort.builder().extractedClaims(createClaimsWithToken(longToken)).build();
-            repoUseCase = MockRepoUseCase.builder().getUserReposFunction(token -> {
-                assertEquals(longToken, token);
-                return TestData.DEFAULT_REPOS;
-            }).build();
+            repoUseCase = MockRepoUseCase.builder().getUserRepos(TestData.DEFAULT_REPOS).build();
             githubRepoLambdaHandler = createHandler(repoUseCase, jwtPort);
             APIGatewayV2HTTPResponse longTokenResponse = githubRepoLambdaHandler.handleUserRequest(
                 LambdaTestData.createEventWithDefaultSessionCookie());

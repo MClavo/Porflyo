@@ -1,12 +1,17 @@
 package com.porflyo.testing.data;
 
+import java.net.URI;
 import java.time.Instant;
 import java.util.List;
+import java.util.Map;
 
 import com.porflyo.domain.model.GithubLoginClaims;
 import com.porflyo.domain.model.GithubRepo;
 import com.porflyo.domain.model.GithubUser;
 import com.porflyo.domain.model.UserSession;
+import com.porflyo.domain.model.shared.EntityId;
+import com.porflyo.domain.model.user.ProviderAccount;
+import com.porflyo.domain.model.user.User;
 
 
 
@@ -58,12 +63,29 @@ public final class TestData {
     public static final long DEFAULT_JWT_EXPIRATION = 3600L;
     public static final String DEFAULT_USER_AGENT = "TestUserAgent/1.0";
 
-    public static final GithubUser DEFAULT_USER = new GithubUser(
+    public static final GithubUser DEFAULT_GITHUB_USER = new GithubUser(
         "testuser",
         "12345",
         "Test User",
         "test@example.com",
         "https://avatars.githubusercontent.com/u/12345"
+    );
+
+    public static final ProviderAccount DEFAULT_PROVIDER_ACCOUNT = new ProviderAccount(
+        "12345",
+        "testuser",
+        URI.create("https://avatars.githubusercontent.com/u/12345"),
+        DEFAULT_ACCESS_TOKEN
+    );
+
+    public static final User DEFAULT_USER = new User(
+        new EntityId("12345"),
+        DEFAULT_PROVIDER_ACCOUNT,
+        "Test User",
+        "test@example.com",
+        "Test Description",
+        URI.create("https://avatars.githubusercontent.com/u/12345"),
+        Map.of("github", "https://github.com/testuser")
     );
 
     public static final GithubRepo REPO_1 = new GithubRepo(
@@ -83,13 +105,11 @@ public final class TestData {
     public static final GithubLoginClaims DEFAULT_CLAIMS = new GithubLoginClaims(
         "12345",
         Instant.now(),
-        Instant.now().plusSeconds(3600),
-        TestData.DEFAULT_ACCESS_TOKEN
+        Instant.now().plusSeconds(3600)
     );
 
     public static final UserSession DEFAULT_USER_SESSION = new UserSession(
         DEFAULT_JWT_TOKEN,
-        DEFAULT_ACCESS_TOKEN,
         DEFAULT_USER
     );
 }

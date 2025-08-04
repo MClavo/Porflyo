@@ -5,11 +5,12 @@ import org.slf4j.LoggerFactory;
 
 import com.amazonaws.services.lambda.runtime.events.APIGatewayV2HTTPEvent;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayV2HTTPResponse;
+import com.porflyo.application.configuration.JwtConfig;
 import com.porflyo.application.ports.input.AuthUseCase;
-import com.porflyo.application.ports.output.ConfigurationPort;
 import com.porflyo.application.ports.output.JwtPort;
 import com.porflyo.domain.model.UserSession;
 import com.porflyo.infrastructure.adapters.input.lambda.utils.LambdaHttpUtils;
+import com.porflyo.infrastructure.configuration.FrontendConfig;
 
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
@@ -43,14 +44,17 @@ import jakarta.inject.Singleton;
 public class AuthLambdaHandler {
     private static final Logger log = LoggerFactory.getLogger(AuthLambdaHandler.class);
     private final AuthUseCase authService;
-    private final ConfigurationPort config;
     private final JwtPort jwtService;
 
+    private final JwtConfig jwtConfig;
+    private final FrontendConfig frontendConfig;
+
     @Inject
-    public AuthLambdaHandler(AuthUseCase authUseCase, ConfigurationPort configurationPort, JwtPort jwtPort) {
+    public AuthLambdaHandler(AuthUseCase authUseCase, JwtPort jwtPort, JwtConfig jwtConfig, FrontendConfig frontendConfig) {
         this.authService = authUseCase;
-        this.config = configurationPort;
         this.jwtService = jwtPort;
+        this.jwtConfig = jwtConfig;
+        this.frontendConfig = frontendConfig;
     }
 
     /**
@@ -72,6 +76,7 @@ public class AuthLambdaHandler {
             return LambdaHttpUtils.createRedirectResponse(loginUrl);
 
         } catch (Exception e) {
+            log.error("Error handling OAuth login: {}", e.getMessage(), e);
             return LambdaHttpUtils.createErrorResponse(500, e.getMessage());
         }
     }
@@ -103,6 +108,7 @@ public class AuthLambdaHandler {
             return LambdaHttpUtils.createResponse(200, "Valid token");
 
         } catch (Exception e) {
+            log.error("Error validating token: {}", e.getMessage(), e);
             return LambdaHttpUtils.createErrorResponse(500, e.getMessage());
         }
     }
@@ -126,9 +132,9 @@ public class AuthLambdaHandler {
             String code = LambdaHttpUtils.extractQueryParameter(input, "code");
             log.debug("Extracted OAuth code: {}", code);
 
-            String frontend = config.getFrontendUrl();
-            long expiration = config.getJwtExpirationSeconds();
-            
+            String frontend = frontendConfig.url();
+            long expiration = jwtConfig.expiration();
+
             if(code == null || code.trim().isEmpty()) {
                 return LambdaHttpUtils.createErrorRedirectResponse(400, frontend, "Missing authorization code");
             }
@@ -145,6 +151,7 @@ public class AuthLambdaHandler {
                 expiration);        // Max-Age
 
         } catch (Exception e) {
+            log.error("Error handling OAuth callback: {}", e.getMessage(), e);
             return LambdaHttpUtils.createErrorResponse(500, e.getMessage());
         }
     }

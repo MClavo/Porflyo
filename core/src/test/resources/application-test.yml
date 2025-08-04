@@ -1,0 +1,28 @@
+micronaut:
+  test:
+    resources:
+      enabled: true
+aws:
+  region: us-east-1
+  #dynamodb:
+    #endpoint-override: http://localhost:8000   
+    #table-name: user-test
+
+dynamodb:
+  endpoint: http://host.docker.internal:8000
+  table-name: user-test    
+  region: us-east-1 
+   
+#dynamodb-local:
+  #url: http://localhost:8000
+
+
+
+test-resources:
+  containers:
+    dynamodb:
+      image-name: amazon/dynamodb-local 
+      hostnames:
+        - dynamodb-local.host 
+      exposed-ports:
+        - dynamodb-local.port: 8000

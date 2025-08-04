@@ -6,13 +6,13 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
 import java.time.Duration;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.porflyo.application.ports.output.ConfigurationPort;
+import com.porflyo.application.configuration.GithubOAuthConfig;
 import com.porflyo.application.ports.output.GithubPort;
 import com.porflyo.domain.model.GithubRepo;
 import com.porflyo.domain.model.GithubUser;
@@ -41,20 +41,20 @@ public class GithubAdapter implements GithubPort {
     private static final int HTTP_SUCCESS_MAX = 299;
     
     private static final Logger log = LoggerFactory.getLogger(GithubAdapter.class);
-    private final ConfigurationPort config;
     private final JsonMapper jsonMapper;
     private final HttpClient httpClient;
+    private final GithubOAuthConfig oauthConfig;
 
     @Inject
-    public GithubAdapter(ConfigurationPort config, JsonMapper jsonMapper) {
-        this.config = validateNotNull(config, "ConfigurationPort cannot be null");
+    public GithubAdapter(GithubOAuthConfig oauthConfig, JsonMapper jsonMapper) {
+        this.oauthConfig = validateNotNull(oauthConfig, "GithubOAuthConfig cannot be null");
         this.jsonMapper = validateNotNull(jsonMapper, "JsonMapper cannot be null");
         this.httpClient = createConfiguredHttpClient();
     }
 
     // Package-private constructor for testing
-    GithubAdapter(ConfigurationPort config, JsonMapper jsonMapper, HttpClient httpClient) {
-        this.config = config;
+    GithubAdapter(GithubOAuthConfig oauthConfig, JsonMapper jsonMapper, HttpClient httpClient) {
+        this.oauthConfig = oauthConfig;
         this.jsonMapper = jsonMapper;
         this.httpClient = httpClient;
     }
@@ -67,11 +67,10 @@ public class GithubAdapter implements GithubPort {
         if (code == null || code.trim().isEmpty()) {
             throw new IllegalArgumentException("OAuth code cannot be null or empty");
         }
-        
-        String clientId = config.getOAuthClientId();
-        String clientSecret = config.getOAuthClientSecret();
-        String redirectUri = config.getOAuthRedirectUri();
-        
+        String clientId = oauthConfig.clientId();
+        String clientSecret = oauthConfig.clientSecret();
+        String redirectUri = oauthConfig.redirectUri();
+
         try {
             validateOAuthParameters(code, clientId, clientSecret, redirectUri);
             
@@ -159,7 +158,7 @@ public class GithubAdapter implements GithubPort {
             .uri(URI.create(TOKEN_URL))
             .header("Content-Type", "application/x-www-form-urlencoded")
             .header("Accept", "application/json")
-            .header("User-Agent", config.getUserAgent())
+            .header("User-Agent", oauthConfig.userAgent())
             .POST(HttpRequest.BodyPublishers.ofString(formData))
             .timeout(Duration.ofSeconds(HTTP_TIMEOUT_SECONDS))
             .build();

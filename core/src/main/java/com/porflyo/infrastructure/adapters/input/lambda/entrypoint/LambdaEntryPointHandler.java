@@ -5,9 +5,9 @@ import org.slf4j.LoggerFactory;
 
 import com.amazonaws.services.lambda.runtime.events.APIGatewayV2HTTPEvent;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayV2HTTPResponse;
+import com.porflyo.infrastructure.adapters.input.lambda.api.GithubRepoLambdaHandler;
+import com.porflyo.infrastructure.adapters.input.lambda.api.UserLambdaHandler;
 import com.porflyo.infrastructure.adapters.input.lambda.auth.AuthLambdaHandler;
-import com.porflyo.infrastructure.adapters.input.lambda.github.GithubRepoLambdaHandler;
-import com.porflyo.infrastructure.adapters.input.lambda.github.GithubUserLambdaHandler;
 import com.porflyo.infrastructure.adapters.input.lambda.utils.LambdaHttpUtils;
 import com.porflyo.infrastructure.adapters.output.github.GithubAdapter;
 
@@ -24,7 +24,7 @@ import jakarta.inject.Inject;
  * The handler routes incoming HTTP requests based on their path to appropriate sub-handlers:
  * <ul>
  *   <li><b>OAuth endpoints</b> (e.g., <code>/oauth/login/github</code>, <code>/oauth/callback/github</code>) are handled by {@link AuthLambdaHandler}.</li>
- *   <li><b>API endpoints</b> (e.g., <code>/api/user</code>, <code>/api/repos</code>) are handled by {@link GithubUserLambdaHandler} and {@link GithubRepoLambdaHandler}.</li>
+ *   <li><b>API endpoints</b> (e.g., <code>/api/user</code>, <code>/api/repos</code>) are handled by {@link UserLambdaHandler} and {@link GithubRepoLambdaHandler}.</li>
  * </ul>
  * <p>
  * Token validation is performed for API endpoints before delegating to user or repo handlers.
@@ -34,7 +34,7 @@ public class LambdaEntryPointHandler extends MicronautRequestHandler<APIGatewayV
     
     private final ApplicationContext applicationContext;
     private final AuthLambdaHandler authLambdaHandler;
-    private final GithubUserLambdaHandler userLambdaHandler;
+    private final UserLambdaHandler userLambdaHandler;
     private final GithubRepoLambdaHandler repoLambdaHandler;
 
     @Inject
@@ -44,7 +44,7 @@ public class LambdaEntryPointHandler extends MicronautRequestHandler<APIGatewayV
             .deduceEnvironment(false)
             .start();
         this.authLambdaHandler = applicationContext.getBean(AuthLambdaHandler.class);
-        this.userLambdaHandler = applicationContext.getBean(GithubUserLambdaHandler.class);
+        this.userLambdaHandler = applicationContext.getBean(UserLambdaHandler.class);
         this.repoLambdaHandler = applicationContext.getBean(GithubRepoLambdaHandler.class);
     }
 

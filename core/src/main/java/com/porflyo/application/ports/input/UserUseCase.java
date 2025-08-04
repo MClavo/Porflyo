@@ -1,19 +1,67 @@
 package com.porflyo.application.ports.input;
 
-import com.porflyo.domain.model.GithubUser;
+import java.util.Optional;
+
+import com.porflyo.domain.model.shared.EntityId;
+import com.porflyo.domain.model.user.User;
+
+import io.micronaut.core.annotation.NonNull;
+import io.micronaut.validation.Validated;
+import jakarta.validation.Valid;
 
 /**
- * UserUseCase interface defines the operations related to user management,
- * specifically for retrieving user data from GitHub.
+ * UserUseCase defines the contract for user management operations in the application.
+ * <p>
+ * This interface provides methods for creating, retrieving, updating, and deleting user entities.
+ * All parameters and return values are expected to be non-null unless otherwise specified.
+ * Validation annotations are used to ensure domain integrity.
+ * </p>
+ *
+ * <ul>
+ *   <li>{@link #create(User)}: Creates a new user and returns its identifier.</li>
+ *   <li>{@link #findById(EntityId)}: Retrieves a user by its identifier, returning an {@code Optional}.</li>
+ *   <li>{@link #update(User)}: Updates an existing user and returns the updated instance.</li>
+ *   <li>{@link #delete(EntityId)}: Deletes a user and all dependent items.</li>
+ * </ul>
+ *
+ * <p>
+ * Implementations should ensure transactional consistency and proper validation of input parameters.
+ * </p>
  */
+@Validated
 public interface UserUseCase {
+    
+     /**
+     * Creates a new user.
+     *
+     * @param user A fully-validated domain object (must carry a non-null id).
+     * @return The identifier assigned to the user (same as {@code user.id()}).
+     */
+    @NonNull
+    EntityId create(@Valid @NonNull User user);
 
     /**
-     * Retrieves user data from GitHub using the provided access token.
+     * Retrieves a user by id.
      *
-     * @param accessToken The access token for GitHub API.
-     * @return The GitHub user data.
+     * @param id The user identifier.
+     * @return Optional present if found, empty otherwise.
      */
-    GithubUser getUserData(String accessToken);
-    
+    @NonNull
+    Optional<User> findById(@NonNull EntityId id);
+
+     /**
+     * Updates an existing user (replace-all strategy).
+     *
+     * @param user The modified user instance (immutable aggregate).
+     * @return The updated user after persistence.
+     */
+    @NonNull
+    User update(@Valid @NonNull User user);
+
+    /**
+     * Deletes a user and every dependent item (portfolios, merits…) if needed.
+     *
+     * @param id The identifier to remove.
+     */
+    void delete(@NonNull EntityId id);
 }

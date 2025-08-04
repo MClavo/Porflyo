@@ -1,32 +1,54 @@
 package com.porflyo.application.services;
 
-import com.porflyo.application.ports.input.UserUseCase;
-import com.porflyo.application.ports.output.GithubPort;
-import com.porflyo.domain.model.GithubUser;
+import java.util.Optional;
 
+import com.porflyo.application.ports.input.UserUseCase;
+import com.porflyo.application.ports.output.UserRepository;
+import com.porflyo.domain.model.shared.EntityId;
+import com.porflyo.domain.model.user.User;
+
+import io.micronaut.core.annotation.NonNull;
+import io.micronaut.validation.Validated;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
+import jakarta.validation.Valid;
 
-// TODO: Implement user management when persistence is available
+/**
+ * Thin application layer orchestrator that delegates pure
+ * persistence to the {@link UserRepository}.
+ */
 @Singleton
+@Validated
 public class UserService implements UserUseCase{
 
-    private final GithubPort githubPort;
+    
+    private final  UserRepository repository;
 
     @Inject
-    public UserService(GithubPort githubPort) {
-        this.githubPort = githubPort;
+    UserService(UserRepository userRepository) {
+        this.repository = userRepository;
     }
 
     @Override
-    public GithubUser getUserData(String accessToken) {
-        try {
-            return githubPort.getUserData(accessToken);
-        } catch (RuntimeException e) {
-            // Handle exceptions related to user data retrieval
-            throw new RuntimeException("Failed to retrieve user data: " + e.getMessage(), e);
-        }
+    public @NonNull EntityId create(@Valid @NonNull User user) {
+        repository.save(user);
+        return user.id();       // ID already generated at domain level
+    }
 
+    @Override
+    public @NonNull Optional<User> findById(@NonNull EntityId id) {
+        return repository.findById(id);
+    }
+
+    @Override
+    public @NonNull User update(@Valid @NonNull User user) {
+        repository.save(user);
+        return user;
     }
     
+
+    @Override
+    public void delete(@NonNull EntityId id) {
+        repository.delete(id);
+    }
 }

@@ -1,13 +1,13 @@
 type Props = {
   name: string;
   login: string;
-  avatar_url: string;
+  avatarUrl: string;
 };
 
-const UserProfile = ({ name, login, avatar_url }: Props) => (
+const UserProfile = ({ name, login, avatarUrl }: Props) => (
   <div>
     <p>Bienvenido, {name || login}</p>
-    <img src={avatar_url} alt="Avatar" width={80} style={{ borderRadius: '50%' }} />
+    <img src={avatarUrl} alt="Avatar" width={80} style={{ borderRadius: '50%' }} />
   </div>
 );
 
