@@ -108,7 +108,7 @@ class GithubRepoLambdaHandlerTest {
     }
 
     private GithubLoginClaims createTestClaims(String userId, String accessToken) {
-        return new GithubLoginClaims(userId, Instant.now(), Instant.now().plusSeconds(3600), accessToken);
+        return new GithubLoginClaims(userId, Instant.now(), Instant.now().plusSeconds(3600));
     }
 
     @Nested
@@ -138,10 +138,7 @@ class GithubRepoLambdaHandlerTest {
             
             jwtPort = MockJwtPort.builder().extractedClaims(claims).build();
             repoUseCase = MockRepoUseCase.builder()
-                .getUserReposFunction(token -> {
-                    assertEquals(accessToken, token);
-                    return customRepos;
-                })
+                .getUserRepos(customRepos)
                 .build();
             githubRepoLambdaHandler = createHandler(repoUseCase, jwtPort);
             
@@ -330,10 +327,7 @@ class GithubRepoLambdaHandlerTest {
             
             jwtPort = MockJwtPort.builder().extractedClaims(integrationClaims).build();
             repoUseCase = MockRepoUseCase.builder()
-                .getUserReposFunction(accessToken -> {
-                    assertEquals(integrationAccessToken, accessToken);
-                    return integrationRepos;
-                })
+                .getUserRepos(integrationRepos)
                 .build();
             githubRepoLambdaHandler = createHandler(repoUseCase, jwtPort);
             

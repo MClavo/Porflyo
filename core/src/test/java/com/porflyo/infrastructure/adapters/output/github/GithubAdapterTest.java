@@ -49,11 +49,11 @@ class GithubAdapterTest {
     
     private static final GithubUserResponseDto USER_DTO = 
         new GithubUserResponseDto(
-            TestData.DEFAULT_USER.login(),
-            TestData.DEFAULT_USER.id(),
-            TestData.DEFAULT_USER.name(),
-            TestData.DEFAULT_USER.email(),
-            TestData.DEFAULT_USER.avatar_url()
+            TestData.DEFAULT_GITHUB_USER.login(),
+            TestData.DEFAULT_GITHUB_USER.id(),
+            TestData.DEFAULT_GITHUB_USER.name(),
+            TestData.DEFAULT_GITHUB_USER.email(),
+            TestData.DEFAULT_GITHUB_USER.avatar_url()
         );
     
     private static final GithubRepoResponseDto[] REPOS_DTO_ARRAY = {
@@ -78,11 +78,11 @@ class GithubAdapterTest {
     private static final String USER_JSON = String.format(
         """
         {"login":"%s","id":"%s","name":"%s","email":"%s","avatar_url":"%s"}""",
-        TestData.DEFAULT_USER.login(),
-        TestData.DEFAULT_USER.id(),
-        TestData.DEFAULT_USER.name(),
-        TestData.DEFAULT_USER.email(),
-        TestData.DEFAULT_USER.avatar_url());
+        TestData.DEFAULT_GITHUB_USER.login(),
+        TestData.DEFAULT_GITHUB_USER.id(),
+        TestData.DEFAULT_GITHUB_USER.name(),
+        TestData.DEFAULT_GITHUB_USER.email(),
+        TestData.DEFAULT_GITHUB_USER.avatar_url());
     
     private static final String REPOS_JSON = String.format(
         """
@@ -191,11 +191,11 @@ class GithubAdapterTest {
 
             // Then
             assertNotNull(user);
-            assertEquals(TestData.DEFAULT_USER.login(), user.login());
-            assertEquals(TestData.DEFAULT_USER.id(), user.id());
-            assertEquals(TestData.DEFAULT_USER.name(), user.name());
-            assertEquals(TestData.DEFAULT_USER.email(), user.email());
-            assertEquals(TestData.DEFAULT_USER.avatar_url(), user.avatar_url());
+            assertEquals(TestData.DEFAULT_GITHUB_USER.login(), user.login());
+            assertEquals(TestData.DEFAULT_GITHUB_USER.id(), user.id());
+            assertEquals(TestData.DEFAULT_GITHUB_USER.name(), user.name());
+            assertEquals(TestData.DEFAULT_GITHUB_USER.email(), user.email());
+            assertEquals(TestData.DEFAULT_GITHUB_USER.avatar_url(), user.avatar_url());
             verify(httpClient).send(any(HttpRequest.class), eq(BodyHandlers.ofString()));
         }
 

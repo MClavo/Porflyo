@@ -1,12 +1,12 @@
 package com.porflyo.testing.mocks.ports;
 
+import java.util.List;
+import java.util.function.Supplier;
+
 import com.porflyo.application.ports.output.GithubPort;
 import com.porflyo.domain.model.GithubRepo;
 import com.porflyo.domain.model.GithubUser;
 import com.porflyo.testing.data.TestData;
-
-import java.util.List;
-import java.util.function.Supplier;
 
 
 /**
@@ -83,7 +83,7 @@ public record MockGithubPort(
 
     public static class Builder {
         private Supplier<String> accessTokenSupplier = () -> TestData.DEFAULT_ACCESS_TOKEN;
-        private Supplier<GithubUser> userSupplier = () -> TestData.DEFAULT_USER;
+        private Supplier<GithubUser> userSupplier = () -> TestData.DEFAULT_GITHUB_USER;
         private Supplier<List<GithubRepo>> repositoriesSupplier = () -> TestData.DEFAULT_REPOS;
 
         private Supplier<RuntimeException> exchangeExceptionSupplier = () -> null;

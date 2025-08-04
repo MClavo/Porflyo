@@ -9,7 +9,7 @@ aws:
     #table-name: user-test
 
 dynamodb:
-  endpoint: http://localhost:8000
+  endpoint: http://host.docker.internal:8000
   table-name: user-test    
   region: us-east-1 
    

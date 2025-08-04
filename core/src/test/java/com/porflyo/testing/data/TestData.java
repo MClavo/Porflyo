@@ -63,7 +63,7 @@ public final class TestData {
     public static final long DEFAULT_JWT_EXPIRATION = 3600L;
     public static final String DEFAULT_USER_AGENT = "TestUserAgent/1.0";
 
-    public static final GithubUser DEFAULT_USER = new GithubUser(
+    public static final GithubUser DEFAULT_GITHUB_USER = new GithubUser(
         "testuser",
         "12345",
         "Test User",
@@ -78,7 +78,7 @@ public final class TestData {
         DEFAULT_ACCESS_TOKEN
     );
 
-    public static final User DEFAULT_DOMAIN_USER = new User(
+    public static final User DEFAULT_USER = new User(
         new EntityId("12345"),
         DEFAULT_PROVIDER_ACCOUNT,
         "Test User",
@@ -105,13 +105,11 @@ public final class TestData {
     public static final GithubLoginClaims DEFAULT_CLAIMS = new GithubLoginClaims(
         "12345",
         Instant.now(),
-        Instant.now().plusSeconds(3600),
-        TestData.DEFAULT_ACCESS_TOKEN
+        Instant.now().plusSeconds(3600)
     );
 
     public static final UserSession DEFAULT_USER_SESSION = new UserSession(
         DEFAULT_JWT_TOKEN,
-        DEFAULT_ACCESS_TOKEN,
         DEFAULT_USER
     );
 }

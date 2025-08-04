@@ -102,7 +102,7 @@ class GithubRepoLambdaHandlerEdgeCasesTest {
     }
 
     private GithubLoginClaims createClaimsWithToken(String token) {
-        return new GithubLoginClaims("user", Instant.now(), Instant.now().plusSeconds(3600), token);
+        return new GithubLoginClaims("user", Instant.now(), Instant.now().plusSeconds(3600));
     }
 
     @Nested
@@ -163,10 +163,7 @@ class GithubRepoLambdaHandlerEdgeCasesTest {
             // Given - very long access token  
             String longToken = "ghp_" + "a".repeat(500);
             jwtPort = MockJwtPort.builder().extractedClaims(createClaimsWithToken(longToken)).build();
-            repoUseCase = MockRepoUseCase.builder().getUserReposFunction(token -> {
-                assertEquals(longToken, token);
-                return TestData.DEFAULT_REPOS;
-            }).build();
+            repoUseCase = MockRepoUseCase.builder().getUserRepos(TestData.DEFAULT_REPOS).build();
             githubRepoLambdaHandler = createHandler(repoUseCase, jwtPort);
             APIGatewayV2HTTPResponse longTokenResponse = githubRepoLambdaHandler.handleUserRequest(
                 LambdaTestData.createEventWithDefaultSessionCookie());

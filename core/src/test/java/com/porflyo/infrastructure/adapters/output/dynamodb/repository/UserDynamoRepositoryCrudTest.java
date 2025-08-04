@@ -32,7 +32,6 @@ public class UserDynamoRepositoryCrudTest {
     @Inject 
     UserRepository repo;
 
-
     private EntityId id1 = new EntityId("123");
     
     private ProviderAccount providerAccount1 = new ProviderAccount(
