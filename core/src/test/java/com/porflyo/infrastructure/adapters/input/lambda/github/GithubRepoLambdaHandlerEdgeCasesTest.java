@@ -20,7 +20,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import com.amazonaws.services.lambda.runtime.events.APIGatewayV2HTTPEvent;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayV2HTTPResponse;
-import com.porflyo.domain.model.GithubLoginClaims;
+import com.porflyo.domain.model.UserClaims;
 import com.porflyo.domain.model.GithubRepo;
 import com.porflyo.infrastructure.adapters.input.lambda.api.GithubRepoLambdaHandler;
 import com.porflyo.testing.data.LambdaTestData;
@@ -101,8 +101,8 @@ class GithubRepoLambdaHandlerEdgeCasesTest {
         return createHandler(repoUseCase, jwtPort);
     }
 
-    private GithubLoginClaims createClaimsWithToken(String token) {
-        return new GithubLoginClaims("user", Instant.now(), Instant.now().plusSeconds(3600));
+    private UserClaims createClaimsWithToken(String token) {
+        return new UserClaims("user", Instant.now(), Instant.now().plusSeconds(3600));
     }
 
     @Nested

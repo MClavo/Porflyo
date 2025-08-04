@@ -17,7 +17,7 @@ import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import com.porflyo.application.configuration.JwtConfig;
-import com.porflyo.domain.model.GithubLoginClaims;
+import com.porflyo.domain.model.UserClaims;
 import com.porflyo.testing.data.TestData;
 import com.porflyo.testing.mocks.ports.MockJwtConfig;
 
@@ -42,7 +42,7 @@ class JwtAdapterTest {
         @DisplayName("Should generate valid JWT token with valid claims")
         void shouldGenerateValidToken() {
             // Given
-            GithubLoginClaims claims = TestData.DEFAULT_CLAIMS;
+            UserClaims claims = TestData.DEFAULT_CLAIMS;
 
             // When
             String token = jwtAdapter.generateToken(claims);
@@ -58,8 +58,8 @@ class JwtAdapterTest {
         @DisplayName("Should generate different tokens for different claims")
         void shouldGenerateDifferentTokensForDifferentClaims() {
             // Given
-            GithubLoginClaims claims1 = new GithubLoginClaims("user1", 3600);
-            GithubLoginClaims claims2 = new GithubLoginClaims("user2", 3600);
+            UserClaims claims1 = new UserClaims("user1", 3600);
+            UserClaims claims2 = new UserClaims("user2", 3600);
 
             // When
             String token1 = jwtAdapter.generateToken(claims1);
@@ -84,7 +84,7 @@ class JwtAdapterTest {
             // Given
             Instant now = Instant.now();
             Instant futureExp = now.plusSeconds(7200); // 2 hours
-            GithubLoginClaims claims = new GithubLoginClaims("testuser", now, futureExp);
+            UserClaims claims = new UserClaims("testuser", now, futureExp);
 
             // When
             String token = jwtAdapter.generateToken(claims);
@@ -93,7 +93,7 @@ class JwtAdapterTest {
             assertNotNull(token);
             
             // Verify by extracting claims back
-            GithubLoginClaims extractedClaims = jwtAdapter.extractClaims(token);
+            UserClaims extractedClaims = jwtAdapter.extractClaims(token);
             assertEquals(claims.getSub(), extractedClaims.getSub());
         }
     }
@@ -106,7 +106,7 @@ class JwtAdapterTest {
         @DisplayName("Should validate correctly signed token")
         void shouldValidateCorrectlySignedToken() {
             // Given
-            GithubLoginClaims claims = TestData.DEFAULT_CLAIMS;
+            UserClaims claims = TestData.DEFAULT_CLAIMS;
             String token = jwtAdapter.generateToken(claims);
 
             // When
@@ -152,7 +152,7 @@ class JwtAdapterTest {
             // Given - Create claims with past expiration
             Instant now = Instant.now();
             Instant pastExp = now.minusSeconds(3600); // 1 hour ago
-            GithubLoginClaims expiredClaims = new GithubLoginClaims("testuser", now.minusSeconds(7200), pastExp);
+            UserClaims expiredClaims = new UserClaims("testuser", now.minusSeconds(7200), pastExp);
 
             String expiredToken = jwtAdapter.generateToken(expiredClaims);
 
@@ -172,11 +172,11 @@ class JwtAdapterTest {
         @DisplayName("Should extract all claims from valid token")
         void shouldExtractAllClaimsFromValidToken() {
             // Given
-            GithubLoginClaims originalClaims = TestData.DEFAULT_CLAIMS;
+            UserClaims originalClaims = TestData.DEFAULT_CLAIMS;
             String token = jwtAdapter.generateToken(originalClaims);
 
             // When
-            GithubLoginClaims extractedClaims = jwtAdapter.extractClaims(token);
+            UserClaims extractedClaims = jwtAdapter.extractClaims(token);
 
             // Then
             assertNotNull(extractedClaims);
@@ -191,7 +191,7 @@ class JwtAdapterTest {
         void shouldExtractClaimsWithSpecialCharacters() {
             // Given
             String specialSub = "user@example.com";
-            GithubLoginClaims claims = new GithubLoginClaims(
+            UserClaims claims = new UserClaims(
                 specialSub, 
                 Instant.now(), 
                 Instant.now().plusSeconds(3600)
@@ -199,7 +199,7 @@ class JwtAdapterTest {
             String token = jwtAdapter.generateToken(claims);
 
             // When
-            GithubLoginClaims extractedClaims = jwtAdapter.extractClaims(token);
+            UserClaims extractedClaims = jwtAdapter.extractClaims(token);
 
             // Then
             assertEquals(specialSub, extractedClaims.getSub());
@@ -237,7 +237,7 @@ class JwtAdapterTest {
         @DisplayName("Should complete full token lifecycle successfully")
         void shouldCompleteFullTokenLifecycleSuccessfully() {
             // Given
-            GithubLoginClaims originalClaims = new GithubLoginClaims(
+            UserClaims originalClaims = new UserClaims(
                 "integration_user",
                 Instant.now(),
                 Instant.now().plusSeconds(1800) // 30 minutes
@@ -250,7 +250,7 @@ class JwtAdapterTest {
             assertTrue(jwtAdapter.validateToken(token));
 
             // And - Extract claims
-            GithubLoginClaims extractedClaims = jwtAdapter.extractClaims(token);
+            UserClaims extractedClaims = jwtAdapter.extractClaims(token);
             assertEquals(originalClaims.getSub(), extractedClaims.getSub());
         }
 
@@ -269,7 +269,7 @@ class JwtAdapterTest {
 
             // Then
             assertTrue(customAdapter.validateToken(token));
-            GithubLoginClaims claims = customAdapter.extractClaims(token);
+            UserClaims claims = customAdapter.extractClaims(token);
             assertEquals(TestData.DEFAULT_CLAIMS.getSub(), claims.getSub());
             
             // But should fail with default adapter
@@ -280,7 +280,7 @@ class JwtAdapterTest {
         @DisplayName("Should handle minimum viable token data")
         void shouldHandleMinimumViableTokenData() {
             // Given - Minimum required data
-            GithubLoginClaims minimalClaims = new GithubLoginClaims(
+            UserClaims minimalClaims = new UserClaims(
                 "1",
                 Instant.now(),
                 Instant.now().plusSeconds(60)
@@ -291,7 +291,7 @@ class JwtAdapterTest {
 
             // Then
             assertTrue(jwtAdapter.validateToken(token));
-            GithubLoginClaims extractedClaims = jwtAdapter.extractClaims(token);
+            UserClaims extractedClaims = jwtAdapter.extractClaims(token);
             assertEquals("1", extractedClaims.getSub());
         }
     }

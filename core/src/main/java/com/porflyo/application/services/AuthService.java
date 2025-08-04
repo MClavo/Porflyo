@@ -13,7 +13,7 @@ import com.porflyo.application.ports.input.AuthUseCase;
 import com.porflyo.application.ports.output.GithubPort;
 import com.porflyo.application.ports.output.JwtPort;
 import com.porflyo.application.ports.output.UserRepository;
-import com.porflyo.domain.model.GithubLoginClaims;
+import com.porflyo.domain.model.UserClaims;
 import com.porflyo.domain.model.GithubUser;
 import com.porflyo.domain.model.UserSession;
 import com.porflyo.domain.model.shared.EntityId;
@@ -95,7 +95,7 @@ public class AuthService implements AuthUseCase {
 
             User user = createUserFromGithubUser(githubUser, accessToken);
 
-            GithubLoginClaims claims = new GithubLoginClaims(
+            UserClaims claims = new UserClaims(
                 user.id().value(),
                 jwtConfig.expiration()
             );

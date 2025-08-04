@@ -10,7 +10,7 @@ import lombok.Getter;
  * expiration time (exp)
  */
 @Getter
-public class GithubLoginClaims {
+public class UserClaims {
 
     private final String sub;           // Subject - User ID
     private final Instant iat;          // Issued At
@@ -28,7 +28,7 @@ public class GithubLoginClaims {
      * @param iat The issued at time
      * @param exp The expiration time
      */
-    public GithubLoginClaims(String sub, Instant iat, Instant exp) {
+    public UserClaims(String sub, Instant iat, Instant exp) {
         this.sub = sub;
         this.iat = iat;
         this.exp = exp;
@@ -41,7 +41,7 @@ public class GithubLoginClaims {
      * 
      * @returns A GithubLoginClaims object with the provided subject and expiration,
      */
-    public GithubLoginClaims(String sub, long tokenLifetime) {
+    public UserClaims(String sub, long tokenLifetime) {
         this.sub = sub;
         this.iat = Instant.now();
         this.exp = iat.plusSeconds(tokenLifetime);

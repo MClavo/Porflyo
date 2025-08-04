@@ -2,8 +2,8 @@ package com.porflyo.infrastructure.adapters.output.dynamodb.repository;
 
 import java.util.Map;
 import java.util.Optional;
-import org.slf4j.Logger;
 
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.porflyo.application.ports.output.UserRepository;
@@ -67,16 +67,17 @@ public class UserDynamoRepository implements UserRepository {
     
 
     @Override
-    public void patch(@NonNull EntityId id, @NonNull Map<String, Object> attrs) {
-        if (attrs.isEmpty()) return;
+    public User patch(@NonNull EntityId id, @NonNull Map<String, Object> attrs) {
+        if (attrs.isEmpty()) return null;
 
         // Dto with null fields except for the attributes in attrs
         DynamoUserDto updateItem = UserDynamoMapper.createPatchDto(id, attrs);
-
         UpdateItemEnhancedRequest<DynamoUserDto> request = createUpdateItemRequest(updateItem);
-
-        table.updateItem(request);
+        
+        DynamoUserDto result = table.updateItem(request);
         log.debug("Patched user: {}", id.value());
+
+        return UserDynamoMapper.toDomain(result);
     }
 
     

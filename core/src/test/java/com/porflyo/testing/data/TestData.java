@@ -5,7 +5,7 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 
-import com.porflyo.domain.model.GithubLoginClaims;
+import com.porflyo.domain.model.UserClaims;
 import com.porflyo.domain.model.GithubRepo;
 import com.porflyo.domain.model.GithubUser;
 import com.porflyo.domain.model.UserSession;
@@ -40,7 +40,7 @@ import com.porflyo.domain.model.user.User;
  *   <li>{@code DEFAULT_REPOS}:
  *       List containing the default repositories.</li>
  *   <li>{@code DEFAULT_CLAIMS}:
- *       Sample {@link GithubLoginClaims} instance for JWT-related tests.</li>
+ *       Sample {@link UserClaims} instance for JWT-related tests.</li>
  * </ul>
  */
 public final class TestData {
@@ -102,7 +102,7 @@ public final class TestData {
 
     public static final List<GithubRepo> DEFAULT_REPOS = List.of(REPO_1, REPO_2);
 
-    public static final GithubLoginClaims DEFAULT_CLAIMS = new GithubLoginClaims(
+    public static final UserClaims DEFAULT_CLAIMS = new UserClaims(
         "12345",
         Instant.now(),
         Instant.now().plusSeconds(3600)

@@ -1,6 +1,6 @@
 package com.porflyo.application.ports.output;
 
-import com.porflyo.domain.model.GithubLoginClaims;
+import com.porflyo.domain.model.UserClaims;
 
 public interface JwtPort {
     
@@ -10,7 +10,7 @@ public interface JwtPort {
      * @param claims A map of claims to include in the JWT token.
      * @return The generated JWT token as a string.
      */
-    String generateToken(GithubLoginClaims claims);
+    String generateToken(UserClaims claims);
 
     /**
      * Validates the provided JWT token.
@@ -26,5 +26,5 @@ public interface JwtPort {
      * @param token The JWT token from which to extract claims.
      * @return A map containing the claims extracted from the token.
      */
-    GithubLoginClaims extractClaims(String token);
+    UserClaims extractClaims(String token);
 }

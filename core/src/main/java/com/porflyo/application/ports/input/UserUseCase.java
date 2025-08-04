@@ -1,5 +1,6 @@
 package com.porflyo.application.ports.input;
 
+import java.util.Map;
 import java.util.Optional;
 
 import com.porflyo.domain.model.shared.EntityId;
@@ -50,13 +51,13 @@ public interface UserUseCase {
     Optional<User> findById(@NonNull EntityId id);
 
      /**
-     * Updates an existing user (replace-all strategy).
+     * Updates an existing user.
      *
      * @param user The modified user instance (immutable aggregate).
      * @return The updated user after persistence.
      */
     @NonNull
-    User update(@Valid @NonNull User user);
+    User patch(@Valid @NonNull EntityId id, @NonNull Map<String, Object> attributes);
 
     /**
      * Deletes a user and every dependent item (portfolios, merits…) if needed.

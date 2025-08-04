@@ -21,7 +21,7 @@ import org.mockito.Mockito;
 
 import com.amazonaws.services.lambda.runtime.events.APIGatewayV2HTTPEvent;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayV2HTTPResponse;
-import com.porflyo.domain.model.GithubLoginClaims;
+import com.porflyo.domain.model.UserClaims;
 import com.porflyo.domain.model.GithubRepo;
 import com.porflyo.infrastructure.adapters.input.lambda.api.GithubRepoLambdaHandler;
 import com.porflyo.testing.data.LambdaTestData;
@@ -107,8 +107,8 @@ class GithubRepoLambdaHandlerTest {
             .toList();
     }
 
-    private GithubLoginClaims createTestClaims(String userId, String accessToken) {
-        return new GithubLoginClaims(userId, Instant.now(), Instant.now().plusSeconds(3600));
+    private UserClaims createTestClaims(String userId, String accessToken) {
+        return new UserClaims(userId, Instant.now(), Instant.now().plusSeconds(3600));
     }
 
     @Nested
@@ -134,7 +134,7 @@ class GithubRepoLambdaHandlerTest {
             // Given
             String accessToken = "custom_token_456";
             List<GithubRepo> customRepos = createTestRepos("custom-repo-1", "custom-repo-2", "custom-repo-3");
-            GithubLoginClaims claims = createTestClaims("customuser", accessToken);
+            UserClaims claims = createTestClaims("customuser", accessToken);
             
             jwtPort = MockJwtPort.builder().extractedClaims(claims).build();
             repoUseCase = MockRepoUseCase.builder()
@@ -323,7 +323,7 @@ class GithubRepoLambdaHandlerTest {
             // Given
             String integrationAccessToken = "integration_access_token_repos";
             List<GithubRepo> integrationRepos = createTestRepos("integration-repo-1", "integration-repo-2");
-            GithubLoginClaims integrationClaims = createTestClaims("integrationuser", integrationAccessToken);
+            UserClaims integrationClaims = createTestClaims("integrationuser", integrationAccessToken);
             
             jwtPort = MockJwtPort.builder().extractedClaims(integrationClaims).build();
             repoUseCase = MockRepoUseCase.builder()
