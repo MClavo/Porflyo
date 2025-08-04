@@ -1,5 +1,7 @@
 package com.porflyo.domain.model;
 
+import com.porflyo.domain.model.user.User;
+
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.serde.annotation.Serdeable;
 
@@ -15,6 +17,5 @@ import io.micronaut.serde.annotation.Serdeable;
 @Introspected
 public record UserSession(
     String jwtToken,
-    String githubAccessToken,
-    GithubUser githubUser
+    User user
 ) { }
