@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import com.porflyo.domain.model.shared.EntityId;
+import com.porflyo.domain.model.user.ProviderAccount;
 import com.porflyo.domain.model.user.User;
 
 import io.micronaut.core.annotation.NonNull;
@@ -20,6 +21,8 @@ public interface UserRepository {
     Optional<User> findById(@NonNull EntityId id);
 
     void patch(@NonNull EntityId id, @NonNull Map<String, Object> attributes);
+
+    void patchProviderAccount(@NonNull EntityId id, @NonNull ProviderAccount providerAccount);
 
     void delete(@NonNull EntityId id);
     

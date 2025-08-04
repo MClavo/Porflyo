@@ -1,16 +1,24 @@
 package com.porflyo.application.services;
 
+import java.net.URI;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.porflyo.application.configuration.GithubOAuthConfig;
 import com.porflyo.application.configuration.JwtConfig;
 import com.porflyo.application.ports.input.AuthUseCase;
 import com.porflyo.application.ports.output.GithubPort;
 import com.porflyo.application.ports.output.JwtPort;
+import com.porflyo.application.ports.output.UserRepository;
 import com.porflyo.domain.model.GithubLoginClaims;
 import com.porflyo.domain.model.GithubUser;
 import com.porflyo.domain.model.UserSession;
+import com.porflyo.domain.model.shared.EntityId;
+import com.porflyo.domain.model.user.ProviderAccount;
+import com.porflyo.domain.model.user.User;
 
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
@@ -45,17 +53,21 @@ import jakarta.inject.Singleton;
  */
 @Singleton
 public class AuthService implements AuthUseCase {
+    private static final Logger log = LoggerFactory.getLogger(AuthService.class);
+    private final UserRepository userRepository;
+
     private final GithubOAuthConfig oauthconfig;
     private final JwtConfig jwtConfig;
     private final GithubPort github;
     private final JwtPort jwt;
 
     @Inject
-    public AuthService(GithubPort githubPort, JwtPort jwtPort, GithubOAuthConfig Oauthconfig, JwtConfig jwtConfig) {
+    public AuthService(GithubPort githubPort, JwtPort jwtPort, GithubOAuthConfig Oauthconfig, JwtConfig jwtConfig, UserRepository userRepository) {
         this.github = githubPort;
         this.jwt = jwtPort;
         this.oauthconfig = Oauthconfig;
         this.jwtConfig = jwtConfig;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -79,21 +91,62 @@ public class AuthService implements AuthUseCase {
        try {
             // Exchange the code for an access token and fetch user data
             String accessToken = github.exchangeCodeForAccessToken(code);
-            GithubUser user = github.getUserData(accessToken);
+            GithubUser githubUser = github.getUserData(accessToken);
+
+            User user = createUserFromGithubUser(githubUser, accessToken);
 
             GithubLoginClaims claims = new GithubLoginClaims(
-                user.id(),
-                jwtConfig.expiration(),
-                accessToken
+                user.id().value(),
+                jwtConfig.expiration()
             );
 
             String jwtToken = jwt.generateToken(claims);
 
-            return new UserSession(jwtToken, accessToken, user);
+
+            // Save or update new user in the repository
+            saveOrUpdateUser(user);
+            log.debug("User session created: JWT: {}, User ID: {}", jwtToken, user.id().value());
+
+            return new UserSession(jwtToken, user);
             
         } catch (Exception e) {
             // Handle exceptions appropriately, e.g., log error, rethrow, etc.
             throw new RuntimeException("Failed to handle OAuth callback", e);
+        }
+    }
+
+    User createUserFromGithubUser(GithubUser githubUser, String accessToken) {
+        
+        ProviderAccount githubAccount = new ProviderAccount(
+            githubUser.id(),
+            githubUser.name(),
+            URI.create(githubUser.avatar_url()),
+            accessToken
+        );
+
+        EntityId id = EntityId.newKsuid();
+
+        return new User(
+            id,
+            githubAccount,
+            githubUser.name(),
+            githubUser.email(),
+            "",                     // Empty description
+            URI.create(githubUser.avatar_url()),
+            null                    // No socials for now
+        );
+    }
+
+    void saveOrUpdateUser(User user) {
+        User existingUser = userRepository.findById(user.id())
+            .orElse(null);
+
+        // Save new user or patch provider account if user already exists
+        if (existingUser != null) {
+            userRepository.patchProviderAccount(user.id(), user.provider());
+
+        } else {
+            userRepository.save(user);
         }
     }
 }
