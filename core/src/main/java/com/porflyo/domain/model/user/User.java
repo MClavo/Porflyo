@@ -16,7 +16,7 @@ import jakarta.validation.constraints.NotBlank;
 @Serdeable
 @Introspected
 public final class User {
-
+    @NotBlank
     private final EntityId id;
 
     @Valid
