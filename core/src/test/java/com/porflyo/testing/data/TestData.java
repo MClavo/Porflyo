@@ -16,32 +16,11 @@ import com.porflyo.domain.model.user.User;
 
 
 /**
- * Utility class providing default test data for unit tests.
+ * Test data for Porflyo application.
  * <p>
- * This class contains constant values and objects commonly used in tests,
- * such as default configuration parameters, sample GitHub user and repository data,
- * and default JWT claims.
+ * This class provides static instances of various domain models and constants
+ * used throughout the application for testing purposes.
  * </p>
- * <p>
- * The class is final and has a private constructor to prevent instantiation.
- * </p>
- *
- * <ul>
- *   <li>{@code DEFAULT_CLIENT_ID}, {@code DEFAULT_CLIENT_SECRET}, {@code DEFAULT_REDIRECT_URI}, {@code DEFAULT_SCOPE}:
- *       Default OAuth configuration values.</li>
- *   <li>{@code DEFAULT_JWT_SECRET}, {@code DEFAULT_JWT_EXPIRATION}:
- *       Default JWT secret and expiration time.</li>
- *   <li>{@code DEFAULT_FRONTEND_URL}:
- *       Default frontend URL for redirection.</li>
- *   <li>{@code DEFAULT_USER}:
- *       A sample {@link GithubUser} instance for testing.</li>
- *   <li>{@code REPO_1}, {@code REPO_2}:
- *       Sample {@link GithubRepo} instances for testing.</li>
- *   <li>{@code DEFAULT_REPOS}:
- *       List containing the default repositories.</li>
- *   <li>{@code DEFAULT_CLAIMS}:
- *       Sample {@link UserClaims} instance for JWT-related tests.</li>
- * </ul>
  */
 public final class TestData {
 

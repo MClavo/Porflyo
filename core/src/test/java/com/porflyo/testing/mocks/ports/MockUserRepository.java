@@ -45,8 +45,8 @@ public final class MockUserRepository implements UserRepository {
     }
 
     @Override
-    public void patch(@NonNull EntityId id, @NonNull Map<String, Object> attributes) {
-        mock.patch(id, attributes);
+    public User patch(@NonNull EntityId id, @NonNull Map<String, Object> attributes) {
+        return mock.patch(id, attributes);
     }
 
     @Override
