@@ -39,7 +39,6 @@ public class JwtAdapter implements JwtPort {
                 .subject(claims.getSub())
                 .issueTime(java.util.Date.from(claims.getIat()))
                 .expirationTime(java.util.Date.from(claims.getExp()))
-                .claim("access_token", claims.getAccessToken())
                 .build();
 
             // Create signed JWT with HS 256 algorithm
@@ -107,9 +106,8 @@ public class JwtAdapter implements JwtPort {
             String sub = claims.getSubject();
             Instant iat = claims.getIssueTime().toInstant();
             Instant exp = claims.getExpirationTime().toInstant();
-            String accessToken = claims.getStringClaim("access_token");
 
-            return new GithubLoginClaims(sub, iat, exp, accessToken);
+            return new GithubLoginClaims(sub, iat, exp);
 
         } catch (Exception e) {
             throw new RuntimeException("Invalid JWT token", e);

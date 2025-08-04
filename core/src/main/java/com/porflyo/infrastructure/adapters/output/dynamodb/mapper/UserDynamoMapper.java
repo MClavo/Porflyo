@@ -8,9 +8,11 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.porflyo.domain.model.shared.EntityId;
+import com.porflyo.domain.model.user.ProviderAccount;
 import com.porflyo.domain.model.user.User;
 import com.porflyo.infrastructure.adapters.output.dynamodb.dto.DynamoUserDto;
 
+import io.micronaut.core.annotation.NonNull;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 
 /**
@@ -115,12 +117,9 @@ public final class UserDynamoMapper {
     /** Creates a DynamoUserDto with null fields except the ones specified on the Map<String, Object>
      *  Used for patching user attributes.
      */
-    public static DynamoUserDto createPatchDto(Map<String, Object> attrs) {
-        if (!attrs.containsKey("pk"))
-            throw new IllegalArgumentException("Missing required attribute 'pk'");
-
+    public static DynamoUserDto createPatchDto(@NonNull EntityId id, Map<String, Object> attrs) {
         DynamoUserDto patchDto = new DynamoUserDto();
-        patchDto.setPk(attrs.get("pk").toString());
+        patchDto.setPk("USER#" + id.value());
         patchDto.setSk("PROFILE");              // Always patching the profile
         patchDto.setName(fetchAttributeValueOrNull(attrs, "name"));
         patchDto.setEmail(fetchAttributeValueOrNull(attrs, "email"));
@@ -142,6 +141,22 @@ public final class UserDynamoMapper {
 
         return patchDto;
     }
+
+    public static DynamoUserDto createPatchDto(@NonNull EntityId id, ProviderAccount providerAccount) {
+        if (providerAccount.providerUserId() == null)
+            throw new IllegalArgumentException("Provider account must have a user ID");
+
+        DynamoUserDto patchDto = new DynamoUserDto();
+        patchDto.setPk("USER#" + id.value());
+        patchDto.setSk("PROFILE");
+        patchDto.setProviderUserId(providerAccount.providerUserId());
+        patchDto.setProviderUserName(providerAccount.providerUserName());
+        patchDto.setProviderAvatarUrl(providerAccount.providerAvatarUrl() != null ? providerAccount.providerAvatarUrl().toString() : null);
+        patchDto.setProviderAccessToken(providerAccount.providerAccessToken());
+
+        return patchDto;
+    }
+
     /* ----------- Helpers ----------- */
 
     private static String fetchAttributeValueOrNull(Map<String, Object> attrs, String key) {

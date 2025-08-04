@@ -8,6 +8,7 @@ import com.porflyo.application.ports.input.RepoUseCase;
 import com.porflyo.application.ports.output.JwtPort;
 import com.porflyo.domain.model.GithubLoginClaims;
 import com.porflyo.domain.model.GithubRepo;
+import com.porflyo.domain.model.shared.EntityId;
 import com.porflyo.infrastructure.adapters.input.lambda.utils.LambdaHttpUtils;
 
 import io.micronaut.json.JsonMapper;
@@ -64,9 +65,14 @@ public class GithubRepoLambdaHandler {
             // Extract cookie and claims
             String cookie = LambdaHttpUtils.extractCookieValue(input, "session");
             GithubLoginClaims claims = jwtService.extractClaims(cookie);
+            if (claims == null) {
+                return LambdaHttpUtils.createErrorResponse(401, "Unauthorized: Invalid session");
+            }
+
+            EntityId userId = new EntityId(claims.getSub());
 
             // Get user data
-            List<GithubRepo> repos = repoService.getUserRepos(claims.getAccessToken());
+            List<GithubRepo> repos = repoService.getUserRepos(userId);
             return LambdaHttpUtils.createResponse(200, jsonMapper.writeValueAsString(repos));
 
         } catch (Exception e) {

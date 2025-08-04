@@ -1,5 +1,7 @@
 micronaut:
-
+  test:
+    resources:
+      enabled: true
   application:
     name: porflyo-api
     
@@ -65,11 +67,16 @@ aws:
     #endpoint: http://localhost:8000
     #region: us-east-1
 
+dynamodb:
+  endpoint: http://host.docker.internal:8000
+  table-name: user-test    
+  region: us-east-1 
+
 test-resources:
   containers:
     dynamodb:
-      image-name: amazon/dynamodb-local # <1>
+      image-name: amazon/dynamodb-local 
       hostnames:
-        - dynamodb-local.host # <2>
+        - dynamodb-local.host 
       exposed-ports:
-        - dynamodb-local.port: 8000 # <3>
+        - dynamodb-local.port: 8000

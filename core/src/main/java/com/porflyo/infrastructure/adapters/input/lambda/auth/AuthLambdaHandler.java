@@ -76,6 +76,7 @@ public class AuthLambdaHandler {
             return LambdaHttpUtils.createRedirectResponse(loginUrl);
 
         } catch (Exception e) {
+            log.error("Error handling OAuth login: {}", e.getMessage(), e);
             return LambdaHttpUtils.createErrorResponse(500, e.getMessage());
         }
     }
@@ -107,6 +108,7 @@ public class AuthLambdaHandler {
             return LambdaHttpUtils.createResponse(200, "Valid token");
 
         } catch (Exception e) {
+            log.error("Error validating token: {}", e.getMessage(), e);
             return LambdaHttpUtils.createErrorResponse(500, e.getMessage());
         }
     }
@@ -149,6 +151,7 @@ public class AuthLambdaHandler {
                 expiration);        // Max-Age
 
         } catch (Exception e) {
+            log.error("Error handling OAuth callback: {}", e.getMessage(), e);
             return LambdaHttpUtils.createErrorResponse(500, e.getMessage());
         }
     }
