@@ -23,8 +23,8 @@ import software.amazon.awssdk.services.dynamodb.model.ResourceNotFoundException;
  * !!!! NEVER use this in production !!!!
  */
 @Singleton
-@Requires(env = { Environment.TEST, Environment.DEVELOPMENT })
-@Requires(beans = DynamoDbConfig.class) // Solo se carga si DynamoDbConfig está disponible
+@Requires(env = { Environment.TEST, Environment.DEVELOPMENT, "local" })
+@Requires(beans = DynamoDbConfig.class) // Only if DynamoDbConfig is present
 public class DynamoBootstrap implements ApplicationEventListener<StartupEvent> {
 
     @Inject DynamoDbEnhancedClient enhanced;
