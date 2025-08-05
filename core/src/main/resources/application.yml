@@ -1,7 +1,7 @@
 micronaut:
   test:
     resources:
-      enabled: false  # Solo habilitado en perfiles de test específicos
+      enabled: false  # Only enable resources for integration tests that require DynamoDB
   application:
     name: porflyo-api
     
