@@ -1,8 +1,10 @@
 package com.porflyo.infrastructure.configuration;
 
 import io.micronaut.context.annotation.ConfigurationProperties;
+import io.micronaut.context.annotation.Requires;
 
 @ConfigurationProperties("dynamodb")
+@Requires(property = "dynamodb.endpoint")
 public record DynamoDbConfig(
     String region,      
     String tableName,

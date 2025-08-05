@@ -38,6 +38,7 @@ public final class User {
      */
     private final Map<@NotBlank String, String> socials;
 
+
     public User(EntityId id, ProviderAccount providerAccount, String name, String email, String description,
             URI avatarUrl, Map<String, String> socials) {
         this.id = Objects.requireNonNull(id);

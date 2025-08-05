@@ -2,8 +2,8 @@ package com.porflyo.infrastructure.adapters.output.dynamodb.repository;
 
 import java.util.Map;
 import java.util.Optional;
-import org.slf4j.Logger;
 
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.porflyo.application.ports.output.UserRepository;
@@ -15,13 +15,17 @@ import com.porflyo.infrastructure.adapters.output.dynamodb.mapper.UserDynamoMapp
 import com.porflyo.infrastructure.adapters.output.dynamodb.schema.UserTableSchema;
 import com.porflyo.infrastructure.configuration.DynamoDbConfig;
 
+import io.micronaut.context.annotation.Requires;
 import io.micronaut.core.annotation.NonNull;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
+import software.amazon.awssdk.core.pagination.sync.SdkIterable;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable;
 import software.amazon.awssdk.enhanced.dynamodb.Key;
 import software.amazon.awssdk.enhanced.dynamodb.model.IgnoreNullsMode;
+import software.amazon.awssdk.enhanced.dynamodb.model.Page;
+import software.amazon.awssdk.enhanced.dynamodb.model.QueryConditional;
 import software.amazon.awssdk.enhanced.dynamodb.model.UpdateItemEnhancedRequest;
 
 /**
@@ -31,6 +35,7 @@ import software.amazon.awssdk.enhanced.dynamodb.model.UpdateItemEnhancedRequest;
  * </p>
  */
 @Singleton
+@Requires(beans = DynamoDbConfig.class)
 public class UserDynamoRepository implements UserRepository {
     private static final Logger log = LoggerFactory.getLogger(UserDynamoRepository.class);
     private final DynamoDbTable<DynamoUserDto> table;
@@ -63,32 +68,61 @@ public class UserDynamoRepository implements UserRepository {
         return Optional.ofNullable(dto).map(UserDynamoMapper::toDomain);
     }
 
-    
+    @Override
+    public Optional<User> findByProviderId(@NonNull String providerId) {
+        Key key = Key.builder()
+                .partitionValue(providerId)
+                .build();
+
+        // Query the GSI for provider-user-id-index
+        QueryConditional query = QueryConditional.keyEqualTo(key);
+
+        // Even if there is only one item, we need SdkIterable to handle pagination
+        SdkIterable<Page<DynamoUserDto>> result = table
+            .index("provider-user-id-index")
+            .query(query);
+
+        DynamoUserDto dto = result.stream()
+                .flatMap(p -> p.items().stream())
+                .findFirst()
+                .orElse(null);
+        
+        if (dto == null) {
+            log.debug("User not found for provider ID: {}", providerId);
+        } else {
+            log.debug("Found user for provider ID: {}", providerId);
+        }
+
+        return Optional.ofNullable(dto).map(UserDynamoMapper::toDomain);
+    }
     
 
     @Override
-    public void patch(@NonNull EntityId id, @NonNull Map<String, Object> attrs) {
-        if (attrs.isEmpty()) return;
+    public User patch(@NonNull EntityId id, @NonNull Map<String, Object> attrs) {
+        if (attrs.isEmpty()) return null;
 
         // Dto with null fields except for the attributes in attrs
         DynamoUserDto updateItem = UserDynamoMapper.createPatchDto(id, attrs);
-
         UpdateItemEnhancedRequest<DynamoUserDto> request = createUpdateItemRequest(updateItem);
-
-        table.updateItem(request);
+        
+        DynamoUserDto result = table.updateItem(request);
         log.debug("Patched user: {}", id.value());
+
+        return UserDynamoMapper.toDomain(result);
     }
 
     
 
     @Override
-    public void patchProviderAccount(@NonNull EntityId id, @NonNull ProviderAccount providerAccount) {
+    public User patchProviderAccount(@NonNull EntityId id, @NonNull ProviderAccount providerAccount) {
         DynamoUserDto updateItem = UserDynamoMapper.createPatchDto(id, providerAccount);
 
         UpdateItemEnhancedRequest<DynamoUserDto> request = createUpdateItemRequest(updateItem);
 
-        table.updateItem(request);
+        DynamoUserDto result = table.updateItem(request);
         log.debug("Patched provider account for user: {}", id.value());
+        
+        return UserDynamoMapper.toDomain(result);
     }
 
     @Override

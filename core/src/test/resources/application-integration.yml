@@ -1,0 +1,18 @@
+micronaut:
+  test:
+    resources:
+      enabled: false
+
+# DynamoDB Configuration for Testing
+aws:
+  region: us-east-1
+   
+dynamodb:
+  endpoint: ${dynamodb.url:`http://localhost:8000`}
+  table-name: user-test    
+  region: us-east-1
+
+logger:
+  levels:
+    com.porflyo: DEBUG
+    root: INFO

@@ -1,0 +1,18 @@
+micronaut:
+  environments:
+    active: local
+
+# DynamoDB Configuration for SAM Local
+aws:
+  region: us-east-1
+   
+dynamodb:
+  endpoint: http://host.docker.internal:8000
+  table-name: user-test    
+  region: us-east-1
+
+logger:
+  levels:
+    com.porflyo: DEBUG
+    io.micronaut.http: DEBUG
+    root: INFO

@@ -1,5 +1,6 @@
 package com.porflyo.application.services;
 
+import java.util.Map;
 import java.util.Optional;
 
 import com.porflyo.application.ports.input.UserUseCase;
@@ -41,9 +42,8 @@ public class UserService implements UserUseCase{
     }
 
     @Override
-    public @NonNull User update(@Valid @NonNull User user) {
-        repository.save(user);
-        return user;
+    public @NonNull User patch(@Valid @NonNull EntityId id, @NonNull Map<String, Object> attributes) {
+        return repository.patch(id, attributes);
     }
     
 

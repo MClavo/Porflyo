@@ -12,7 +12,7 @@ import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import com.porflyo.application.configuration.JwtConfig;
 import com.porflyo.application.ports.output.JwtPort;
-import com.porflyo.domain.model.GithubLoginClaims;
+import com.porflyo.domain.model.UserClaims;
 
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
@@ -29,7 +29,7 @@ public class JwtAdapter implements JwtPort {
     }
 
     @Override
-    public String generateToken(GithubLoginClaims claims) {
+    public String generateToken(UserClaims claims) {
         try {
             JWSSigner signer = new MACSigner(jwtConfig.secret());
 
@@ -90,7 +90,7 @@ public class JwtAdapter implements JwtPort {
     }
 
     @Override
-    public GithubLoginClaims extractClaims(String token) {
+    public UserClaims extractClaims(String token) {
         try {
 
             SignedJWT signedJWT = SignedJWT.parse(token);
@@ -107,7 +107,7 @@ public class JwtAdapter implements JwtPort {
             Instant iat = claims.getIssueTime().toInstant();
             Instant exp = claims.getExpirationTime().toInstant();
 
-            return new GithubLoginClaims(sub, iat, exp);
+            return new UserClaims(sub, iat, exp);
 
         } catch (Exception e) {
             throw new RuntimeException("Invalid JWT token", e);

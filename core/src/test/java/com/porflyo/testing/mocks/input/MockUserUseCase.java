@@ -1,54 +1,30 @@
 package com.porflyo.testing.mocks.input;
 
-import java.util.Arrays;
-import java.util.HashMap;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyMap;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Function;
 
 import com.porflyo.application.ports.input.UserUseCase;
 import com.porflyo.domain.model.shared.EntityId;
 import com.porflyo.domain.model.user.User;
 
-import io.micronaut.core.annotation.NonNull;
-
 /**
- * Extremely lightweight in-memory mock for {@link UserUseCase}.
- * <p>
- * – Uses a plain {@link HashMap} as backing store.<br>
- * – Allows optional overrides via builder lambdas.<br>
- * – Perfect for unit tests where the real repository is irrelevant.
+ * Mockito-based mock of {@link UserUseCase} for unit tests.
+ * Allows stubbing of methods via fluent builder syntax.
  */
-public final class MockUserUseCase implements UserUseCase {
+public final class MockUserUseCase {
 
-    /* --------------------------------------------------------------------- */
-    /* Backing store & optional overrides */
-    /* --------------------------------------------------------------------- */
+    private final UserUseCase mock;
 
-    private final Map<EntityId, User> store = new HashMap<>();
-
-    private final Function<User, EntityId> createFn;
-    private final Function<EntityId, Optional<User>> findFn;
-    private final Function<User, User> updateFn;
-    private final Function<EntityId, Boolean> deleteFn;
-
-    /* --------------------------------------------------------------------- */
-    /* Constructor (package-private, use builder) */
-    /* --------------------------------------------------------------------- */
-
-    public MockUserUseCase(Function<User, EntityId> createFn,
-            Function<EntityId, Optional<User>> findFn,
-            Function<User, User> updateFn,
-            Function<EntityId, Boolean> deleteFn) {
-        this.createFn = createFn;
-        this.findFn = findFn;
-        this.updateFn = updateFn;
-        this.deleteFn = deleteFn;
+    private MockUserUseCase(UserUseCase mock) {
+        this.mock = mock;
     }
-
-    /* --------------------------------------------------------------------- */
-    /* Builder – override only what you need */
-    /* --------------------------------------------------------------------- */
 
     public static Builder builder() {
         return new Builder();
@@ -58,73 +34,49 @@ public final class MockUserUseCase implements UserUseCase {
         return builder().build();
     }
 
+    public UserUseCase instance() {
+        return mock;
+    }
+
     public static final class Builder {
-        private final Map<EntityId, User> seed = new HashMap<>();
+        private final UserUseCase mock = mock(UserUseCase.class);
 
-        private Function<User, EntityId> createFn;
-        private Function<EntityId, Optional<User>> findFn;
-        private Function<User, User> updateFn;
-        private Function<EntityId, Boolean> deleteFn;
-
-        /** Pre-populate the in-memory store. */
-        public Builder seed(User... users) {
-            Arrays.stream(users).forEach(u -> seed.put(u.id(), u));
+        public Builder withCreateReturn(EntityId id) {
+            when(mock.create(any(User.class))).thenReturn(id);
             return this;
         }
 
-        public Builder onCreate(Function<User, EntityId> fn) {
-            this.createFn = fn;
+        public Builder withFindReturn(EntityId id, User user) {
+            when(mock.findById(eq(id))).thenReturn(Optional.of(user));
             return this;
         }
 
-        public Builder onFind(Function<EntityId, Optional<User>> fn) {
-            this.findFn = fn;
+        public Builder withFindEmpty(EntityId id) {
+            when(mock.findById(eq(id))).thenReturn(Optional.empty());
             return this;
         }
 
-        public Builder onUpdate(Function<User, User> fn) {
-            this.updateFn = fn;
+        public Builder withPatchReturn(EntityId id, Map<String, Object> attributes, User user) {
+            when(mock.patch(eq(id), eq(attributes))).thenReturn(user);
             return this;
         }
 
-        public Builder onDelete(Function<EntityId, Boolean> fn) {
-            this.deleteFn = fn;
+        public Builder withPatchAnyReturn(User user) {
+            when(mock.patch(any(EntityId.class), anyMap())).thenReturn(user);
             return this;
+        }
+
+        public Builder withDelete() {
+            doNothing().when(mock).delete(any(EntityId.class));
+            return this;
+        }
+
+        public UserUseCase buildInstance() {
+            return mock;
         }
 
         public MockUserUseCase build() {
-            var mock = new MockUserUseCase(
-                    createFn != null ? createFn : user -> {seed.put(user.id(), user);  return user.id();},
-                    findFn   != null ? findFn   : id   -> Optional.ofNullable(seed.get(id)),
-                    updateFn != null ? updateFn : user -> {seed.put(user.id(), user);  return user;},
-                    deleteFn != null ? deleteFn : id   -> seed.remove(id) != null);
-                    
-            mock.store.putAll(seed); // copy initial data
-            return mock;
+            return new MockUserUseCase(mock);
         }
-    }
-
-    /* --------------------------------------------------------------------- */
-    /* Implementation of UserUseCase */
-    /* --------------------------------------------------------------------- */
-
-    @Override
-    public @NonNull EntityId create(@NonNull User user) {
-        return createFn.apply(user);
-    }
-
-    @Override
-    public @NonNull Optional<User> findById(@NonNull EntityId id) {
-        return findFn.apply(id);
-    }
-
-    @Override
-    public @NonNull User update(@NonNull User user) {
-        return updateFn.apply(user);
-    }
-
-    @Override
-    public void delete(@NonNull EntityId id) {
-        deleteFn.apply(id);
     }
 }

@@ -21,7 +21,7 @@ Resources:
   PorflyoApi:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: ./build/libs/core-0.2-optimized-lambda.zip
+      CodeUri: ./build/libs/core-0.3-optimized-lambda.zip
       Handler: com.porflyo.infrastructure.adapters.input.lambda.entrypoint.NativeLambdaEntrypoint
       Runtime: provided.al2023
       MemorySize: 128

@@ -1,7 +1,7 @@
 micronaut:
   test:
     resources:
-      enabled: true
+      enabled: false  # Only enable resources for integration tests that require DynamoDB
   application:
     name: porflyo-api
     
@@ -63,20 +63,8 @@ logger:
  
 aws:
   region: us-east-1
-  #dynamodb:
-    #endpoint: http://localhost:8000
-    #region: us-east-1
 
-dynamodb:
-  endpoint: http://host.docker.internal:8000
-  table-name: user-test    
-  region: us-east-1 
 
-test-resources:
-  containers:
-    dynamodb:
-      image-name: amazon/dynamodb-local 
-      hostnames:
-        - dynamodb-local.host 
-      exposed-ports:
-        - dynamodb-local.port: 8000
+
+# DynamoDB configuration is now only in test profile configurations
+# See application-integration.yml for integration tests

@@ -3,10 +3,11 @@ plugins {
     id("com.gradleup.shadow") version "8.3.7"
     //id("com.diffplug.spotless") version "6.23.3"
     id("io.micronaut.aot") version "4.5.4"
-    id("io.micronaut.test-resources") version "4.5.4"
+    // Comentado test-resources plugin para evitar problemas con AOT en producción
+    //id("io.micronaut.test-resources") version "4.5.4"
 }
 
-version = "0.2"
+version = "0.3"
 group = "com.porflyo"
 
 repositories {
@@ -22,7 +23,6 @@ repositories {
 }
 
 dependencies {
-    //implementation("io.micronaut.testresources:micronaut-test-resources-testcontainers")
     // Annotation processors
     annotationProcessor("io.micronaut.serde:micronaut-serde-processor")
     annotationProcessor("io.micronaut.validation:micronaut-validation-processor")
@@ -68,10 +68,10 @@ dependencies {
     testImplementation("org.mockito:mockito-junit-jupiter")
     testImplementation("io.micronaut.test:micronaut-test-junit5")
     
-    //testImplementation("org.testcontainers:junit-jupiter")
-    //testImplementation("org.testcontainers:localstack")
-    //testImplementation("org.testcontainers:testcontainers")
-
+    // TestContainers for DynamoDB testing
+    testImplementation("org.testcontainers:junit-jupiter")
+    testImplementation("org.testcontainers:localstack")
+    testImplementation("org.testcontainers:testcontainers")
 
     // Test annotation processors
     testAnnotationProcessor("org.projectlombok:lombok:1.18.38")

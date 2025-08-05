@@ -1,13 +1,28 @@
 package com.porflyo.application.services;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
+import java.net.URI;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Map;
+import java.util.Optional;
 
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
@@ -18,9 +33,15 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.porflyo.application.configuration.GithubOAuthConfig;
 import com.porflyo.application.configuration.JwtConfig;
 import com.porflyo.application.ports.output.UserRepository;
-import com.porflyo.domain.model.*;
+import com.porflyo.domain.model.UserSession;
+import com.porflyo.domain.model.shared.EntityId;
+import com.porflyo.domain.model.user.ProviderAccount;
+import com.porflyo.domain.model.user.User;
 import com.porflyo.testing.data.TestData;
-import com.porflyo.testing.mocks.ports.*;
+import com.porflyo.testing.mocks.ports.MockGithubOAuthConfig;
+import com.porflyo.testing.mocks.ports.MockGithubPort;
+import com.porflyo.testing.mocks.ports.MockJwtConfig;
+import com.porflyo.testing.mocks.ports.MockJwtPort;
 
 /**
  * Unit tests for {@link AuthService}.
@@ -110,7 +131,7 @@ class AuthServiceTest {
         @DisplayName("creates a valid UserSession on happy path")
         void happyPath() {
             // Given
-            String code = TestData.DEFAULT_CODE;
+            String code = TestData.DEFAULT_OAUTH_CODE;
 
             // When
             UserSession session = authService.handleOAuthCallback(code);
@@ -135,6 +156,91 @@ class AuthServiceTest {
             // When / Then
             assertDoesNotThrow(() -> authService.handleOAuthCallback(invalid));
         }
+
+        @Test
+        @DisplayName("saves new user if not previously registered")
+        void createsNewUser() {
+            // Given
+            when(userRepository.findByProviderId(any())).thenReturn(Optional.empty());
+
+            // When
+            UserSession session = authService.handleOAuthCallback(TestData.DEFAULT_OAUTH_CODE);
+
+            // Then
+            verify(userRepository).save(argThat(user -> {
+                assertAll(
+                    () -> assertNotNull(user.id(), "ID should not be null"),
+                    () -> assertTrue(user.id().equals(session.user().id()), "ID should match session user ID")
+                );
+                return true;
+            }));
+
+            assertNotNull(session.user().id());
+        }
+
+        @Test
+        @DisplayName("does not save if user already exists with same provider data")
+        void reusesExistingUser() {
+            // Given
+            EntityId originalId = EntityId.newKsuid(); // simulate existing ID
+
+            ProviderAccount account = new ProviderAccount(
+                TestData.DEFAULT_GITHUB_ID,
+                TestData.DEFAULT_GITHUB_NAME,
+                URI.create(TestData.DEFAULT_GITHUB_AVATAR_URL),
+                TestData.DEFAULT_ACCESS_TOKEN
+            );
+
+            User existing = new User(
+                originalId,
+                account,
+                TestData.DEFAULT_GITHUB_NAME,
+                TestData.DEFAULT_GITHUB_EMAIL,
+                "",
+                URI.create(TestData.DEFAULT_GITHUB_AVATAR_URL),
+                Map.of()
+            );
+
+            when(userRepository.findByProviderId(TestData.DEFAULT_GITHUB_ID)).thenReturn(Optional.of(existing));
+
+            // When
+            UserSession session = authService.handleOAuthCallback(TestData.DEFAULT_OAUTH_CODE);
+
+            // Then
+            assertEquals(originalId.value(), session.user().id().value());
+            verify(userRepository, never()).save(any());
+        }
+
+        @Test
+        @DisplayName("patches user if provider data changes (e.g. new name or avatar)")
+        void updatesProviderAccountIfDifferent() {
+            // Given: same GitHub ID, but different token
+            ProviderAccount oldAccount = new ProviderAccount(
+                TestData.DEFAULT_GITHUB_ID,
+                "OLD Name",
+                URI.create("https://newProfile.com/avatar.png"),
+                TestData.DEFAULT_ACCESS_TOKEN
+            );
+
+            User existing = new User(
+                EntityId.newKsuid(),
+                oldAccount,
+                TestData.DEFAULT_GITHUB_NAME,
+                TestData.DEFAULT_GITHUB_EMAIL,
+                "",
+                URI.create(TestData.DEFAULT_GITHUB_AVATAR_URL),
+                Map.of()
+            );
+
+            when(userRepository.findByProviderId(TestData.DEFAULT_GITHUB_ID)).thenReturn(Optional.of(existing));
+            when(userRepository.patchProviderAccount(eq(existing.id()), eq(TestData.DEFAULT_PROVIDER_ACCOUNT))).thenReturn(existing);
+
+            // When
+            authService.handleOAuthCallback(TestData.DEFAULT_OAUTH_CODE);
+            // Then
+            verify(userRepository).patchProviderAccount(eq(existing.id()), any());
+        }
+
     }
 
     // ─────────────────────────────────── error scenarios ──────────────────────────────

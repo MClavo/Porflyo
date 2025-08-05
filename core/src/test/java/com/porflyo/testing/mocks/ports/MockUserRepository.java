@@ -45,13 +45,18 @@ public final class MockUserRepository implements UserRepository {
     }
 
     @Override
-    public void patch(@NonNull EntityId id, @NonNull Map<String, Object> attributes) {
-        mock.patch(id, attributes);
+    public Optional<User> findByProviderId(@NonNull String providerId) {
+        return mock.findByProviderId(providerId);
     }
 
     @Override
-    public void patchProviderAccount(@NonNull EntityId id, @NonNull ProviderAccount providerAccount) {
-        mock.patchProviderAccount(id, providerAccount);
+    public User patch(@NonNull EntityId id, @NonNull Map<String, Object> attributes) {
+        return mock.patch(id, attributes);
+    }
+
+    @Override
+    public User patchProviderAccount(@NonNull EntityId id, @NonNull ProviderAccount providerAccount) {
+        return mock.patchProviderAccount(id, providerAccount);
     }
 
     @Override
@@ -78,6 +83,16 @@ public final class MockUserRepository implements UserRepository {
 
         public Builder findByIdThrows(RuntimeException ex) {
             when(mock.findById(any())).thenThrow(ex);
+            return this;
+        }
+
+        public Builder findByProviderIdReturns(User user) {
+            when(mock.findByProviderId(any())).thenReturn(Optional.ofNullable(user));
+            return this;
+        }
+
+        public Builder findByProviderIdThrows(RuntimeException ex) {
+            when(mock.findByProviderId(any())).thenThrow(ex);
             return this;
         }
 

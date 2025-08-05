@@ -126,11 +126,11 @@ class GithubAdapterTest {
         @DisplayName("Should successfully exchange code for access token")
         void shouldExchangeCodeForAccessToken() throws Exception {
             // Given
-            String code = TestData.DEFAULT_CODE;
+            String code = TestData.DEFAULT_OAUTH_CODE;
             String requestBodyJson = String.format(
                 """
                 {"client_id":"%s","client_secret":"%s","code":"%s","redirect_uri":"%s"}""",
-                TestData.DEFAULT_CLIENT_ID, TestData.DEFAULT_CLIENT_SECRET, TestData.DEFAULT_CODE, TestData.DEFAULT_REDIRECT_URI);
+                TestData.DEFAULT_CLIENT_ID, TestData.DEFAULT_CLIENT_SECRET, TestData.DEFAULT_OAUTH_CODE, TestData.DEFAULT_REDIRECT_URI);
 
             // Setup mocks
             mockJsonSerialization(requestBodyJson);
@@ -155,7 +155,7 @@ class GithubAdapterTest {
 
             // When & Then
             RuntimeException exception = assertThrows(RuntimeException.class, 
-                () -> githubAdapter.exchangeCodeForAccessToken(TestData.DEFAULT_CODE));
+                () -> githubAdapter.exchangeCodeForAccessToken(TestData.DEFAULT_OAUTH_CODE));
             assertEquals("Failed to exchange GitHub code", exception.getMessage());
         }
 
@@ -167,7 +167,7 @@ class GithubAdapterTest {
 
             // When & Then
             RuntimeException exception = assertThrows(RuntimeException.class, 
-                () -> githubAdapter.exchangeCodeForAccessToken(TestData.DEFAULT_CODE));
+                () -> githubAdapter.exchangeCodeForAccessToken(TestData.DEFAULT_OAUTH_CODE));
             assertEquals("Failed to exchange GitHub code", exception.getMessage());
         }
     }

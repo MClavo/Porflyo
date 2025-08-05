@@ -3,7 +3,7 @@ package com.porflyo.testing.mocks.ports;
 import java.util.function.Supplier;
 
 import com.porflyo.application.ports.output.JwtPort;
-import com.porflyo.domain.model.GithubLoginClaims;
+import com.porflyo.domain.model.UserClaims;
 import com.porflyo.testing.data.TestData;
 
 /**
@@ -22,7 +22,7 @@ import com.porflyo.testing.data.TestData;
  * <ul>
  *   <li>{@code generatedTokenSupplier}: Supplies the token string to return from {@code generateToken}.</li>
  *   <li>{@code isTokenValidSupplier}: Supplies the boolean result for {@code validateToken}.</li>
- *   <li>{@code extractedClaimsSupplier}: Supplies the {@link GithubLoginClaims} for {@code extractClaims}.</li>
+ *   <li>{@code extractedClaimsSupplier}: Supplies the {@link UserClaims} for {@code extractClaims}.</li>
  *   <li>{@code generateExceptionSupplier}: Supplies an exception to throw from {@code generateToken}, or {@code null} for none.</li>
  *   <li>{@code validateExceptionSupplier}: Supplies an exception to throw from {@code validateToken}, or {@code null} for none.</li>
  *   <li>{@code extractExceptionSupplier}: Supplies an exception to throw from {@code extractClaims}, or {@code null} for none.</li>
@@ -42,7 +42,7 @@ import com.porflyo.testing.data.TestData;
 public record MockJwtPort(
     Supplier<String> generatedTokenSupplier,
     Supplier<Boolean> isTokenValidSupplier,
-    Supplier<GithubLoginClaims> extractedClaimsSupplier,
+    Supplier<UserClaims> extractedClaimsSupplier,
     Supplier<RuntimeException> generateExceptionSupplier,
     Supplier<RuntimeException> validateExceptionSupplier,
     Supplier<RuntimeException> extractExceptionSupplier
@@ -57,7 +57,7 @@ public record MockJwtPort(
     }
 
     @Override
-    public String generateToken(GithubLoginClaims claims) {
+    public String generateToken(UserClaims claims) {
         if (generateExceptionSupplier.get() != null) throw generateExceptionSupplier.get();
         return generatedTokenSupplier.get();
     }
@@ -69,7 +69,7 @@ public record MockJwtPort(
     }
 
     @Override
-    public GithubLoginClaims extractClaims(String token) {
+    public UserClaims extractClaims(String token) {
         if (extractExceptionSupplier.get() != null) throw extractExceptionSupplier.get();
         return extractedClaimsSupplier.get();
     }
@@ -77,7 +77,7 @@ public record MockJwtPort(
     public static class Builder {
         private Supplier<String> generatedTokenSupplier = () -> TestData.DEFAULT_JWT_TOKEN;
         private Supplier<Boolean> isTokenValidSupplier = () -> true;
-        private Supplier<GithubLoginClaims> extractedClaimsSupplier = () -> TestData.DEFAULT_CLAIMS;
+        private Supplier<UserClaims> extractedClaimsSupplier = () -> TestData.DEFAULT_CLAIMS;
 
         private Supplier<RuntimeException> generateExceptionSupplier = () -> null;
         private Supplier<RuntimeException> validateExceptionSupplier = () -> null;
@@ -93,7 +93,7 @@ public record MockJwtPort(
             return this;
         }
 
-        public Builder extractedClaims(GithubLoginClaims claims) {
+        public Builder extractedClaims(UserClaims claims) {
             this.extractedClaimsSupplier = () -> claims;
             return this;
         }

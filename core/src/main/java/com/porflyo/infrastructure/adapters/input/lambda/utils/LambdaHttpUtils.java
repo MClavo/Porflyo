@@ -153,6 +153,26 @@ public final class LambdaHttpUtils {
         return input.getQueryStringParameters().get(paramName);
     }
 
+
+    /**
+     * Extracts a specific part of the path from the incoming API Gateway event.
+     *
+     * @param input     the API Gateway event
+     * @param position  the position of the path part to extract (0 is the first segment)
+     * @return the extracted path part, or null if the position is invalid
+     */
+    public static String extractPathSegment(APIGatewayV2HTTPEvent input, int position) {
+        String[] pathParts = input.getRawPath().split("/");
+        int adjustedPos = position + 1; // Adjust for the leading slash in the path
+
+        if (adjustedPos < 0 || adjustedPos >= pathParts.length)
+            return null; // Invalid position
+
+        return pathParts[adjustedPos];
+    }
+
+    // ────────────────────────── helper methods ────────────────────────── 
+
     private static String extractFromHeader(String cookieHeader, String cookieName) {
         if (cookieHeader == null) {
             return null;

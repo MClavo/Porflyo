@@ -3,6 +3,7 @@ package com.porflyo.application.services;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,8 +14,8 @@ import com.porflyo.application.ports.input.AuthUseCase;
 import com.porflyo.application.ports.output.GithubPort;
 import com.porflyo.application.ports.output.JwtPort;
 import com.porflyo.application.ports.output.UserRepository;
-import com.porflyo.domain.model.GithubLoginClaims;
 import com.porflyo.domain.model.GithubUser;
+import com.porflyo.domain.model.UserClaims;
 import com.porflyo.domain.model.UserSession;
 import com.porflyo.domain.model.shared.EntityId;
 import com.porflyo.domain.model.user.ProviderAccount;
@@ -95,7 +96,10 @@ public class AuthService implements AuthUseCase {
 
             User user = createUserFromGithubUser(githubUser, accessToken);
 
-            GithubLoginClaims claims = new GithubLoginClaims(
+            // Save or update new user in the repository
+            user = saveOrUpdateUser(user);
+
+            UserClaims claims = new UserClaims(
                 user.id().value(),
                 jwtConfig.expiration()
             );
@@ -103,8 +107,6 @@ public class AuthService implements AuthUseCase {
             String jwtToken = jwt.generateToken(claims);
 
 
-            // Save or update new user in the repository
-            saveOrUpdateUser(user);
             log.debug("User session created: JWT: {}, User ID: {}", jwtToken, user.id().value());
 
             return new UserSession(jwtToken, user);
@@ -115,7 +117,7 @@ public class AuthService implements AuthUseCase {
         }
     }
 
-    User createUserFromGithubUser(GithubUser githubUser, String accessToken) {
+    private User createUserFromGithubUser(GithubUser githubUser, String accessToken) {
         
         ProviderAccount githubAccount = new ProviderAccount(
             githubUser.id(),
@@ -126,27 +128,43 @@ public class AuthService implements AuthUseCase {
 
         EntityId id = EntityId.newKsuid();
 
+
         return new User(
             id,
             githubAccount,
             githubUser.name(),
             githubUser.email(),
-            "",                     // Empty description
+            "",                             // Empty description
             URI.create(githubUser.avatar_url()),
-            null                    // No socials for now
+            Collections.emptyMap()
         );
     }
 
-    void saveOrUpdateUser(User user) {
-        User existingUser = userRepository.findById(user.id())
+    private User saveOrUpdateUser(User user) {
+        // Check if user already exists by provider ID
+        User existingUser = userRepository.findByProviderId(
+                user.provider().providerUserId())
             .orElse(null);
 
         // Save new user or patch provider account if user already exists
         if (existingUser != null) {
-            userRepository.patchProviderAccount(user.id(), user.provider());
+            user = updateProviderAccount(existingUser, user); // Update provider account if necessary
 
         } else {
             userRepository.save(user);
         }
+
+        return user;
     }
+
+    private User updateProviderAccount(User existingUser, User newUser) {
+        log.debug("THIS HAS BEEN CALLED");
+        if(existingUser.provider().equals(newUser.provider())) 
+            return existingUser;
+
+        log.debug("Updating provider account for user: {}", existingUser.id().value());
+
+        return userRepository.patchProviderAccount(existingUser.id(), newUser.provider());
+    }
+
 }

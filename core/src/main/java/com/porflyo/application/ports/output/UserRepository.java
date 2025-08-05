@@ -20,9 +20,11 @@ public interface UserRepository {
     @NonNull
     Optional<User> findById(@NonNull EntityId id);
 
-    void patch(@NonNull EntityId id, @NonNull Map<String, Object> attributes);
+    Optional<User> findByProviderId(@NonNull String providerId);
 
-    void patchProviderAccount(@NonNull EntityId id, @NonNull ProviderAccount providerAccount);
+    User patch(@NonNull EntityId id, @NonNull Map<String, Object> attributes);
+
+    User patchProviderAccount(@NonNull EntityId id, @NonNull ProviderAccount providerAccount);
 
     void delete(@NonNull EntityId id);
     
