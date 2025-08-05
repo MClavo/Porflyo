@@ -139,7 +139,6 @@ public class AuthLambdaHandler {
                 return LambdaHttpUtils.createErrorRedirectResponse(400, frontend, "Missing authorization code");
             }
 
-            
             // Exchange code internally
             UserSession session = authService.handleOAuthCallback(code);
 

@@ -19,10 +19,13 @@ import io.micronaut.context.annotation.Requires;
 import io.micronaut.core.annotation.NonNull;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
+import software.amazon.awssdk.core.pagination.sync.SdkIterable;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable;
 import software.amazon.awssdk.enhanced.dynamodb.Key;
 import software.amazon.awssdk.enhanced.dynamodb.model.IgnoreNullsMode;
+import software.amazon.awssdk.enhanced.dynamodb.model.Page;
+import software.amazon.awssdk.enhanced.dynamodb.model.QueryConditional;
 import software.amazon.awssdk.enhanced.dynamodb.model.UpdateItemEnhancedRequest;
 
 /**
@@ -65,7 +68,33 @@ public class UserDynamoRepository implements UserRepository {
         return Optional.ofNullable(dto).map(UserDynamoMapper::toDomain);
     }
 
-    
+    @Override
+    public Optional<User> findByProviderId(@NonNull String providerId) {
+        Key key = Key.builder()
+                .partitionValue(providerId)
+                .build();
+
+        // Query the GSI for provider-user-id-index
+        QueryConditional query = QueryConditional.keyEqualTo(key);
+
+        // Even if there is only one item, we need SdkIterable to handle pagination
+        SdkIterable<Page<DynamoUserDto>> result = table
+            .index("provider-user-id-index")
+            .query(query);
+
+        DynamoUserDto dto = result.stream()
+                .flatMap(p -> p.items().stream())
+                .findFirst()
+                .orElse(null);
+        
+        if (dto == null) {
+            log.debug("User not found for provider ID: {}", providerId);
+        } else {
+            log.debug("Found user for provider ID: {}", providerId);
+        }
+
+        return Optional.ofNullable(dto).map(UserDynamoMapper::toDomain);
+    }
     
 
     @Override
@@ -85,13 +114,15 @@ public class UserDynamoRepository implements UserRepository {
     
 
     @Override
-    public void patchProviderAccount(@NonNull EntityId id, @NonNull ProviderAccount providerAccount) {
+    public User patchProviderAccount(@NonNull EntityId id, @NonNull ProviderAccount providerAccount) {
         DynamoUserDto updateItem = UserDynamoMapper.createPatchDto(id, providerAccount);
 
         UpdateItemEnhancedRequest<DynamoUserDto> request = createUpdateItemRequest(updateItem);
 
-        table.updateItem(request);
+        DynamoUserDto result = table.updateItem(request);
         log.debug("Patched provider account for user: {}", id.value());
+        
+        return UserDynamoMapper.toDomain(result);
     }
 
     @Override

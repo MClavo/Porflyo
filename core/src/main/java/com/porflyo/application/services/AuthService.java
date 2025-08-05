@@ -3,8 +3,7 @@ package com.porflyo.application.services;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Collections;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -97,6 +96,9 @@ public class AuthService implements AuthUseCase {
 
             User user = createUserFromGithubUser(githubUser, accessToken);
 
+            // Save or update new user in the repository
+            user = saveOrUpdateUser(user);
+
             UserClaims claims = new UserClaims(
                 user.id().value(),
                 jwtConfig.expiration()
@@ -105,8 +107,6 @@ public class AuthService implements AuthUseCase {
             String jwtToken = jwt.generateToken(claims);
 
 
-            // Save or update new user in the repository
-            saveOrUpdateUser(user);
             log.debug("User session created: JWT: {}, User ID: {}", jwtToken, user.id().value());
 
             return new UserSession(jwtToken, user);
@@ -117,7 +117,7 @@ public class AuthService implements AuthUseCase {
         }
     }
 
-    User createUserFromGithubUser(GithubUser githubUser, String accessToken) {
+    private User createUserFromGithubUser(GithubUser githubUser, String accessToken) {
         
         ProviderAccount githubAccount = new ProviderAccount(
             githubUser.id(),
@@ -127,8 +127,6 @@ public class AuthService implements AuthUseCase {
         );
 
         EntityId id = EntityId.newKsuid();
-        Map<String, String> socials = new HashMap<>();
-        socials.put("github", "Example URL"); // Placeholder, can be updated later
 
 
         return new User(
@@ -138,20 +136,35 @@ public class AuthService implements AuthUseCase {
             githubUser.email(),
             "",                             // Empty description
             URI.create(githubUser.avatar_url()),
-            socials
+            Collections.emptyMap()
         );
     }
 
-    void saveOrUpdateUser(User user) {
-        User existingUser = userRepository.findById(user.id())
+    private User saveOrUpdateUser(User user) {
+        // Check if user already exists by provider ID
+        User existingUser = userRepository.findByProviderId(
+                user.provider().providerUserId())
             .orElse(null);
 
         // Save new user or patch provider account if user already exists
         if (existingUser != null) {
-            userRepository.patchProviderAccount(user.id(), user.provider());
+            user = updateProviderAccount(existingUser, user); // Update provider account if necessary
 
         } else {
             userRepository.save(user);
         }
+
+        return user;
     }
+
+    private User updateProviderAccount(User existingUser, User newUser) {
+        log.debug("THIS HAS BEEN CALLED");
+        if(existingUser.provider().equals(newUser.provider())) 
+            return existingUser;
+
+        log.debug("Updating provider account for user: {}", existingUser.id().value());
+
+        return userRepository.patchProviderAccount(existingUser.id(), newUser.provider());
+    }
+
 }

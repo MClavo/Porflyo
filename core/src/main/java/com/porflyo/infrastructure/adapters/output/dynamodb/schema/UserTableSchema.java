@@ -36,6 +36,8 @@ public final class UserTableSchema {
 
     public static final TableSchema<DynamoUserDto> SCHEMA = TableSchema.builder(DynamoUserDto.class)
             .newItemSupplier(DynamoUserDto::new)
+
+            // ────────────────────────── Key Attributes ──────────────────────────
             .addAttribute(String.class, a -> a.name("PK")
                     .getter(DynamoUserDto::getPk)
                     .setter(DynamoUserDto::setPk)
@@ -44,6 +46,15 @@ public final class UserTableSchema {
                     .getter(DynamoUserDto::getSk)
                     .setter(DynamoUserDto::setSk)
                     .tags(StaticAttributeTags.primarySortKey()))
+            
+            // GSI for provider user ID, used for lookups in OAuth flow
+            .addAttribute(String.class, a -> a.name("providerUserId")
+                .getter(DynamoUserDto::getProviderUserId)
+                .setter(DynamoUserDto::setProviderUserId)
+                .tags(StaticAttributeTags.secondaryPartitionKey("provider-user-id-index")))
+            
+                
+            // ────────────────────────── User Attributes ──────────────────────────
             .addAttribute(String.class, a -> a.name("name")
                     .getter(DynamoUserDto::getName)
                     .setter(DynamoUserDto::setName))
@@ -53,9 +64,6 @@ public final class UserTableSchema {
             .addAttribute(String.class, a -> a.name("description")
                     .getter(DynamoUserDto::getDescription)
                     .setter(DynamoUserDto::setDescription))
-            .addAttribute(String.class, a -> a.name("providerUserId")
-                    .getter(DynamoUserDto::getProviderUserId)
-                    .setter(DynamoUserDto::setProviderUserId))
             .addAttribute(String.class, a -> a.name("providerUserName")
                     .getter(DynamoUserDto::getProviderUserName)
                     .setter(DynamoUserDto::setProviderUserName))
