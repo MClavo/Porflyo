@@ -7,10 +7,7 @@ const Navbar: React.FC = () => {
 
   const handleLogout = () => {
     logout();
-    // TODO: Close session in backend
     window.location.href = '/logout';
-    // Delete Session Cookie
-
   };
 
   return (

@@ -103,6 +103,9 @@ public class LambdaEntryPointHandler extends MicronautRequestHandler<APIGatewayV
 
                 case "api":
                     return apiHandler(path, input);
+                
+                case "logout":
+                    return authLambdaHandler.handleLogout(input);
 
                 default:
                     log.warn("No handler found for path: {}", path);

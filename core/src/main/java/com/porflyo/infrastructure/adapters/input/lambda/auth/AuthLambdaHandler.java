@@ -8,7 +8,9 @@ import com.amazonaws.services.lambda.runtime.events.APIGatewayV2HTTPResponse;
 import com.porflyo.application.configuration.JwtConfig;
 import com.porflyo.application.ports.input.AuthUseCase;
 import com.porflyo.application.ports.output.JwtPort;
+import com.porflyo.domain.model.UserClaims;
 import com.porflyo.domain.model.UserSession;
+import com.porflyo.domain.model.shared.EntityId;
 import com.porflyo.infrastructure.adapters.input.lambda.utils.LambdaHttpUtils;
 import com.porflyo.infrastructure.configuration.FrontendConfig;
 
@@ -58,16 +60,14 @@ public class AuthLambdaHandler {
     }
 
     /**
-     * Handles the OAuth login process by generating a redirect response to the OAuth login URL.
+     * Handles the OAuth login by generating a login URL and returning a redirect response.
      * <p>
-     * This method builds the OAuth login URL using the {@code authService} and returns an HTTP redirect
-     * response to that URL. If an exception occurs during the process, it returns an error response with
-     * status code 500 and the exception message.
+     * This method uses the authentication service to build the OAuth login URL and returns
+     * an HTTP response that redirects the user to this URL.
      * </p>
      *
      * @param input the incoming API Gateway V2 HTTP event
-     * @return an {@code APIGatewayV2HTTPResponse} that redirects the user to the OAuth login URL,
-     *         or an error response if an exception occurs
+     * @return an {@code APIGatewayV2HTTPResponse} containing the redirect URL for OAuth login
      */
     public APIGatewayV2HTTPResponse handleOauthLogin(APIGatewayV2HTTPEvent input) {
         try {
@@ -154,6 +154,32 @@ public class AuthLambdaHandler {
             log.error("Error handling OAuth callback: {}", e.getMessage(), e);
             return LambdaHttpUtils.createErrorResponse(500, e.getMessage());
         }
+    }
+
+    public APIGatewayV2HTTPResponse handleLogout (APIGatewayV2HTTPEvent input){
+        try {
+            log.debug("Received logout request from user: {}", getUserId(input));
+
+            String frontend = frontendConfig.url();
+
+            // Clear session cookie
+            return LambdaHttpUtils.createRedirectResponseWithCookie(
+                frontend,           // redirect URL
+                "",                 // body
+                "session",          // Cookie name
+                "",                 // Cookie value (clearing the cookie)
+                0);                 // Max-Age set to 0 to delete the cookie
+
+        } catch (Exception e) {
+            log.error("Error handling logout: {}", e.getMessage(), e);
+            return LambdaHttpUtils.createErrorResponse(500, e.getMessage());
+        }
+    }
+
+    private String getUserId(APIGatewayV2HTTPEvent input) {
+        String cookie = LambdaHttpUtils.extractCookieValue(input, "session");
+        UserClaims claims = jwtService.extractClaims(cookie);
+        return claims.getSub();
     }
 
 }
