@@ -80,6 +80,8 @@ public class UserDynamoRepositoryCrudTest implements TestPropertyProvider {
         // READ
         var loaded = repo.findById(id1).orElseThrow();
         assertEquals("User One", loaded.name());
+        loaded = repo.findByProviderId(providerAccount1.providerUserId()).orElseThrow();
+        assertEquals("User One", loaded.name());
 
         // UPDATE
         Map<String, Object> updates = Map.of(

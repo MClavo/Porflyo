@@ -26,7 +26,7 @@ public final class TestData {
 
     private TestData() {}
     
-    public static final String DEFAULT_CODE = "test-auth-code-1234567890";
+    public static final String DEFAULT_OAUTH_CODE = "test-auth-code-1234567890";
     public static final String DEFAULT_ACCESS_TOKEN = "ghp_test_token_1234567890";
     public static final String DEFAULT_JWT_TOKEN = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.test.token";
     public static final String DEFAULT_LOGIN_URL = "https://github.com/login/oauth/authorize?client_id=test-client-id&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fauth%2Fcallback&scope=user%3Aemail%2Cread%3Auser%2Cpublic_repo&response_type=code";
@@ -42,28 +42,34 @@ public final class TestData {
     public static final long DEFAULT_JWT_EXPIRATION = 3600L;
     public static final String DEFAULT_USER_AGENT = "TestUserAgent/1.0";
 
+    public static final String DEFAULT_GITHUB_ID = "12345";
+    public static final String DEFAULT_GITHUB_NAME = "Test User";
+    public static final String DEFAULT_GITHUB_EMAIL = "test@example.com";
+    public static final String DEFAULT_GITHUB_AVATAR_URL = "https://avatars.githubusercontent.com/u/12345";
+
+
     public static final GithubUser DEFAULT_GITHUB_USER = new GithubUser(
         "testuser",
-        "12345",
-        "Test User",
-        "test@example.com",
-        "https://avatars.githubusercontent.com/u/12345"
+        DEFAULT_GITHUB_ID,
+        DEFAULT_GITHUB_NAME,
+        DEFAULT_GITHUB_EMAIL,
+        DEFAULT_GITHUB_AVATAR_URL
     );
 
     public static final ProviderAccount DEFAULT_PROVIDER_ACCOUNT = new ProviderAccount(
-        "12345",
-        "testuser",
-        URI.create("https://avatars.githubusercontent.com/u/12345"),
+        DEFAULT_GITHUB_ID,
+        DEFAULT_GITHUB_NAME,
+        URI.create(DEFAULT_GITHUB_AVATAR_URL),
         DEFAULT_ACCESS_TOKEN
     );
 
     public static final User DEFAULT_USER = new User(
         new EntityId("12345"),
         DEFAULT_PROVIDER_ACCOUNT,
-        "Test User",
-        "test@example.com",
+        DEFAULT_GITHUB_NAME,
+        DEFAULT_GITHUB_EMAIL,
         "Test Description",
-        URI.create("https://avatars.githubusercontent.com/u/12345"),
+        URI.create(DEFAULT_GITHUB_AVATAR_URL),
         Map.of("github", "https://github.com/testuser")
     );
 
