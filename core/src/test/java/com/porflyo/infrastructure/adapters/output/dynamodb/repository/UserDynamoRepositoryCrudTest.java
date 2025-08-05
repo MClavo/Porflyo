@@ -8,6 +8,10 @@ import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.utility.DockerImageName;
 
 import com.porflyo.application.ports.output.UserRepository;
 import com.porflyo.domain.model.shared.EntityId;
@@ -15,22 +19,35 @@ import com.porflyo.domain.model.user.ProviderAccount;
 import com.porflyo.domain.model.user.User;
 
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
+import io.micronaut.test.support.TestPropertyProvider;
 import jakarta.inject.Inject;
 
-// THIS **** DOES NOT WANT TO RUN A DYNAMO DB CONTAINER 
-// EVEN WITH TESTCONTAINERS IT WAITS UNTIL IT STOPS TO RUN THE TESTS
-// HOURS **** LOST HERE : 16
-
-// BTW, in the micronaut example https://guides.micronaut.io/latest/micronaut-dynamodb-gradle-java.html
-// the tests only work when all of them are executed at once
-// and not individually. I hate this.
-
-@MicronautTest()
+@MicronautTest(environments = {"integration"})
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class UserDynamoRepositoryCrudTest {
+@Testcontainers
+public class UserDynamoRepositoryCrudTest implements TestPropertyProvider {
+
+    @Container
+    @SuppressWarnings("resource")
+    static GenericContainer<?> dynamodb = new GenericContainer<>(DockerImageName.parse("amazon/dynamodb-local:latest"))
+            .withExposedPorts(8000)
+            .withCommand("-jar", "DynamoDBLocal.jar", "-sharedDb", "-inMemory");
 
     @Inject 
     UserRepository repo;
+
+    @Override
+    public Map<String, String> getProperties() {
+        if (!dynamodb.isRunning()) {
+            dynamodb.start();
+        }
+        String dynamoUrl = "http://" + dynamodb.getHost() + ":" + dynamodb.getMappedPort(8000);
+        return Map.of(
+            "dynamodb.endpoint", dynamoUrl,
+            "dynamodb.region", "us-east-1",
+            "micronaut.test.resources.enabled", "false"
+        );
+    }
 
     private EntityId id1 = new EntityId("123");
     
