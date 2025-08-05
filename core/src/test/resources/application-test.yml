@@ -3,9 +3,6 @@ micronaut:
     resources:
       enabled: false
 
-# Configuración por defecto para tests - sin DynamoDB ni contenedores
-# Los tests unitarios no necesitan infraestructura externa
-
 logger:
   levels:
     com.porflyo: DEBUG

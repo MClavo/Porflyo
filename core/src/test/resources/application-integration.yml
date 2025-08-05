@@ -3,7 +3,7 @@ micronaut:
     resources:
       enabled: false
 
-# Configuración específica para tests de integración que necesitan DynamoDB
+# DynamoDB Configuration for Testing
 aws:
   region: us-east-1
    
