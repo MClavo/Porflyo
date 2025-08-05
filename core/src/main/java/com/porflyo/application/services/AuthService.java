@@ -3,6 +3,8 @@ package com.porflyo.application.services;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,8 +15,8 @@ import com.porflyo.application.ports.input.AuthUseCase;
 import com.porflyo.application.ports.output.GithubPort;
 import com.porflyo.application.ports.output.JwtPort;
 import com.porflyo.application.ports.output.UserRepository;
-import com.porflyo.domain.model.UserClaims;
 import com.porflyo.domain.model.GithubUser;
+import com.porflyo.domain.model.UserClaims;
 import com.porflyo.domain.model.UserSession;
 import com.porflyo.domain.model.shared.EntityId;
 import com.porflyo.domain.model.user.ProviderAccount;
@@ -125,15 +127,18 @@ public class AuthService implements AuthUseCase {
         );
 
         EntityId id = EntityId.newKsuid();
+        Map<String, String> socials = new HashMap<>();
+        socials.put("github", "Example URL"); // Placeholder, can be updated later
+
 
         return new User(
             id,
             githubAccount,
             githubUser.name(),
             githubUser.email(),
-            "",                     // Empty description
+            "",                             // Empty description
             URI.create(githubUser.avatar_url()),
-            null                    // No socials for now
+            socials
         );
     }
 
