@@ -5,6 +5,7 @@ import java.net.URI;
 import com.porflyo.infrastructure.configuration.DynamoDbConfig;
 
 import io.micronaut.context.annotation.Factory;
+import io.micronaut.context.annotation.Requires;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.inject.Singleton;
@@ -19,6 +20,7 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
  *
  */
 @Factory
+@Requires(beans = DynamoDbConfig.class) // Solo se carga si DynamoDbConfig está disponible
 public class DynamoDbClientFactory {
 
     private final DynamoDbConfig dynamoDbConfig;
@@ -31,7 +33,7 @@ public class DynamoDbClientFactory {
 
     @Singleton
     @Named("lowClient")
-     DynamoDbClient lowClient() {
+    DynamoDbClient lowClient() {
 
         String endpoint = dynamoDbConfig.endpoint();
         Region region = Region.of(dynamoDbConfig.region());

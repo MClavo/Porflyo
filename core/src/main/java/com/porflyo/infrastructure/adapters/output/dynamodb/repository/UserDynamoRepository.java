@@ -15,6 +15,7 @@ import com.porflyo.infrastructure.adapters.output.dynamodb.mapper.UserDynamoMapp
 import com.porflyo.infrastructure.adapters.output.dynamodb.schema.UserTableSchema;
 import com.porflyo.infrastructure.configuration.DynamoDbConfig;
 
+import io.micronaut.context.annotation.Requires;
 import io.micronaut.core.annotation.NonNull;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
@@ -31,6 +32,7 @@ import software.amazon.awssdk.enhanced.dynamodb.model.UpdateItemEnhancedRequest;
  * </p>
  */
 @Singleton
+@Requires(beans = DynamoDbConfig.class)
 public class UserDynamoRepository implements UserRepository {
     private static final Logger log = LoggerFactory.getLogger(UserDynamoRepository.class);
     private final DynamoDbTable<DynamoUserDto> table;
