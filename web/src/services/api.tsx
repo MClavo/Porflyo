@@ -1,5 +1,5 @@
 export const getUser = async () => {
-  const res = await fetch('/api/user', { credentials: 'include' });
+  const res = await fetch('/api/user/get', { credentials: 'include' });
   if (!res.ok) throw new Error('Usuario no autenticado');
   return res.json(); // Devuelve { login, id, name, email, avatar_url }
 };
