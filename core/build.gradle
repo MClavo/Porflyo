@@ -7,7 +7,7 @@ plugins {
     //id("io.micronaut.test-resources") version "4.5.4"
 }
 
-version = "0.2"
+version = "0.3"
 group = "com.porflyo"
 
 repositories {
