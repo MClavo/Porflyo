@@ -1,6 +1,6 @@
 package com.porflyo.application.ports.output;
 
-import com.porflyo.domain.model.UserClaims;
+import com.porflyo.domain.model.user.UserClaims;
 
 public interface JwtPort {
     

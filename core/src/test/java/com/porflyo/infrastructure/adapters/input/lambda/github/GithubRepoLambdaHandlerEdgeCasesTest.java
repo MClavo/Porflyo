@@ -20,8 +20,8 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import com.amazonaws.services.lambda.runtime.events.APIGatewayV2HTTPEvent;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayV2HTTPResponse;
-import com.porflyo.domain.model.UserClaims;
 import com.porflyo.domain.model.provider.ProviderRepo;
+import com.porflyo.domain.model.user.UserClaims;
 import com.porflyo.infrastructure.adapters.input.lambda.api.ProviderRepoLambdaHandler;
 import com.porflyo.testing.data.LambdaTestData;
 import com.porflyo.testing.data.TestData;

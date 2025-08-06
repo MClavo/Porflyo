@@ -1,4 +1,4 @@
-package com.porflyo.domain.model;
+package com.porflyo.domain.model.user;
 
 import java.time.Instant;
 

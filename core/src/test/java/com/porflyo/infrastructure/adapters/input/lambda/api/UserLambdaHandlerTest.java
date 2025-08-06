@@ -21,9 +21,9 @@ import org.mockito.Mock;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayV2HTTPEvent;
 import com.porflyo.application.ports.input.UserUseCase;
 import com.porflyo.application.ports.output.JwtPort;
-import com.porflyo.domain.model.UserClaims;
 import com.porflyo.domain.model.shared.EntityId;
 import com.porflyo.domain.model.user.User;
+import com.porflyo.domain.model.user.UserClaims;
 import com.porflyo.infrastructure.adapters.input.lambda.api.dto.PublicUserDto;
 import com.porflyo.testing.data.TestData;
 

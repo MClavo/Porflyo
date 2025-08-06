@@ -17,7 +17,7 @@ import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import com.porflyo.application.configuration.JwtConfig;
-import com.porflyo.domain.model.UserClaims;
+import com.porflyo.domain.model.user.UserClaims;
 import com.porflyo.testing.data.TestData;
 import com.porflyo.testing.mocks.ports.MockJwtConfig;
 

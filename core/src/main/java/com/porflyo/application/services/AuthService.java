@@ -14,12 +14,12 @@ import com.porflyo.application.ports.input.AuthUseCase;
 import com.porflyo.application.ports.output.ProviderPort;
 import com.porflyo.application.ports.output.JwtPort;
 import com.porflyo.application.ports.output.UserRepository;
-import com.porflyo.domain.model.UserClaims;
-import com.porflyo.domain.model.UserSession;
 import com.porflyo.domain.model.provider.ProviderUser;
 import com.porflyo.domain.model.shared.EntityId;
 import com.porflyo.domain.model.user.ProviderAccount;
 import com.porflyo.domain.model.user.User;
+import com.porflyo.domain.model.user.UserClaims;
+import com.porflyo.domain.model.user.UserSession;
 
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;

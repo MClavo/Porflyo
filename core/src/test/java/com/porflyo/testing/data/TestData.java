@@ -5,13 +5,13 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 
-import com.porflyo.domain.model.UserClaims;
-import com.porflyo.domain.model.UserSession;
 import com.porflyo.domain.model.provider.ProviderRepo;
 import com.porflyo.domain.model.provider.ProviderUser;
 import com.porflyo.domain.model.shared.EntityId;
 import com.porflyo.domain.model.user.ProviderAccount;
 import com.porflyo.domain.model.user.User;
+import com.porflyo.domain.model.user.UserClaims;
+import com.porflyo.domain.model.user.UserSession;
 
 
 
