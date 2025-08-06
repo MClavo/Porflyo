@@ -7,6 +7,6 @@ import io.micronaut.context.annotation.Requires;
 @Requires(property = "s3.endpoint")
 public record S3Config(
     String region,
+    String bucketName,
     String endpoint
-
 ) {}

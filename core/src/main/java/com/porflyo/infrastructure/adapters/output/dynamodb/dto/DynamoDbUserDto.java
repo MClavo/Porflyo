@@ -21,7 +21,7 @@ import lombok.Setter;
 @Introspected
 @NoArgsConstructor
 @AllArgsConstructor
-public class DynamoUserDto {
+public class DynamoDbUserDto {
     private String pk;
     private String sk;
     private String name;
