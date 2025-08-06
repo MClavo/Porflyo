@@ -20,7 +20,7 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
  *
  */
 @Factory
-@Requires(beans = DynamoDbConfig.class) // Solo se carga si DynamoDbConfig está disponible
+@Requires(beans = DynamoDbConfig.class) // Only loads if DynamoDbConfig is available
 public class DynamoDbClientFactory {
 
     private final DynamoDbConfig dynamoDbConfig;
@@ -29,11 +29,10 @@ public class DynamoDbClientFactory {
     public DynamoDbClientFactory(DynamoDbConfig dynamoDbConfig) {
         this.dynamoDbConfig = dynamoDbConfig;
     }
-    
 
     @Singleton
-    @Named("lowClient")
-    DynamoDbClient lowClient() {
+    @Named("lowDynamoDbClient")
+    DynamoDbClient createDbClient() {
 
         String endpoint = dynamoDbConfig.endpoint();
         Region region = Region.of(dynamoDbConfig.region());
@@ -43,16 +42,16 @@ public class DynamoDbClientFactory {
         AwsBasicCredentials fakeCreds = AwsBasicCredentials.create("test", "test");
 
         return DynamoDbClient.builder()
-                             .region(region)
-                             .endpointOverride(URI.create(endpoint))
-                             .credentialsProvider(StaticCredentialsProvider.create(fakeCreds))
-                             .build();
+                .region(region)
+                .endpointOverride(URI.create(endpoint))
+                .credentialsProvider(StaticCredentialsProvider.create(fakeCreds))
+                .build();
     }
 
     @Singleton
-    DynamoDbEnhancedClient enhanced(@Named("lowClient") DynamoDbClient low) {
+    DynamoDbEnhancedClient enhanced(@Named("lowDynamoDbClient") DynamoDbClient low) {
         return DynamoDbEnhancedClient.builder()
-                                     .dynamoDbClient(low)
-                                     .build();
+                .dynamoDbClient(low)
+                .build();
     }
 }
