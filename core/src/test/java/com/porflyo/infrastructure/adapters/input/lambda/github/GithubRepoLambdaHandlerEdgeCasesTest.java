@@ -21,8 +21,8 @@ import org.junit.jupiter.params.provider.ValueSource;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayV2HTTPEvent;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayV2HTTPResponse;
 import com.porflyo.domain.model.UserClaims;
-import com.porflyo.domain.model.GithubRepo;
-import com.porflyo.infrastructure.adapters.input.lambda.api.GithubRepoLambdaHandler;
+import com.porflyo.domain.model.provider.ProviderRepo;
+import com.porflyo.infrastructure.adapters.input.lambda.api.ProviderRepoLambdaHandler;
 import com.porflyo.testing.data.LambdaTestData;
 import com.porflyo.testing.data.TestData;
 import com.porflyo.testing.mocks.input.MockRepoUseCase;
@@ -36,7 +36,7 @@ class GithubRepoLambdaHandlerEdgeCasesTest {
     private MockRepoUseCase repoUseCase;
     private MockJwtPort jwtPort;
     private JsonMapper jsonMapper;
-    private GithubRepoLambdaHandler githubRepoLambdaHandler;
+    private ProviderRepoLambdaHandler githubRepoLambdaHandler;
 
     @BeforeEach
     void setUp() {
@@ -60,7 +60,7 @@ class GithubRepoLambdaHandlerEdgeCasesTest {
                     StringBuilder sb = new StringBuilder("[");
                     for (int i = 0; i < list.size(); i++) {
                         if (i > 0) sb.append(",");
-                        if (list.get(i) instanceof GithubRepo repo) {
+                        if (list.get(i) instanceof ProviderRepo repo) {
                             sb.append(String.format(
                                 "{\"name\":\"%s\",\"description\":\"%s\",\"html_url\":\"%s\"}",
                                 repo.name(), repo.description(), repo.html_url()
@@ -78,8 +78,8 @@ class GithubRepoLambdaHandlerEdgeCasesTest {
         return mockMapper;
     }
 
-    private GithubRepoLambdaHandler createHandler(MockRepoUseCase repoUseCase, MockJwtPort jwtPort) {
-        return new GithubRepoLambdaHandler(repoUseCase, jwtPort, jsonMapper);
+    private ProviderRepoLambdaHandler createHandler(MockRepoUseCase repoUseCase, MockJwtPort jwtPort) {
+        return new ProviderRepoLambdaHandler(repoUseCase, jwtPort, jsonMapper);
     }
 
     private void assertErrorResponse(APIGatewayV2HTTPResponse response, String expectedErrorMessage) {
@@ -96,7 +96,7 @@ class GithubRepoLambdaHandlerEdgeCasesTest {
         assertEquals(200, response.getStatusCode());
     }
 
-    private GithubRepoLambdaHandler createHandlerWithError(String errorMessage) {
+    private ProviderRepoLambdaHandler createHandlerWithError(String errorMessage) {
         jwtPort = MockJwtPort.builder().throwOnExtract(new RuntimeException(errorMessage)).build();
         return createHandler(repoUseCase, jwtPort);
     }
@@ -185,9 +185,9 @@ class GithubRepoLambdaHandlerEdgeCasesTest {
             switch (scenario) {
                 case "null_values" -> {
                     // Given - repos with null values
-                    List<GithubRepo> reposWithNulls = List.of(
-                        new GithubRepo(null, null, "https://github.com/user/repo1"),
-                        new GithubRepo("valid-repo", "Valid description", null)
+                    List<ProviderRepo> reposWithNulls = List.of(
+                        new ProviderRepo(null, null, "https://github.com/user/repo1"),
+                        new ProviderRepo("valid-repo", "Valid description", null)
                     );
                     repoUseCase = MockRepoUseCase.builder().getUserRepos(reposWithNulls).build();
                     githubRepoLambdaHandler = createHandler(repoUseCase, jwtPort);
@@ -200,8 +200,8 @@ class GithubRepoLambdaHandlerEdgeCasesTest {
                     // Given - repos with very long values
                     String longName = "a".repeat(500);
                     String longDescription = "Description: " + "b".repeat(1000);
-                    List<GithubRepo> reposWithLongValues = List.of(
-                        new GithubRepo(longName, longDescription, "https://github.com/user/long-repo")
+                    List<ProviderRepo> reposWithLongValues = List.of(
+                        new ProviderRepo(longName, longDescription, "https://github.com/user/long-repo")
                     );
                     repoUseCase = MockRepoUseCase.builder().getUserRepos(reposWithLongValues).build();
                     githubRepoLambdaHandler = createHandler(repoUseCase, jwtPort);
@@ -212,9 +212,9 @@ class GithubRepoLambdaHandlerEdgeCasesTest {
                 }
                 case "unicode" -> {
                     // Given - unicode characters
-                    List<GithubRepo> unicodeRepos = List.of(
-                        new GithubRepo("项目-α", "项目描述 with émojis 🚀", "https://github.com/用户/项目-α"),
-                        new GithubRepo("проект-β", "Описание проекта", "https://github.com/пользователь/проект-β")
+                    List<ProviderRepo> unicodeRepos = List.of(
+                        new ProviderRepo("项目-α", "项目描述 with émojis 🚀", "https://github.com/用户/项目-α"),
+                        new ProviderRepo("проект-β", "Описание проекта", "https://github.com/пользователь/проект-β")
                     );
                     repoUseCase = MockRepoUseCase.builder().getUserRepos(unicodeRepos).build();
                     githubRepoLambdaHandler = createHandler(repoUseCase, jwtPort);
@@ -225,8 +225,8 @@ class GithubRepoLambdaHandlerEdgeCasesTest {
                 }
                 case "massive_list" -> {
                     // Given - very large repository list
-                    List<GithubRepo> massiveRepos = java.util.stream.IntStream.rangeClosed(1, 500)
-                        .mapToObj(i -> new GithubRepo("repo-" + i, "Description " + i, "https://github.com/user/repo-" + i))
+                    List<ProviderRepo> massiveRepos = java.util.stream.IntStream.rangeClosed(1, 500)
+                        .mapToObj(i -> new ProviderRepo("repo-" + i, "Description " + i, "https://github.com/user/repo-" + i))
                         .toList();
                     repoUseCase = MockRepoUseCase.builder().getUserRepos(massiveRepos).build();
                     githubRepoLambdaHandler = createHandler(repoUseCase, jwtPort);

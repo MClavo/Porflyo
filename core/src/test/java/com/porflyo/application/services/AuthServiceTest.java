@@ -30,7 +30,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.porflyo.application.configuration.GithubOAuthConfig;
+import com.porflyo.application.configuration.ProviderOAuthConfig;
 import com.porflyo.application.configuration.JwtConfig;
 import com.porflyo.application.ports.output.UserRepository;
 import com.porflyo.domain.model.UserSession;
@@ -60,7 +60,7 @@ class AuthServiceTest {
     private AuthService authService;
 
     // static config data
-    private GithubOAuthConfig oauthCfg;
+    private ProviderOAuthConfig oauthCfg;
     private JwtConfig         jwtCfg;
 
     // ───────────────────────────────── test setup ─────────────────────────────────────

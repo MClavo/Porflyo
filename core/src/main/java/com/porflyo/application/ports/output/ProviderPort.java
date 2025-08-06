@@ -2,14 +2,14 @@ package com.porflyo.application.ports.output;
 
 import java.util.List;
 
-import com.porflyo.domain.model.GithubRepo;
-import com.porflyo.domain.model.GithubUser;
+import com.porflyo.domain.model.provider.ProviderRepo;
+import com.porflyo.domain.model.provider.ProviderUser;
 
 /**
  * GithubPort interface defines the operations related to GitHub API interactions,
  * including user authentication and data retrieval.
  */
-public interface GithubPort {
+public interface ProviderPort {
 
     /**
      * Exchanges OAuth code for access token
@@ -25,7 +25,7 @@ public interface GithubPort {
      * @param accessToken The access token for GitHub API.
      * @return The GitHub user data.
      */
-    GithubUser getUserData(String accessToken);
+    ProviderUser getUserData(String accessToken);
     
     /**
      * Retrieves a list of repositories for the authenticated user.
@@ -33,6 +33,6 @@ public interface GithubPort {
      * @param accessToken The access token for GitHub API.
      * @return A list of GitHub repositories.
      */
-    List<GithubRepo> getUserRepos(String accessToken);
+    List<ProviderRepo> getUserRepos(String accessToken);
     
 }

@@ -2,7 +2,7 @@ package com.porflyo.application.ports.input;
 
 import java.util.List;
 
-import com.porflyo.domain.model.GithubRepo;
+import com.porflyo.domain.model.provider.ProviderRepo;
 import com.porflyo.domain.model.shared.EntityId;
 
 /**
@@ -17,7 +17,7 @@ public interface RepoUseCase {
      * @param accessToken The access token for the provider API.
      * @return A list of repositories.
      */
-    List<GithubRepo> getUserRepos(String accessToken);
+    List<ProviderRepo> getUserRepos(String accessToken);
     
     
     
@@ -27,5 +27,5 @@ public interface RepoUseCase {
      * @param userId The ID of the user whose repositories are to be retrieved.
      * @return A list of repositories.
      */
-    List<GithubRepo> getUserRepos(EntityId userId);
+    List<ProviderRepo> getUserRepos(EntityId userId);
 }

@@ -8,15 +8,15 @@ import java.util.Collections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.porflyo.application.configuration.GithubOAuthConfig;
+import com.porflyo.application.configuration.ProviderOAuthConfig;
 import com.porflyo.application.configuration.JwtConfig;
 import com.porflyo.application.ports.input.AuthUseCase;
-import com.porflyo.application.ports.output.GithubPort;
+import com.porflyo.application.ports.output.ProviderPort;
 import com.porflyo.application.ports.output.JwtPort;
 import com.porflyo.application.ports.output.UserRepository;
-import com.porflyo.domain.model.GithubUser;
 import com.porflyo.domain.model.UserClaims;
 import com.porflyo.domain.model.UserSession;
+import com.porflyo.domain.model.provider.ProviderUser;
 import com.porflyo.domain.model.shared.EntityId;
 import com.porflyo.domain.model.user.ProviderAccount;
 import com.porflyo.domain.model.user.User;
@@ -35,7 +35,7 @@ import jakarta.inject.Singleton;
  * Dependencies:
  * <ul>
  *   <li>{@link ConfigurationPort} - Provides configuration values such as OAuth client ID, redirect URI, scope, and JWT expiration.</li>
- *   <li>{@link GithubPort} - Handles communication with GitHub for exchanging codes and fetching user data.</li>
+ *   <li>{@link ProviderPort} - Handles communication with GitHub for exchanging codes and fetching user data.</li>
  *   <li>{@link JwtPort} - Responsible for generating JWT tokens based on user claims.</li>
  * </ul>
  * </p>
@@ -57,13 +57,13 @@ public class AuthService implements AuthUseCase {
     private static final Logger log = LoggerFactory.getLogger(AuthService.class);
     private final UserRepository userRepository;
 
-    private final GithubOAuthConfig oauthconfig;
+    private final ProviderOAuthConfig oauthconfig;
     private final JwtConfig jwtConfig;
-    private final GithubPort github;
+    private final ProviderPort github;
     private final JwtPort jwt;
 
     @Inject
-    public AuthService(GithubPort githubPort, JwtPort jwtPort, GithubOAuthConfig Oauthconfig, JwtConfig jwtConfig, UserRepository userRepository) {
+    public AuthService(ProviderPort githubPort, JwtPort jwtPort, ProviderOAuthConfig Oauthconfig, JwtConfig jwtConfig, UserRepository userRepository) {
         this.github = githubPort;
         this.jwt = jwtPort;
         this.oauthconfig = Oauthconfig;
@@ -92,7 +92,7 @@ public class AuthService implements AuthUseCase {
        try {
             // Exchange the code for an access token and fetch user data
             String accessToken = github.exchangeCodeForAccessToken(code);
-            GithubUser githubUser = github.getUserData(accessToken);
+            ProviderUser githubUser = github.getUserData(accessToken);
 
             User user = createUserFromGithubUser(githubUser, accessToken);
 
@@ -117,7 +117,7 @@ public class AuthService implements AuthUseCase {
         }
     }
 
-    private User createUserFromGithubUser(GithubUser githubUser, String accessToken) {
+    private User createUserFromGithubUser(ProviderUser githubUser, String accessToken) {
         
         ProviderAccount githubAccount = new ProviderAccount(
             githubUser.id(),
