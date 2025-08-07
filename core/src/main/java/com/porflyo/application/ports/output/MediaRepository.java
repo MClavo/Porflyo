@@ -14,7 +14,7 @@ public interface MediaRepository {
      * @param key    The key (path) where the file will be uploaded.
      * @return A PresignedPostDto containing the URL and fields for the presigned POST request.
      */
-    PresignedPostDto generatePost(String bucket, String key, String contentType, long size, String md5);
+    PresignedPostDto generatePut(String bucket, String key, String contentType, long size, String md5);
 
 
     /**

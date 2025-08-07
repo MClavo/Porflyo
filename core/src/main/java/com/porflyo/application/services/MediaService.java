@@ -12,8 +12,8 @@ public class MediaService implements MediaUseCase {
     }
     
     @Override
-    public PresignedPostDto createPresignedPost(String bucket, String key, String contentType, long size, String md5) {
-        return mediaRepository.generatePost(bucket, key, contentType, size, md5);
+    public PresignedPostDto createPresignedPut(String bucket, String key, String contentType, long size, String md5) {
+        return mediaRepository.generatePut(bucket, key, contentType, size, md5);
     }
 
     @Override

@@ -39,7 +39,7 @@ public class S3MediaRepository implements MediaRepository {
     }
 
     @Override
-    public PresignedPostDto generatePost(String bucket, String key, String contentType, long size, String md5) {
+    public PresignedPostDto generatePut(String bucket, String key, String contentType, long size, String md5) {
         try {
             PutObjectRequest putReq = PutObjectRequest.builder()
                     .bucket(bucket)

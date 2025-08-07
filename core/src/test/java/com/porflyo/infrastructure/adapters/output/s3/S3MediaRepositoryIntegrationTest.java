@@ -75,7 +75,7 @@ class S3MediaRepositoryIntegrationTest implements TestPropertyProvider {
         String md5 = md5Base64(testFile);
 
         // When
-        PresignedPostDto dto = mediaRepository.generatePost(
+        PresignedPostDto dto = mediaRepository.generatePut(
                 BUCKET, 
                 KEY, 
                 "text/plain", 
