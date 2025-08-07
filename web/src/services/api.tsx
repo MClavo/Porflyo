@@ -31,3 +31,7 @@ export const updateUser = async (updates: Record<string, unknown>) => {
   });
   return response.data;
 };
+
+export const updateUserAvatar = async (avatarUrl: string) => {
+  return updateUser({ avatarUrl });
+};

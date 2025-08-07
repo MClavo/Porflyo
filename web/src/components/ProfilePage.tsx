@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
 import { updateUser as updateUserAPI } from '../services/api';
+import ProfilePictureUploader from './ProfilePictureUploader';
 
 const ProfilePage: React.FC = () => {
   const { user, updateUser, loading } = useUser();
@@ -15,6 +16,7 @@ const ProfilePage: React.FC = () => {
   const [newSocialUrl, setNewSocialUrl] = useState('');
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const [avatarUploadMessage, setAvatarUploadMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
   if (!user) {
     return (
@@ -141,6 +143,50 @@ const ProfilePage: React.FC = () => {
     }
   };
 
+  const handleAvatarUploadSuccess = async (newAvatarUrl: string, isFirstCustomAvatar: boolean) => {
+    try {
+      setAvatarUploadMessage(null);
+      
+      // Only update the backend if this is the first custom avatar
+      if (isFirstCustomAvatar) {
+        // Extract the key from the URL to save it in the backend
+        const pathParts = newAvatarUrl.split('/');
+        let avatarKey = '';
+        if (pathParts.length >= 5 && pathParts[3] === 'profile-pictures') {
+          avatarKey = pathParts.slice(3).join('/'); // Get "profile-pictures/uuid/avatar.webp"
+        }
+        
+        // Update both avatarUrl and avatarKey in the backend
+        const updatedUser = await updateUserAPI({ avatarUrl: newAvatarUrl, avatarKey });
+        updateUser(updatedUser);
+      } else {
+        // Just update the local state since the S3 object was overwritten
+        // The backend already has the correct avatarKey saved
+        updateUser({ ...user, avatarUrl: newAvatarUrl });
+      }
+      
+      setAvatarUploadMessage({ type: 'success', text: 'Foto de perfil actualizada correctamente' });
+      
+      // Clear the message after 3 seconds
+      setTimeout(() => {
+        setAvatarUploadMessage(null);
+      }, 3000);
+    } catch (error) {
+      setAvatarUploadMessage({ 
+        type: 'error', 
+        text: error instanceof Error ? error.message : 'Error al actualizar la foto de perfil' 
+      });
+    }
+  };
+
+  const handleAvatarUploadError = (error: string) => {
+    setAvatarUploadMessage({ type: 'error', text: error });
+    // Clear the error message after 5 seconds
+    setTimeout(() => {
+      setAvatarUploadMessage(null);
+    }, 5000);
+  };
+
   return (
     <div className="main-content fade-in">
       <div className="profile-header">
@@ -151,6 +197,29 @@ const ProfilePage: React.FC = () => {
         />
         <h1 className="card-title">Edit Profile</h1>
         <p className="card-description">Update your personal information</p>
+      </div>
+
+      {/* Profile Picture Upload Section */}
+      <div className="card">
+        <div className="card-header">
+          <h2 className="card-title">Foto de Perfil</h2>
+          <p className="card-description">Cambia tu foto de perfil. Se mostrará como un círculo en tu perfil.</p>
+        </div>
+
+        {avatarUploadMessage && (
+          <div className={avatarUploadMessage.type === 'success' ? 'success' : 'error'}>
+            {avatarUploadMessage.text}
+          </div>
+        )}
+
+        <ProfilePictureUploader
+          currentUser={{
+            avatarUrl: user.avatarUrl,
+            providerAvatarUrl: user.providerAvatarUrl
+          }}
+          onUploadSuccess={handleAvatarUploadSuccess}
+          onUploadError={handleAvatarUploadError}
+        />
       </div>
 
       {/* Provider Information (read only) */}
