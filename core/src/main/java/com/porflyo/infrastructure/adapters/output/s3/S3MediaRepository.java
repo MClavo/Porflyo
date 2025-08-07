@@ -32,7 +32,7 @@ public class S3MediaRepository implements MediaRepository {
     private final S3Config s3Config;
 
     @Inject
-    public S3MediaRepository(S3Client s3, S3Presigner presigner, S3Config s3Config) {
+    public S3MediaRepository(@Named("lowS3Client") S3Client s3, S3Presigner presigner, S3Config s3Config) {
         this.s3 = s3;
         this.presigner = presigner;
         this.s3Config = s3Config;
@@ -56,14 +56,14 @@ public class S3MediaRepository implements MediaRepository {
 
             PresignedPutObjectRequest presigned = presigner.presignPutObject(presignReq);
 
-            logger.debug("Generated presigned POST for bucket: {}, key: {}", bucket, key);
+            logger.debug("Generated presigned URL for bucket: {}, key: {}", bucket, key);
 
             return new PresignedPostDto(
                     presigned.url().toString(),
                     presigned.signedHeaders());
 
         } catch (Exception e) {
-            logger.error("Failed to generate presigned POST for bucket: {}, key: {}", bucket, key, e);
+            logger.error("Failed to generate presigned URL for bucket: {}, key: {}", bucket, key, e);
             throw e;
         }
     }

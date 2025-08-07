@@ -5,7 +5,6 @@ import java.net.URI;
 import com.porflyo.infrastructure.configuration.S3Config;
 
 import io.micronaut.context.annotation.Factory;
-import io.micronaut.context.annotation.Primary;
 import io.micronaut.context.annotation.Requires;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
@@ -52,8 +51,17 @@ public class S3ClientFactory {
 
     @Singleton
     public S3Presigner createPresigner(@Named("lowS3Client") S3Client low) {
+        String endpoint = s3Config.endpoint();
+        Region region = Region.of(s3Config.region());
+        
+        AwsBasicCredentials fakeCreds = AwsBasicCredentials.create("test", "test");
+        
+        // For presigner to work with LocalStack, we need to configure it explicitly
         return S3Presigner.builder()
-            .s3Client(low)
+            .region(region)
+            .endpointOverride(URI.create(endpoint))
+            .credentialsProvider(StaticCredentialsProvider.create(fakeCreds))
+            .serviceConfiguration(S3Configuration.builder().pathStyleAccessEnabled(true).build())
             .build();
     }
 }
