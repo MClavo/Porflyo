@@ -46,7 +46,7 @@ public class S3MediaRepository implements MediaRepository {
                     .key(key)
                     .contentType(contentType)
                     .contentLength(size)
-                    .contentMD5(md5)
+                    //.contentMD5(md5)
                     .build();
 
             PutObjectPresignRequest presignReq = PutObjectPresignRequest.builder()

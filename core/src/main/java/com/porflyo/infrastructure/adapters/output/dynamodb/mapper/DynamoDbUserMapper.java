@@ -54,7 +54,7 @@ public final class DynamoDbUserMapper {
             map.put("description", fromS(dUsr.getDescription()));
 
         if (dUsr.getProfileImage() != null)
-            map.put("avatarUrl", fromS(dUsr.getProfileImage()));
+            map.put("profileImage", fromS(dUsr.getProfileImage()));
 
         if (dUsr.getSocials() != null && !dUsr.getSocials().isEmpty()) {
             map.put("socials", AttributeValue.fromM(
@@ -89,7 +89,7 @@ public final class DynamoDbUserMapper {
                 item.get("name").s(),
                 item.get("email").s(),
                 item.getOrDefault("description", fromS("")).s(),
-                item.getOrDefault("avatarUrl", fromS("")).s(),
+                item.getOrDefault("profileImage", fromS("")).s(),
                 socials,
                 item.get("providerUserId").s(),
                 item.get("providerUserName").s(),
@@ -105,7 +105,8 @@ public final class DynamoDbUserMapper {
                         d.getProviderUserId(),
                         d.getProviderUserName(),
                         URI.create(d.getProviderAvatarUrl()),
-                        d.getProviderAccessToken()),
+                        d.getProviderAccessToken()
+                ),
                 d.getName(),
                 d.getEmail(),
                 d.getDescription(),
@@ -124,7 +125,7 @@ public final class DynamoDbUserMapper {
         patchDto.setName(fetchAttributeValueOrNull(attrs, "name"));
         patchDto.setEmail(fetchAttributeValueOrNull(attrs, "email"));
         patchDto.setDescription(fetchAttributeValueOrNull(attrs, "description"));
-        patchDto.setProfileImage(fetchAttributeValueOrNull(attrs, "avatarUrl"));
+        patchDto.setProfileImage(fetchAttributeValueOrNull(attrs, "profileImage"));
 
         if (attrs.containsKey("socials") && attrs.get("socials") instanceof Map) {
             @SuppressWarnings("unchecked")  // I promise this is a Map<String, String> :()
@@ -142,6 +143,7 @@ public final class DynamoDbUserMapper {
         return patchDto;
     }
 
+    
     public static DynamoDbUserDto createPatchDto(@NonNull EntityId id, ProviderAccount providerAccount) {
         if (providerAccount.providerUserId() == null)
             throw new IllegalArgumentException("Provider account must have a user ID");
@@ -153,7 +155,7 @@ public final class DynamoDbUserMapper {
         patchDto.setProviderUserName(providerAccount.providerUserName());
         patchDto.setProviderAvatarUrl(providerAccount.providerAvatarUrl() != null ? providerAccount.providerAvatarUrl().toString() : null);
         patchDto.setProviderAccessToken(providerAccount.providerAccessToken());
-
+        
         return patchDto;
     }
 

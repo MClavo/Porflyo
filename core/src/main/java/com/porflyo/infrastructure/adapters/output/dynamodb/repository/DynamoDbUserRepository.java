@@ -47,12 +47,17 @@ public class DynamoDbUserRepository implements UserRepository {
         this.table = enhanced.table(dynamoDbConfig.tableName(), UserTableSchema.SCHEMA);
     }
 
+    // ────────────────────────── Save ──────────────────────────
+
     @Override
     public void save(@NonNull User user) {
         table.putItem(DynamoDbUserMapper.toDto(user));
         log.debug("Saved user: {}", user.id().value());
     }
 
+
+    // ────────────────────────── Find ──────────────────────────
+    
     @Override
     public @NonNull Optional<User> findById(@NonNull EntityId id) {
         Key key = buildUserKey(id);
@@ -97,6 +102,8 @@ public class DynamoDbUserRepository implements UserRepository {
     }
     
 
+    // ────────────────────────── Patch ──────────────────────────
+
     @Override
     public User patch(@NonNull EntityId id, @NonNull Map<String, Object> attrs) {
         if (attrs.isEmpty()) return null;
@@ -111,8 +118,6 @@ public class DynamoDbUserRepository implements UserRepository {
         return DynamoDbUserMapper.toDomain(result);
     }
 
-    
-
     @Override
     public User patchProviderAccount(@NonNull EntityId id, @NonNull ProviderAccount providerAccount) {
         DynamoDbUserDto updateItem = DynamoDbUserMapper.createPatchDto(id, providerAccount);
@@ -125,6 +130,9 @@ public class DynamoDbUserRepository implements UserRepository {
         return DynamoDbUserMapper.toDomain(result);
     }
 
+
+    // ────────────────────────── Delete ──────────────────────────
+
     @Override
     public void delete(@NonNull EntityId id) {
         Key key = buildUserKey(id);
@@ -132,6 +140,8 @@ public class DynamoDbUserRepository implements UserRepository {
         log.debug("Deleted user: {}", id.value());
     }
 
+
+    // ────────────────────────── Private Methods ──────────────────────────
 
     private Key buildUserKey(EntityId id) {
         Key key = Key.builder()

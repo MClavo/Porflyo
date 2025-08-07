@@ -21,7 +21,7 @@ import software.amazon.awssdk.enhanced.dynamodb.mapper.StaticAttributeTags;
  * <li><b>description</b>: User's description or bio</li>
  * <li><b>providerUserId</b>: ID from the authentication provider</li>
  * <li><b>providerUserName</b>: Username from the authentication provider</li>
- * <li><b>avatarUrl</b>: URL to the user's avatar image</li>
+ * <li><b>profileImage</b>: URL to the user's profile image</li>
  * <li><b>accessToken</b>: Access token from the authentication provider</li>
  * <li><b>socials</b>: Map of user's social accounts</li>
  * </ul>
@@ -73,7 +73,7 @@ public final class UserTableSchema {
             .addAttribute(String.class, a -> a.name("providerAccessToken")
                     .getter(DynamoDbUserDto::getProviderAccessToken)
                     .setter(DynamoDbUserDto::setProviderAccessToken))
-            .addAttribute(String.class, a -> a.name("avatarUrl")
+            .addAttribute(String.class, a -> a.name("profileImage")
                     .getter(DynamoDbUserDto::getProfileImage)
                     .setter(DynamoDbUserDto::setProfileImage))
             .addAttribute(String.class, a -> a.name("accessToken")
