@@ -4,10 +4,10 @@ import { uploadProfilePicture } from '../services/mediaService';
 
 interface ProfilePictureUploaderProps {
   currentUser: {
-    avatarUrl: string;
+    profileImage: string;
     providerAvatarUrl: string;
   };
-  onUploadSuccess: (newAvatarUrl: string, isFirstCustomAvatar: boolean) => void;
+  onUploadSuccess: (newProfileImageUrl: string, isFirstCustomProfileImage: boolean) => void;
   onUploadError: (error: string) => void;
 }
 
@@ -52,7 +52,7 @@ const ProfilePictureUploader: React.FC<ProfilePictureUploaderProps> = ({
       setPreviewUrl(previewUrl);
 
       // Upload to S3
-      const { avatarUrl, isFirstCustomAvatar } = await uploadProfilePicture(
+      const { profileImageUrl, isFirstCustomProfileImage } = await uploadProfilePicture(
         croppedImageBlob, 
         currentUser
       );
@@ -61,7 +61,7 @@ const ProfilePictureUploader: React.FC<ProfilePictureUploaderProps> = ({
       URL.revokeObjectURL(previewUrl);
       setPreviewUrl(null);
       
-      onUploadSuccess(avatarUrl, isFirstCustomAvatar);
+      onUploadSuccess(profileImageUrl, isFirstCustomProfileImage);
     } catch (error) {
       // Clean up preview URL on error
       if (previewUrl) {
@@ -101,7 +101,7 @@ const ProfilePictureUploader: React.FC<ProfilePictureUploaderProps> = ({
     <div className="profile-picture-uploader">
       <div className="avatar-container">
         <img
-          src={previewUrl || currentUser.avatarUrl || '/default-avatar.png'}
+          src={previewUrl || currentUser.profileImage || '/default-avatar.png'}
           alt="Profile picture"
           className="profile-avatar-large"
         />
@@ -121,7 +121,7 @@ const ProfilePictureUploader: React.FC<ProfilePictureUploaderProps> = ({
           className="btn btn-secondary"
           disabled={isUploading}
         >
-          {currentUser.avatarUrl ? 'Change photo' : 'Upload photo'}
+          {currentUser.profileImage ? 'Change photo' : 'Upload photo'}
         </button>
         
         <p className="avatar-help-text">

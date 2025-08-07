@@ -1,19 +1,19 @@
 import CryptoJS from 'crypto-js';
 
-export interface PresignedPutResponse {
+export interface PresignedPostResponse {
   url: string;
-  fields: Record<string, string[]>; // Contains signed headers as arrays
+  fields: Record<string, string>;
 }
 
 export interface MediaUploadRequest {
   key: string;
   contentType: string;
   size: number;
-  md5?: string; // Make MD5 optional
+  md5: string;
 }
 
 /**
- * Calculate MD5 hash of a blob in base64 format (as expected by S3)
+ * Calculate MD5 hash of a blob
  */
 export const calculateMD5 = async (blob: Blob): Promise<string> => {
   return new Promise((resolve, reject) => {
@@ -22,10 +22,8 @@ export const calculateMD5 = async (blob: Blob): Promise<string> => {
       try {
         const arrayBuffer = reader.result as ArrayBuffer;
         const wordArray = CryptoJS.lib.WordArray.create(arrayBuffer);
-        const md5 = CryptoJS.MD5(wordArray);
-        // Convert to base64 as expected by S3
-        const md5Base64 = CryptoJS.enc.Base64.stringify(md5);
-        resolve(md5Base64);
+        const md5 = CryptoJS.MD5(wordArray).toString();
+        resolve(md5);
       } catch (error) {
         reject(error);
       }
@@ -51,9 +49,9 @@ export const generateProfilePictureKey = (): string => {
 };
 
 /**
- * Request a presigned PUT URL from the backend
+ * Request a presigned POST URL from the backend
  */
-export const requestPresignedPost = async (request: MediaUploadRequest): Promise<PresignedPutResponse> => {
+export const requestPresignedPost = async (request: MediaUploadRequest): Promise<PresignedPostResponse> => {
   const response = await fetch('/api/media', {
     method: 'POST',
     headers: {
@@ -71,36 +69,28 @@ export const requestPresignedPost = async (request: MediaUploadRequest): Promise
 };
 
 /**
- * Upload a file to S3 using presigned PUT
+ * Upload a file to S3 using presigned POST
  */
 export const uploadToS3 = async (
-  presignedPut: PresignedPutResponse,
+  presignedPost: PresignedPostResponse,
   file: Blob
 ): Promise<void> => {
-  // For presigned PUT, we send the file directly as the body
-  // Use ONLY the headers provided by the presigned request to avoid signature issues
-  const headers: Record<string, string> = {};
-
-  // Convert header arrays to single values (take the first value)
-  Object.entries(presignedPut.fields).forEach(([key, values]) => {
-    if (Array.isArray(values) && values.length > 0) {
-      headers[key] = values[0];
-    }
+  const formData = new FormData();
+  
+  // Add all the fields from the presigned post
+  Object.entries(presignedPost.fields).forEach(([key, value]) => {
+    formData.append(key, value);
   });
+  
+  // Add the file last
+  formData.append('file', file);
 
-  console.log('Uploading with headers:', headers);
-  console.log('File size:', file.size);
-  console.log('File type:', file.type);
-
-  const response = await fetch(presignedPut.url, {
-    method: 'PUT',
-    headers,
-    body: file,
+  const response = await fetch(presignedPost.url, {
+    method: 'POST',
+    body: formData,
   });
 
   if (!response.ok) {
-    const errorText = await response.text().catch(() => 'No error details');
-    console.error('Upload failed with status:', response.status, 'Error:', errorText);
     throw new Error(`Failed to upload to S3: ${response.statusText}`);
   }
 };
@@ -158,6 +148,9 @@ export const uploadProfilePicture = async (
   currentUser: { profileImage: string; providerAvatarUrl: string }
 ): Promise<{ profileImageUrl: string; isFirstCustomProfileImage: boolean }> => {
   try {
+    // Calculate MD5 and prepare request
+    const md5 = await calculateMD5(imageBlob);
+    
     // Check if this is the first time user uploads a custom profile image
     const isFirstCustomProfileImage = !hasCustomProfileImage(currentUser);
     
@@ -187,35 +180,19 @@ export const uploadProfilePicture = async (
       key,
       contentType: 'image/webp',
       size: imageBlob.size,
-      // Temporarily remove MD5 to test if it's causing the issue
-      // md5,
+      md5,
     };
 
     // Get presigned URL
-    const presignedPut = await requestPresignedPost(uploadRequest);
+    const presignedPost = await requestPresignedPost(uploadRequest);
 
     // Upload to S3
-    await uploadToS3(presignedPut, imageBlob);
+    await uploadToS3(presignedPost, imageBlob);
 
-    // Construct the complete URL for the uploaded object
-    // For LocalStack: http://host.docker.internal:8000/bucket-name/key
-    // For AWS: https://bucket-name.s3.amazonaws.com/key
-    
-    // Extract the base endpoint from the presigned URL
-    const presignedUrl = new URL(presignedPut.url);
-    const baseEndpoint = `${presignedUrl.protocol}//${presignedUrl.host}`;
-    
-    // For LocalStack, the presigned URL is usually: http://host.docker.internal:8000/bucket-name
-    // So we need to construct: http://host.docker.internal:8000/bucket-name/key
-    let profileImageUrl: string;
-    
-    if (presignedUrl.pathname.includes('/media-test')) {
-      // LocalStack format - the presigned URL already includes the bucket
-      profileImageUrl = `${baseEndpoint}/media-test/${key}`;
-    } else {
-      // Standard S3 format
-      profileImageUrl = `${baseEndpoint}/${key}`;
-    }
+    // Construct the complete URL from the presigned post response
+    // The presigned post URL contains the bucket info
+    const bucketUrl = presignedPost.url;
+    const profileImageUrl = `${bucketUrl}/${key}`;
     
     return { profileImageUrl, isFirstCustomProfileImage };
     

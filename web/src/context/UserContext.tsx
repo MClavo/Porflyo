@@ -5,7 +5,7 @@ import { getUser, getRepos } from '../services/api';
 export interface User {
   name: string;
   email: string;
-  avatarUrl: string;
+  profileImage: string;
   providerUserName: string;
   providerAvatarUrl: string;
   socials: Record<string, string>;

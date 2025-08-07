@@ -8,7 +8,7 @@ export const getUser = async () => {
     }
     throw new Error('Failed to fetch user data');
   }
-  return res.json(); // Returns { name, email, avatarUrl, providerUserName, providerAvatarUrl, socials }
+  return res.json(); // Returns { name, email, profileImage, providerUserName, providerAvatarUrl, socials }
 };
 
 export const getRepos = async () => {
@@ -32,6 +32,6 @@ export const updateUser = async (updates: Record<string, unknown>) => {
   return response.data;
 };
 
-export const updateUserAvatar = async (avatarUrl: string) => {
-  return updateUser({ avatarUrl });
+export const updateUserProfileImage = async (profileImage: string) => {
+  return updateUser({ profileImage });
 };

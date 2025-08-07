@@ -143,30 +143,26 @@ const ProfilePage: React.FC = () => {
     }
   };
 
-  const handleAvatarUploadSuccess = async (newAvatarUrl: string, isFirstCustomAvatar: boolean) => {
+  const handleAvatarUploadSuccess = async (newProfileImageUrl: string, isFirstCustomProfileImage: boolean) => {
     try {
       setAvatarUploadMessage(null);
       
-      // Only update the backend if this is the first custom avatar
-      if (isFirstCustomAvatar) {
+      // Only update the backend if this is the first custom profile image
+      if (isFirstCustomProfileImage) {
         // Extract the key from the URL to save it in the backend
-        const pathParts = newAvatarUrl.split('/');
-        let avatarKey = '';
-        if (pathParts.length >= 5 && pathParts[3] === 'profile-pictures') {
-          avatarKey = pathParts.slice(3).join('/'); // Get "profile-pictures/uuid/avatar.webp"
-        }
+        const key = newProfileImageUrl.split('/').slice(-3).join('/'); // Get "profile-pictures/uuid/avatar.webp"
         
-        // Update both avatarUrl and avatarKey in the backend
-        const updatedUser = await updateUserAPI({ avatarUrl: newAvatarUrl, avatarKey });
+        // Update profileImage with the key in the backend
+        const updatedUser = await updateUserAPI({ profileImage: key });
         updateUser(updatedUser);
       } else {
         // Just update the local state since the S3 object was overwritten
-        // The backend already has the correct avatarKey saved
-        updateUser({ ...user, avatarUrl: newAvatarUrl });
+        // The backend already has the correct profile image key saved
+        updateUser({ ...user, profileImage: newProfileImageUrl });
       }
-      
-      setAvatarUploadMessage({ type: 'success', text: 'Foto de perfil actualizada correctamente' });
-      
+
+      setAvatarUploadMessage({ type: 'success', text: 'Profile picture updated successfully' });
+
       // Clear the message after 3 seconds
       setTimeout(() => {
         setAvatarUploadMessage(null);
@@ -174,7 +170,7 @@ const ProfilePage: React.FC = () => {
     } catch (error) {
       setAvatarUploadMessage({ 
         type: 'error', 
-        text: error instanceof Error ? error.message : 'Error al actualizar la foto de perfil' 
+        text: error instanceof Error ? error.message : 'Error updating profile picture' 
       });
     }
   };
@@ -191,7 +187,7 @@ const ProfilePage: React.FC = () => {
     <div className="main-content fade-in">
       <div className="profile-header">
         <img 
-          src={user.avatarUrl} 
+          src={user.profileImage} 
           alt="Avatar" 
           className="profile-avatar"
         />
@@ -202,8 +198,8 @@ const ProfilePage: React.FC = () => {
       {/* Profile Picture Upload Section */}
       <div className="card">
         <div className="card-header">
-          <h2 className="card-title">Foto de Perfil</h2>
-          <p className="card-description">Cambia tu foto de perfil. Se mostrará como un círculo en tu perfil.</p>
+          <h2 className="card-title">Profile Picture</h2>
+          <p className="card-description">Change your profile picture. It will be displayed as a circle on your profile.</p>
         </div>
 
         {avatarUploadMessage && (
@@ -214,7 +210,7 @@ const ProfilePage: React.FC = () => {
 
         <ProfilePictureUploader
           currentUser={{
-            avatarUrl: user.avatarUrl,
+            profileImage: user.profileImage,
             providerAvatarUrl: user.providerAvatarUrl
           }}
           onUploadSuccess={handleAvatarUploadSuccess}
