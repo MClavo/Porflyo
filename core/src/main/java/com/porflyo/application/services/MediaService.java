@@ -4,6 +4,9 @@ import com.porflyo.application.ports.input.MediaUseCase;
 import com.porflyo.application.ports.output.MediaRepository;
 import com.porflyo.domain.model.dto.PresignedPostDto;
 
+import jakarta.inject.Singleton;
+
+@Singleton
 public class MediaService implements MediaUseCase {
      private final MediaRepository mediaRepository;
 
