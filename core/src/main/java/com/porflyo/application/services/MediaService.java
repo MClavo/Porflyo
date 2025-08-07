@@ -1,5 +1,7 @@
 package com.porflyo.application.services;
 
+import java.io.File;
+
 import com.porflyo.application.ports.input.MediaUseCase;
 import com.porflyo.application.ports.output.MediaRepository;
 import com.porflyo.domain.model.dto.PresignedPostDto;
@@ -15,8 +17,8 @@ public class MediaService implements MediaUseCase {
     }
 
     @Override
-    public void put(String bucket, String key, Object object) {
-        mediaRepository.put(bucket, key, object);
+    public void put(String bucket, String key, File file) {
+        mediaRepository.put(bucket, key, file);
     }
     
     @Override

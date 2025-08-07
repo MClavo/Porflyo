@@ -1,5 +1,7 @@
 package com.porflyo.application.ports.input;
 
+import java.io.File;
+
 import com.porflyo.domain.model.dto.PresignedPostDto;
 
 /**
@@ -12,10 +14,10 @@ public interface MediaUseCase {
      * Puts an object into the specified storage bucket with the given key.
      *
      * @param bucket The name of the storage bucket.
-     * @param key    The key (path) where the object will be stored.
-     * @param object The object to be stored.
+     * @param key    The key (path) where the file will be stored.
+     * @param file   The file to be stored.
      */
-    void put(String bucket, String key, Object object);
+    void put(String bucket, String key, File file);
 
 
     /**
