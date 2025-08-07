@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import com.amazonaws.services.lambda.runtime.events.APIGatewayV2HTTPEvent;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayV2HTTPResponse;
+import com.porflyo.infrastructure.adapters.input.lambda.api.MediaLambdaHandler;
 import com.porflyo.infrastructure.adapters.input.lambda.api.ProviderRepoLambdaHandler;
 import com.porflyo.infrastructure.adapters.input.lambda.api.UserLambdaHandler;
 import com.porflyo.infrastructure.adapters.input.lambda.auth.AuthLambdaHandler;
@@ -36,6 +37,7 @@ public class LambdaEntryPointHandler extends MicronautRequestHandler<APIGatewayV
     private final AuthLambdaHandler authLambdaHandler;
     private final UserLambdaHandler userLambdaHandler;
     private final ProviderRepoLambdaHandler repoLambdaHandler;
+    private final MediaLambdaHandler mediaLambdaHandler;
 
     @Inject
     public LambdaEntryPointHandler() {
@@ -46,8 +48,49 @@ public class LambdaEntryPointHandler extends MicronautRequestHandler<APIGatewayV
         this.authLambdaHandler = applicationContext.getBean(AuthLambdaHandler.class);
         this.userLambdaHandler = applicationContext.getBean(UserLambdaHandler.class);
         this.repoLambdaHandler = applicationContext.getBean(ProviderRepoLambdaHandler.class);
+        this.mediaLambdaHandler = applicationContext.getBean(MediaLambdaHandler.class);
     }
 
+    
+    @Override
+    public APIGatewayV2HTTPResponse execute(APIGatewayV2HTTPEvent input) {
+        try {
+            String path = input.getRawPath();
+            log.debug("Received request for path: {}", path);
+            
+            // Handle edge case where path might be null or empty
+            if (path == null || path.isEmpty() || path.equals("/")) {
+                log.warn("Invalid or empty path received: {}", path);
+                return LambdaHttpUtils.createErrorResponse(404, "Not Found");
+            }
+            
+            String[] pathParts = path.split("/");
+            String startingRoute = pathParts[1];
+            
+            // Route the request to the appropriate handlers based on path
+            switch (startingRoute) {
+                case "oauth":
+                return oauthHandler(path, input);
+                
+                case "api":
+                return apiHandler(path, input);
+                
+                case "logout":
+                return authLambdaHandler.handleLogout(input);
+                
+                default:
+                log.warn("No handler found for path: {}", path);
+                return LambdaHttpUtils.createErrorResponse(404, "Not Found");
+            }
+            
+        } catch (Exception e){
+            log.error("Error processing request for path: {}, error: {}", input.getRawPath(), e.getMessage(), e);
+            return LambdaHttpUtils.createErrorResponse(500, e.getMessage());
+        }
+        
+    }
+
+    
     private APIGatewayV2HTTPResponse oauthHandler(String path, APIGatewayV2HTTPEvent input){
         
         if(path.equals("/oauth/login/github"))
@@ -74,48 +117,13 @@ public class LambdaEntryPointHandler extends MicronautRequestHandler<APIGatewayV
 
             case "repos":
                 return repoLambdaHandler.handleUserRequest(input);
-        
+            
+            case "media":
+                return mediaLambdaHandler.handleMediaRequest(input);
+
             default:
                 return LambdaHttpUtils.createErrorResponse(404, "Not Found");
         }
     }
 
-
-    @Override
-    public APIGatewayV2HTTPResponse execute(APIGatewayV2HTTPEvent input) {
-        try {
-            String path = input.getRawPath();
-            log.debug("Received request for path: {}", path);
-
-            // Handle edge case where path might be null or empty
-            if (path == null || path.isEmpty() || path.equals("/")) {
-                log.warn("Invalid or empty path received: {}", path);
-                return LambdaHttpUtils.createErrorResponse(404, "Not Found");
-            }
-
-            String[] pathParts = path.split("/");
-            String startingRoute = pathParts[1];
-
-            // Route the request to the appropriate handlers based on path
-            switch (startingRoute) {
-                case "oauth":
-                    return oauthHandler(path, input);
-
-                case "api":
-                    return apiHandler(path, input);
-                
-                case "logout":
-                    return authLambdaHandler.handleLogout(input);
-
-                default:
-                    log.warn("No handler found for path: {}", path);
-                    return LambdaHttpUtils.createErrorResponse(404, "Not Found");
-            }
-
-        } catch (Exception e){
-            log.error("Error processing request for path: {}, error: {}", input.getRawPath(), e.getMessage(), e);
-            return LambdaHttpUtils.createErrorResponse(500, e.getMessage());
-        }
-
-    }
 }
