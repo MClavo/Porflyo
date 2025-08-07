@@ -9,6 +9,16 @@ import com.porflyo.domain.model.dto.PresignedPostDto;
 public interface MediaUseCase {
 
     /**
+     * Puts an object into the specified storage bucket with the given key.
+     *
+     * @param bucket The name of the storage bucket.
+     * @param key    The key (path) where the object will be stored.
+     * @param object The object to be stored.
+     */
+    void put(String bucket, String key, Object object);
+
+
+    /**
      * Creates a presigned POST request for uploading files to a specified bucket and key.
      *
      * @param bucket The name of the storage bucket.
@@ -25,6 +35,8 @@ public interface MediaUseCase {
      * @return The retrieved object.
      */
     Object get(String bucket, String key);
+
+
 
     /**
      * Deletes an object from the specified storage bucket using its key.

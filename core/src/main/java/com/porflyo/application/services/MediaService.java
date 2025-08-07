@@ -13,6 +13,11 @@ public class MediaService implements MediaUseCase {
     public MediaService(MediaRepository mediaRepository) {
         this.mediaRepository = mediaRepository;
     }
+
+    @Override
+    public void put(String bucket, String key, Object object) {
+        mediaRepository.put(bucket, key, object);
+    }
     
     @Override
     public PresignedPostDto createPresignedPut(String bucket, String key, String contentType, long size, String md5) {
