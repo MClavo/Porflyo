@@ -65,7 +65,7 @@ public class DynamoDbUserRepositoryIntegrationTest implements TestPropertyProvid
         "User One",
         "user-email@example.com",
         "Description for User One",
-        URI.create("https://example.com/avatar1.png"),
+        "https://example.com/avatar1.png",
         Map.of("github", "https://github.com/user1")
     );
 

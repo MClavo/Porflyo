@@ -135,7 +135,7 @@ public class AuthService implements AuthUseCase {
             githubUser.name(),
             githubUser.email(),
             "",                             // Empty description
-            URI.create(githubUser.avatar_url()),
+            githubUser.avatar_url(),
             Collections.emptyMap()
         );
     }

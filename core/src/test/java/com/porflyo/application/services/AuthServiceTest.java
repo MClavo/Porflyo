@@ -30,8 +30,8 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.porflyo.application.configuration.ProviderOAuthConfig;
 import com.porflyo.application.configuration.JwtConfig;
+import com.porflyo.application.configuration.ProviderOAuthConfig;
 import com.porflyo.application.ports.output.UserRepository;
 import com.porflyo.domain.model.shared.EntityId;
 import com.porflyo.domain.model.user.ProviderAccount;
@@ -197,7 +197,7 @@ class AuthServiceTest {
                 TestData.DEFAULT_GITHUB_NAME,
                 TestData.DEFAULT_GITHUB_EMAIL,
                 "",
-                URI.create(TestData.DEFAULT_GITHUB_AVATAR_URL),
+                TestData.DEFAULT_GITHUB_AVATAR_URL,
                 Map.of()
             );
 
@@ -228,7 +228,7 @@ class AuthServiceTest {
                 TestData.DEFAULT_GITHUB_NAME,
                 TestData.DEFAULT_GITHUB_EMAIL,
                 "",
-                URI.create(TestData.DEFAULT_GITHUB_AVATAR_URL),
+                TestData.DEFAULT_GITHUB_AVATAR_URL,
                 Map.of()
             );
 

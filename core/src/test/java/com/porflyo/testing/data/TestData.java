@@ -69,7 +69,7 @@ public final class TestData {
         DEFAULT_GITHUB_NAME,
         DEFAULT_GITHUB_EMAIL,
         "Test Description",
-        URI.create(DEFAULT_GITHUB_AVATAR_URL),
+        DEFAULT_GITHUB_AVATAR_URL,
         Map.of("github", "https://github.com/testuser")
     );
 

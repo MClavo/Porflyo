@@ -34,7 +34,7 @@ public final class DynamoDbUserMapper {
                 u.name(),
                 u.email(),
                 u.description(),
-                u.avatarUrl() != null ? u.avatarUrl().toString() : null,
+                u.profileImage() != null ? u.profileImage().toString() : null,
                 u.socials(),
                 u.provider().providerUserId(),
                 u.provider().providerUserName(),
@@ -53,8 +53,8 @@ public final class DynamoDbUserMapper {
         if (dUsr.getDescription() != null)
             map.put("description", fromS(dUsr.getDescription()));
 
-        if (dUsr.getAvatarUrl() != null)
-            map.put("avatarUrl", fromS(dUsr.getAvatarUrl()));
+        if (dUsr.getProfileImage() != null)
+            map.put("avatarUrl", fromS(dUsr.getProfileImage()));
 
         if (dUsr.getSocials() != null && !dUsr.getSocials().isEmpty()) {
             map.put("socials", AttributeValue.fromM(
@@ -109,7 +109,7 @@ public final class DynamoDbUserMapper {
                 d.getName(),
                 d.getEmail(),
                 d.getDescription(),
-                d.getAvatarUrl() != null && !d.getAvatarUrl().isBlank() ? URI.create(d.getAvatarUrl()) : null,
+                d.getProfileImage() != null && !d.getProfileImage().isBlank() ? d.getProfileImage() : null,
                 d.getSocials());
     }
 
@@ -124,7 +124,7 @@ public final class DynamoDbUserMapper {
         patchDto.setName(fetchAttributeValueOrNull(attrs, "name"));
         patchDto.setEmail(fetchAttributeValueOrNull(attrs, "email"));
         patchDto.setDescription(fetchAttributeValueOrNull(attrs, "description"));
-        patchDto.setAvatarUrl(fetchAttributeValueOrNull(attrs, "avatarUrl"));
+        patchDto.setProfileImage(fetchAttributeValueOrNull(attrs, "avatarUrl"));
 
         if (attrs.containsKey("socials") && attrs.get("socials") instanceof Map) {
             @SuppressWarnings("unchecked")  // I promise this is a Map<String, String> :()
