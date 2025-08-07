@@ -5,6 +5,7 @@ import java.net.URI;
 import com.porflyo.infrastructure.configuration.S3Config;
 
 import io.micronaut.context.annotation.Factory;
+import io.micronaut.context.annotation.Primary;
 import io.micronaut.context.annotation.Requires;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
@@ -36,14 +37,15 @@ public class S3ClientFactory {
     @Named("lowS3Client")
     public S3Client createS3Client() {
 
-        Region region = Region.of(s3Config.region());
         String endpoint = s3Config.endpoint();
+        Region region = Region.of(s3Config.region());
+
         AwsBasicCredentials fakeCreds = AwsBasicCredentials.create("test", "test");
 
         return S3Client.builder()
+            .region(region)
             .endpointOverride(URI.create(endpoint))
             .credentialsProvider(StaticCredentialsProvider.create(fakeCreds))
-            .region(region)
             .serviceConfiguration(S3Configuration.builder().pathStyleAccessEnabled(true).build())
             .build();
     }

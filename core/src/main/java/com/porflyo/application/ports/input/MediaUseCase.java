@@ -15,7 +15,16 @@ public interface MediaUseCase {
      * @param key    The key (path) where the file will be uploaded.
      * @return A PresignedPostDto containing the URL and fields for the presigned POST request.
      */
-    PresignedPostDto createPresignedPost(String bucket, String key);
+    PresignedPostDto createPresignedPost(String bucket, String key, String contentType, long size, String md5);
+
+    /**
+     * Retrieves an object from the specified storage bucket using its key.
+     *
+     * @param bucket The name of the storage bucket.
+     * @param key    The key (path) of the object to be retrieved.
+     * @return The retrieved object.
+     */
+    Object get(String bucket, String key);
 
     /**
      * Deletes an object from the specified storage bucket using its key.

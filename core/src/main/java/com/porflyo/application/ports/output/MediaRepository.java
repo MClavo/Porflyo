@@ -14,7 +14,19 @@ public interface MediaRepository {
      * @param key    The key (path) where the file will be uploaded.
      * @return A PresignedPostDto containing the URL and fields for the presigned POST request.
      */
-    PresignedPostDto generatePost(String bucket, String key);
+    PresignedPostDto generatePost(String bucket, String key, String contentType, long size, String md5);
+
+
+    /**
+     * Retrieves an object from the specified storage bucket using its key.
+     *
+     * @param bucket The name of the storage bucket.
+     * @param key    The key (path) of the object to be retrieved.
+     * 
+     * Note: The return type is Object for simplicity, but it should be replaced with a specific type
+     * @return The retrieved object.
+     */
+    Object get(String bucket, String key);
 
     /**
      * Deletes an object from the specified storage bucket using its key.
@@ -22,5 +34,6 @@ public interface MediaRepository {
      * @param bucket The name of the storage bucket.
      * @param key    The key (path) of the object to be deleted.
      */
-    void deleteObject(String bucket, String key);
+    void delete(String bucket, String key);
+    
 }

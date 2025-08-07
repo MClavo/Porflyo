@@ -1,5 +1,6 @@
 package com.porflyo.domain.model.dto;
 
+import java.util.List;
 import java.util.Map;
 
 import io.micronaut.core.annotation.Introspected;
@@ -19,5 +20,5 @@ import io.micronaut.serde.annotation.Serdeable;
 @Introspected
 public record PresignedPostDto(
         String url,
-        Map<String, String> fields
+        Map<String, List<String>> fields
 ) {}

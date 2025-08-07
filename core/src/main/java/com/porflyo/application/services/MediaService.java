@@ -10,14 +10,19 @@ public class MediaService implements MediaUseCase {
     public MediaService(MediaRepository mediaRepository) {
         this.mediaRepository = mediaRepository;
     }
+    
+    @Override
+    public PresignedPostDto createPresignedPost(String bucket, String key, String contentType, long size, String md5) {
+        return mediaRepository.generatePost(bucket, key, contentType, size, md5);
+    }
 
     @Override
-    public PresignedPostDto createPresignedPost(String bucket, String key) {
-        return mediaRepository.generatePost(bucket, key);
+    public Object get(String bucket, String key) {
+        return mediaRepository.get(bucket, key);
     }
 
     @Override
     public void delete(String bucket, String key) {
-        mediaRepository.deleteObject(bucket, key);
+        mediaRepository.delete(bucket, key);
     }
 }
