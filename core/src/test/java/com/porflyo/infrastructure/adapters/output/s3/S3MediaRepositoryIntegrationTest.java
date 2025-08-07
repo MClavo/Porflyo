@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -16,8 +15,8 @@ import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.testcontainers.containers.localstack.LocalStackContainer;
@@ -34,7 +33,7 @@ import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import software.amazon.awssdk.services.s3.S3Client;
 
-@MicronautTest(environments = {"integration"})
+@MicronautTest(environments = {"s3-integration"})
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @Testcontainers
 class S3MediaRepositoryIntegrationTest implements TestPropertyProvider {
@@ -62,27 +61,20 @@ class S3MediaRepositoryIntegrationTest implements TestPropertyProvider {
         String s3Url = "http://" + S3.getHost() + ":" + S3.getMappedPort(4566);
         return Map.of(
             "s3.endpoint", s3Url,
-            "s3.region", "us-east-1",
             "micronaut.test.resources.enabled", "false"
         );
     }
 
     // Test file to upload
     private static final File testFile = new File("src/test/resources/S3Test.txt");
-    
-    @BeforeAll
-    void setup() {
-        // Create the bucket before running tests
-        s3client.createBucket(b -> b.bucket(BUCKET));
-    }
 
 
     @Test
-    void presignedAndDeleteRoundTrip()throws Exception {
+    void presignedPutAndDeleteRoundTrip() throws Exception {
         // Given
-        String md5 = md5Hex(testFile);
+        String md5 = md5Base64(testFile);
 
-        // Hen
+        // When
         PresignedPostDto dto = mediaRepository.generatePost(
                 BUCKET, 
                 KEY, 
@@ -95,12 +87,16 @@ class S3MediaRepositoryIntegrationTest implements TestPropertyProvider {
         assertNotNull(dto.fields(), "Fields must not be null");
 
         
-        // Upload the file using the presigned URL
-        uploadWithPresignedPost(dto, testFile.toPath());
+        // Upload the file using the presigned URL (PUT method)
+        uploadWithPresignedPut(dto, testFile.toPath());
 
         // Verify the file was uploaded
         var listed = s3client.listObjectsV2(b -> b.bucket(BUCKET).prefix(KEY));
         assertEquals(1, listed.contents().size(), "Object should exist");
+
+        // Test get method
+        Object retrievedObject = mediaRepository.get(BUCKET, KEY);
+        assertNotNull(retrievedObject, "Retrieved object should not be null");
 
         /* ---------- Delete via repository ---------- */
         mediaRepository.delete(BUCKET, KEY);
@@ -110,64 +106,38 @@ class S3MediaRepositoryIntegrationTest implements TestPropertyProvider {
     }
 
 
-    private static String md5Hex(File file) throws Exception {
-        // 1) Leer todo el fichero en un array de bytes
+    private static String md5Base64(File file) throws Exception {
+        // 1) Read the entire file into a byte array
         byte[] data = Files.readAllBytes(file.toPath());
-        // 2) Crear el digest MD5
+        // 2) Create the MD5 digest
         MessageDigest md = MessageDigest.getInstance("MD5");
         byte[] digest = md.digest(data);
-        // 3) Convertir a hex
-        StringBuilder sb = new StringBuilder();
-        for (byte b : digest) 
-            sb.append(String.format("%02x", b));
-        
-
-        return sb.toString();
+        // 3) Convert to Base64 as S3 expects Base64 for Content-MD5
+        return java.util.Base64.getEncoder().encodeToString(digest);
     }
 
 
-    public static void uploadWithPresignedPost(PresignedPostDto dto, Path file) throws IOException, InterruptedException {
-        String boundary = "----JavaBoundary" + System.currentTimeMillis();
+    public static void uploadWithPresignedPut(PresignedPostDto dto, Path file) throws IOException, InterruptedException {
+        // Read file content
+        byte[] fileBytes = Files.readAllBytes(file);
 
-        // Construye el cuerpo multipart/form-data
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        var nl = "\r\n".getBytes();
+        // Build the PUT request with the presigned URL
+        HttpRequest.Builder requestBuilder = HttpRequest.newBuilder()
+                .uri(URI.create(dto.url()))
+                .PUT(HttpRequest.BodyPublishers.ofByteArray(fileBytes));
 
-        // 1) Campos firmados
+        // Add any signed headers to the request, but skip restricted headers
+        Set<String> restrictedHeaders = Set.of("content-length", "host", "connection");
         for (Map.Entry<String, List<String>> entry : dto.fields().entrySet()) {
-            for (String value : entry.getValue()) {
-                bos.write(("--" + boundary).getBytes());
-                bos.write(nl);
-                bos.write(("Content-Disposition: form-data; name=\"" + entry.getKey() + "\"").getBytes());
-                bos.write(nl); bos.write(nl);
-                bos.write(value.getBytes());
-                bos.write(nl);
+            String headerName = entry.getKey().toLowerCase();
+            if (!restrictedHeaders.contains(headerName)) {
+                for (String value : entry.getValue()) {
+                    requestBuilder.header(entry.getKey(), value);
+                }
             }
         }
 
-        // 2) Parte del archivo
-        byte[] fileBytes = Files.readAllBytes(file);
-        String filename = file.getFileName().toString();
-        bos.write(("--" + boundary).getBytes());
-        bos.write(nl);
-        bos.write(("Content-Disposition: form-data; name=\"file\"; filename=\"" + filename + "\"").getBytes());
-        bos.write(nl);
-        bos.write(("Content-Type: application/octet-stream").getBytes());
-        bos.write(nl); bos.write(nl);
-        bos.write(fileBytes);
-        bos.write(nl);
-
-        // 3) Cierre del multipart
-        bos.write(("--" + boundary + "--").getBytes());
-        bos.write(nl);
-
-        // 4) Construye y envía la petición
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(dto.url()))
-                .header("Content-Type", "multipart/form-data; boundary=" + boundary)
-                .POST(HttpRequest.BodyPublishers.ofByteArray(bos.toByteArray()))
-                .build();
-
+        HttpRequest request = requestBuilder.build();
         HttpClient client = HttpClient.newHttpClient();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 

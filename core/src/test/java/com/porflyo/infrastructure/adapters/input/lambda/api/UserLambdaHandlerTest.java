@@ -100,6 +100,7 @@ class UserLambdaHandlerTest {
             assertEquals(204, response.getStatusCode());
         }
 
+        @SuppressWarnings("unchecked")
         @Test
         @DisplayName("should return 400 if patch throws exception")
         void shouldReturnBadRequestOnPatchError() throws Exception {
