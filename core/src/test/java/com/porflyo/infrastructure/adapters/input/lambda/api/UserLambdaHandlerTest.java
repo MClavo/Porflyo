@@ -25,11 +25,14 @@ import com.porflyo.domain.model.shared.EntityId;
 import com.porflyo.domain.model.user.User;
 import com.porflyo.domain.model.user.UserClaims;
 import com.porflyo.infrastructure.adapters.input.lambda.api.dto.PublicUserDto;
+import com.porflyo.infrastructure.adapters.input.lambda.api.mapper.PublicUserDtoMapper;
 import com.porflyo.testing.data.TestData;
 
 import io.micronaut.core.type.Argument;
 import io.micronaut.json.JsonMapper;
+import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 
+@MicronautTest
 class UserLambdaHandlerTest {
 
     @Mock
@@ -40,12 +43,13 @@ class UserLambdaHandlerTest {
     private UserClaims claims;
     private JsonMapper jsonMapper;
     private UserLambdaHandler handler;
+    private PublicUserDtoMapper publicUserDtoMapper;
 
     // Shared test data
     private final String cookie = TestData.DEFAULT_JWT_TOKEN;
     private final EntityId userId = TestData.DEFAULT_USER.id();
     private final User user = TestData.DEFAULT_USER;
-    private final PublicUserDto dto = PublicUserDto.from(TestData.DEFAULT_USER);
+    private final PublicUserDto dto = TestData.DEFAULT_PUBLIC_USER_DTO;
 
     @BeforeEach
     void setUp() {
@@ -53,8 +57,8 @@ class UserLambdaHandlerTest {
         jwtService = mock(JwtPort.class);
         claims = mock(UserClaims.class);
         jsonMapper = mock(JsonMapper.class);
-        handler = new UserLambdaHandler(jsonMapper, userService, jwtService);
-        
+        publicUserDtoMapper = mock(PublicUserDtoMapper.class);
+        handler = new UserLambdaHandler(jsonMapper, userService, jwtService, publicUserDtoMapper);
         // Configure the claims mock to return the expected userId
         when(claims.getSub()).thenReturn(userId.value());
     }
@@ -75,7 +79,7 @@ class UserLambdaHandlerTest {
             when(jwtService.extractClaims(cookie)).thenReturn(claims);
             when(userService.findById(userId)).thenReturn(Optional.of(user));
             when(jsonMapper.writeValueAsString(dto)).thenReturn("{\"name\":\"Test User\"}");
-
+            when(publicUserDtoMapper.toDto(user)).thenReturn(dto);
 
             var response = handler.handleUserRequest(request);
 

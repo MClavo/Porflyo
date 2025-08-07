@@ -8,7 +8,6 @@ import com.amazonaws.services.lambda.runtime.events.APIGatewayV2HTTPResponse;
 import com.porflyo.application.configuration.JwtConfig;
 import com.porflyo.application.ports.input.AuthUseCase;
 import com.porflyo.application.ports.output.JwtPort;
-import com.porflyo.domain.model.shared.EntityId;
 import com.porflyo.domain.model.user.UserClaims;
 import com.porflyo.domain.model.user.UserSession;
 import com.porflyo.infrastructure.adapters.input.lambda.utils.LambdaHttpUtils;

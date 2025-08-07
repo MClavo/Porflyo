@@ -83,7 +83,7 @@ public class MediaLambdaHandler {
                 requestDto.key(),
                 requestDto.contentType(),
                 requestDto.size(),
-                requestDto.md5()
+                ""//requestDto.md5()
             );
 
             log.debug("Generated presigned PUT URL for key: {}", requestDto.key());

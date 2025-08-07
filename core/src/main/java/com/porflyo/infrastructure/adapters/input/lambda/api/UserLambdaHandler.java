@@ -14,6 +14,7 @@ import com.porflyo.domain.model.shared.EntityId;
 import com.porflyo.domain.model.user.User;
 import com.porflyo.domain.model.user.UserClaims;
 import com.porflyo.infrastructure.adapters.input.lambda.api.dto.PublicUserDto;
+import com.porflyo.infrastructure.adapters.input.lambda.api.mapper.PublicUserDtoMapper;
 import com.porflyo.infrastructure.adapters.input.lambda.utils.LambdaHttpUtils;
 
 import io.micronaut.core.type.Argument;
@@ -35,14 +36,16 @@ import jakarta.inject.Singleton;
 public class UserLambdaHandler {
     private static final Logger log = LoggerFactory.getLogger(UserLambdaHandler.class);
     private final JsonMapper jsonMapper;
+    private final PublicUserDtoMapper publicUserDtoMapper;
     private final UserUseCase userService;
     private final JwtPort jwtService;
 
     @Inject
-    public UserLambdaHandler(JsonMapper jsonMapper, UserUseCase userService, JwtPort jwtService) {
+    public UserLambdaHandler(JsonMapper jsonMapper, UserUseCase userService, JwtPort jwtService, PublicUserDtoMapper publicUserDtoMapper) {
         this.jsonMapper = jsonMapper;
         this.userService = userService;
         this.jwtService = jwtService;
+        this.publicUserDtoMapper = publicUserDtoMapper;
     }
 
     /**
@@ -109,7 +112,7 @@ public class UserLambdaHandler {
             }
 
             // User has sensitive data, so we return a PublicUserDto
-            PublicUserDto dto = PublicUserDto.from(userOpt.get());
+            PublicUserDto dto = publicUserDtoMapper.toDto(userOpt.get());
             log.debug("User search: {}", userId.value());
             return LambdaHttpUtils.createResponse(200, jsonMapper.writeValueAsString(dto));
 
@@ -131,7 +134,7 @@ public class UserLambdaHandler {
             Map<String, Object> attributes = extractAttributesFromBody(body);
 
             User user = userService.patch(userId, attributes);
-            PublicUserDto dto = PublicUserDto.from(user);
+            PublicUserDto dto = publicUserDtoMapper.toDto(user);
 
             log.debug("Patched user: {}, Attributes: {}", userId.value(), attributes);
             return LambdaHttpUtils.createResponse(200, jsonMapper.writeValueAsString(dto));

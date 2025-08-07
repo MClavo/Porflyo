@@ -20,17 +20,4 @@ public record PublicUserDto(
     URI providerAvatarUrl,
     Map<String, String> socials
     
-) {
-    public static PublicUserDto from(User user) {
-        ProviderAccount account = user.provider();
-        return new PublicUserDto(
-            user.name(),
-            user.email(),
-            user.description(),
-            user.profileImage(),
-            account.providerUserName(),
-            account.providerAvatarUrl(),
-            user.socials()
-        );
-    }
-}
+) {}

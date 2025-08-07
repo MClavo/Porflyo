@@ -12,6 +12,7 @@ import com.porflyo.domain.model.user.ProviderAccount;
 import com.porflyo.domain.model.user.User;
 import com.porflyo.domain.model.user.UserClaims;
 import com.porflyo.domain.model.user.UserSession;
+import com.porflyo.infrastructure.adapters.input.lambda.api.dto.PublicUserDto;
 
 
 
@@ -72,6 +73,17 @@ public final class TestData {
         DEFAULT_GITHUB_AVATAR_URL,
         Map.of("github", "https://github.com/testuser")
     );
+
+     public static final PublicUserDto DEFAULT_PUBLIC_USER_DTO = new PublicUserDto(
+        DEFAULT_GITHUB_NAME,
+        DEFAULT_GITHUB_EMAIL,
+        "Test Description",
+        DEFAULT_GITHUB_AVATAR_URL,
+        DEFAULT_GITHUB_NAME,
+        URI.create(DEFAULT_GITHUB_AVATAR_URL),
+        Map.of("github", "https://github.com/testuser")
+    );
+
 
     public static final ProviderRepo REPO_1 = new ProviderRepo(
         "project-alpha",
