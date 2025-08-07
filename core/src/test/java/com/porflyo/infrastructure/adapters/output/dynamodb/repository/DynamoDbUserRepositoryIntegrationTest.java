@@ -25,7 +25,7 @@ import jakarta.inject.Inject;
 @MicronautTest(environments = {"integration"})
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @Testcontainers
-public class UserDynamoRepositoryCrudTest implements TestPropertyProvider {
+public class DynamoDbUserRepositoryIntegrationTest implements TestPropertyProvider {
 
     @Container
     @SuppressWarnings("resource")
