@@ -11,6 +11,14 @@ dynamodb:
   table-name: user-test    
   region: us-east-1
 
+s3:
+  access-key: test
+  secret-key: test
+  expiration: 5
+  region: us-east-1
+  bucket-name: media-test
+  endpoint: http://host.docker.internal:8000
+
 logger:
   levels:
     com.porflyo: DEBUG
