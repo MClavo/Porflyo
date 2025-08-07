@@ -48,6 +48,12 @@ Resources:
           Properties:
             Path: /
             Method: ANY
+        # Handle media uploads
+        DeleteUpload:
+          Type: HttpApi
+          Properties:
+            Path: /api/media/{key+}
+            Method: DELETE
 
 Outputs:
   PorflyoApiUrl:
