@@ -5,9 +5,10 @@ import { uploadProfilePicture } from '../services/mediaService';
 interface ProfilePictureUploaderProps {
   currentUser: {
     profileImage: string;
+    profileImageKey: string;
     providerAvatarUrl: string;
   };
-  onUploadSuccess: (newProfileImageUrl: string, isFirstCustomProfileImage: boolean) => void;
+  onUploadSuccess: () => void;
   onUploadError: (error: string) => void;
 }
 
@@ -51,17 +52,15 @@ const ProfilePictureUploader: React.FC<ProfilePictureUploaderProps> = ({
       const previewUrl = URL.createObjectURL(croppedImageBlob);
       setPreviewUrl(previewUrl);
 
-      // Upload to S3
-      const { profileImageUrl, isFirstCustomProfileImage } = await uploadProfilePicture(
-        croppedImageBlob, 
-        currentUser
-      );
+      // Upload to S3 using the user's profileImageKey
+      await uploadProfilePicture(croppedImageBlob, currentUser.profileImageKey);
       
       // Clean up preview URL
       URL.revokeObjectURL(previewUrl);
       setPreviewUrl(null);
       
-      onUploadSuccess(profileImageUrl, isFirstCustomProfileImage);
+      // Notify parent component that upload was successful
+      onUploadSuccess();
     } catch (error) {
       // Clean up preview URL on error
       if (previewUrl) {

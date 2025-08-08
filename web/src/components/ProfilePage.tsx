@@ -5,7 +5,7 @@ import { updateUser as updateUserAPI } from '../services/api';
 import ProfilePictureUploader from './ProfilePictureUploader';
 
 const ProfilePage: React.FC = () => {
-  const { user, updateUser, loading } = useUser();
+  const { user, updateUser, loading, checkAuthStatus } = useUser();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: user?.name || '',
@@ -143,24 +143,14 @@ const ProfilePage: React.FC = () => {
     }
   };
 
-  const handleAvatarUploadSuccess = async (newProfileImageUrl: string, isFirstCustomProfileImage: boolean) => {
+  const handleAvatarUploadSuccess = async () => {
     try {
       setAvatarUploadMessage(null);
       
-      // Only update the backend if this is the first custom profile image
-      if (isFirstCustomProfileImage) {
-        // Extract the key from the URL to save it in the backend
-        const key = newProfileImageUrl.split('/').slice(-3).join('/'); // Get "profile-pictures/uuid/avatar.webp"
-        
-        // Update profileImage with the key in the backend
-        const updatedUser = await updateUserAPI({ profileImage: key });
-        updateUser(updatedUser);
-      } else {
-        // Just update the local state since the S3 object was overwritten
-        // The backend already has the correct profile image key saved
-        updateUser({ ...user, profileImage: newProfileImageUrl });
-      }
-
+      // Refresh user data to get the updated profile image URL
+      // The backend automatically generates the full URL from the profileImageKey
+      await checkAuthStatus(); // This will fetch fresh user data from the API
+      
       setAvatarUploadMessage({ type: 'success', text: 'Profile picture updated successfully' });
 
       // Clear the message after 3 seconds
@@ -211,6 +201,7 @@ const ProfilePage: React.FC = () => {
         <ProfilePictureUploader
           currentUser={{
             profileImage: user.profileImage,
+            profileImageKey: user.profileImageKey,
             providerAvatarUrl: user.providerAvatarUrl
           }}
           onUploadSuccess={handleAvatarUploadSuccess}

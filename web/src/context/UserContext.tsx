@@ -6,6 +6,7 @@ export interface User {
   name: string;
   email: string;
   profileImage: string;
+  profileImageKey: string;
   providerUserName: string;
   providerAvatarUrl: string;
   socials: Record<string, string>;

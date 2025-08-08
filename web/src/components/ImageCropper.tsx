@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
 import ReactCrop, { centerCrop, makeAspectCrop } from 'react-image-crop';
 import type { Crop, PixelCrop } from 'react-image-crop';
 import 'react-image-crop/dist/ReactCrop.css';
@@ -9,75 +9,55 @@ interface ImageCropperProps {
   onCancel: () => void;
 }
 
+const OUTPUT_SIZE = 500; // fixed output size in pixels
+
 const ImageCropper: React.FC<ImageCropperProps> = ({ imageFile, onCropComplete, onCancel }) => {
   const [crop, setCrop] = useState<Crop>();
   const [completedCrop, setCompletedCrop] = useState<PixelCrop>();
   const [imageSrc, setImageSrc] = useState<string>('');
+
   const imgRef = useRef<HTMLImageElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  React.useEffect(() => {
+  // Load image as data URL
+  useEffect(() => {
     const reader = new FileReader();
-    reader.onload = () => {
-      setImageSrc(reader.result as string);
-    };
+    reader.onload = () => setImageSrc(reader.result as string);
     reader.readAsDataURL(imageFile);
   }, [imageFile]);
 
+  // Initialize centered square crop on image load
   const onImageLoad = useCallback((e: React.SyntheticEvent<HTMLImageElement>) => {
     const { width, height } = e.currentTarget;
-    
-    // Create a circular crop area centered in the image
-    const crop = centerCrop(
-      makeAspectCrop(
-        {
-          unit: '%',
-          width: 50, 
-        },
-        1, // 1:1 aspect ratio for circular crop
-        width,
-        height
-      ),
+    const initial = centerCrop(
+      makeAspectCrop({ unit: '%', width: 50 }, 1, width, height),
       width,
       height
     );
-
-    setCrop(crop);
+    setCrop(initial);
   }, []);
 
-  const getCroppedImg = useCallback(async () => {
-    if (!completedCrop || !imgRef.current || !canvasRef.current) {
-      return;
-    }
+  // Generate cropped image blob at fixed resolution
+  const getCroppedImg = useCallback(() => {
+    if (!completedCrop || !imgRef.current || !canvasRef.current) return;
 
     const image = imgRef.current;
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
+    if (!ctx) return;
 
-    if (!ctx) {
-      return;
-    }
+    // set canvas to fixed size
+    canvas.width = OUTPUT_SIZE;
+    canvas.height = OUTPUT_SIZE;
 
-    // Set canvas size to desired output size (profile picture size)
-    const outputSize = 200; // 200x200 pixels for profile picture
-    canvas.width = outputSize;
-    canvas.height = outputSize;
-
-    // Calculate scale factors
+    // calculate scale factors
     const scaleX = image.naturalWidth / image.width;
     const scaleY = image.naturalHeight / image.height;
 
-    // Clear canvas
-    ctx.fillStyle = '#ffffff';
-    ctx.fillRect(0, 0, outputSize, outputSize);
+    // clear canvas
+    ctx.clearRect(0, 0, OUTPUT_SIZE, OUTPUT_SIZE);
 
-    // Create circular clipping path
-    ctx.save();
-    ctx.beginPath();
-    ctx.arc(outputSize / 2, outputSize / 2, outputSize / 2, 0, 2 * Math.PI);
-    ctx.clip();
-
-    // Draw the cropped image
+    // draw cropped area into canvas, scaled to OUTPUT_SIZE
     ctx.drawImage(
       image,
       completedCrop.x * scaleX,
@@ -86,21 +66,17 @@ const ImageCropper: React.FC<ImageCropperProps> = ({ imageFile, onCropComplete, 
       completedCrop.height * scaleY,
       0,
       0,
-      outputSize,
-      outputSize
+      OUTPUT_SIZE,
+      OUTPUT_SIZE
     );
 
-    ctx.restore();
-
-    // Convert to WebP blob with compression
+    // export as WebP
     canvas.toBlob(
       (blob) => {
-        if (blob) {
-          onCropComplete(blob);
-        }
+        if (blob) onCropComplete(blob);
       },
       'image/webp',
-      0.8 // 80% quality for good compression
+      0.8
     );
   }, [completedCrop, onCropComplete]);
 
@@ -109,56 +85,69 @@ const ImageCropper: React.FC<ImageCropperProps> = ({ imageFile, onCropComplete, 
       <div className="image-cropper-overlay" onClick={onCancel} />
       <div className="image-cropper-container">
         <div className="image-cropper-header">
-          <h3>Ajustar foto de perfil</h3>
-          <p>Mueve y redimensiona la imagen para que quede perfecta en tu perfil</p>
+          <h3>Adjust Profile Photo</h3>
+          <p>Move and resize the image until it looks perfect.</p>
         </div>
-        
+
         <div className="image-cropper-content">
           {imageSrc && (
             <ReactCrop
               crop={crop}
-              onChange={(_, percentCrop) => setCrop(percentCrop)}
-              onComplete={(c) => setCompletedCrop(c)}
-              aspect={1} // Force 1:1 aspect ratio
-              circularCrop // Show circular crop area
+              onChange={(_, pct) => setCrop(pct)}
+              onComplete={setCompletedCrop}
+              aspect={1}              // enforce square aspect
+              circularCrop         // show circular overlay
               minWidth={50}
               minHeight={50}
+              keepSelection
             >
               <img
                 ref={imgRef}
-                alt="Crop preview"
                 src={imageSrc}
+                alt="To be cropped"
                 onLoad={onImageLoad}
-                style={{ maxWidth: '100%', maxHeight: '400px' }}
+                style={{ maxWidth: '100%', maxHeight: 400 }}
               />
             </ReactCrop>
           )}
         </div>
 
         <div className="image-cropper-actions">
-          <button
-            type="button"
-            onClick={onCancel}
-            className="btn btn-outline"
-          >
-            Cancelar
+          <button type="button" onClick={onCancel} className="btn btn-outline">
+            Cancel
           </button>
-          <button
-            type="button"
-            onClick={getCroppedImg}
-            className="btn"
-            disabled={!completedCrop}
-          >
-            Aceptar
+          <button type="button" onClick={getCroppedImg} className="btn" disabled={!completedCrop}>
+            Accept
           </button>
         </div>
 
-        {/* Hidden canvas for image processing */}
-        <canvas
-          ref={canvasRef}
-          style={{ display: 'none' }}
-        />
+        <canvas ref={canvasRef} style={{ display: 'none' }} />
       </div>
+
+      {/* custom styles for react-image-crop overlay & handles */}
+      <style>{`
+        /* circular overlay border in white */
+        
+        .ReactCrop__crop-selection {
+          border: 1px solid white !important;
+          border-radius: 50% !important;
+          box-shadow: none !important;
+        }
+        /* remove marching-ants animation */
+        .ReactCrop__crop-selection::before,
+        .ReactCrop__crop-selection::after {
+          display: none;
+        }
+
+        /* circular white handles */
+        .ReactCrop__drag-handle {
+          width: 12px !important;
+          height: 12px !important;
+          border-radius: 50% !important;
+          background: white !important;
+          border: 1px solid grey !important;
+        }
+      `}</style>
     </div>
   );
 };
