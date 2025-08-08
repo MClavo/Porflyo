@@ -79,11 +79,10 @@ public class MediaLambdaHandler {
             
             // Generate the presigned PUT URL
             PresignedPostDto result = mediaService.createPresignedPut(
-                s3Config.bucketName(),
                 requestDto.key(),
                 requestDto.contentType(),
                 requestDto.size(),
-                ""//requestDto.md5()
+                requestDto.md5()
             );
 
             log.debug("Generated presigned PUT URL for key: {}", requestDto.key());
@@ -102,7 +101,7 @@ public class MediaLambdaHandler {
      */
     private APIGatewayV2HTTPResponse deleteMediaObject(String key) {
         try {
-            mediaService.delete(s3Config.bucketName(), key);
+            mediaService.delete(key);
             
             log.debug("Deleted media object with key: {}", key);
             return LambdaHttpUtils.createResponse(204, "No Content");

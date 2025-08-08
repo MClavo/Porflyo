@@ -8,6 +8,6 @@ import io.micronaut.serde.annotation.Serdeable;
 public record PresignRequestDto(
     String key,
     String contentType,
-    long size
-   // String md5
+    long size,
+    String md5
 ) {}

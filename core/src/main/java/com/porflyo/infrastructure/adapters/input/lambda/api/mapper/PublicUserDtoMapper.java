@@ -1,5 +1,7 @@
 package com.porflyo.infrastructure.adapters.input.lambda.api.mapper;
 
+import java.net.URI;
+
 import com.porflyo.domain.model.user.ProviderAccount;
 import com.porflyo.domain.model.user.User;
 import com.porflyo.infrastructure.adapters.input.lambda.api.dto.PublicUserDto;
@@ -27,13 +29,14 @@ public class PublicUserDtoMapper {
     public PublicUserDto toDto(User user) {
         ProviderAccount account = user.provider();
         String profileKey = user.profileImage(); 
-        String publicUrl = urlBuilder.buildPublicUrl(profileKey);
+        URI publicUrl = urlBuilder.buildPublicUrl(profileKey);
 
         return new PublicUserDto(
             user.name(),
             user.email(),
             user.description(),
             publicUrl,
+            profileKey,
             account.providerUserName(),
             account.providerAvatarUrl(),
             user.socials()
