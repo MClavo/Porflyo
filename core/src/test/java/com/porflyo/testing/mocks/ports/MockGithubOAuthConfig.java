@@ -1,6 +1,6 @@
 package com.porflyo.testing.mocks.ports;
 
-import com.porflyo.application.configuration.GithubOAuthConfig;
+import com.porflyo.application.configuration.ProviderOAuthConfig;
 import com.porflyo.testing.data.TestData;
 
 /**
@@ -18,7 +18,7 @@ public record MockGithubOAuthConfig(
         return new Builder();
     }
 
-    public static GithubOAuthConfig withDefaults() {
+    public static ProviderOAuthConfig withDefaults() {
         return builder().build();
     }
 
@@ -49,8 +49,8 @@ public record MockGithubOAuthConfig(
             this.userAgent = userAgent;
             return this;
         }
-        public GithubOAuthConfig build() {
-            return new GithubOAuthConfig(clientId, clientSecret, redirectUri, scope, userAgent);
+        public ProviderOAuthConfig build() {
+            return new ProviderOAuthConfig(clientId, clientSecret, redirectUri, scope, userAgent);
         }
     }
 }

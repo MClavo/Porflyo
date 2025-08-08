@@ -12,7 +12,7 @@ import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import com.porflyo.application.configuration.JwtConfig;
 import com.porflyo.application.ports.output.JwtPort;
-import com.porflyo.domain.model.UserClaims;
+import com.porflyo.domain.model.user.UserClaims;
 
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;

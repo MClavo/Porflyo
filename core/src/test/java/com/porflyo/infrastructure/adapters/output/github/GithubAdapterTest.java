@@ -22,9 +22,9 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import com.porflyo.application.configuration.GithubOAuthConfig;
-import com.porflyo.domain.model.GithubRepo;
-import com.porflyo.domain.model.GithubUser;
+import com.porflyo.application.configuration.ProviderOAuthConfig;
+import com.porflyo.domain.model.provider.ProviderRepo;
+import com.porflyo.domain.model.provider.ProviderUser;
 import com.porflyo.infrastructure.adapters.output.github.dto.GithubAccessTokenResponseDto;
 import com.porflyo.infrastructure.adapters.output.github.dto.GithubRepoResponseDto;
 import com.porflyo.infrastructure.adapters.output.github.dto.GithubUserResponseDto;
@@ -36,7 +36,7 @@ import io.micronaut.json.JsonMapper;
 @DisplayName("GithubAdapter Tests")
 class GithubAdapterTest {
 
-    private GithubOAuthConfig oauthConfig;
+    private ProviderOAuthConfig oauthConfig;
     @Mock private JsonMapper jsonMapper;
     @Mock private HttpClient httpClient;
     @Mock private HttpResponse<String> httpResponse;
@@ -187,7 +187,7 @@ class GithubAdapterTest {
             mockJsonDeserialization(USER_JSON, USER_DTO, GithubUserResponseDto.class);
 
             // When
-            GithubUser user = githubAdapter.getUserData(accessToken);
+            ProviderUser user = githubAdapter.getUserData(accessToken);
 
             // Then
             assertNotNull(user);
@@ -227,18 +227,18 @@ class GithubAdapterTest {
             mockJsonDeserialization(REPOS_JSON, REPOS_DTO_ARRAY, GithubRepoResponseDto[].class);
 
             // When
-            List<GithubRepo> repos = githubAdapter.getUserRepos(accessToken);
+            List<ProviderRepo> repos = githubAdapter.getUserRepos(accessToken);
 
             // Then
             assertNotNull(repos);
             assertEquals(2, repos.size());
             
-            GithubRepo repo1 = repos.get(0);
+            ProviderRepo repo1 = repos.get(0);
             assertEquals(TestData.REPO_1.name(), repo1.name());
             assertEquals(TestData.REPO_1.description(), repo1.description());
             assertEquals(TestData.REPO_1.html_url(), repo1.html_url());
             
-            GithubRepo repo2 = repos.get(1);
+            ProviderRepo repo2 = repos.get(1);
             assertEquals(TestData.REPO_2.name(), repo2.name());
             assertEquals(TestData.REPO_2.description(), repo2.description());
             assertEquals(TestData.REPO_2.html_url(), repo2.html_url());

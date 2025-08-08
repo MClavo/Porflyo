@@ -3,7 +3,7 @@ package com.porflyo.testing.mocks.ports;
 import java.util.function.Supplier;
 
 import com.porflyo.application.ports.output.JwtPort;
-import com.porflyo.domain.model.UserClaims;
+import com.porflyo.domain.model.user.UserClaims;
 import com.porflyo.testing.data.TestData;
 
 /**

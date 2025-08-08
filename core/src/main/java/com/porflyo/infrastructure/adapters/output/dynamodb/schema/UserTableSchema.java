@@ -1,13 +1,13 @@
 package com.porflyo.infrastructure.adapters.output.dynamodb.schema;
 
-import com.porflyo.infrastructure.adapters.output.dynamodb.dto.DynamoUserDto;
+import com.porflyo.infrastructure.adapters.output.dynamodb.dto.DynamoDbUserDto;
 
 import software.amazon.awssdk.enhanced.dynamodb.EnhancedType;
 import software.amazon.awssdk.enhanced.dynamodb.TableSchema;
 import software.amazon.awssdk.enhanced.dynamodb.mapper.StaticAttributeTags;
 
 /**
- * Defines the DynamoDB table schema for the {@link DynamoUserDto} entity.
+ * Defines the DynamoDB table schema for the {@link DynamoDbUserDto} entity.
  * <p>
  * This class provides a static {@code TableSchema} instance that maps the
  * attributes
@@ -21,7 +21,7 @@ import software.amazon.awssdk.enhanced.dynamodb.mapper.StaticAttributeTags;
  * <li><b>description</b>: User's description or bio</li>
  * <li><b>providerUserId</b>: ID from the authentication provider</li>
  * <li><b>providerUserName</b>: Username from the authentication provider</li>
- * <li><b>avatarUrl</b>: URL to the user's avatar image</li>
+ * <li><b>profileImage</b>: URL to the user's profile image</li>
  * <li><b>accessToken</b>: Access token from the authentication provider</li>
  * <li><b>socials</b>: Map of user's social accounts</li>
  * </ul>
@@ -34,56 +34,56 @@ public final class UserTableSchema {
     private UserTableSchema() {
     }
 
-    public static final TableSchema<DynamoUserDto> SCHEMA = TableSchema.builder(DynamoUserDto.class)
-            .newItemSupplier(DynamoUserDto::new)
+    public static final TableSchema<DynamoDbUserDto> SCHEMA = TableSchema.builder(DynamoDbUserDto.class)
+            .newItemSupplier(DynamoDbUserDto::new)
 
             // ────────────────────────── Key Attributes ──────────────────────────
             .addAttribute(String.class, a -> a.name("PK")
-                    .getter(DynamoUserDto::getPk)
-                    .setter(DynamoUserDto::setPk)
+                    .getter(DynamoDbUserDto::getPk)
+                    .setter(DynamoDbUserDto::setPk)
                     .tags(StaticAttributeTags.primaryPartitionKey()))
             .addAttribute(String.class, a -> a.name("SK")
-                    .getter(DynamoUserDto::getSk)
-                    .setter(DynamoUserDto::setSk)
+                    .getter(DynamoDbUserDto::getSk)
+                    .setter(DynamoDbUserDto::setSk)
                     .tags(StaticAttributeTags.primarySortKey()))
             
             // GSI for provider user ID, used for lookups in OAuth flow
             .addAttribute(String.class, a -> a.name("providerUserId")
-                .getter(DynamoUserDto::getProviderUserId)
-                .setter(DynamoUserDto::setProviderUserId)
+                .getter(DynamoDbUserDto::getProviderUserId)
+                .setter(DynamoDbUserDto::setProviderUserId)
                 .tags(StaticAttributeTags.secondaryPartitionKey("provider-user-id-index")))
             
                 
             // ────────────────────────── User Attributes ──────────────────────────
             .addAttribute(String.class, a -> a.name("name")
-                    .getter(DynamoUserDto::getName)
-                    .setter(DynamoUserDto::setName))
+                    .getter(DynamoDbUserDto::getName)
+                    .setter(DynamoDbUserDto::setName))
             .addAttribute(String.class, a -> a.name("email")
-                    .getter(DynamoUserDto::getEmail)
-                    .setter(DynamoUserDto::setEmail))
+                    .getter(DynamoDbUserDto::getEmail)
+                    .setter(DynamoDbUserDto::setEmail))
             .addAttribute(String.class, a -> a.name("description")
-                    .getter(DynamoUserDto::getDescription)
-                    .setter(DynamoUserDto::setDescription))
+                    .getter(DynamoDbUserDto::getDescription)
+                    .setter(DynamoDbUserDto::setDescription))
             .addAttribute(String.class, a -> a.name("providerUserName")
-                    .getter(DynamoUserDto::getProviderUserName)
-                    .setter(DynamoUserDto::setProviderUserName))
+                    .getter(DynamoDbUserDto::getProviderUserName)
+                    .setter(DynamoDbUserDto::setProviderUserName))
             .addAttribute(String.class, a -> a.name("providerAvatarUrl")
-                    .getter(DynamoUserDto::getProviderAvatarUrl)
-                    .setter(DynamoUserDto::setProviderAvatarUrl))
+                    .getter(DynamoDbUserDto::getProviderAvatarUrl)
+                    .setter(DynamoDbUserDto::setProviderAvatarUrl))
             .addAttribute(String.class, a -> a.name("providerAccessToken")
-                    .getter(DynamoUserDto::getProviderAccessToken)
-                    .setter(DynamoUserDto::setProviderAccessToken))
-            .addAttribute(String.class, a -> a.name("avatarUrl")
-                    .getter(DynamoUserDto::getAvatarUrl)
-                    .setter(DynamoUserDto::setAvatarUrl))
+                    .getter(DynamoDbUserDto::getProviderAccessToken)
+                    .setter(DynamoDbUserDto::setProviderAccessToken))
+            .addAttribute(String.class, a -> a.name("profileImage")
+                    .getter(DynamoDbUserDto::getProfileImage)
+                    .setter(DynamoDbUserDto::setProfileImage))
             .addAttribute(String.class, a -> a.name("accessToken")
-                    .getter(DynamoUserDto::getProviderAccessToken)
-                    .setter(DynamoUserDto::setProviderAccessToken))
+                    .getter(DynamoDbUserDto::getProviderAccessToken)
+                    .setter(DynamoDbUserDto::setProviderAccessToken))
             .addAttribute(
                 EnhancedType.mapOf(String.class, String.class),
                 a -> a.name("socials")
-                    .getter(DynamoUserDto::getSocials)
-                    .setter(DynamoUserDto::setSocials)
+                    .getter(DynamoDbUserDto::getSocials)
+                    .setter(DynamoDbUserDto::setSocials)
             )
             .build();
 }

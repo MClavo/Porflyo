@@ -2,9 +2,10 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
 import { updateUser as updateUserAPI } from '../services/api';
+import ProfilePictureUploader from './ProfilePictureUploader';
 
 const ProfilePage: React.FC = () => {
-  const { user, updateUser, loading } = useUser();
+  const { user, updateUser, loading, checkAuthStatus } = useUser();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: user?.name || '',
@@ -15,6 +16,7 @@ const ProfilePage: React.FC = () => {
   const [newSocialUrl, setNewSocialUrl] = useState('');
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const [avatarUploadMessage, setAvatarUploadMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
   if (!user) {
     return (
@@ -141,16 +143,70 @@ const ProfilePage: React.FC = () => {
     }
   };
 
+  const handleAvatarUploadSuccess = async () => {
+    try {
+      setAvatarUploadMessage(null);
+      
+      // Refresh user data to get the updated profile image URL
+      // The backend automatically generates the full URL from the profileImageKey
+      await checkAuthStatus(); // This will fetch fresh user data from the API
+      
+      setAvatarUploadMessage({ type: 'success', text: 'Profile picture updated successfully' });
+
+      // Clear the message after 3 seconds
+      setTimeout(() => {
+        setAvatarUploadMessage(null);
+      }, 3000);
+    } catch (error) {
+      setAvatarUploadMessage({ 
+        type: 'error', 
+        text: error instanceof Error ? error.message : 'Error updating profile picture' 
+      });
+    }
+  };
+
+  const handleAvatarUploadError = (error: string) => {
+    setAvatarUploadMessage({ type: 'error', text: error });
+    // Clear the error message after 5 seconds
+    setTimeout(() => {
+      setAvatarUploadMessage(null);
+    }, 5000);
+  };
+
   return (
     <div className="main-content fade-in">
       <div className="profile-header">
         <img 
-          src={user.avatarUrl} 
+          src={user.profileImage} 
           alt="Avatar" 
           className="profile-avatar"
         />
         <h1 className="card-title">Edit Profile</h1>
         <p className="card-description">Update your personal information</p>
+      </div>
+
+      {/* Profile Picture Upload Section */}
+      <div className="card">
+        <div className="card-header">
+          <h2 className="card-title">Profile Picture</h2>
+          <p className="card-description">Change your profile picture. It will be displayed as a circle on your profile.</p>
+        </div>
+
+        {avatarUploadMessage && (
+          <div className={avatarUploadMessage.type === 'success' ? 'success' : 'error'}>
+            {avatarUploadMessage.text}
+          </div>
+        )}
+
+        <ProfilePictureUploader
+          currentUser={{
+            profileImage: user.profileImage,
+            profileImageKey: user.profileImageKey,
+            providerAvatarUrl: user.providerAvatarUrl
+          }}
+          onUploadSuccess={handleAvatarUploadSuccess}
+          onUploadError={handleAvatarUploadError}
+        />
       </div>
 
       {/* Provider Information (read only) */}

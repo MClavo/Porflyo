@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 import com.porflyo.domain.model.shared.EntityId;
 import com.porflyo.domain.model.user.ProviderAccount;
 import com.porflyo.domain.model.user.User;
-import com.porflyo.infrastructure.adapters.output.dynamodb.dto.DynamoUserDto;
+import com.porflyo.infrastructure.adapters.output.dynamodb.dto.DynamoDbUserDto;
 
 import io.micronaut.core.annotation.NonNull;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
@@ -21,20 +21,20 @@ import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
  * Contains NO infrastructure code besides the mapping itself.
  * </p>
  */
-public final class UserDynamoMapper {
+public final class DynamoDbUserMapper {
 
-    private UserDynamoMapper() {
+    private DynamoDbUserMapper() {
     }
 
     /** ----------- Domain → DTO → Dynamo Map ----------- */
-    public static DynamoUserDto toDto(User u) {
-        return new DynamoUserDto(
+    public static DynamoDbUserDto toDto(User u) {
+        return new DynamoDbUserDto(
                 pk(u.id().value()),
                 "PROFILE",
                 u.name(),
                 u.email(),
                 u.description(),
-                u.avatarUrl() != null ? u.avatarUrl().toString() : null,
+                u.profileImage() != null ? u.profileImage().toString() : null,
                 u.socials(),
                 u.provider().providerUserId(),
                 u.provider().providerUserName(),
@@ -42,8 +42,8 @@ public final class UserDynamoMapper {
                 u.provider().providerAccessToken());
     }
 
-    /** Converts a {@link DynamoUserDto} to a DynamoDB item map. */
-    public static Map<String, AttributeValue> toItem(DynamoUserDto dUsr) {
+    /** Converts a {@link DynamoDbUserDto} to a DynamoDB item map. */
+    public static Map<String, AttributeValue> toItem(DynamoDbUserDto dUsr) {
         Map<String, AttributeValue> map = new HashMap<>();
         map.put("PK", fromS(dUsr.getPk()));
         map.put("SK", fromS(dUsr.getSk()));
@@ -53,8 +53,8 @@ public final class UserDynamoMapper {
         if (dUsr.getDescription() != null)
             map.put("description", fromS(dUsr.getDescription()));
 
-        if (dUsr.getAvatarUrl() != null)
-            map.put("avatarUrl", fromS(dUsr.getAvatarUrl()));
+        if (dUsr.getProfileImage() != null)
+            map.put("profileImage", fromS(dUsr.getProfileImage()));
 
         if (dUsr.getSocials() != null && !dUsr.getSocials().isEmpty()) {
             map.put("socials", AttributeValue.fromM(
@@ -75,7 +75,7 @@ public final class UserDynamoMapper {
     }
 
     /** ----------- Dynamo Map → DTO → Domain ----------- */
-    public static DynamoUserDto fromItem(Map<String, AttributeValue> item) {
+    public static DynamoDbUserDto fromItem(Map<String, AttributeValue> item) {
         Map<String, String> socials = item.containsKey("socials")
                 ? item.get("socials").m().entrySet().stream()
                         .collect(Collectors.toMap(
@@ -83,13 +83,13 @@ public final class UserDynamoMapper {
                                 e -> e.getValue().s()))
                 : Map.of();
 
-        return new DynamoUserDto(
+        return new DynamoDbUserDto(
                 item.get("PK").s(),
                 item.get("SK").s(),
                 item.get("name").s(),
                 item.get("email").s(),
                 item.getOrDefault("description", fromS("")).s(),
-                item.getOrDefault("avatarUrl", fromS("")).s(),
+                item.getOrDefault("profileImage", fromS("")).s(),
                 socials,
                 item.get("providerUserId").s(),
                 item.get("providerUserName").s(),
@@ -97,19 +97,20 @@ public final class UserDynamoMapper {
                 item.get("providerAccessToken").s());
     }
 
-    /** Converts a {@link DynamoUserDto} to a domain {@link User}. */
-    public static User toDomain(DynamoUserDto d) {
+    /** Converts a {@link DynamoDbUserDto} to a domain {@link User}. */
+    public static User toDomain(DynamoDbUserDto d) {
         return new User(
                 new EntityId(d.getPk().replace("USER#", "")),
                 new com.porflyo.domain.model.user.ProviderAccount(
                         d.getProviderUserId(),
                         d.getProviderUserName(),
                         URI.create(d.getProviderAvatarUrl()),
-                        d.getProviderAccessToken()),
+                        d.getProviderAccessToken()
+                ),
                 d.getName(),
                 d.getEmail(),
                 d.getDescription(),
-                d.getAvatarUrl() != null && !d.getAvatarUrl().isBlank() ? URI.create(d.getAvatarUrl()) : null,
+                d.getProfileImage() != null && !d.getProfileImage().isBlank() ? d.getProfileImage() : null,
                 d.getSocials());
     }
 
@@ -117,14 +118,14 @@ public final class UserDynamoMapper {
     /** Creates a DynamoUserDto with null fields except the ones specified on the Map<String, Object>
      *  Used for patching user attributes.
      */
-    public static DynamoUserDto createPatchDto(@NonNull EntityId id, Map<String, Object> attrs) {
-        DynamoUserDto patchDto = new DynamoUserDto();
+    public static DynamoDbUserDto createPatchDto(@NonNull EntityId id, Map<String, Object> attrs) {
+        DynamoDbUserDto patchDto = new DynamoDbUserDto();
         patchDto.setPk("USER#" + id.value());
         patchDto.setSk("PROFILE");              // Always patching the profile
         patchDto.setName(fetchAttributeValueOrNull(attrs, "name"));
         patchDto.setEmail(fetchAttributeValueOrNull(attrs, "email"));
         patchDto.setDescription(fetchAttributeValueOrNull(attrs, "description"));
-        patchDto.setAvatarUrl(fetchAttributeValueOrNull(attrs, "avatarUrl"));
+        patchDto.setProfileImage(fetchAttributeValueOrNull(attrs, "profileImage"));
 
         if (attrs.containsKey("socials") && attrs.get("socials") instanceof Map) {
             @SuppressWarnings("unchecked")  // I promise this is a Map<String, String> :()
@@ -142,18 +143,19 @@ public final class UserDynamoMapper {
         return patchDto;
     }
 
-    public static DynamoUserDto createPatchDto(@NonNull EntityId id, ProviderAccount providerAccount) {
+    
+    public static DynamoDbUserDto createPatchDto(@NonNull EntityId id, ProviderAccount providerAccount) {
         if (providerAccount.providerUserId() == null)
             throw new IllegalArgumentException("Provider account must have a user ID");
 
-        DynamoUserDto patchDto = new DynamoUserDto();
+        DynamoDbUserDto patchDto = new DynamoDbUserDto();
         patchDto.setPk("USER#" + id.value());
         patchDto.setSk("PROFILE");
         patchDto.setProviderUserId(providerAccount.providerUserId());
         patchDto.setProviderUserName(providerAccount.providerUserName());
         patchDto.setProviderAvatarUrl(providerAccount.providerAvatarUrl() != null ? providerAccount.providerAvatarUrl().toString() : null);
         patchDto.setProviderAccessToken(providerAccount.providerAccessToken());
-
+        
         return patchDto;
     }
 

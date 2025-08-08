@@ -5,7 +5,7 @@ import io.micronaut.context.annotation.ConfigurationProperties;
 // Micronaut converts camelCase <-> kebab-case automatically
 // clientId -> client-id
 @ConfigurationProperties("oauth.github")
-public record GithubOAuthConfig(
+public record ProviderOAuthConfig(
     String clientId,
     String clientSecret,
     String redirectUri,
