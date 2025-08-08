@@ -21,9 +21,9 @@ import org.mockito.Mockito;
 
 import com.amazonaws.services.lambda.runtime.events.APIGatewayV2HTTPEvent;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayV2HTTPResponse;
-import com.porflyo.domain.model.GithubRepo;
-import com.porflyo.domain.model.UserClaims;
-import com.porflyo.infrastructure.adapters.input.lambda.api.GithubRepoLambdaHandler;
+import com.porflyo.domain.model.provider.ProviderRepo;
+import com.porflyo.domain.model.user.UserClaims;
+import com.porflyo.infrastructure.adapters.input.lambda.api.ProviderRepoLambdaHandler;
 import com.porflyo.testing.data.LambdaTestData;
 import com.porflyo.testing.data.TestData;
 import com.porflyo.testing.mocks.input.MockRepoUseCase;
@@ -38,7 +38,7 @@ class GithubRepoLambdaHandlerTest {
 
     private MockRepoUseCase repoUseCase;
     private MockJwtPort jwtPort;
-    private GithubRepoLambdaHandler githubRepoLambdaHandler;
+    private ProviderRepoLambdaHandler githubRepoLambdaHandler;
 
     // Helper method to create a mock JsonMapper
     private JsonMapper createMockJsonMapper() {
@@ -54,7 +54,7 @@ class GithubRepoLambdaHandlerTest {
                     StringBuilder sb = new StringBuilder("[");
                     for (int i = 0; i < list.size(); i++) {
                         if (i > 0) sb.append(",");
-                        if (list.get(i) instanceof GithubRepo repo) {
+                        if (list.get(i) instanceof ProviderRepo repo) {
                             sb.append(String.format(
                                 "{\"name\":\"%s\",\"description\":\"%s\",\"html_url\":\"%s\"}",
                                 repo.name(), repo.description(), repo.html_url()
@@ -73,8 +73,8 @@ class GithubRepoLambdaHandlerTest {
     }
 
     // Helper method to create handler with mocked JsonMapper
-    private GithubRepoLambdaHandler createHandler(MockRepoUseCase repoUseCase, MockJwtPort jwtPort) {
-        return new GithubRepoLambdaHandler(repoUseCase, jwtPort, createMockJsonMapper());
+    private ProviderRepoLambdaHandler createHandler(MockRepoUseCase repoUseCase, MockJwtPort jwtPort) {
+        return new ProviderRepoLambdaHandler(repoUseCase, jwtPort, createMockJsonMapper());
     }
 
     @BeforeEach
@@ -103,9 +103,9 @@ class GithubRepoLambdaHandlerTest {
         }
     }
 
-    private List<GithubRepo> createTestRepos(String... repoNames) {
+    private List<ProviderRepo> createTestRepos(String... repoNames) {
         return List.of(repoNames).stream()
-            .map(name -> new GithubRepo(name, "Description for " + name, "https://github.com/user/" + name))
+            .map(name -> new ProviderRepo(name, "Description for " + name, "https://github.com/user/" + name))
             .toList();
     }
 
@@ -135,7 +135,7 @@ class GithubRepoLambdaHandlerTest {
         void shouldHandleCustomRepositoriesAndVerifyAccessTokenFlow() {
             // Given
             String accessToken = "custom_token_456";
-            List<GithubRepo> customRepos = createTestRepos("custom-repo-1", "custom-repo-2", "custom-repo-3");
+            List<ProviderRepo> customRepos = createTestRepos("custom-repo-1", "custom-repo-2", "custom-repo-3");
             UserClaims claims = createTestClaims("customuser", accessToken);
             
             jwtPort = MockJwtPort.builder().extractedClaims(claims).build();
@@ -156,7 +156,7 @@ class GithubRepoLambdaHandlerTest {
         @DisplayName("Should handle empty repository list")
         void shouldHandleEmptyRepositoryList() {
             // Given
-            List<GithubRepo> emptyRepos = List.of();
+            List<ProviderRepo> emptyRepos = List.of();
             repoUseCase = MockRepoUseCase.builder().getUserRepos(emptyRepos).build();
             githubRepoLambdaHandler = createHandler(repoUseCase, jwtPort);
             
@@ -174,9 +174,9 @@ class GithubRepoLambdaHandlerTest {
         @DisplayName("Should handle repositories with special characters")
         void shouldHandleRepositoriesWithSpecialCharacters() {
             // Given
-            List<GithubRepo> specialRepos = List.of(
-                new GithubRepo("repo-with-dashes", "Description with émojis 🚀", "https://github.com/user/repo-with-dashes"),
-                new GithubRepo("repo_with_underscores", "Descripción con caracteres especiales", "https://github.com/user/repo_with_underscores")
+            List<ProviderRepo> specialRepos = List.of(
+                new ProviderRepo("repo-with-dashes", "Description with émojis 🚀", "https://github.com/user/repo-with-dashes"),
+                new ProviderRepo("repo_with_underscores", "Descripción con caracteres especiales", "https://github.com/user/repo_with_underscores")
             );
             repoUseCase = MockRepoUseCase.builder().getUserRepos(specialRepos).build();
             githubRepoLambdaHandler = createHandler(repoUseCase, jwtPort);
@@ -324,7 +324,7 @@ class GithubRepoLambdaHandlerTest {
         void shouldCompleteFullEndToEndRepositoryRetrievalFlow() {
             // Given
             String integrationAccessToken = "integration_access_token_repos";
-            List<GithubRepo> integrationRepos = createTestRepos("integration-repo-1", "integration-repo-2");
+            List<ProviderRepo> integrationRepos = createTestRepos("integration-repo-1", "integration-repo-2");
             UserClaims integrationClaims = createTestClaims("integrationuser", integrationAccessToken);
             
             jwtPort = MockJwtPort.builder().extractedClaims(integrationClaims).build();
@@ -346,10 +346,10 @@ class GithubRepoLambdaHandlerTest {
         @DisplayName("Should handle large number of repositories")
         void shouldHandleLargeNumberOfRepositories() {
             // Given
-            List<GithubRepo> manyRepos = List.of(
+            List<ProviderRepo> manyRepos = List.of(
                 "repo1", "repo2", "repo3", "repo4", "repo5", "repo6", "repo7", "repo8", "repo9", "repo10"
             ).stream()
-                .map(name -> new GithubRepo(name, "Description", "https://github.com/user/" + name))
+                .map(name -> new ProviderRepo(name, "Description", "https://github.com/user/" + name))
                 .toList();
             
             repoUseCase = MockRepoUseCase.builder().getUserRepos(manyRepos).build();

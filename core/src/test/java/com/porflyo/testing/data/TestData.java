@@ -5,13 +5,14 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 
-import com.porflyo.domain.model.UserClaims;
-import com.porflyo.domain.model.GithubRepo;
-import com.porflyo.domain.model.GithubUser;
-import com.porflyo.domain.model.UserSession;
+import com.porflyo.domain.model.provider.ProviderRepo;
+import com.porflyo.domain.model.provider.ProviderUser;
 import com.porflyo.domain.model.shared.EntityId;
 import com.porflyo.domain.model.user.ProviderAccount;
 import com.porflyo.domain.model.user.User;
+import com.porflyo.domain.model.user.UserClaims;
+import com.porflyo.domain.model.user.UserSession;
+import com.porflyo.infrastructure.adapters.input.lambda.api.dto.PublicUserDto;
 
 
 
@@ -48,7 +49,7 @@ public final class TestData {
     public static final String DEFAULT_GITHUB_AVATAR_URL = "https://avatars.githubusercontent.com/u/12345";
 
 
-    public static final GithubUser DEFAULT_GITHUB_USER = new GithubUser(
+    public static final ProviderUser DEFAULT_GITHUB_USER = new ProviderUser(
         "testuser",
         DEFAULT_GITHUB_ID,
         DEFAULT_GITHUB_NAME,
@@ -69,23 +70,35 @@ public final class TestData {
         DEFAULT_GITHUB_NAME,
         DEFAULT_GITHUB_EMAIL,
         "Test Description",
+        DEFAULT_GITHUB_AVATAR_URL,
+        Map.of("github", "https://github.com/testuser")
+    );
+
+     public static final PublicUserDto DEFAULT_PUBLIC_USER_DTO = new PublicUserDto(
+        DEFAULT_GITHUB_NAME,
+        DEFAULT_GITHUB_EMAIL,
+        "Test Description",
+        URI.create(DEFAULT_GITHUB_AVATAR_URL),
+        DEFAULT_GITHUB_AVATAR_URL,
+        DEFAULT_GITHUB_NAME,
         URI.create(DEFAULT_GITHUB_AVATAR_URL),
         Map.of("github", "https://github.com/testuser")
     );
 
-    public static final GithubRepo REPO_1 = new GithubRepo(
+
+    public static final ProviderRepo REPO_1 = new ProviderRepo(
         "project-alpha",
         "My first repo",
         "https://github.com/testuser/project-alpha"
     );
 
-    public static final GithubRepo REPO_2 = new GithubRepo(
+    public static final ProviderRepo REPO_2 = new ProviderRepo(
         "project-beta",
         "Second repo",
         "https://github.com/testuser/project-beta"
     );
 
-    public static final List<GithubRepo> DEFAULT_REPOS = List.of(REPO_1, REPO_2);
+    public static final List<ProviderRepo> DEFAULT_REPOS = List.of(REPO_1, REPO_2);
 
     public static final UserClaims DEFAULT_CLAIMS = new UserClaims(
         "12345",

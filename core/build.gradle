@@ -3,8 +3,6 @@ plugins {
     id("com.gradleup.shadow") version "8.3.7"
     //id("com.diffplug.spotless") version "6.23.3"
     id("io.micronaut.aot") version "4.5.4"
-    // Comentado test-resources plugin para evitar problemas con AOT en producción
-    //id("io.micronaut.test-resources") version "4.5.4"
 }
 
 version = "0.3"
@@ -46,6 +44,9 @@ dependencies {
     implementation("io.micronaut.aws:micronaut-aws-sdk-v2")
     implementation("software.amazon.awssdk:dynamodb-enhanced:2.32.13")
     implementation("software.amazon.awssdk:dynamodb")
+
+    // AWS S3 dependencies
+    implementation('software.amazon.awssdk:s3')
 
     // Other dependencies
     implementation("com.github.ksuid:ksuid:1.1.3")

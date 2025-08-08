@@ -1,6 +1,4 @@
-package com.porflyo.domain.model;
-
-import com.porflyo.domain.model.user.User;
+package com.porflyo.domain.model.user;
 
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.serde.annotation.Serdeable;

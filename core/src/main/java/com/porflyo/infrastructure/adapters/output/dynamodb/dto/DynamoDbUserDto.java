@@ -21,13 +21,13 @@ import lombok.Setter;
 @Introspected
 @NoArgsConstructor
 @AllArgsConstructor
-public class DynamoUserDto {
+public class DynamoDbUserDto {
     private String pk;
     private String sk;
     private String name;
     private String email;
     private String description;
-    private String avatarUrl;
+    private String profileImage;
     private Map<String, String> socials; // Map<platform, url>
     private String providerUserId;
     private String providerUserName;

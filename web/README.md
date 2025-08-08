@@ -89,7 +89,7 @@ Global state managed with Context API includes:
 interface User {
   name: string;
   email: string;
-  avatarUrl: string;
+  profileImage: string;
   providerUserName: string;    // Read-only (GitHub)
   providerAvatarUrl: string;   // Read-only (GitHub)
   socials: Record<string, string>; // Dynamic social platforms

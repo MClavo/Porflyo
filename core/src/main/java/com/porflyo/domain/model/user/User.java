@@ -1,6 +1,5 @@
 package com.porflyo.domain.model.user;
 
-import java.net.URI;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
@@ -12,6 +11,7 @@ import io.micronaut.serde.annotation.Serdeable;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import software.amazon.awssdk.services.dynamodb.endpoints.internal.Value.Str;
 
 @Serdeable
 @Introspected
@@ -29,7 +29,7 @@ public final class User {
     private final String email;
 
     private final String description;
-    private final URI avatarUrl;
+    private final String profileImage;
 
     /**
      * KEY: Social Media Platform (e.g., "linkedin", "github")
@@ -40,13 +40,13 @@ public final class User {
 
 
     public User(EntityId id, ProviderAccount providerAccount, String name, String email, String description,
-            URI avatarUrl, Map<String, String> socials) {
+            String profileImage, Map<String, String> socials) {
         this.id = Objects.requireNonNull(id);
         this.providerAccount = providerAccount;
         this.name = Objects.requireNonNull(name);
         this.email = Objects.requireNonNull(email);
         this.description = description;
-        this.avatarUrl = avatarUrl;
+        this.profileImage = profileImage;
         this.socials = socials == null ? Collections.emptyMap()
                 : Map.copyOf(socials);
     }
@@ -59,14 +59,14 @@ public final class User {
             String name,
             @Email String email,
             String description,
-            URI avatarUrl) {
+            String profileImage) {
 
         return new User(id,
                 providerAccount,
                 name,
                 email,
                 description,
-                avatarUrl,
+                profileImage,
                 Collections.emptyMap());
     }
 
@@ -77,7 +77,7 @@ public final class User {
     public User editProfile(String newName,
             @Email String newEmail,
             String newDescription,
-            URI newAvatarUrl,
+            String newProfileImage,
             Map<String, String> newSocials) {
 
         return new User(
@@ -86,7 +86,7 @@ public final class User {
                 newName != null ? newName : this.name,
                 newEmail != null ? newEmail : this.email,
                 newDescription != null ? newDescription : this.description,
-                newAvatarUrl != null ? newAvatarUrl : this.avatarUrl,
+                newProfileImage != null ? newProfileImage : this.profileImage,
                 newSocials != null ? Map.copyOf(newSocials) : this.socials);
     }
 
@@ -110,8 +110,8 @@ public final class User {
         return description;
     }
 
-    public URI avatarUrl() {
-        return avatarUrl;
+    public String profileImage() {
+        return profileImage;
     }
 
     public Map<String, String> socials() {

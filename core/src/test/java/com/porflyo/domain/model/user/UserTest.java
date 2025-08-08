@@ -6,7 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.net.URI;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,18 +27,18 @@ class UserTest {
         String name = "John Doe";
         String email = "john@example.com";
         String description = "A user";
-        URI avatarUrl = URI.create("http://avatar.com/john.png");
+        String profileImage = "http://avatar.com/john.png";
         Map<String, String> socials = new HashMap<>();
         socials.put("github", "https://github.com/johndoe");
 
-        User user = new User(id, provider, name, email, description, avatarUrl, socials);
+        User user = new User(id, provider, name, email, description, profileImage, socials);
 
         assertEquals(id, user.id());
         assertEquals(provider, user.provider());
         assertEquals(name, user.name());
         assertEquals(email, user.email());
         assertEquals(description, user.description());
-        assertEquals(avatarUrl, user.avatarUrl());
+        assertEquals(profileImage, user.profileImage());
         assertEquals(socials, user.socials());
     }
 
@@ -63,16 +62,16 @@ class UserTest {
         String name = "Alice";
         String email = "alice@example.com";
         String description = "desc";
-        URI avatarUrl = URI.create("http://avatar.com/alice.png");
+        String profileImage = "http://avatar.com/alice.png";
 
-        User user = User.fromProvider(id, provider, name, email, description, avatarUrl);
+        User user = User.fromProvider(id, provider, name, email, description, profileImage);
 
         assertEquals(id, user.id());
         assertEquals(provider, user.provider());
         assertEquals(name, user.name());
         assertEquals(email, user.email());
         assertEquals(description, user.description());
-        assertEquals(avatarUrl, user.avatarUrl());
+        assertEquals(profileImage, user.profileImage());
         assertTrue(user.socials().isEmpty());
     }
 
@@ -86,12 +85,12 @@ class UserTest {
         Map<String, String> newSocials = new HashMap<>();
         newSocials.put("linkedin", "https://linkedin.com/in/bob");
 
-        User edited = user.editProfile("Bobby", "bobby@example.com", "new desc", URI.create("http://avatar.com/bobby.png"), newSocials);
+        User edited = user.editProfile("Bobby", "bobby@example.com", "new desc", "http://avatar.com/bobby.png", newSocials);
 
         assertEquals("Bobby", edited.name());
         assertEquals("bobby@example.com", edited.email());
         assertEquals("new desc", edited.description());
-        assertEquals(URI.create("http://avatar.com/bobby.png"), edited.avatarUrl());
+        assertEquals("http://avatar.com/bobby.png", edited.profileImage());
         assertEquals(newSocials, edited.socials());
         assertEquals(provider, edited.provider());
         assertEquals(id, edited.id());
@@ -110,7 +109,7 @@ class UserTest {
         assertEquals("Bob", edited.name());
         assertEquals("bob@example.com", edited.email());
         assertEquals("desc", edited.description());
-        assertNull(edited.avatarUrl());
+        assertNull(edited.profileImage());
         assertEquals(socials, edited.socials());
     }
 

@@ -12,10 +12,10 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.porflyo.application.configuration.GithubOAuthConfig;
-import com.porflyo.application.ports.output.GithubPort;
-import com.porflyo.domain.model.GithubRepo;
-import com.porflyo.domain.model.GithubUser;
+import com.porflyo.application.configuration.ProviderOAuthConfig;
+import com.porflyo.application.ports.output.ProviderPort;
+import com.porflyo.domain.model.provider.ProviderRepo;
+import com.porflyo.domain.model.provider.ProviderUser;
 import com.porflyo.infrastructure.adapters.output.github.dto.GithubAccessTokenResponseDto;
 import com.porflyo.infrastructure.adapters.output.github.dto.GithubRepoResponseDto;
 import com.porflyo.infrastructure.adapters.output.github.dto.GithubUserResponseDto;
@@ -29,7 +29,7 @@ import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 
 @Singleton
-public class GithubAdapter implements GithubPort {
+public class GithubAdapter implements ProviderPort {
     
     private static final String TOKEN_URL = "https://github.com/login/oauth/access_token";
     private static final String USER_URL = "https://api.github.com/user";
@@ -43,17 +43,17 @@ public class GithubAdapter implements GithubPort {
     private static final Logger log = LoggerFactory.getLogger(GithubAdapter.class);
     private final JsonMapper jsonMapper;
     private final HttpClient httpClient;
-    private final GithubOAuthConfig oauthConfig;
+    private final ProviderOAuthConfig oauthConfig;
 
     @Inject
-    public GithubAdapter(GithubOAuthConfig oauthConfig, JsonMapper jsonMapper) {
+    public GithubAdapter(ProviderOAuthConfig oauthConfig, JsonMapper jsonMapper) {
         this.oauthConfig = validateNotNull(oauthConfig, "GithubOAuthConfig cannot be null");
         this.jsonMapper = validateNotNull(jsonMapper, "JsonMapper cannot be null");
         this.httpClient = createConfiguredHttpClient();
     }
 
     // Package-private constructor for testing
-    GithubAdapter(GithubOAuthConfig oauthConfig, JsonMapper jsonMapper, HttpClient httpClient) {
+    GithubAdapter(ProviderOAuthConfig oauthConfig, JsonMapper jsonMapper, HttpClient httpClient) {
         this.oauthConfig = oauthConfig;
         this.jsonMapper = jsonMapper;
         this.httpClient = httpClient;
@@ -91,7 +91,7 @@ public class GithubAdapter implements GithubPort {
     }
 
     @Override
-    public GithubUser getUserData(String accessToken) {
+    public ProviderUser getUserData(String accessToken) {
         log.debug("Fetching user data from GitHub API using native HTTP client");
         try {
             HttpRequest request = buildGetRequest(USER_URL, accessToken);
@@ -110,7 +110,7 @@ public class GithubAdapter implements GithubPort {
     }
 
     @Override
-    public List<GithubRepo> getUserRepos(String accessToken) {
+    public List<ProviderRepo> getUserRepos(String accessToken) {
         log.debug("Fetching user repositories from GitHub API using native HTTP client");
         try {
             HttpRequest request = buildGetRequest(REPOS_URL, accessToken);

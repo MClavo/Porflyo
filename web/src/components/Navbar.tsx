@@ -34,7 +34,7 @@ const Navbar: React.FC = () => {
             
             <div className="user-profile">
               <img 
-                src={user.avatarUrl} 
+                src={user.profileImage} 
                 alt="Avatar" 
                 className="user-avatar"
               />

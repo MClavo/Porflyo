@@ -92,7 +92,7 @@ const HomePage: React.FC = () => {
           
           <div className="user-profile">
             <img 
-              src={user.avatarUrl} 
+              src={user.profileImage} 
               alt="Avatar" 
               className="user-avatar"
               style={{ width: '4rem', height: '4rem' }}

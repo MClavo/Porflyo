@@ -1,6 +1,6 @@
 package com.porflyo.application.ports.input;
 
-import com.porflyo.domain.model.UserSession;
+import com.porflyo.domain.model.user.UserSession;
 
 public interface AuthUseCase {
     

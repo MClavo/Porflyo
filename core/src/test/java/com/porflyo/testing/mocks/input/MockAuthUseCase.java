@@ -1,7 +1,7 @@
 package com.porflyo.testing.mocks.input;
 
 import com.porflyo.application.ports.input.AuthUseCase;
-import com.porflyo.domain.model.UserSession;
+import com.porflyo.domain.model.user.UserSession;
 import com.porflyo.testing.data.TestData;
 
 import java.util.function.Function;

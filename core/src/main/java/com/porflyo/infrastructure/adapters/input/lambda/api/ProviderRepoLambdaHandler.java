@@ -6,9 +6,9 @@ import com.amazonaws.services.lambda.runtime.events.APIGatewayV2HTTPEvent;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayV2HTTPResponse;
 import com.porflyo.application.ports.input.RepoUseCase;
 import com.porflyo.application.ports.output.JwtPort;
-import com.porflyo.domain.model.UserClaims;
-import com.porflyo.domain.model.GithubRepo;
+import com.porflyo.domain.model.provider.ProviderRepo;
 import com.porflyo.domain.model.shared.EntityId;
+import com.porflyo.domain.model.user.UserClaims;
 import com.porflyo.infrastructure.adapters.input.lambda.utils.LambdaHttpUtils;
 
 import io.micronaut.json.JsonMapper;
@@ -35,14 +35,14 @@ import jakarta.inject.Singleton;
  * @since 1.0
  */
 @Singleton
-public class GithubRepoLambdaHandler {
+public class ProviderRepoLambdaHandler {
 
     private final RepoUseCase repoService;
     private final JwtPort jwtService;
     private final JsonMapper jsonMapper;
 
     @Inject
-    public GithubRepoLambdaHandler(RepoUseCase repoService, JwtPort jwtService, JsonMapper jsonMapper) {
+    public ProviderRepoLambdaHandler(RepoUseCase repoService, JwtPort jwtService, JsonMapper jsonMapper) {
         this.repoService = repoService;
         this.jwtService = jwtService;
         this.jsonMapper = jsonMapper;
@@ -72,7 +72,7 @@ public class GithubRepoLambdaHandler {
             EntityId userId = new EntityId(claims.getSub());
 
             // Get user data
-            List<GithubRepo> repos = repoService.getUserRepos(userId);
+            List<ProviderRepo> repos = repoService.getUserRepos(userId);
             return LambdaHttpUtils.createResponse(200, jsonMapper.writeValueAsString(repos));
 
         } catch (Exception e) {

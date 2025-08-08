@@ -4,9 +4,9 @@ import java.util.List;
 import java.util.Optional;
 
 import com.porflyo.application.ports.input.RepoUseCase;
-import com.porflyo.application.ports.output.GithubPort;
+import com.porflyo.application.ports.output.ProviderPort;
 import com.porflyo.application.ports.output.UserRepository;
-import com.porflyo.domain.model.GithubRepo;
+import com.porflyo.domain.model.provider.ProviderRepo;
 import com.porflyo.domain.model.shared.EntityId;
 import com.porflyo.domain.model.user.User;
 
@@ -16,17 +16,17 @@ import jakarta.inject.Singleton;
 @Singleton
 public class RepoService implements RepoUseCase {
 
-    private final GithubPort githubPort;
+    private final ProviderPort githubPort;
     private final UserRepository userRepository;
 
     @Inject
-    public RepoService(GithubPort githubPort, UserRepository userRepository) {
+    public RepoService(ProviderPort githubPort, UserRepository userRepository) {
         this.githubPort = githubPort;
         this.userRepository = userRepository;
     }
 
     @Override
-    public List<GithubRepo> getUserRepos(String accessToken) {
+    public List<ProviderRepo> getUserRepos(String accessToken) {
         try {
             return githubPort.getUserRepos(accessToken);
         } catch (RuntimeException e) {
@@ -36,7 +36,7 @@ public class RepoService implements RepoUseCase {
     }
 
     @Override
-    public List<GithubRepo> getUserRepos(EntityId userId) {
+    public List<ProviderRepo> getUserRepos(EntityId userId) {
 
         Optional<User> user = userRepository.findById(userId);
 
