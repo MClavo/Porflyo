@@ -1,5 +1,6 @@
 package com.porflyo.infrastructure.adapters.output.s3;
 
+import java.net.URI;
 import java.util.logging.Logger;
 
 import com.porflyo.infrastructure.configuration.S3Config;
@@ -26,7 +27,7 @@ public class S3UrlBuilder {
      * @param key The S3 object key
      * @return The complete public URL
      */
-    public String buildPublicUrl(String key) {
+    public URI buildPublicUrl(String key) {
         if (key == null || key.trim().isEmpty())
             return null;
 
@@ -41,7 +42,7 @@ public class S3UrlBuilder {
         }
 
         log.info("Building S3 public URL: " + url);
-        return url;
+        return URI.create(url);
     }
 
     /**
@@ -50,15 +51,16 @@ public class S3UrlBuilder {
      * @param url The complete S3 URL
      * @return The S3 key, or null if the URL is not a valid S3 URL
      */
-    public String extractKeyFromUrl(String url) {
-        if (url == null || url.trim().isEmpty())
+    public String extractKeyFromUrl(URI url) {
+        String urlString = url.toString();
+        if (url == null || urlString.trim().isEmpty())
             return null;
 
         try {
             // Expected format: https://bucket-name.s3.amazonaws.com/key
             String bucketPrefix = String.format(S3_URL_FORMAT, s3Config.bucketName(), "");
-            if (url.startsWith(bucketPrefix))
-                return url.substring(bucketPrefix.length());
+            if (urlString.startsWith(bucketPrefix))
+                return urlString.substring(bucketPrefix.length());
 
             return null;
         } catch (Exception e) {
