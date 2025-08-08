@@ -1,6 +1,6 @@
 package com.porflyo.application.services;
 
-import java.io.File;
+import java.io.InputStream;
 
 import com.porflyo.application.ports.input.MediaUseCase;
 import com.porflyo.application.ports.output.MediaRepository;
@@ -17,22 +17,22 @@ public class MediaService implements MediaUseCase {
     }
 
     @Override
-    public void put(String bucket, String key, File file) {
-        mediaRepository.put(bucket, key, file);
+    public void put(String key, InputStream file) {
+        mediaRepository.put(key, file);
     }
     
     @Override
-    public PresignedPostDto createPresignedPut(String bucket, String key, String contentType, long size, String md5) {
-        return mediaRepository.generatePut(bucket, key, contentType, size, md5);
+    public PresignedPostDto createPresignedPut(String key, String contentType, long size, String md5) {
+        return mediaRepository.generatePut(key, contentType, size, md5);
     }
 
     @Override
-    public Object get(String bucket, String key) {
-        return mediaRepository.get(bucket, key);
+    public Object get(String key) {
+        return mediaRepository.get(key);
     }
 
     @Override
-    public void delete(String bucket, String key) {
-        mediaRepository.delete(bucket, key);
+    public void delete(String key) {
+        mediaRepository.delete(key);
     }
 }
