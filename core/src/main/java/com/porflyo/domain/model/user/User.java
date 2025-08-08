@@ -1,6 +1,5 @@
 package com.porflyo.domain.model.user;
 
-import java.net.URI;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
@@ -12,6 +11,7 @@ import io.micronaut.serde.annotation.Serdeable;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import software.amazon.awssdk.services.dynamodb.endpoints.internal.Value.Str;
 
 @Serdeable
 @Introspected
