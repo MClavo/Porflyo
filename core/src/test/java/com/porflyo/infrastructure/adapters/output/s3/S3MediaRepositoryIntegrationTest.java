@@ -76,7 +76,6 @@ class S3MediaRepositoryIntegrationTest implements TestPropertyProvider {
 
         // When
         PresignedPostDto dto = mediaRepository.generatePut(
-                BUCKET, 
                 KEY, 
                 "text/plain", 
                 testFile.length(), 
@@ -95,11 +94,11 @@ class S3MediaRepositoryIntegrationTest implements TestPropertyProvider {
         assertEquals(1, listed.contents().size(), "Object should exist");
 
         // Test get method
-        Object retrievedObject = mediaRepository.get(BUCKET, KEY);
+        Object retrievedObject = mediaRepository.get(KEY);
         assertNotNull(retrievedObject, "Retrieved object should not be null");
 
         /* ---------- Delete via repository ---------- */
-        mediaRepository.delete(BUCKET, KEY);
+        mediaRepository.delete(KEY);
 
         listed = s3client.listObjectsV2(b -> b.bucket(BUCKET).prefix(KEY));
         assertTrue(listed.contents().isEmpty(), "Object should be deleted");

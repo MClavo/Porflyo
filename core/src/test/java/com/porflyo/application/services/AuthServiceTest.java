@@ -9,12 +9,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.net.URI;
 import java.net.URLEncoder;
+import java.net.http.HttpClient;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.Optional;
@@ -32,6 +34,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.porflyo.application.configuration.JwtConfig;
 import com.porflyo.application.configuration.ProviderOAuthConfig;
+import com.porflyo.application.ports.output.MediaRepository;
 import com.porflyo.application.ports.output.UserRepository;
 import com.porflyo.domain.model.shared.EntityId;
 import com.porflyo.domain.model.user.ProviderAccount;
@@ -54,7 +57,12 @@ class AuthServiceTest {
     private MockJwtPort    jwtPort;
 
     @Mock
-    private UserRepository userRepository;   // classic Mockito mock
+    private UserRepository userRepository;   
+    @Mock
+    private MediaRepository mediaRepository;
+    @Mock
+    private HttpClient httpClient;
+
 
     // ──────────────────────────────────── SUT ─────────────────────────────────────────
     private AuthService authService;
@@ -70,7 +78,23 @@ class AuthServiceTest {
         jwtCfg     = MockJwtConfig.withDefaults();
         githubPort = MockGithubPort.withDefaults();
         jwtPort    = MockJwtPort.withDefaults();
-        authService = new AuthService(githubPort, jwtPort, oauthCfg, jwtCfg, userRepository);
+        authService = new AuthService(githubPort, jwtPort, oauthCfg, jwtCfg, userRepository, mediaRepository);
+
+        // mediaRepository.put is a void method, so use doNothing().when(...)
+        org.mockito.Mockito.lenient().doNothing().when(mediaRepository).put(any(), any());
+
+        // Mock HttpClient.send to return a valid HttpResponse with a non-null body
+        var mockResponse = org.mockito.Mockito.mock(java.net.http.HttpResponse.class);
+        org.mockito.Mockito.lenient().when(mockResponse.body()).thenReturn(new java.io.ByteArrayInputStream(new byte[0]));
+        try {
+            org.mockito.Mockito.lenient().when(httpClient.send(any(), any())).thenReturn(mockResponse);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void refreshAuthService() {
+        authService = new AuthService(githubPort, jwtPort, oauthCfg, jwtCfg, userRepository, mediaRepository);
     }
 
     // ─────────────────────────────────── buildOAuthLoginUrl ───────────────────────────
@@ -107,7 +131,7 @@ class AuthServiceTest {
                         .redirectUri("https://cb")
                         .scope("user")
                         .build();
-            authService = new AuthService(githubPort, jwtPort, oauthCfg, jwtCfg, userRepository);
+            refreshAuthService();
 
             // When
             String url = authService.buildOAuthLoginUrl();
@@ -255,7 +279,8 @@ class AuthServiceTest {
             githubPort = MockGithubPort.builder()
                           .throwOnExchange(new RuntimeException("boom"))
                           .build();
-            authService = new AuthService(githubPort, jwtPort, oauthCfg, jwtCfg, userRepository);
+
+            refreshAuthService();
 
             // When / Then
             RuntimeException ex = assertThrows(RuntimeException.class,
@@ -271,7 +296,8 @@ class AuthServiceTest {
             githubPort = MockGithubPort.builder()
                           .throwOnGetUserData(new RuntimeException("user-fail"))
                           .build();
-            authService = new AuthService(githubPort, jwtPort, oauthCfg, jwtCfg, userRepository);
+
+            refreshAuthService();
 
             // Then
             RuntimeException ex = assertThrows(RuntimeException.class,
@@ -286,7 +312,7 @@ class AuthServiceTest {
             jwtPort = MockJwtPort.builder()
                        .throwOnGenerate(new RuntimeException("jwt-fail"))
                        .build();
-            authService = new AuthService(githubPort, jwtPort, oauthCfg, jwtCfg, userRepository);
+            refreshAuthService();
 
             // Then
             RuntimeException ex = assertThrows(RuntimeException.class,
