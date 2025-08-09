@@ -1,120 +1,73 @@
 package com.porflyo.domain.model.user;
 
-import java.util.Collections;
+import java.time.Instant;
 import java.util.Map;
 import java.util.Objects;
-
-import com.porflyo.domain.model.shared.EntityId;
 
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.serde.annotation.Serdeable;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import software.amazon.awssdk.services.dynamodb.endpoints.internal.Value.Str;
 
 @Serdeable
 @Introspected
 public final class User {
-    @NotBlank
-    private final EntityId id;
 
+    // ────────────────────────── Attributes ──────────────────────────
+    @NotBlank
+    private final UserId id;
     @Valid
     private final ProviderAccount providerAccount;
-
     @NotBlank
     private final String name;
-
     @Email
     private final String email;
-
     private final String description;
     private final String profileImage;
+    private final Map<@NotBlank String, String> socials; // {key: social platform, value: URL or handle}
+    private final Instant createdAt;
+    private final Instant updatedAt;
 
-    /**
-     * KEY: Social Media Platform (e.g., "linkedin", "github")
-     * <p>
-     * VALUE: absolute URL of the user's profile
-     */
-    private final Map<@NotBlank String, String> socials;
+    public User(
+            UserId id,
+            ProviderAccount providerAccount,
+            String name,
+            String email,
+            String description,
+            String profileImage,
+            Map<String, String> socials,
+            Instant createdAt,
+            Instant updatedAt) {
 
-
-    public User(EntityId id, ProviderAccount providerAccount, String name, String email, String description,
-            String profileImage, Map<String, String> socials) {
         this.id = Objects.requireNonNull(id);
         this.providerAccount = providerAccount;
         this.name = Objects.requireNonNull(name);
         this.email = Objects.requireNonNull(email);
         this.description = description;
         this.profileImage = profileImage;
-        this.socials = socials == null ? Collections.emptyMap()
-                : Map.copyOf(socials);
+        this.socials = socials;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
 
-    /**
-     * Creates a brand new user when signing up first time via a provider.
-     */
-    public static User fromProvider(EntityId id,
-            ProviderAccount providerAccount,
-            String name,
-            @Email String email,
-            String description,
-            String profileImage) {
+    // ────────────────────────── Getters ──────────────────────────
 
-        return new User(id,
-                providerAccount,
-                name,
-                email,
-                description,
-                profileImage,
-                Collections.emptyMap());
-    }
+    public UserId id() { return id; }
 
-    /**
-     * Returns a new {@code User} instance with the requested modifications.
-     * Provider data is intentionally immutable.
-     */
-    public User editProfile(String newName,
-            @Email String newEmail,
-            String newDescription,
-            String newProfileImage,
-            Map<String, String> newSocials) {
+    public ProviderAccount provider() { return providerAccount; }
 
-        return new User(
-                id,
-                this.providerAccount, // immutable
-                newName != null ? newName : this.name,
-                newEmail != null ? newEmail : this.email,
-                newDescription != null ? newDescription : this.description,
-                newProfileImage != null ? newProfileImage : this.profileImage,
-                newSocials != null ? Map.copyOf(newSocials) : this.socials);
-    }
+    public String name() { return name; }
 
-    public EntityId id() {
-        return id;
-    }
+    public String email() { return email; }
 
-    public ProviderAccount provider() {
-        return providerAccount;
-    }
+    public String description() { return description; }
 
-    public String name() {
-        return name;
-    }
+    public String profileImage() { return profileImage; }
 
-    public String email() {
-        return email;
-    }
+    public Map<String, String> socials() { return socials; }
 
-    public String description() {
-        return description;
-    }
+    public Instant createdAt() { return createdAt; }
 
-    public String profileImage() {
-        return profileImage;
-    }
-
-    public Map<String, String> socials() {
-        return socials;
-    }
+    public Instant updatedAt() { return updatedAt; }
 }
