@@ -1,4 +1,4 @@
-package com.porflyo.domain.model.shared;
+package com.porflyo.domain.model.ids;
 
 import com.github.ksuid.Ksuid;
 
