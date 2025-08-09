@@ -6,6 +6,7 @@ import io.micronaut.context.annotation.ConfigurationProperties;
 // clientId -> client-id
 @ConfigurationProperties("oauth.github")
 public record ProviderOAuthConfig(
+    String providerName,
     String clientId,
     String clientSecret,
     String redirectUri,

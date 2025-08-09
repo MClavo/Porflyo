@@ -1,49 +1,46 @@
 package com.porflyo.application.ports.input;
 
 import java.io.InputStream;
+import java.util.Optional;
 
 import com.porflyo.domain.model.dto.PresignedPostDto;
 
+import jakarta.validation.constraints.NotNull;
+
 /**
- * Use case interface for media operations, such as generating presigned URLs for file uploads
- * and deleting objects from storage.
+ * MediaUseCase interface defines operations related to media management,
+ * such as uploading files and creating presigned URLs for file uploads.
  */
 public interface MediaUseCase {
 
     /**
-     * Puts an object with the given key.
-     *
-     * @param key    The key (path) where the file will be stored.
-     * @param file   The file to be stored.
+     * Only available for the backend, used to upload files when the user is first
+     * created
      */
-    void put(String key, InputStream file);
-
+    void put(@NotNull String key, @NotNull InputStream file);
 
     /**
      * Creates a presigned POST request for uploading files to a specified key.
+     * The bucket and region are configured in the application properties.
      *
      * @param key         The key (path) where the file will be uploaded.
      * @param contentType The content type of the file.
      * @param size       The size of the file.
-     * @param md5       The MD5 checksum of the file.
+     * @param md5       The MD5 base64 checksum of the file.
      * @return A PresignedPostDto containing the URL and fields for the presigned POST request.
      */
-    PresignedPostDto createPresignedPut(String key, String contentType, long size, String md5);
+    @NotNull
+    PresignedPostDto createPresignedPut(@NotNull String key, @NotNull String contentType, @NotNull long size, @NotNull String md5);
 
     /**
-     * Retrieves an object from the specified storage using its key.
-     *
-     * @param key    The key (path) of the object to be retrieved.
-     * @return The retrieved object.
+     * Mainly used in tests.
      */
-    Object get(String key);
-
-
+    @NotNull
+    Optional<Object> get(String key);
 
     /**
-     * Deletes an object from the specified storage using its key.
-     *
-     * @param key    The key (path) of the object to be deleted.
+     * Deletes an object from storage using the specified key.
+     * Does not verify if the object is used in more than one place.
      */
     void delete(String key);
 }

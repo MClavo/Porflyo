@@ -1,6 +1,7 @@
 package com.porflyo.application.services;
 
 import java.io.InputStream;
+import java.util.Optional;
 
 import com.porflyo.application.ports.input.MediaUseCase;
 import com.porflyo.application.ports.output.MediaRepository;
@@ -27,7 +28,7 @@ public class MediaService implements MediaUseCase {
     }
 
     @Override
-    public Object get(String key) {
+    public Optional<Object> get(String key) {
         return mediaRepository.get(key);
     }
 

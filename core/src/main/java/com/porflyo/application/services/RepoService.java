@@ -6,8 +6,8 @@ import java.util.Optional;
 import com.porflyo.application.ports.input.RepoUseCase;
 import com.porflyo.application.ports.output.ProviderPort;
 import com.porflyo.application.ports.output.UserRepository;
+import com.porflyo.domain.model.ids.UserId;
 import com.porflyo.domain.model.provider.ProviderRepo;
-import com.porflyo.domain.model.shared.EntityId;
 import com.porflyo.domain.model.user.User;
 
 import jakarta.inject.Inject;
@@ -36,7 +36,7 @@ public class RepoService implements RepoUseCase {
     }
 
     @Override
-    public List<ProviderRepo> getUserRepos(EntityId userId) {
+    public List<ProviderRepo> getUserRepos(UserId userId) {
 
         Optional<User> user = userRepository.findById(userId);
 

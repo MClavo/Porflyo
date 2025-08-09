@@ -1,9 +1,10 @@
 package com.porflyo.application.ports.output;
 
-import java.util.Map;
 import java.util.Optional;
 
-import com.porflyo.domain.model.shared.EntityId;
+import com.porflyo.application.dto.UserPatchDto;
+import com.porflyo.domain.model.ids.ProviderUserId;
+import com.porflyo.domain.model.ids.UserId;
 import com.porflyo.domain.model.user.ProviderAccount;
 import com.porflyo.domain.model.user.User;
 
@@ -15,17 +16,15 @@ import io.micronaut.core.annotation.NonNull;
  */
 public interface UserRepository {
 
-    void save(@NonNull User user);  // Create or Update
+    void save(@NonNull User user);
 
-    @NonNull
-    Optional<User> findById(@NonNull EntityId id);
+    @NonNull Optional<User> findById(@NonNull UserId id);
 
-    Optional<User> findByProviderId(@NonNull String providerId);
+    @NonNull Optional<User> findByProviderId(@NonNull ProviderUserId providerId);
 
-    User patch(@NonNull EntityId id, @NonNull Map<String, Object> attributes);
+    @NonNull User patch(@NonNull UserPatchDto patch);
 
-    User patchProviderAccount(@NonNull EntityId id, @NonNull ProviderAccount providerAccount);
+    @NonNull User patchProviderAccount(@NonNull UserId userId, @NonNull ProviderAccount account);
 
-    void delete(@NonNull EntityId id);
-    
+    void delete(@NonNull UserId id);
 }

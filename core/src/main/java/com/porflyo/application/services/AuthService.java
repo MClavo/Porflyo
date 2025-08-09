@@ -8,6 +8,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
+import java.time.Instant;
 import java.util.Collections;
 
 import org.slf4j.Logger;
@@ -20,8 +21,8 @@ import com.porflyo.application.ports.output.JwtPort;
 import com.porflyo.application.ports.output.MediaRepository;
 import com.porflyo.application.ports.output.ProviderPort;
 import com.porflyo.application.ports.output.UserRepository;
+import com.porflyo.domain.model.ids.UserId;
 import com.porflyo.domain.model.provider.ProviderUser;
-import com.porflyo.domain.model.shared.EntityId;
 import com.porflyo.domain.model.user.ProviderAccount;
 import com.porflyo.domain.model.user.User;
 import com.porflyo.domain.model.user.UserClaims;
@@ -30,34 +31,7 @@ import com.porflyo.domain.model.user.UserSession;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 
-/**
- * Service responsible for handling authentication logic using GitHub OAuth.
- * <p>
- * This service provides methods to build the GitHub OAuth login URL and handle the OAuth callback,
- * exchanging the authorization code for an access token, retrieving user data, and generating a JWT token for session management.
- * </p>
- *
- * <p>
- * Dependencies:
- * <ul>
- *   <li>{@link ConfigurationPort} - Provides configuration values such as OAuth client ID, redirect URI, scope, and JWT expiration.</li>
- *   <li>{@link ProviderPort} - Handles communication with GitHub for exchanging codes and fetching user data.</li>
- *   <li>{@link JwtPort} - Responsible for generating JWT tokens based on user claims.</li>
- * </ul>
- * </p>
- *
- * <p>
- * Main methods:
- * <ul>
- *   <li>{@link #buildOAuthLoginUrl()} - Constructs the GitHub OAuth login URL with required parameters.</li>
- *   <li>{@link #handleOAuthCallback(String)} - Handles the OAuth callback by exchanging the code for an access token, retrieving user data, and generating a JWT token.</li>
- * </ul>
- * </p>
- *
- * <p>
- * This class is annotated with {@code @Singleton} to ensure a single instance is used throughout the application.
- * </p>
- */
+
 @Singleton
 public class AuthService implements AuthUseCase {
     private static final Logger log = LoggerFactory.getLogger(AuthService.class);
@@ -117,7 +91,7 @@ public class AuthService implements AuthUseCase {
             String accessToken = github.exchangeCodeForAccessToken(code);
             ProviderUser githubUser = github.getUserData(accessToken);
 
-            User user = createUserFromGithubUser(githubUser, accessToken);
+            User user = generateUserFromProviderAccount(githubUser, accessToken);
 
             // Save or update new user in the repository
             user = saveOrUpdateUser(user);
@@ -143,26 +117,31 @@ public class AuthService implements AuthUseCase {
 
     // ────────────────────────── Helpers ──────────────────────────
 
-    private User createUserFromGithubUser(ProviderUser githubUser, String accessToken) {
+    private User generateUserFromProviderAccount(ProviderUser providerUser, String accessToken) {
         
         ProviderAccount githubAccount = new ProviderAccount(
-            githubUser.id(),
-            githubUser.name(),
-            URI.create(githubUser.avatar_url()),
+            ProviderAccount.resolveProvider(oauthConfig.providerName()),
+            providerUser.id(),
+            providerUser.name(),
+            URI.create(providerUser.avatar_url()),
             accessToken
         );
 
-        EntityId id = EntityId.newKsuid();
+        UserId id = UserId.newKsuid();
         String profileImageKey = "u/" + id.value() + ".webp";
+
+        Instant now = Instant.now();
 
         return new User(
             id,
             githubAccount,
-            githubUser.name(),
-            githubUser.email(),
+            providerUser.name(),
+            providerUser.email(),
             "",                             // Empty description
             profileImageKey,
-            Collections.emptyMap()
+            Collections.emptyMap(),
+            now,
+            now
         );
     }
 
