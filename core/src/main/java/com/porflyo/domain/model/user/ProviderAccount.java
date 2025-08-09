@@ -21,8 +21,8 @@ public record ProviderAccount(
     @NotNull Provider provider,
     @NotNull ProviderUserId providerUserId,
     @NotBlank String providerUserName,
-    @NotBlank URI providerAvatarUrl,
-    @NotBlank String providerAccessToken // stored but never exposed to frontend
+    URI providerAvatarUrl,
+    String providerAccessToken  // stored but never exposed to frontend
 ) {
     public enum Provider { GITHUB }
 }

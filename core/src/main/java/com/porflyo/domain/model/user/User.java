@@ -15,7 +15,7 @@ import jakarta.validation.constraints.NotNull;
 @Serdeable
 @Introspected
 public record User(
-        @NotNull UserId id,
+        @NotNull @Valid UserId id,
         @NotNull @Valid ProviderAccount providerAccount,
         @NotBlank String name,
         @Email String email,
