@@ -25,4 +25,11 @@ public record ProviderAccount(
     String providerAccessToken  // stored but never exposed to frontend
 ) {
     public enum Provider { GITHUB }
+
+    public static Provider resolveProvider(String name) {
+        return switch (name.toLowerCase()) {
+            case "github" -> Provider.GITHUB;
+            default -> throw new IllegalArgumentException("Unknown provider: " + name);
+        };
+    }
 }

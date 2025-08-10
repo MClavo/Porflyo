@@ -1,6 +1,5 @@
 package com.porflyo.domain.model.user;
 
-import java.time.Instant;
 import java.util.Map;
 
 import com.porflyo.domain.model.ids.UserId;
@@ -16,11 +15,10 @@ import jakarta.validation.constraints.NotNull;
 @Introspected
 public record User(
         @NotNull @Valid UserId id,
-        @NotNull @Valid ProviderAccount providerAccount,
+        @NotNull @Valid ProviderAccount provider,
         @NotBlank String name,
         @Email String email,
         String description,
         String profileImage,
-        Map<@NotBlank String, String> socials, // {key: social platform, value: URL or handle}
-        Instant createdAt,
-        Instant updatedAt) {}
+        Map<@NotBlank String, String> socials // {key: social platform, value: URL or handle}
+) {}
