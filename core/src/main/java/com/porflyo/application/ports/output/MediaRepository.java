@@ -1,9 +1,10 @@
 package com.porflyo.application.ports.output;
 
 import java.io.InputStream;
+import java.net.URI;
 import java.util.Optional;
 
-import com.porflyo.domain.model.dto.PresignedPostDto;
+import com.porflyo.application.dto.PresignedPostDto;
 
 import jakarta.validation.constraints.NotNull;
 
@@ -17,7 +18,7 @@ public interface MediaRepository {
      * Only available for the backend, used to upload files when the user is first
      * created
      */
-    void put(@NotNull String key, @NotNull InputStream file);
+    void putFromUrl(@NotNull String key, @NotNull URI url);
     
     /**
      * Creates a presigned POST request for uploading files to a specified key.

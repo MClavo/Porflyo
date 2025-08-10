@@ -22,7 +22,7 @@ public interface UserRepository {
 
     @NonNull Optional<User> findByProviderId(@NonNull ProviderUserId providerId);
 
-    @NonNull User patch(@NonNull UserPatchDto patch);
+    @NonNull User patch(@NonNull UserId userId, @NonNull UserPatchDto patch);
 
     @NonNull User patchProviderAccount(@NonNull UserId userId, @NonNull ProviderAccount account);
 

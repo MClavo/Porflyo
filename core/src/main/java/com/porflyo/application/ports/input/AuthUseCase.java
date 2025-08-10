@@ -12,10 +12,10 @@ public interface AuthUseCase {
     String buildOAuthLoginUrl();
 
     /**
-     * Handles the OAuth callback from GitHub after user authentication.
+     * Handles the OAuth callback from the provider after user authentication.
      *
-     * @param code The authorization code received from GitHub.
-     * @return A UserSession containing user data and access token if authentication is successful.
+     * @param code The authorization code received from the provider.
+     * @return A UserSession containing user data and jwt session token if authentication is successful.
      */
     UserSession handleOAuthCallback(String code);
 }

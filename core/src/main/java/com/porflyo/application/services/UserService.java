@@ -5,7 +5,6 @@ import java.util.Optional;
 import com.porflyo.application.dto.UserPatchDto;
 import com.porflyo.application.ports.input.UserUseCase;
 import com.porflyo.application.ports.output.UserRepository;
-import com.porflyo.domain.model.ids.ProviderUserId;
 import com.porflyo.domain.model.ids.UserId;
 import com.porflyo.domain.model.user.User;
 
@@ -30,11 +29,6 @@ public class UserService implements UserUseCase{
         this.repository = userRepository;
     }
 
-    @Override
-    public @NonNull UserId create(@Valid @NonNull User user) {
-        repository.save(user);
-        return user.id();       // ID already generated at domain level
-    }
 
     @Override
     public @NonNull Optional<User> findById(@NonNull UserId id) {
@@ -42,13 +36,8 @@ public class UserService implements UserUseCase{
     }
 
     @Override
-    public @NonNull Optional<User> findByProviderId(@NonNull ProviderUserId providerId) {
-        return repository.findByProviderId(providerId);
-    }
-
-    @Override
-    public @NonNull User patch(@Valid @NonNull UserPatchDto patch) {
-        return repository.patch(patch);
+    public @NonNull User patch(@NonNull UserId userId, @Valid @NonNull UserPatchDto patch) {
+        return repository.patch(userId, patch);
     }
     
     @Override

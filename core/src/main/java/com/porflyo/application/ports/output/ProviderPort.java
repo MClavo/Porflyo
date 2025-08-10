@@ -11,6 +11,15 @@ import com.porflyo.domain.model.provider.ProviderUser;
  */
 public interface ProviderPort {
 
+    String getProviderName();
+
+    /**
+     * Builds the authorization URL for GitHub OAuth.
+     *
+     * @return The authorization URL as a String.
+     */
+    String buildAuthorizationUrl();
+
     /**
      * Exchanges OAuth code for access token
      * 

@@ -1,9 +1,6 @@
 package com.porflyo.application.ports.input;
 
-import java.io.InputStream;
-import java.util.Optional;
-
-import com.porflyo.domain.model.dto.PresignedPostDto;
+import com.porflyo.application.dto.PresignedPostDto;
 
 import jakarta.validation.constraints.NotNull;
 
@@ -12,13 +9,6 @@ import jakarta.validation.constraints.NotNull;
  * such as uploading files and creating presigned URLs for file uploads.
  */
 public interface MediaUseCase {
-
-    /**
-     * Only available for the backend, used to upload files when the user is first
-     * created
-     */
-    void put(@NotNull String key, @NotNull InputStream file);
-
     /**
      * Creates a presigned POST request for uploading files to a specified key.
      * The bucket and region are configured in the application properties.
@@ -31,12 +21,6 @@ public interface MediaUseCase {
      */
     @NotNull
     PresignedPostDto createPresignedPut(@NotNull String key, @NotNull String contentType, @NotNull long size, @NotNull String md5);
-
-    /**
-     * Mainly used in tests.
-     */
-    @NotNull
-    Optional<Object> get(String key);
 
     /**
      * Deletes an object from storage using the specified key.
