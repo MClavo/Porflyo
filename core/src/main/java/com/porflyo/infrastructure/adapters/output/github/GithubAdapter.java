@@ -12,7 +12,6 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.porflyo.application.configuration.ProviderOAuthConfig;
 import com.porflyo.application.ports.output.ProviderPort;
 import com.porflyo.domain.model.provider.ProviderRepo;
 import com.porflyo.domain.model.provider.ProviderUser;
@@ -23,6 +22,7 @@ import com.porflyo.infrastructure.adapters.output.github.exception.GithubApiExce
 import com.porflyo.infrastructure.adapters.output.github.exception.GithubAuthenticationException;
 import com.porflyo.infrastructure.adapters.output.github.exception.GithubConfigurationException;
 import com.porflyo.infrastructure.adapters.output.github.mapper.GithubDtoMapper;
+import com.porflyo.infrastructure.configuration.ProviderOAuthConfig;
 
 import io.micronaut.json.JsonMapper;
 import jakarta.inject.Inject;
@@ -57,6 +57,30 @@ public class GithubAdapter implements ProviderPort {
         this.oauthConfig = oauthConfig;
         this.jsonMapper = jsonMapper;
         this.httpClient = httpClient;
+    }
+
+
+    // ────────────────────────── Implementation ──────────────────────────
+    
+    @Override
+    public String getProviderName() {
+        return "GitHub";
+    }
+
+    @Override
+    public String buildAuthorizationUrl(){
+        String clientId = oauthConfig.clientId();
+        String redirectUri = oauthConfig.redirectUri();
+        String scope = oauthConfig.scope();
+
+        String loginUrl = String.format(
+            "https://github.com/login/oauth/authorize?client_id=%s&redirect_uri=%s&scope=%s&response_type=code",
+            URLEncoder.encode(clientId, StandardCharsets.UTF_8),
+            URLEncoder.encode(redirectUri, StandardCharsets.UTF_8),
+            URLEncoder.encode(scope, StandardCharsets.UTF_8)
+        );
+
+        return loginUrl;
     }
 
     @Override

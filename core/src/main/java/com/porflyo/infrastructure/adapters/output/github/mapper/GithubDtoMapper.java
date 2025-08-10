@@ -1,12 +1,13 @@
 package com.porflyo.infrastructure.adapters.output.github.mapper;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
+import com.porflyo.domain.model.ids.ProviderUserId;
 import com.porflyo.domain.model.provider.ProviderRepo;
 import com.porflyo.domain.model.provider.ProviderUser;
 import com.porflyo.infrastructure.adapters.output.github.dto.GithubRepoResponseDto;
 import com.porflyo.infrastructure.adapters.output.github.dto.GithubUserResponseDto;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 
 /**
@@ -26,8 +27,8 @@ public class GithubDtoMapper {
      */
     public static ProviderUser toDomain(GithubUserResponseDto dto) {
         return new ProviderUser(
+            new ProviderUserId(dto.id()),
             dto.login(),
-            dto.id(),
             dto.name(),
             dto.email(),
             dto.avatar_url()
