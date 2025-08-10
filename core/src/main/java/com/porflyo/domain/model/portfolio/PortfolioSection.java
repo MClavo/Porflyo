@@ -10,7 +10,8 @@ import jakarta.validation.constraints.NotNull;
 @Serdeable
 @Introspected
 public record PortfolioSection(
-  @NotBlank String sectionType,
-  @NotNull Object content,
-  List<String> media
-){}
+    @NotBlank String sectionType,
+    @NotBlank String title,
+    @NotNull Object content,
+    List<String> media
+) {}

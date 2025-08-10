@@ -19,11 +19,10 @@ import jakarta.validation.constraints.NotNull;
 public record Portfolio(
     @NotNull @Valid PortfolioId id,
     @NotNull @Valid UserId userId,
-
-    @NotBlank String title,
-    String description,
+    
     @NotBlank String template,
-
+    String title,
+    String description,
     @NotNull @Valid List<PortfolioSection> sections,
     @NotNull List<String> media,
 

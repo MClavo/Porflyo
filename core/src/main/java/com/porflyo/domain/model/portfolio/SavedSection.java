@@ -1,8 +1,5 @@
 package com.porflyo.domain.model.portfolio;
 
-import java.time.Instant;
-import java.util.List;
-
 import com.porflyo.domain.model.ids.SectionId;
 import com.porflyo.domain.model.ids.UserId;
 
@@ -15,13 +12,9 @@ import jakarta.validation.constraints.NotNull;
 @Serdeable
 @Introspected
 public record SavedSection(
-  @NotNull SectionId id,
-  @NotNull UserId userId,
-  @NotBlank String sectionType,
-  @NotBlank String title,
-  @NotNull Object content,
-  List<String> media,
-  @Min(1) int version,
-  @NotNull Instant createdAt,
-  @NotNull Instant updatedAt
+    @NotNull SectionId id,
+    @NotNull UserId userId,
+    @NotBlank String name,
+    @NotBlank PortfolioSection section,
+    @Min(1) int version
 ) {}
