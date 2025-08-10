@@ -1,6 +1,5 @@
 package com.porflyo.application.ports.output;
 
-import java.io.InputStream;
 import java.net.URI;
 import java.util.Optional;
 
