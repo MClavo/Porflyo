@@ -5,9 +5,10 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 
+import com.porflyo.domain.model.ids.ProviderUserId;
+import com.porflyo.domain.model.ids.UserId;
 import com.porflyo.domain.model.provider.ProviderRepo;
 import com.porflyo.domain.model.provider.ProviderUser;
-import com.porflyo.domain.model.shared.EntityId;
 import com.porflyo.domain.model.user.ProviderAccount;
 import com.porflyo.domain.model.user.User;
 import com.porflyo.domain.model.user.UserClaims;
@@ -34,6 +35,7 @@ public final class TestData {
 
 
     // Default values for ConfigurationPort
+    public static final String DEFAULT_PROVIDER_NAME = "GitHub";
     public static final String DEFAULT_CLIENT_ID = "test-client-id";
     public static final String DEFAULT_CLIENT_SECRET = "test-client-secret";
     public static final String DEFAULT_REDIRECT_URI = "http://localhost:3000/auth/callback";
@@ -50,7 +52,7 @@ public final class TestData {
 
 
     public static final ProviderUser DEFAULT_GITHUB_USER = new ProviderUser(
-        "testuser",
+        new ProviderUserId(DEFAULT_GITHUB_ID),
         DEFAULT_GITHUB_ID,
         DEFAULT_GITHUB_NAME,
         DEFAULT_GITHUB_EMAIL,
@@ -58,14 +60,15 @@ public final class TestData {
     );
 
     public static final ProviderAccount DEFAULT_PROVIDER_ACCOUNT = new ProviderAccount(
-        DEFAULT_GITHUB_ID,
+        ProviderAccount.Provider.GITHUB,
+        new ProviderUserId(DEFAULT_GITHUB_ID),
         DEFAULT_GITHUB_NAME,
         URI.create(DEFAULT_GITHUB_AVATAR_URL),
         DEFAULT_ACCESS_TOKEN
     );
 
     public static final User DEFAULT_USER = new User(
-        new EntityId("12345"),
+        new UserId("12345"),
         DEFAULT_PROVIDER_ACCOUNT,
         DEFAULT_GITHUB_NAME,
         DEFAULT_GITHUB_EMAIL,

@@ -8,7 +8,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.Instant;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -16,23 +15,26 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import com.porflyo.application.configuration.JwtConfig;
+import com.porflyo.application.ports.output.JwtPort;
 import com.porflyo.domain.model.user.UserClaims;
 import com.porflyo.testing.data.TestData;
-import com.porflyo.testing.mocks.ports.MockJwtConfig;
+
+import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 
 
+@MicronautTest(startApplication = false)
 @DisplayName("JwtAdapter Tests")
-class JwtAdapterTest {
+class JwtAdapterContractTest {
 
-    private JwtAdapter jwtAdapter;
-    private JwtConfig jwtConfig;
+    @Inject
+    @Named("jwt-adapter")
+    private JwtPort jwtPort;
 
-    @BeforeEach
-    void setUp() {
-        jwtConfig = MockJwtConfig.withDefaults();
-        jwtAdapter = new JwtAdapter(jwtConfig);
-    }
+    @Inject
+    @Named("jwt-different-adapter")
+    private JwtPort differentPort;
 
     @Nested
     @DisplayName("Token Generation")
@@ -45,7 +47,7 @@ class JwtAdapterTest {
             UserClaims claims = TestData.DEFAULT_CLAIMS;
 
             // When
-            String token = jwtAdapter.generateToken(claims);
+            String token = jwtPort.generateToken(claims);
 
             // Then
             assertNotNull(token);
@@ -62,8 +64,8 @@ class JwtAdapterTest {
             UserClaims claims2 = new UserClaims("user2", 3600);
 
             // When
-            String token1 = jwtAdapter.generateToken(claims1);
-            String token2 = jwtAdapter.generateToken(claims2);
+            String token1 = jwtPort.generateToken(claims1);
+            String token2 = jwtPort.generateToken(claims2);
 
             // Then
             assertNotNull(token1);
@@ -75,7 +77,7 @@ class JwtAdapterTest {
         @DisplayName("Should throw exception when claims is null")
         void shouldThrowExceptionWhenClaimsIsNull() {
             // When & Then
-            assertThrows(RuntimeException.class, () -> jwtAdapter.generateToken(null));
+            assertThrows(RuntimeException.class, () -> jwtPort.generateToken(null));
         }
 
         @Test
@@ -87,13 +89,13 @@ class JwtAdapterTest {
             UserClaims claims = new UserClaims("testuser", now, futureExp);
 
             // When
-            String token = jwtAdapter.generateToken(claims);
+            String token = jwtPort.generateToken(claims);
 
             // Then
             assertNotNull(token);
             
             // Verify by extracting claims back
-            UserClaims extractedClaims = jwtAdapter.extractClaims(token);
+            UserClaims extractedClaims = jwtPort.extractClaims(token);
             assertEquals(claims.getSub(), extractedClaims.getSub());
         }
     }
@@ -107,10 +109,10 @@ class JwtAdapterTest {
         void shouldValidateCorrectlySignedToken() {
             // Given
             UserClaims claims = TestData.DEFAULT_CLAIMS;
-            String token = jwtAdapter.generateToken(claims);
+            String token = jwtPort.generateToken(claims);
 
             // When
-            boolean isValid = jwtAdapter.validateToken(token);
+            boolean isValid = jwtPort.validateToken(token);
 
             // Then
             assertTrue(isValid);
@@ -122,7 +124,7 @@ class JwtAdapterTest {
         @DisplayName("Should return false for invalid tokens")
         void shouldReturnFalseForInvalidTokens(String invalidToken) {
             // When
-            boolean isValid = jwtAdapter.validateToken(invalidToken);
+            boolean isValid = jwtPort.validateToken(invalidToken);
 
             // Then
             assertFalse(isValid);
@@ -131,16 +133,11 @@ class JwtAdapterTest {
         @Test
         @DisplayName("Should return false for token with wrong issuer")
         void shouldReturnFalseForTokenWithWrongIssuer() {
-            // Given - Create adapter with different secret to simulate wrong issuer
-            JwtConfig differentConfig = MockJwtConfig.builder()
-                .secret("different-secret-key-that-is-long-enough-for-hs256-algorithm")
-                .build();
-            JwtAdapter differentAdapter = new JwtAdapter(differentConfig);
-            
-            String tokenFromDifferentAdapter = differentAdapter.generateToken(TestData.DEFAULT_CLAIMS);
+            // Given - different secret to simulate wrong issuer
+            String tokenFromDifferentAdapter = differentPort.generateToken(TestData.DEFAULT_CLAIMS);
 
             // When
-            boolean isValid = jwtAdapter.validateToken(tokenFromDifferentAdapter);
+            boolean isValid = jwtPort.validateToken(tokenFromDifferentAdapter);
 
             // Then
             assertFalse(isValid);
@@ -154,10 +151,10 @@ class JwtAdapterTest {
             Instant pastExp = now.minusSeconds(3600); // 1 hour ago
             UserClaims expiredClaims = new UserClaims("testuser", now.minusSeconds(7200), pastExp);
 
-            String expiredToken = jwtAdapter.generateToken(expiredClaims);
+            String expiredToken = jwtPort.generateToken(expiredClaims);
 
             // When
-            boolean isValid = jwtAdapter.validateToken(expiredToken);
+            boolean isValid = jwtPort.validateToken(expiredToken);
 
             // Then
             assertFalse(isValid);
@@ -173,10 +170,10 @@ class JwtAdapterTest {
         void shouldExtractAllClaimsFromValidToken() {
             // Given
             UserClaims originalClaims = TestData.DEFAULT_CLAIMS;
-            String token = jwtAdapter.generateToken(originalClaims);
+            String token = jwtPort.generateToken(originalClaims);
 
             // When
-            UserClaims extractedClaims = jwtAdapter.extractClaims(token);
+            UserClaims extractedClaims = jwtPort.extractClaims(token);
 
             // Then
             assertNotNull(extractedClaims);
@@ -196,10 +193,10 @@ class JwtAdapterTest {
                 Instant.now(), 
                 Instant.now().plusSeconds(3600)
             );
-            String token = jwtAdapter.generateToken(claims);
+            String token = jwtPort.generateToken(claims);
 
             // When
-            UserClaims extractedClaims = jwtAdapter.extractClaims(token);
+            UserClaims extractedClaims = jwtPort.extractClaims(token);
 
             // Then
             assertEquals(specialSub, extractedClaims.getSub());
@@ -211,21 +208,18 @@ class JwtAdapterTest {
         @DisplayName("Should throw exception for invalid tokens")
         void shouldThrowExceptionForInvalidTokens(String invalidToken) {
             // When & Then
-            assertThrows(RuntimeException.class, () -> jwtAdapter.extractClaims(invalidToken));
+            assertThrows(RuntimeException.class, () -> jwtPort.extractClaims(invalidToken));
         }
 
         @Test
         @DisplayName("Should throw exception for token with wrong signature")
         void shouldThrowExceptionForTokenWithWrongSignature() {
-            // Given - Token from different adapter (different secret)
-            JwtConfig differentConfig = MockJwtConfig.builder()
-                .secret("completely-different-secret-that-is-long-enough-for-hs256")
-                .build();
-            JwtAdapter differentAdapter = new JwtAdapter(differentConfig);
-            String tokenFromDifferentAdapter = differentAdapter.generateToken(TestData.DEFAULT_CLAIMS);
+            // Given
+
+            String tokenFromDifferentAdapter = differentPort.generateToken(TestData.DEFAULT_CLAIMS);
 
             // When & Then
-            assertThrows(RuntimeException.class, () -> jwtAdapter.extractClaims(tokenFromDifferentAdapter));
+            assertThrows(RuntimeException.class, () -> jwtPort.extractClaims(tokenFromDifferentAdapter));
         }
     }
 
@@ -244,36 +238,14 @@ class JwtAdapterTest {
             );
 
             // When - Generate token
-            String token = jwtAdapter.generateToken(originalClaims);
+            String token = jwtPort.generateToken(originalClaims);
 
             // Then - Validate token
-            assertTrue(jwtAdapter.validateToken(token));
+            assertTrue(jwtPort.validateToken(token));
 
             // And - Extract claims
-            UserClaims extractedClaims = jwtAdapter.extractClaims(token);
+            UserClaims extractedClaims = jwtPort.extractClaims(token);
             assertEquals(originalClaims.getSub(), extractedClaims.getSub());
-        }
-
-        @Test
-        @DisplayName("Should work with different JWT secrets")
-        void shouldWorkWithDifferentJwtSecrets() {
-            // Given
-            String customSecret = "my-super-secret-jwt-key-for-testing-purposes-that-is-long-enough";
-            JwtConfig customConfig = MockJwtConfig.builder()
-                .secret(customSecret)
-                .build();
-            JwtAdapter customAdapter = new JwtAdapter(customConfig);
-
-            // When
-            String token = customAdapter.generateToken(TestData.DEFAULT_CLAIMS);
-
-            // Then
-            assertTrue(customAdapter.validateToken(token));
-            UserClaims claims = customAdapter.extractClaims(token);
-            assertEquals(TestData.DEFAULT_CLAIMS.getSub(), claims.getSub());
-            
-            // But should fail with default adapter
-            assertFalse(jwtAdapter.validateToken(token));
         }
 
         @Test
@@ -287,11 +259,11 @@ class JwtAdapterTest {
             );
 
             // When
-            String token = jwtAdapter.generateToken(minimalClaims);
+            String token = jwtPort.generateToken(minimalClaims);
 
             // Then
-            assertTrue(jwtAdapter.validateToken(token));
-            UserClaims extractedClaims = jwtAdapter.extractClaims(token);
+            assertTrue(jwtPort.validateToken(token));
+            UserClaims extractedClaims = jwtPort.extractClaims(token);
             assertEquals("1", extractedClaims.getSub());
         }
     }

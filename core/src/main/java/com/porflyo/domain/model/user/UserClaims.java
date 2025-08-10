@@ -19,7 +19,7 @@ public class UserClaims {
     // If needs an inmediate logout or session invalidation:
     //private final String jti;         // JWT ID - unique token identifier
     
-    /*
+    /**
     * Constructor with all fields for testing purposes.
     * @param sub The subject (user ID)
     * @param iat The issued at time
@@ -31,7 +31,7 @@ public class UserClaims {
         this.exp = exp;
     }
     
-    /*
+    /**
     * Constructor with subject and expiration, iat is set to now
     * @param sub The subject (user ID)
     * @param tokenLifetime The token lifetime in seconds
