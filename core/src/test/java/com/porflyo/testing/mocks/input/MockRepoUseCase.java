@@ -3,18 +3,18 @@ package com.porflyo.testing.mocks.input;
 import java.util.List;
 import java.util.function.Function;
 
-import com.porflyo.application.ports.input.RepoUseCase;
+import com.porflyo.application.ports.input.ProviderUseCase;
+import com.porflyo.domain.model.ids.EntityId;
 import com.porflyo.domain.model.provider.ProviderRepo;
-import com.porflyo.domain.model.shared.EntityId;
 import com.porflyo.testing.data.TestData;
 
 /**
- * A mock implementation of the {@link RepoUseCase} interface for testing purposes.
+ * A mock implementation of the {@link ProviderUseCase} interface for testing purposes.
  */
 public record MockRepoUseCase(
     Function<String, List<ProviderRepo>> getUserReposByToken,
     Function<EntityId, List<ProviderRepo>> getUserReposById
-) implements RepoUseCase {
+) implements ProviderUseCase {
 
     public static Builder builder() {
         return new Builder();

@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import com.porflyo.application.ports.input.UserUseCase;
-import com.porflyo.domain.model.shared.EntityId;
+import com.porflyo.domain.model.ids.EntityId;
 import com.porflyo.domain.model.user.User;
 
 /**

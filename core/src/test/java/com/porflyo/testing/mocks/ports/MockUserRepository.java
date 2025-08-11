@@ -10,7 +10,7 @@ import java.util.Optional;
 import org.mockito.Mockito;
 
 import com.porflyo.application.ports.output.UserRepository;
-import com.porflyo.domain.model.shared.EntityId;
+import com.porflyo.domain.model.ids.UserId;
 import com.porflyo.domain.model.user.ProviderAccount;
 import com.porflyo.domain.model.user.User;
 import com.porflyo.testing.data.TestData;
@@ -40,7 +40,7 @@ public final class MockUserRepository implements UserRepository {
 
     @Override
     @NonNull
-    public Optional<User> findById(@NonNull EntityId id) {
+    public Optional<User> findById(@NonNull UserId id) {
         return mock.findById(id);
     }
 
@@ -50,17 +50,17 @@ public final class MockUserRepository implements UserRepository {
     }
 
     @Override
-    public User patch(@NonNull EntityId id, @NonNull Map<String, Object> attributes) {
+    public User patch(@NonNull UserId id, @NonNull Map<String, Object> attributes) {
         return mock.patch(id, attributes);
     }
 
     @Override
-    public User patchProviderAccount(@NonNull EntityId id, @NonNull ProviderAccount providerAccount) {
+    public User patchProviderAccount(@NonNull UserId id, @NonNull ProviderAccount providerAccount) {
         return mock.patchProviderAccount(id, providerAccount);
     }
 
     @Override
-    public void delete(@NonNull EntityId id) {
+    public void delete(@NonNull UserId id) {
         mock.delete(id);
     }
 

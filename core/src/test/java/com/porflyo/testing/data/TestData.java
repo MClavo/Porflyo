@@ -59,16 +59,20 @@ public final class TestData {
         DEFAULT_GITHUB_AVATAR_URL
     );
 
+    public static final UserId DEFAULT_USER_ID = new UserId("12345");
+    public static final ProviderUserId DEFAULT_PROVIDER_USER_ID = new ProviderUserId("12345");
+
+
     public static final ProviderAccount DEFAULT_PROVIDER_ACCOUNT = new ProviderAccount(
         ProviderAccount.Provider.GITHUB,
-        new ProviderUserId(DEFAULT_GITHUB_ID),
+        DEFAULT_PROVIDER_USER_ID,
         DEFAULT_GITHUB_NAME,
         URI.create(DEFAULT_GITHUB_AVATAR_URL),
         DEFAULT_ACCESS_TOKEN
     );
 
     public static final User DEFAULT_USER = new User(
-        new UserId("12345"),
+        DEFAULT_USER_ID,
         DEFAULT_PROVIDER_ACCOUNT,
         DEFAULT_GITHUB_NAME,
         DEFAULT_GITHUB_EMAIL,

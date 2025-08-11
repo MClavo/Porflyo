@@ -1,12 +1,13 @@
 package com.porflyo.testing.mocks.ports;
 
-import com.porflyo.application.configuration.ProviderOAuthConfig;
+import com.porflyo.infrastructure.configuration.ProviderOAuthConfig;
 import com.porflyo.testing.data.TestData;
 
 /**
  * Mock para GithubOAuthConfig, igual que el record original, con builder y valores por defecto para tests.
  */
 public record MockGithubOAuthConfig(
+    String providerName,
     String clientId,
     String clientSecret,
     String redirectUri,
@@ -23,6 +24,7 @@ public record MockGithubOAuthConfig(
     }
 
     public static class Builder {
+        private String providerName = TestData.DEFAULT_PROVIDER_NAME;
         private String clientId = TestData.DEFAULT_CLIENT_ID;
         private String clientSecret = TestData.DEFAULT_CLIENT_SECRET;
         private String redirectUri = TestData.DEFAULT_REDIRECT_URI;
@@ -49,8 +51,12 @@ public record MockGithubOAuthConfig(
             this.userAgent = userAgent;
             return this;
         }
+        public Builder providerName(String providerName) {
+            this.providerName = providerName;
+            return this;
+        }
         public ProviderOAuthConfig build() {
-            return new ProviderOAuthConfig(clientId, clientSecret, redirectUri, scope, userAgent);
+            return new ProviderOAuthConfig(clientId, clientSecret, redirectUri, scope, userAgent, providerName);
         }
     }
 }
