@@ -14,7 +14,7 @@ import com.porflyo.domain.model.ids.ProviderUserId;
 import com.porflyo.domain.model.ids.UserId;
 import com.porflyo.domain.model.user.ProviderAccount;
 import com.porflyo.domain.model.user.User;
-import com.porflyo.infrastructure.adapters.output.dynamodb.dto.DdbUserDto;
+import com.porflyo.infrastructure.adapters.output.dynamodb.Item.DdbUserItem;
 
 import io.micronaut.core.annotation.NonNull;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
@@ -30,9 +30,9 @@ public final class DdbUserMapper {
     private DdbUserMapper() {}
 
     /** ----------- Domain → DTO → Dynamo Map ----------- */
-    public static DdbUserDto toDto(User u) {
-        DdbUserDto dto = new DdbUserDto();
-        dto.setPK(DdbUserDto.pkOf(u.id().value()));
+    public static DdbUserItem toDto(User u) {
+        DdbUserItem dto = new DdbUserItem();
+        dto.setPK(DdbUserItem.pkOf(u.id().value()));
         dto.setSK(SK_PREFIX_USER);
         dto.setUserId(u.id().value());
         dto.setName(u.name());
@@ -47,8 +47,8 @@ public final class DdbUserMapper {
         return dto;
     }
 
-    /** Converts a {@link DdbUserDto} to a DynamoDB item map. */
-    public static Map<String, AttributeValue> toItem(DdbUserDto dUsr) {
+    /** Converts a {@link DdbUserItem} to a DynamoDB item map. */
+    public static Map<String, AttributeValue> toItem(DdbUserItem dUsr) {
         Map<String, AttributeValue> map = new HashMap<>();
         map.put("PK", fromS(dUsr.getPK()));
         map.put("SK", fromS(dUsr.getSK()));
@@ -77,11 +77,11 @@ public final class DdbUserMapper {
     }
 
     /** ----------- Dynamo Map → DTO → Domain ----------- */
-    public static DdbUserDto fromItem(Map<String, AttributeValue> item) {
+    public static DdbUserItem fromItem(Map<String, AttributeValue> item) {
         Map<String, String> socials = item.containsKey("socials") ? item.get("socials").m().entrySet().stream()
                 .collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().s())) : Map.of();
 
-        DdbUserDto dto = new DdbUserDto();
+        DdbUserItem dto = new DdbUserItem();
         dto.setPK(item.get("PK").s());
         dto.setSK(item.get("SK").s());
         dto.setName(item.get("name").s());
@@ -96,8 +96,8 @@ public final class DdbUserMapper {
         return dto;
     }
 
-    /** Converts a {@link DdbUserDto} to a domain {@link User}. */
-    public static User toDomain(DdbUserDto d) {
+    /** Converts a {@link DdbUserItem} to a domain {@link User}. */
+    public static User toDomain(DdbUserItem d) {
         ProviderAccount providerAccount = new ProviderAccount(ProviderAccount.Provider.GITHUB,
                 new ProviderUserId(d.getProviderUserId()), d.getProviderUserName(),
                 d.getProviderAvatarUrl() != null ? URI.create(d.getProviderAvatarUrl()) : null,
@@ -118,9 +118,9 @@ public final class DdbUserMapper {
      * Creates a DynamoUserDto with null fields except the ones specified on the
      * Map<String, Object> Used for patching user attributes.
      */
-    public static DdbUserDto PatchToDto(@NonNull UserId id, UserPatchDto patch) {
-        DdbUserDto patchDto = new DdbUserDto();
-        String pk = DdbUserDto.pkOf(id.value());
+    public static DdbUserItem PatchToDto(@NonNull UserId id, UserPatchDto patch) {
+        DdbUserItem patchDto = new DdbUserItem();
+        String pk = DdbUserItem.pkOf(id.value());
         String sk = SK_PREFIX_USER;
 
         patchDto.setPK(pk);
@@ -145,11 +145,11 @@ public final class DdbUserMapper {
         return patchDto;
     }
 
-    public static DdbUserDto providerToPatch(@NonNull UserId id, ProviderAccount providerAccount) {
+    public static DdbUserItem providerToPatch(@NonNull UserId id, ProviderAccount providerAccount) {
         if (providerAccount.providerUserId() == null)
             throw new IllegalArgumentException("Provider account must have a user ID");
 
-        DdbUserDto patchDto = new DdbUserDto();
+        DdbUserItem patchDto = new DdbUserItem();
         patchDto.setPK(PK_PREFIX_USER + id.value());
         patchDto.setSK(SK_PREFIX_USER);
         patchDto.setProviderUserId(providerAccount.providerUserId().value());

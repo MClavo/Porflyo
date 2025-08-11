@@ -1,4 +1,4 @@
-package com.porflyo.infrastructure.adapters.output.dynamodb.dto;
+package com.porflyo.infrastructure.adapters.output.dynamodb.Item;
 
 import java.util.List;
 
@@ -7,7 +7,7 @@ import io.micronaut.serde.annotation.Serdeable;
 
 @Serdeable
 @Introspected
-public class DdbSavedSectionDto {
+public class DdbSavedSectionItem {
 
     // ────────────────────────── Key & Index ──────────────────────────
    
@@ -28,7 +28,7 @@ public class DdbSavedSectionDto {
 
     private Integer version;
 
-    public DdbSavedSectionDto() {}
+    public DdbSavedSectionItem() {}
 
 
     // ────────────────────────── getters & setters ──────────────────────────

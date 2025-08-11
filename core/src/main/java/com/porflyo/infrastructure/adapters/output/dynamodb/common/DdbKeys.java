@@ -12,12 +12,11 @@ public final class DdbKeys {
     
     public static final String SK_PREFIX_PORTFOLIO = "PORTFOLIO#";
     public static final String SK_PREFIX_SAVED_SECTION = "SSECTION#";
+    public static final String SK_PREFIX_MEDIA = "MEDIA#";
     public static final String SK_PREFIX_QUOTA = "QUOTA";
 
 
     // ────────────────────────── MEDIA ──────────────────────────
-    public static final String PK_PREFIX_MEDIA = "MEDIA#";
-    public static final String SK_PREFIX_MEDIA = "META";
 
     
     // ────────────────────────── SLUG ──────────────────────────

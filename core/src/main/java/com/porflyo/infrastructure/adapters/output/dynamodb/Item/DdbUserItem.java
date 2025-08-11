@@ -1,4 +1,4 @@
-package com.porflyo.infrastructure.adapters.output.dynamodb.dto;
+package com.porflyo.infrastructure.adapters.output.dynamodb.Item;
 
 import static com.porflyo.infrastructure.adapters.output.dynamodb.common.DdbKeys.PK_PREFIX_USER;
 import static com.porflyo.infrastructure.adapters.output.dynamodb.common.DdbKeys.pk;
@@ -16,7 +16,7 @@ import io.micronaut.serde.annotation.Serdeable;
  */
 @Serdeable
 @Introspected
-public class DdbUserDto {
+public class DdbUserItem {
 
     // ────────────────────────── Key & Index ──────────────────────────
 
@@ -39,7 +39,7 @@ public class DdbUserDto {
     private String providerAvatarUrl;
     private String providerAccessToken; 
 
-    public DdbUserDto() {}
+    public DdbUserItem() {}
 
 
     // ────────────────────────── getters & setters ──────────────────────────
