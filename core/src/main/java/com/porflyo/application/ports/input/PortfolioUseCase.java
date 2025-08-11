@@ -19,7 +19,7 @@ public interface PortfolioUseCase {
     List<Portfolio> listByOwner(UserId userId);
 
     Portfolio patchPortfolio(
-        @NotNull PortfolioId id,
+        @NotNull UserId userId,
         @NotNull PortfolioId portfolioId,
         @NotNull PortfolioDetailsDto patch
     );

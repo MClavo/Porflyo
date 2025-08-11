@@ -1,7 +1,7 @@
 package com.porflyo.infrastructure.adapters.output.dynamodb.common;
 
 import com.porflyo.infrastructure.adapters.output.dynamodb.schema.UserTableSchema;
-import com.porflyo.infrastructure.configuration.DynamoDbConfig;
+import com.porflyo.infrastructure.configuration.DdbConfig;
 
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.context.env.Environment;
@@ -24,11 +24,11 @@ import software.amazon.awssdk.services.dynamodb.model.ResourceNotFoundException;
  */
 @Singleton
 @Requires(env = { Environment.TEST, Environment.DEVELOPMENT, "local" })
-@Requires(beans = DynamoDbConfig.class) // Only if DynamoDbConfig is present
-public class DynamoBootstrap implements ApplicationEventListener<StartupEvent> {
+@Requires(beans = DdbConfig.class) // Only if DynamoDbConfig is present
+public class DdbBootstrap implements ApplicationEventListener<StartupEvent> {
 
     @Inject DynamoDbEnhancedClient enhanced;
-    @Inject DynamoDbConfig dynamoDbConfig;
+    @Inject DdbConfig dynamoDbConfig;
 
     @Override
     public void onApplicationEvent(StartupEvent event) {

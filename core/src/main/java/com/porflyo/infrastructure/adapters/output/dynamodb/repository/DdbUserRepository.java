@@ -1,19 +1,20 @@
 package com.porflyo.infrastructure.adapters.output.dynamodb.repository;
 
-import java.util.Map;
 import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.porflyo.application.dto.UserPatchDto;
 import com.porflyo.application.ports.output.UserRepository;
-import com.porflyo.domain.model.shared.EntityId;
+import com.porflyo.domain.model.ids.ProviderUserId;
+import com.porflyo.domain.model.ids.UserId;
 import com.porflyo.domain.model.user.ProviderAccount;
 import com.porflyo.domain.model.user.User;
-import com.porflyo.infrastructure.adapters.output.dynamodb.dto.DynamoDbUserDto;
-import com.porflyo.infrastructure.adapters.output.dynamodb.mapper.DynamoDbUserMapper;
+import com.porflyo.infrastructure.adapters.output.dynamodb.dto.DdbUserDto;
+import com.porflyo.infrastructure.adapters.output.dynamodb.mapper.DdbUserMapper;
 import com.porflyo.infrastructure.adapters.output.dynamodb.schema.UserTableSchema;
-import com.porflyo.infrastructure.configuration.DynamoDbConfig;
+import com.porflyo.infrastructure.configuration.DdbConfig;
 
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.core.annotation.NonNull;
@@ -31,18 +32,18 @@ import software.amazon.awssdk.enhanced.dynamodb.model.UpdateItemEnhancedRequest;
 /**
  * DynamoDB implementation of the {@link UserRepository} port.
  * <p>
- * Serialization details are fully delegated to {@link DynamoDbUserMapper}.
+ * Serialization details are fully delegated to {@link DdbUserMapper}.
  * </p>
  */
 @Singleton
-@Requires(beans = DynamoDbConfig.class)
-public class DynamoDbUserRepository implements UserRepository {
-    private static final Logger log = LoggerFactory.getLogger(DynamoDbUserRepository.class);
-    private final DynamoDbTable<DynamoDbUserDto> table;
+@Requires(beans = DdbConfig.class)
+public class DdbUserRepository implements UserRepository {
+    private static final Logger log = LoggerFactory.getLogger(DdbUserRepository.class);
+    private final DynamoDbTable<DdbUserDto> table;
     //private DynamoDbConfig dynamoDbConfig;
 
     @Inject
-    public DynamoDbUserRepository(DynamoDbEnhancedClient enhanced, DynamoDbConfig dynamoDbConfig) {
+    public DdbUserRepository(DynamoDbEnhancedClient enhanced, DdbConfig dynamoDbConfig) {
         //this.dynamoDbConfig = dynamoDbConfig;
         this.table = enhanced.table(dynamoDbConfig.tableName(), UserTableSchema.SCHEMA);
     }
@@ -51,7 +52,7 @@ public class DynamoDbUserRepository implements UserRepository {
 
     @Override
     public void save(@NonNull User user) {
-        table.putItem(DynamoDbUserMapper.toDto(user));
+        table.putItem(DdbUserMapper.toDto(user));
         log.debug("Saved user: {}", user.id().value());
     }
 
@@ -59,9 +60,9 @@ public class DynamoDbUserRepository implements UserRepository {
     // ────────────────────────── Find ──────────────────────────
     
     @Override
-    public @NonNull Optional<User> findById(@NonNull EntityId id) {
+    public @NonNull Optional<User> findById(@NonNull UserId id) {
         Key key = buildUserKey(id);
-        DynamoDbUserDto dto = table.getItem(r -> r.key(key));
+        DdbUserDto dto = table.getItem(r -> r.key(key));
         
         if (dto == null) {
             log.debug("User not found: {}", id.value());
@@ -70,24 +71,24 @@ public class DynamoDbUserRepository implements UserRepository {
         }
 
 
-        return Optional.ofNullable(dto).map(DynamoDbUserMapper::toDomain);
+        return Optional.ofNullable(dto).map(DdbUserMapper::toDomain);
     }
 
     @Override
-    public Optional<User> findByProviderId(@NonNull String providerId) {
+    public Optional<User> findByProviderId(@NonNull ProviderUserId providerId) {
         Key key = Key.builder()
-                .partitionValue(providerId)
+                .partitionValue(providerId.value())
                 .build();
 
         // Query the GSI for provider-user-id-index
         QueryConditional query = QueryConditional.keyEqualTo(key);
 
         // Even if there is only one item, we need SdkIterable to handle pagination
-        SdkIterable<Page<DynamoDbUserDto>> result = table
+        SdkIterable<Page<DdbUserDto>> result = table
             .index("provider-user-id-index")
             .query(query);
 
-        DynamoDbUserDto dto = result.stream()
+        DdbUserDto dto = result.stream()
                 .flatMap(p -> p.items().stream())
                 .findFirst()
                 .orElse(null);
@@ -98,43 +99,42 @@ public class DynamoDbUserRepository implements UserRepository {
             log.debug("Found user for provider ID: {}", providerId);
         }
 
-        return Optional.ofNullable(dto).map(DynamoDbUserMapper::toDomain);
+        return Optional.ofNullable(dto).map(DdbUserMapper::toDomain);
     }
     
 
     // ────────────────────────── Patch ──────────────────────────
 
     @Override
-    public User patch(@NonNull EntityId id, @NonNull Map<String, Object> attrs) {
-        if (attrs.isEmpty()) return null;
-
+    public User patch(@NonNull UserId id, @NonNull UserPatchDto patch) {
+       
         // Dto with null fields except for the attributes in attrs
-        DynamoDbUserDto updateItem = DynamoDbUserMapper.createPatchDto(id, attrs);
-        UpdateItemEnhancedRequest<DynamoDbUserDto> request = createUpdateItemRequest(updateItem);
+        DdbUserDto updateItem = DdbUserMapper.PatchToDto(id, patch);
+        UpdateItemEnhancedRequest<DdbUserDto> request = createUpdateItemRequest(updateItem);
         
-        DynamoDbUserDto result = table.updateItem(request);
+        DdbUserDto result = table.updateItem(request);
         log.debug("Patched user: {}", id.value());
 
-        return DynamoDbUserMapper.toDomain(result);
+        return DdbUserMapper.toDomain(result);
     }
 
     @Override
-    public User patchProviderAccount(@NonNull EntityId id, @NonNull ProviderAccount providerAccount) {
-        DynamoDbUserDto updateItem = DynamoDbUserMapper.createPatchDto(id, providerAccount);
+    public User patchProviderAccount(@NonNull UserId id, @NonNull ProviderAccount providerAccount) {
+        DdbUserDto updateItem = DdbUserMapper.providerToPatch(id, providerAccount);
 
-        UpdateItemEnhancedRequest<DynamoDbUserDto> request = createUpdateItemRequest(updateItem);
+        UpdateItemEnhancedRequest<DdbUserDto> request = createUpdateItemRequest(updateItem);
 
-        DynamoDbUserDto result = table.updateItem(request);
+        DdbUserDto result = table.updateItem(request);
         log.debug("Patched provider account for user: {}", id.value());
         
-        return DynamoDbUserMapper.toDomain(result);
+        return DdbUserMapper.toDomain(result);
     }
 
 
     // ────────────────────────── Delete ──────────────────────────
 
     @Override
-    public void delete(@NonNull EntityId id) {
+    public void delete(@NonNull UserId id) {
         Key key = buildUserKey(id);
         table.deleteItem(r -> r.key(key));
         log.debug("Deleted user: {}", id.value());
@@ -143,7 +143,7 @@ public class DynamoDbUserRepository implements UserRepository {
 
     // ────────────────────────── Private Methods ──────────────────────────
 
-    private Key buildUserKey(EntityId id) {
+    private Key buildUserKey(UserId id) {
         Key key = Key.builder()
                 .partitionValue("USER#" + id.value())
                 .sortValue("PROFILE")
@@ -151,9 +151,9 @@ public class DynamoDbUserRepository implements UserRepository {
         return key;
     }
 
-    private UpdateItemEnhancedRequest<DynamoDbUserDto> createUpdateItemRequest(DynamoDbUserDto updateItem) {
-        UpdateItemEnhancedRequest<DynamoDbUserDto> request =
-            UpdateItemEnhancedRequest.builder(DynamoDbUserDto.class)
+    private UpdateItemEnhancedRequest<DdbUserDto> createUpdateItemRequest(DdbUserDto updateItem) {
+        UpdateItemEnhancedRequest<DdbUserDto> request =
+            UpdateItemEnhancedRequest.builder(DdbUserDto.class)
             .item(updateItem)
             .ignoreNullsMode(IgnoreNullsMode.SCALAR_ONLY)
             .build();

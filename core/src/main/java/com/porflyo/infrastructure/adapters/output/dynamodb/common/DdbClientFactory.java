@@ -2,7 +2,7 @@ package com.porflyo.infrastructure.adapters.output.dynamodb.common;
 
 import java.net.URI;
 
-import com.porflyo.infrastructure.configuration.DynamoDbConfig;
+import com.porflyo.infrastructure.configuration.DdbConfig;
 
 import io.micronaut.context.annotation.Factory;
 import io.micronaut.context.annotation.Requires;
@@ -20,13 +20,13 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
  *
  */
 @Factory
-@Requires(beans = DynamoDbConfig.class) // Only loads if DynamoDbConfig is available
-public class DynamoDbClientFactory {
+@Requires(beans = DdbConfig.class) // Only loads if DynamoDbConfig is available
+public class DdbClientFactory {
 
-    private final DynamoDbConfig dynamoDbConfig;
+    private final DdbConfig dynamoDbConfig;
 
     @Inject
-    public DynamoDbClientFactory(DynamoDbConfig dynamoDbConfig) {
+    public DdbClientFactory(DdbConfig dynamoDbConfig) {
         this.dynamoDbConfig = dynamoDbConfig;
     }
 

@@ -15,6 +15,6 @@ public record SavedSection(
     @NotNull SectionId id,
     @NotNull UserId userId,
     @NotBlank String name,
-    @NotBlank PortfolioSection section,
-    @Min(1) int version
+    @NotNull PortfolioSection section,
+    @Min(1) Integer version
 ) {}

@@ -18,8 +18,8 @@ public interface PortfolioRepository {
 
     @NotNull List<Portfolio> findByUserId(UserId userId);
 
-    @NotNull Portfolio patchPortfolio(
-        @NotNull PortfolioId id,
+    @NotNull Portfolio patch(
+        @NotNull UserId userId,
         @NotNull PortfolioId portfolioId,
         @NotNull PortfolioDetailsDto patch
     );

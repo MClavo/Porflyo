@@ -27,7 +27,7 @@ public record Portfolio(
     @NotNull List<String> media,
 
     // Schema version for future data migrations
-    @Min(1) int modelVersion,
+    @Min(1) Integer modelVersion,
 
     // Slug proposed by the user for their public URL. May be null untill publication
     Slug desiredSlug,

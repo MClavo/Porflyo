@@ -5,7 +5,7 @@ import io.micronaut.context.annotation.Requires;
 
 @ConfigurationProperties("dynamodb")
 @Requires(property = "dynamodb.endpoint")
-public record DynamoDbConfig(
+public record DdbConfig(
     String region,      
     String tableName,
     String endpoint

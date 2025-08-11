@@ -36,11 +36,11 @@ public class PortfolioService implements PortfolioUseCase {
 
     @Override
     public Portfolio patchPortfolio(
-            @NotNull PortfolioId id,
+            @NotNull UserId userId,
             @NotNull PortfolioId portfolioId,
             @NotNull PortfolioDetailsDto patch) {
 
-        return portfolioRepository.patchPortfolio(id, portfolioId, patch);
+        return portfolioRepository.patch(userId, portfolioId, patch);
     }
 
     @Override
