@@ -1,10 +1,12 @@
 package com.porflyo.infrastructure.adapters.output.dynamodb.repository;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -13,11 +15,11 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 
-import com.porflyo.application.dto.UserPatchDto;
-import com.porflyo.application.ports.output.UserRepository;
+import com.porflyo.application.ports.output.SavedSectionRepository;
+import com.porflyo.domain.model.ids.SectionId;
 import com.porflyo.domain.model.ids.UserId;
-import com.porflyo.domain.model.user.ProviderAccount;
-import com.porflyo.domain.model.user.User;
+import com.porflyo.domain.model.portfolio.SavedSection;
+import com.porflyo.testing.data.SectionTestData;
 import com.porflyo.testing.data.TestData;
 
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
@@ -27,8 +29,8 @@ import jakarta.inject.Inject;
 @MicronautTest(environments = {"integration"})
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @Testcontainers
-public class DynamoDbUserRepositoryIntegrationTest implements TestPropertyProvider {
-
+public class DdbSavedSectionRepositoryIntegrationTest implements TestPropertyProvider {
+    
     @Container
     @SuppressWarnings("resource")
     static GenericContainer<?> dynamodb = new GenericContainer<>(DockerImageName.parse("amazon/dynamodb-local:latest"))
@@ -36,7 +38,7 @@ public class DynamoDbUserRepositoryIntegrationTest implements TestPropertyProvid
             .withCommand("-jar", "DynamoDBLocal.jar", "-sharedDb", "-inMemory");
 
     @Inject 
-    UserRepository repo;
+    SavedSectionRepository repo;
 
     @Override
     public Map<String, String> getProperties() {
@@ -50,41 +52,33 @@ public class DynamoDbUserRepositoryIntegrationTest implements TestPropertyProvid
             "micronaut.test.resources.enabled", "false"
         );
     }
-   
+
     private final UserId id1 = TestData.DEFAULT_USER_ID;
-    private final ProviderAccount providerAccount1 = TestData.DEFAULT_PROVIDER_ACCOUNT;
-    private final User user1 = TestData.DEFAULT_USER;
-    
+    private final SectionId sectionId1 = SectionTestData.DEFAULT_SECTION_ID;
+    private final SavedSection section1 = SectionTestData.DEFAULT_SAVED_SECTION;
 
     @Test
     void crudRoundTrip() {
-        // CREATE
-        repo.save(user1);
-        
+        // Save section
+        SavedSection savedSection = repo.save(id1, section1);
+        assertNotNull(savedSection);
+        assertEquals(sectionId1, savedSection.id());
+        assertEquals(section1.name(), savedSection.name());
 
-        // READ
-        var loaded = repo.findById(id1).orElseThrow();
-        assertEquals(TestData.DEFAULT_USER.name(), loaded.name());
-        loaded = repo.findByProviderId(providerAccount1.providerUserId()).orElseThrow();
-        assertEquals(TestData.DEFAULT_USER.name(), loaded.name());
+        // Find by user ID
+        List<SavedSection> sections = repo.findByUserId(id1);
+        assertFalse(sections.isEmpty());
+        assertTrue(sections.stream().anyMatch(s -> s.id().equals(sectionId1)));
 
-        // UPDATE
-        UserPatchDto patch = new UserPatchDto(
-            Optional.of("User One Updated"),
-            Optional.empty(),
-            Optional.empty(),
-            Optional.empty()
-        );
+        // Find by section ID
+        List<SavedSection> foundSection = repo.findByUserId(id1);
+        assertFalse(foundSection.isEmpty());
+        assertEquals(section1.name(), foundSection.get(0).name());
 
-        repo.patch(id1, patch);
-        var patched = repo.findById(id1).orElseThrow();
-        assertEquals("User One Updated", patched.name());
-        assertEquals(id1.value(), patched.id().value());
-
-        // DELETE
-        repo.delete(id1);
-        assertTrue(repo.findById(id1).isEmpty());
+        // Delete section
+        repo.delete(id1, sectionId1);
+        List<SavedSection> deletedSection = repo.findByUserId(id1);
+        assertTrue(deletedSection.isEmpty());
     }
 
 }
-
