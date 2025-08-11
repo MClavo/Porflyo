@@ -23,7 +23,7 @@ public class DdbSavedSectionItem {
 
     private String sectionType;
     private String title;
-    private Object content;
+    private String contentJson;
     private List<String> media;
 
     private Integer version;
@@ -61,9 +61,9 @@ public class DdbSavedSectionItem {
 
     public void setTitle(String title) { this.title = title; }
 
-    public Object getContent() { return content; }
+    public String getContentJson() { return contentJson; }
 
-    public void setContent(Object content) { this.content = content; }
+    public void setContentJson(String content) { this.contentJson = content; }
 
     public List<String> getMedia() { return media; }
 

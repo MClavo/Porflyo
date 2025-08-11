@@ -6,6 +6,7 @@ import software.amazon.awssdk.enhanced.dynamodb.TableSchema;
 import software.amazon.awssdk.enhanced.dynamodb.mapper.StaticAttributeTags;
 
 public final class MediaTableSchema {
+    
     private MediaTableSchema() {}
 
     public static final TableSchema<DdbMediaItem> SCHEMA = TableSchema

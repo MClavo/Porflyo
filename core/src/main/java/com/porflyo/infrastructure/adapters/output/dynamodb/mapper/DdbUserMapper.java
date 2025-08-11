@@ -29,8 +29,8 @@ public final class DdbUserMapper {
 
     private DdbUserMapper() {}
 
-    /** ----------- Domain → DTO → Dynamo Map ----------- */
-    public static DdbUserItem toDto(User u) {
+    // ────────────────────────── Domain → ITEM → Dynamo Map ──────────────────────────
+    public static DdbUserItem toItem(User u) {
         DdbUserItem dto = new DdbUserItem();
         dto.setPK(DdbUserItem.pkOf(u.id().value()));
         dto.setSK(SK_PREFIX_USER);
@@ -48,7 +48,7 @@ public final class DdbUserMapper {
     }
 
     /** Converts a {@link DdbUserItem} to a DynamoDB item map. */
-    public static Map<String, AttributeValue> toItem(DdbUserItem dUsr) {
+    public static Map<String, AttributeValue> toAttributeMap(DdbUserItem dUsr) {
         Map<String, AttributeValue> map = new HashMap<>();
         map.put("PK", fromS(dUsr.getPK()));
         map.put("SK", fromS(dUsr.getSK()));
@@ -76,7 +76,7 @@ public final class DdbUserMapper {
         return map;
     }
 
-    /** ----------- Dynamo Map → DTO → Domain ----------- */
+    /** ----------- Dynamo Map → ITEM → Domain ----------- */
     public static DdbUserItem fromItem(Map<String, AttributeValue> item) {
         Map<String, String> socials = item.containsKey("socials") ? item.get("socials").m().entrySet().stream()
                 .collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().s())) : Map.of();
@@ -118,7 +118,7 @@ public final class DdbUserMapper {
      * Creates a DynamoUserDto with null fields except the ones specified on the
      * Map<String, Object> Used for patching user attributes.
      */
-    public static DdbUserItem PatchToDto(@NonNull UserId id, UserPatchDto patch) {
+    public static DdbUserItem PatchToItem(@NonNull UserId id, UserPatchDto patch) {
         DdbUserItem patchDto = new DdbUserItem();
         String pk = DdbUserItem.pkOf(id.value());
         String sk = SK_PREFIX_USER;
@@ -145,7 +145,7 @@ public final class DdbUserMapper {
         return patchDto;
     }
 
-    public static DdbUserItem providerToPatch(@NonNull UserId id, ProviderAccount providerAccount) {
+    public static DdbUserItem providerToItem(@NonNull UserId id, ProviderAccount providerAccount) {
         if (providerAccount.providerUserId() == null)
             throw new IllegalArgumentException("Provider account must have a user ID");
 

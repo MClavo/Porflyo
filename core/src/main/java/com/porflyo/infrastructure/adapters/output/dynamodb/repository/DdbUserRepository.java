@@ -38,6 +38,7 @@ import software.amazon.awssdk.enhanced.dynamodb.model.UpdateItemEnhancedRequest;
 @Singleton
 @Requires(beans = DdbConfig.class)
 public class DdbUserRepository implements UserRepository {
+   
     private static final Logger log = LoggerFactory.getLogger(DdbUserRepository.class);
     private final DynamoDbTable<DdbUserItem> table;
     //private DynamoDbConfig dynamoDbConfig;
@@ -52,7 +53,7 @@ public class DdbUserRepository implements UserRepository {
 
     @Override
     public void save(@NonNull User user) {
-        table.putItem(DdbUserMapper.toDto(user));
+        table.putItem(DdbUserMapper.toItem(user));
         log.debug("Saved user: {}", user.id().value());
     }
 
@@ -109,7 +110,7 @@ public class DdbUserRepository implements UserRepository {
     public User patch(@NonNull UserId id, @NonNull UserPatchDto patch) {
        
         // Dto with null fields except for the attributes in attrs
-        DdbUserItem updateItem = DdbUserMapper.PatchToDto(id, patch);
+        DdbUserItem updateItem = DdbUserMapper.PatchToItem(id, patch);
         UpdateItemEnhancedRequest<DdbUserItem> request = createUpdateItemRequest(updateItem);
         
         DdbUserItem result = table.updateItem(request);
@@ -120,7 +121,7 @@ public class DdbUserRepository implements UserRepository {
 
     @Override
     public User patchProviderAccount(@NonNull UserId id, @NonNull ProviderAccount providerAccount) {
-        DdbUserItem updateItem = DdbUserMapper.providerToPatch(id, providerAccount);
+        DdbUserItem updateItem = DdbUserMapper.providerToItem(id, providerAccount);
 
         UpdateItemEnhancedRequest<DdbUserItem> request = createUpdateItemRequest(updateItem);
 

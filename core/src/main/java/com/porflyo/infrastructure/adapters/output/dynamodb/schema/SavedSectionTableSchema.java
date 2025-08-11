@@ -6,10 +6,9 @@ import software.amazon.awssdk.enhanced.dynamodb.EnhancedType;
 import software.amazon.awssdk.enhanced.dynamodb.TableSchema;
 import software.amazon.awssdk.enhanced.dynamodb.mapper.StaticAttributeTags;
 
-public final class SavedSecionTableSchema {
+public final class SavedSectionTableSchema {
     
-    private SavedSecionTableSchema() {
-    }
+    private SavedSectionTableSchema() {}
 
     public static final TableSchema<DdbSavedSectionItem> SCHEMA = TableSchema
             .builder(DdbSavedSectionItem.class)
@@ -41,9 +40,9 @@ public final class SavedSecionTableSchema {
             .addAttribute(String.class, a -> a.name("title")
                     .getter(DdbSavedSectionItem::getTitle)
                     .setter(DdbSavedSectionItem::setTitle))
-            .addAttribute(Object.class, a -> a.name("content")
-                    .getter(DdbSavedSectionItem::getContent)
-                    .setter(DdbSavedSectionItem::setContent))
+            .addAttribute(String.class, a -> a.name("content")
+                    .getter(DdbSavedSectionItem::getContentJson)
+                    .setter(DdbSavedSectionItem::setContentJson))
             .addAttribute(EnhancedType.listOf(String.class), 
                 a -> a.name("media")
                 .getter(DdbSavedSectionItem::getMedia)

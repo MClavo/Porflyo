@@ -1,5 +1,8 @@
 package com.porflyo.infrastructure.adapters.output.dynamodb.common;
 
+import java.util.List;
+
+import com.porflyo.infrastructure.adapters.output.dynamodb.schema.SavedSectionTableSchema;
 import com.porflyo.infrastructure.adapters.output.dynamodb.schema.UserTableSchema;
 import com.porflyo.infrastructure.configuration.DdbConfig;
 
@@ -11,6 +14,7 @@ import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable;
+import software.amazon.awssdk.enhanced.dynamodb.TableSchema;
 import software.amazon.awssdk.services.dynamodb.model.ResourceNotFoundException;
 
 /**
@@ -27,20 +31,49 @@ import software.amazon.awssdk.services.dynamodb.model.ResourceNotFoundException;
 @Requires(beans = DdbConfig.class) // Only if DynamoDbConfig is present
 public class DdbBootstrap implements ApplicationEventListener<StartupEvent> {
 
-    @Inject DynamoDbEnhancedClient enhanced;
-    @Inject DdbConfig dynamoDbConfig;
+    DynamoDbEnhancedClient enhanced;
+    DdbConfig ddbConfig;
+
+    @Inject
+    public DdbBootstrap(DynamoDbEnhancedClient enhanced, DdbConfig ddbConfig) {
+        this.enhanced = enhanced;
+        this.ddbConfig = ddbConfig;
+    }
+
+    private static final List<TableSchema<?>> SCHEMAS = List.of(
+        UserTableSchema.SCHEMA,
+        SavedSectionTableSchema.SCHEMA
+    );
+
 
     @Override
     public void onApplicationEvent(StartupEvent event) {
-        var table = enhanced.table(dynamoDbConfig.tableName(), UserTableSchema.SCHEMA);
-        if (!tableExists(table)) {
-            table.createTable();
+        final String tableName = ddbConfig.tableName();
+
+        // Choose the creator schema. It must define the PK/SK used by the single table.
+        TableSchema<?> creatorSchema = SCHEMAS.get(0);
+
+        // Create the table once (if missing) using the creator schema
+        DynamoDbTable<?> creatorHandle = enhanced.table(tableName, creatorSchema);
+        if (!tableExists(creatorHandle)) {
+            creatorHandle.createTable();
+        }
+
+        // Warm up handles for all other schemas WITHOUT creating tables again
+        // (this is safe; it only builds typed views over the same physical table).
+        for (int i = 1; i < SCHEMAS.size(); i++) {
+            TableSchema<?> schema = SCHEMAS.get(i);
+            enhanced.table(tableName, schema);
         }
     }
 
+
     private boolean tableExists(DynamoDbTable<?> table) {
-        try { table.describeTable(); return true; }
-        catch (ResourceNotFoundException __) { return false; }
+        try {
+            table.describeTable();
+            return true;
+        } catch (ResourceNotFoundException __) {
+            return false;
+        }
     }
 }
-
