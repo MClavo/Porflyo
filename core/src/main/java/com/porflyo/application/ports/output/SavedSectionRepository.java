@@ -10,9 +10,9 @@ import jakarta.validation.constraints.NotNull;
 
 public interface SavedSectionRepository {
 
-  @NotNull SavedSection save(SavedSection section);
-
-  void delete(UserId userId, SectionId sectionId);
+  @NotNull SavedSection save(UserId userId, SavedSection section);
 
   List<SavedSection> findByUserId(UserId userId);
+  
+  void delete(UserId userId, SectionId sectionId);
 }
