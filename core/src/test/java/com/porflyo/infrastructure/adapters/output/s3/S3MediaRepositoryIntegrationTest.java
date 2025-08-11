@@ -24,8 +24,8 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 
+import com.porflyo.application.dto.PresignedPostDto;
 import com.porflyo.application.ports.output.MediaRepository;
-import com.porflyo.domain.model.dto.PresignedPostDto;
 
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import io.micronaut.test.support.TestPropertyProvider;
