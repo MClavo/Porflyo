@@ -22,12 +22,12 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import com.porflyo.application.configuration.ProviderOAuthConfig;
 import com.porflyo.domain.model.provider.ProviderRepo;
 import com.porflyo.domain.model.provider.ProviderUser;
 import com.porflyo.infrastructure.adapters.output.github.dto.GithubAccessTokenResponseDto;
 import com.porflyo.infrastructure.adapters.output.github.dto.GithubRepoResponseDto;
 import com.porflyo.infrastructure.adapters.output.github.dto.GithubUserResponseDto;
+import com.porflyo.infrastructure.configuration.ProviderOAuthConfig;
 import com.porflyo.testing.data.TestData;
 import com.porflyo.testing.mocks.ports.MockGithubOAuthConfig;
 
@@ -50,7 +50,7 @@ class GithubAdapterTest {
     private static final GithubUserResponseDto USER_DTO = 
         new GithubUserResponseDto(
             TestData.DEFAULT_GITHUB_USER.login(),
-            TestData.DEFAULT_GITHUB_USER.id(),
+            TestData.DEFAULT_GITHUB_USER.id().value(),
             TestData.DEFAULT_GITHUB_USER.name(),
             TestData.DEFAULT_GITHUB_USER.email(),
             TestData.DEFAULT_GITHUB_USER.avatar_url()
