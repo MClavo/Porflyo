@@ -33,13 +33,13 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.porflyo.application.configuration.JwtConfig;
-import com.porflyo.application.configuration.ProviderOAuthConfig;
 import com.porflyo.application.ports.output.MediaRepository;
 import com.porflyo.application.ports.output.UserRepository;
-import com.porflyo.domain.model.shared.EntityId;
+import com.porflyo.domain.model.ids.EntityId;
 import com.porflyo.domain.model.user.ProviderAccount;
 import com.porflyo.domain.model.user.User;
 import com.porflyo.domain.model.user.UserSession;
+import com.porflyo.infrastructure.configuration.ProviderOAuthConfig;
 import com.porflyo.testing.data.TestData;
 import com.porflyo.testing.mocks.ports.MockGithubOAuthConfig;
 import com.porflyo.testing.mocks.ports.MockGithubPort;
@@ -81,7 +81,7 @@ class AuthServiceTest {
         authService = new AuthService(githubPort, jwtPort, oauthCfg, jwtCfg, userRepository, mediaRepository);
 
         // mediaRepository.put is a void method, so use doNothing().when(...)
-        org.mockito.Mockito.lenient().doNothing().when(mediaRepository).put(any(), any());
+        org.mockito.Mockito.lenient().doNothing().when(mediaRepository).putFromUrl(any(), any());
 
         // Mock HttpClient.send to return a valid HttpResponse with a non-null body
         var mockResponse = org.mockito.Mockito.mock(java.net.http.HttpResponse.class);
