@@ -2,6 +2,7 @@ package com.porflyo.infrastructure.adapters.output.dynamodb.common;
 
 import java.util.List;
 
+import com.porflyo.infrastructure.adapters.output.dynamodb.schema.PortfolioTableSchema;
 import com.porflyo.infrastructure.adapters.output.dynamodb.schema.SavedSectionTableSchema;
 import com.porflyo.infrastructure.adapters.output.dynamodb.schema.UserTableSchema;
 import com.porflyo.infrastructure.configuration.DdbConfig;
@@ -42,7 +43,8 @@ public class DdbBootstrap implements ApplicationEventListener<StartupEvent> {
 
     private static final List<TableSchema<?>> SCHEMAS = List.of(
         UserTableSchema.SCHEMA,
-        SavedSectionTableSchema.SCHEMA
+        SavedSectionTableSchema.SCHEMA,
+        PortfolioTableSchema.SCHEMA
     );
 
 

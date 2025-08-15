@@ -47,7 +47,7 @@ public final class UserTableSchema {
             .addAttribute(String.class, a -> a.name("email")
                     .getter(DdbUserItem::getEmail)
                     .setter(DdbUserItem::setEmail))
-            .addAttribute(String.class, a -> a.name("description")
+            .addAttribute(byte[].class, a -> a.name("description")
                     .getter(DdbUserItem::getDescription)
                     .setter(DdbUserItem::setDescription))
             .addAttribute(String.class, a -> a.name("profileImage")

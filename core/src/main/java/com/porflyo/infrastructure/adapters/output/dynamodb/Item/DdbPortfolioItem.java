@@ -1,7 +1,5 @@
 package com.porflyo.infrastructure.adapters.output.dynamodb.Item;
 
-import java.util.List;
-
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.serde.annotation.Serdeable;
 
@@ -17,23 +15,16 @@ public class DdbPortfolioItem {
 
     // ────────────────────────── Attributes ──────────────────────────
 
-    private String portfolioId; 
-    private String userId; 
     private String template;
     private String title;
-    private String description;
-    private List<Object> sections; 
-    private List<String> media;
+    private byte[] description;     // Compressed description for WCU optimization
+    private byte[] sections;    // Compressed sections JSON for WCU optimization
 
     private Integer modelVersion;
     private String desiredSlug; // Slug proposed by the user for their public URL
     private Boolean isPublished;
 
-    private String createdAt; // ISO 8601 string
-    private String updatedAt; // ISO 8601 string
-
     public DdbPortfolioItem() {}
-
 
     // ────────────────────────── getters & setters ──────────────────────────
     
@@ -45,14 +36,6 @@ public class DdbPortfolioItem {
 
     public void setSK(String sK) { SK = sK; }
 
-    public String getPortfolioId() { return portfolioId; }
-
-    public void setPortfolioId(String portfolioId) { this.portfolioId = portfolioId; }
-
-    public String getUserId() { return userId; }
-
-    public void setUserId(String userId) { this.userId = userId; }
-
     public String getTemplate() { return template; }
 
     public void setTemplate(String template) { this.template = template; }
@@ -61,17 +44,13 @@ public class DdbPortfolioItem {
 
     public void setTitle(String title) { this.title = title; }
 
-    public String getDescription() { return description; }
+    public byte[] getDescription() { return description; }
 
-    public void setDescription(String description) { this.description = description; }
+    public void setDescription(byte[] description) { this.description = description; }
 
-    public List<Object> getSections() { return sections; }
+    public byte[] getSections() { return sections; }
 
-    public void setSections(List<Object> sections) { this.sections = sections; }
-
-    public List<String> getMedia() { return media; }
-
-    public void setMedia(List<String> media) { this.media = media; }
+    public void setSections(byte[] sections) { this.sections = sections; }
 
     public Integer getModelVersion() { return modelVersion; }
 
@@ -84,12 +63,4 @@ public class DdbPortfolioItem {
     public Boolean getIsPublished() { return isPublished; }
 
     public void setIsPublished(Boolean isPublished) { this.isPublished = isPublished; }
-
-    public String getCreatedAt() { return createdAt; }
-
-    public void setCreatedAt(String createdAt) { this.createdAt = createdAt; }
-
-    public String getUpdatedAt() { return updatedAt; }
-
-    public void setUpdatedAt(String updatedAt) { this.updatedAt = updatedAt; }
 }

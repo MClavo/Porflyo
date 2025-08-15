@@ -1,13 +1,12 @@
 package com.porflyo.infrastructure.adapters.output.dynamodb.mapper;
 
-import static com.porflyo.infrastructure.adapters.output.dynamodb.common.DdbKeys.SK_PREFIX_USER;
-import static com.porflyo.infrastructure.adapters.output.dynamodb.common.DdbKeys.PK_PREFIX_USER;
-import static software.amazon.awssdk.services.dynamodb.model.AttributeValue.fromS;
+import static com.porflyo.infrastructure.adapters.output.dynamodb.common.DdbKeys.USER_PK_PREFIX;
+import static com.porflyo.infrastructure.adapters.output.dynamodb.common.DdbKeys.USER_SK_PREFIX;
+import static com.porflyo.infrastructure.adapters.output.dynamodb.common.DdbKeys.idFrom;
+import static com.porflyo.infrastructure.adapters.output.dynamodb.common.DdbKeys.pk;
 
 import java.net.URI;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import com.porflyo.application.dto.UserPatchDto;
 import com.porflyo.domain.model.ids.ProviderUserId;
@@ -15,9 +14,11 @@ import com.porflyo.domain.model.ids.UserId;
 import com.porflyo.domain.model.user.ProviderAccount;
 import com.porflyo.domain.model.user.User;
 import com.porflyo.infrastructure.adapters.output.dynamodb.Item.DdbUserItem;
+import com.porflyo.infrastructure.adapters.output.dynamodb.common.DataCompressor;
 
 import io.micronaut.core.annotation.NonNull;
-import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 
 /**
  * Converts between domain {@link User} and low-level Dynamo representations.
@@ -25,19 +26,36 @@ import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
  * Contains NO infrastructure code besides the mapping itself.
  * </p>
  */
+@Singleton
 public final class DdbUserMapper {
 
-    private DdbUserMapper() {}
+    private final DataCompressor dataCompressor;
 
-    // ────────────────────────── Domain → ITEM → Dynamo Map ──────────────────────────
-    public static DdbUserItem toItem(User u) {
+    @Inject
+    public DdbUserMapper(DataCompressor dataCompressor) {
+        this.dataCompressor = dataCompressor;
+    }
+
+    /** Converts a {@link User} to a Item {@link DdbUserItem}. */
+    public DdbUserItem toItem(User u) {
+        
         DdbUserItem dto = new DdbUserItem();
-        dto.setPK(DdbUserItem.pkOf(u.id().value()));
-        dto.setSK(SK_PREFIX_USER);
+        dto.setPK(pk(USER_PK_PREFIX, u.id().value()));
+        dto.setSK(USER_SK_PREFIX);
         dto.setUserId(u.id().value());
         dto.setName(u.name());
         dto.setEmail(u.email());
-        dto.setDescription(u.description());
+
+        if(u.description() != null) {
+            try {
+                byte[] compressedDescription = dataCompressor.compress(u.description());
+                dto.setDescription(compressedDescription);
+
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to compress user description", e);
+            }
+        }
+
         dto.setProfileImage(u.profileImage());
         dto.setSocials(u.socials());
         dto.setProviderUserId(u.provider().providerUserId().value());
@@ -47,87 +65,59 @@ public final class DdbUserMapper {
         return dto;
     }
 
-    /** Converts a {@link DdbUserItem} to a DynamoDB item map. */
-    public static Map<String, AttributeValue> toAttributeMap(DdbUserItem dUsr) {
-        Map<String, AttributeValue> map = new HashMap<>();
-        map.put("PK", fromS(dUsr.getPK()));
-        map.put("SK", fromS(dUsr.getSK()));
-        map.put("name", fromS(dUsr.getName()));
-        map.put("email", fromS(dUsr.getEmail()));
 
-        if (dUsr.getDescription() != null)
-            map.put("description", fromS(dUsr.getDescription()));
-
-        if (dUsr.getProfileImage() != null)
-            map.put("profileImage", fromS(dUsr.getProfileImage()));
-
-        if (dUsr.getSocials() != null && !dUsr.getSocials().isEmpty()) {
-            map.put("socials", AttributeValue.fromM(dUsr.getSocials().entrySet().stream()
-                    .collect(Collectors.toMap(Map.Entry::getKey, e -> fromS(e.getValue())))));
-        }
-
-        map.put("providerUserId", fromS(dUsr.getProviderUserId()));
-        map.put("providerUserName", fromS(dUsr.getProviderUserName()));
-
-        if (dUsr.getProviderAvatarUrl() != null)
-            map.put("providerAvatarUrl", fromS(dUsr.getProviderAvatarUrl()));
-
-        map.put("providerAccessToken", fromS(dUsr.getProviderAccessToken()));
-        return map;
-    }
-
-    /** ----------- Dynamo Map → ITEM → Domain ----------- */
-    public static DdbUserItem fromItem(Map<String, AttributeValue> item) {
-        Map<String, String> socials = item.containsKey("socials") ? item.get("socials").m().entrySet().stream()
-                .collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().s())) : Map.of();
-
-        DdbUserItem dto = new DdbUserItem();
-        dto.setPK(item.get("PK").s());
-        dto.setSK(item.get("SK").s());
-        dto.setName(item.get("name").s());
-        dto.setEmail(item.get("email").s());
-        dto.setDescription(item.getOrDefault("description", fromS("")).s());
-        dto.setProfileImage(item.getOrDefault("profileImage", fromS("")).s());
-        dto.setSocials(socials);
-        dto.setProviderUserId(item.get("providerUserId").s());
-        dto.setProviderUserName(item.get("providerUserName").s());
-        dto.setProviderAvatarUrl(item.getOrDefault("providerAvatarUrl", fromS("")).s());
-        dto.setProviderAccessToken(item.get("providerAccessToken").s());
-        return dto;
-    }
 
     /** Converts a {@link DdbUserItem} to a domain {@link User}. */
-    public static User toDomain(DdbUserItem d) {
+    public User toDomain(DdbUserItem d) {
         ProviderAccount providerAccount = new ProviderAccount(ProviderAccount.Provider.GITHUB,
-                new ProviderUserId(d.getProviderUserId()), d.getProviderUserName(),
-                d.getProviderAvatarUrl() != null ? URI.create(d.getProviderAvatarUrl()) : null,
-                d.getProviderAccessToken());
+                new ProviderUserId(
+                    d.getProviderUserId()),
+                    d.getProviderUserName(),
+                    URI.create(d.getProviderAvatarUrl()),
+                    d.getProviderAccessToken());
 
-        return new User(
-                new UserId(d.getPK().replace(PK_PREFIX_USER, "")),
-                providerAccount,
-                d.getName(),
-                d.getEmail(),
-                d.getDescription(),
-                d.getProfileImage(),
-                d.getSocials()
-        );
+        try {
+            String description = dataCompressor.decompress(d.getDescription(), String.class);
+            
+            return new User(
+                    new UserId(idFrom(USER_PK_PREFIX, d.getPK())),
+                    providerAccount,
+                    d.getName(),
+                    d.getEmail(),
+                    description,
+                    d.getProfileImage(),
+                    d.getSocials()
+            );
+
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to decompress user description", e);
+        }
     }
 
     /**
      * Creates a DynamoUserDto with null fields except the ones specified on the
      * Map<String, Object> Used for patching user attributes.
      */
-    public static DdbUserItem PatchToItem(@NonNull UserId id, UserPatchDto patch) {
+    public DdbUserItem patchToItem(@NonNull UserId id, UserPatchDto patch) {
         DdbUserItem patchDto = new DdbUserItem();
-        String pk = DdbUserItem.pkOf(id.value());
-        String sk = SK_PREFIX_USER;
+        String pk = pk(USER_PK_PREFIX, id.value());
+        String sk = USER_SK_PREFIX;
 
         patchDto.setPK(pk);
         patchDto.setSK(sk);
-
+        
         patchDto.setName(patch.name().orElse(null));
-        patchDto.setDescription(patch.description().orElse(null));
+
+        try {
+            byte[] compressedDescription = patch.description().isPresent()
+                ? dataCompressor.compress(patch.description().get())
+                : null;
+            patchDto.setDescription(compressedDescription);
+
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to compress user description", e);
+        }
+
         patchDto.setProfileImage(patch.avatarUrl().orElse(null));
 
         if (patch.socials().isPresent()) 
@@ -145,13 +135,13 @@ public final class DdbUserMapper {
         return patchDto;
     }
 
-    public static DdbUserItem providerToItem(@NonNull UserId id, ProviderAccount providerAccount) {
+    public DdbUserItem providerToItem(@NonNull UserId id, ProviderAccount providerAccount) {
         if (providerAccount.providerUserId() == null)
             throw new IllegalArgumentException("Provider account must have a user ID");
 
         DdbUserItem patchDto = new DdbUserItem();
-        patchDto.setPK(PK_PREFIX_USER + id.value());
-        patchDto.setSK(SK_PREFIX_USER);
+        patchDto.setPK(pk(USER_PK_PREFIX, id.value()));
+        patchDto.setSK(USER_SK_PREFIX);
         patchDto.setProviderUserId(providerAccount.providerUserId().value());
         patchDto.setProviderUserName(providerAccount.providerUserName());
         patchDto.setProviderAvatarUrl(

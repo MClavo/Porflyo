@@ -1,10 +1,8 @@
 package com.porflyo.domain.model.portfolio;
 
-import java.time.Instant;
 import java.util.List;
 
 import com.porflyo.domain.model.ids.PortfolioId;
-import com.porflyo.domain.model.ids.Slug;
 import com.porflyo.domain.model.ids.UserId;
 
 import io.micronaut.core.annotation.Introspected;
@@ -31,8 +29,5 @@ public record Portfolio(
 
     // Slug proposed by the user for their public URL. May be null untill publication
     Slug desiredSlug,
-    Boolean isPublished,
-
-    @NotNull Instant createdAt,
-    @NotNull Instant updatedAt
+    Boolean isPublished
 ) {}

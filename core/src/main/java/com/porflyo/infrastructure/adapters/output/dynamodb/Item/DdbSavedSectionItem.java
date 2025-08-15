@@ -1,7 +1,5 @@
 package com.porflyo.infrastructure.adapters.output.dynamodb.Item;
 
-import java.util.List;
-
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.serde.annotation.Serdeable;
 
@@ -16,20 +14,13 @@ public class DdbSavedSectionItem {
 
 
     // ────────────────────────── Attributes ──────────────────────────
-
-    private String sectionId;
-    private String userId;
     private String name;
 
-    private String sectionType;
-    private String title;
-    private String contentJson;
-    private List<String> media;
+    private byte[] section; // Compressed Section for WCU optimization
 
     private Integer version;
 
     public DdbSavedSectionItem() {}
-
 
     // ────────────────────────── getters & setters ──────────────────────────
 
@@ -41,33 +32,13 @@ public class DdbSavedSectionItem {
 
     public void setSK(String sK) { SK = sK; }
 
-    public String getSectionId() { return sectionId; }
-
-    public void setSectionId(String sectionId) { this.sectionId = sectionId; }
-
-    public String getUserId() { return userId; }
-
-    public void setUserId(String userId) { this.userId = userId; }
-
     public String getName() { return name; }
 
     public void setName(String name) { this.name = name; }
 
-    public String getSectionType() { return sectionType; }
+    public byte[] getSection() { return section; }
 
-    public void setSectionType(String sectionType) { this.sectionType = sectionType; }
-
-    public String getTitle() { return title; }
-
-    public void setTitle(String title) { this.title = title; }
-
-    public String getContentJson() { return contentJson; }
-
-    public void setContentJson(String content) { this.contentJson = content; }
-
-    public List<String> getMedia() { return media; }
-
-    public void setMedia(List<String> media) { this.media = media; }
+    public void setSection(byte[] section) { this.section = section; }
 
     public Integer getVersion() { return version; }
 

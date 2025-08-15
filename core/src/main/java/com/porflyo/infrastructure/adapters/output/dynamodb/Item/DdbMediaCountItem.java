@@ -1,32 +1,33 @@
 package com.porflyo.infrastructure.adapters.output.dynamodb.Item;
 
+import java.util.List;
+
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.serde.annotation.Serdeable;
 
 /**
- * Represents a media item in the DynamoDB database. 
+ * Represents the media items in the DynamoDB database. 
  * This class is used to control when to delete media items based on their usage.
+ * <p>
+ * @implNote {@link #mediaCount} is a compressed representation of {@code Map<String, Integer>}.
+ * All the media items are stored in a compressed format to optimize storage and retrieval costs.
+ * 
  */
 @Serdeable
 @Introspected
-public class DdbMediaItem {
+public class DdbMediaCountItem {
     
     // ────────────────────────── Key & Index ──────────────────────────
 
     private String PK;  // e.g., USER#123
-    private String SK;  // "MEDIA#456"
+    private String SK;  // "MEDIA"
 
 
     // ────────────────────────── Attributes ──────────────────────────
 
-    private String mediaId;
-    private Integer useCount;
-    private Integer size;
-    private String type;
+    private byte[] mediaCount;      // Map<String, Integer>
 
-    private String createdAt; // ISO 8601 string
-
-    public DdbMediaItem() {}
+    public DdbMediaCountItem() {}
 
 
     // ────────────────────────── getters & setters ──────────────────────────
@@ -39,23 +40,7 @@ public class DdbMediaItem {
 
     public void setSK(String sK) { SK = sK; }
 
-    public String getMediaId() { return mediaId; }
+    public byte[] getMediaCount() { return mediaCount; }
 
-    public void setMediaId(String mediaId) { this.mediaId = mediaId; }
-
-    public Integer getUseCount() { return useCount; }
-
-    public void setUseCount(Integer useCount) { this.useCount = useCount; }
-
-    public Integer getSize() { return size; }
-
-    public void setSize(Integer size) { this.size = size; }
-
-    public String getType() { return type; }
-
-    public void setType(String type) { this.type = type; }
-
-    public String getCreatedAt() { return createdAt; }
-
-    public void setCreatedAt(String createdAt) { this.createdAt = createdAt; }
+    public void setMediaCount(byte[] mediaCountList) { this.mediaCount = mediaCountList; }
 }

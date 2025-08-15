@@ -1,7 +1,7 @@
 package com.porflyo.infrastructure.adapters.output.dynamodb.repository;
 
-import static com.porflyo.infrastructure.adapters.output.dynamodb.common.DdbKeys.PK_PREFIX_USER;
-import static com.porflyo.infrastructure.adapters.output.dynamodb.common.DdbKeys.SK_PREFIX_SAVED_SECTION;
+import static com.porflyo.infrastructure.adapters.output.dynamodb.common.DdbKeys.USER_PK_PREFIX;
+import static com.porflyo.infrastructure.adapters.output.dynamodb.common.DdbKeys.USER_SAVED_SECTION_SK_PREFIX;
 import static com.porflyo.infrastructure.adapters.output.dynamodb.common.DdbKeys.pk;
 import static com.porflyo.infrastructure.adapters.output.dynamodb.common.DdbKeys.sk;
 
@@ -32,22 +32,24 @@ import software.amazon.awssdk.enhanced.dynamodb.model.QueryConditional;
 @Requires(beans = DdbConfig.class)
 public class DbdSavedSectionRepository implements SavedSectionRepository {
 
+    private final DdbSavedSectionMapper mapper;
     private static final Logger log = LoggerFactory.getLogger(DbdSavedSectionRepository.class);
     private final DynamoDbTable<DdbSavedSectionItem> table;
 
     @Inject
-    DbdSavedSectionRepository(DynamoDbEnhancedClient enhanced, DdbConfig dynamoDbConfig) {
+    DbdSavedSectionRepository(DynamoDbEnhancedClient enhanced, DdbConfig dynamoDbConfig, DdbSavedSectionMapper mapper) {
         this.table = enhanced.table(
             dynamoDbConfig.tableName(),
             SavedSectionTableSchema.SCHEMA);
+        this.mapper = mapper;
     }
 
 
     // ────────────────────────── Save ──────────────────────────
 
     @Override
-    public @NotNull SavedSection save(UserId userId, SavedSection section) {
-        table.putItem(DdbSavedSectionMapper.toItem(userId, section));
+    public @NotNull SavedSection save(SavedSection section) {
+        table.putItem(mapper.toItem(section));
         log.debug("Saved section: {}", section.id().value());
         return section;
     }
@@ -58,7 +60,7 @@ public class DbdSavedSectionRepository implements SavedSectionRepository {
     @Override
     public List<SavedSection> findByUserId(UserId userId) {
         
-        String pk = pk(PK_PREFIX_USER, userId.value());
+        String pk = pk(USER_PK_PREFIX, userId.value());
 
         // Query for all saved sections of the user
         QueryConditional query = QueryConditional
@@ -67,7 +69,7 @@ public class DbdSavedSectionRepository implements SavedSectionRepository {
         List<SavedSection> sections = table.query(r -> r.queryConditional(query))
             .items()
             .stream()
-            .map(DdbSavedSectionMapper::toDomain)
+            .map(mapper::toDomain)
             .toList();
 
         log.debug("Found {} sections for user: {}", sections.size(), userId.value());
@@ -79,8 +81,8 @@ public class DbdSavedSectionRepository implements SavedSectionRepository {
 
     @Override
     public void delete(UserId userId, SectionId sectionId) {
-        String pk = pk(PK_PREFIX_USER, userId.value());
-        String sk = sk(SK_PREFIX_SAVED_SECTION, sectionId.value());
+        String pk = pk(USER_PK_PREFIX, userId.value());
+        String sk = sk(USER_SAVED_SECTION_SK_PREFIX, sectionId.value());
 
         table.deleteItem(r -> r.key(Key.builder()
             .partitionValue(pk)

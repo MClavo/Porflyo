@@ -1,7 +1,8 @@
 package com.porflyo.infrastructure.adapters.output.dynamodb.mapper;
 
-import static com.porflyo.infrastructure.adapters.output.dynamodb.common.DdbKeys.PK_PREFIX_USER;
-import static com.porflyo.infrastructure.adapters.output.dynamodb.common.DdbKeys.SK_PREFIX_SAVED_SECTION;
+import static com.porflyo.infrastructure.adapters.output.dynamodb.common.DdbKeys.USER_PK_PREFIX;
+import static com.porflyo.infrastructure.adapters.output.dynamodb.common.DdbKeys.USER_SAVED_SECTION_SK_PREFIX;
+import static com.porflyo.infrastructure.adapters.output.dynamodb.common.DdbKeys.idFrom;
 import static com.porflyo.infrastructure.adapters.output.dynamodb.common.DdbKeys.pk;
 import static com.porflyo.infrastructure.adapters.output.dynamodb.common.DdbKeys.sk;
 
@@ -10,47 +11,59 @@ import com.porflyo.domain.model.ids.UserId;
 import com.porflyo.domain.model.portfolio.PortfolioSection;
 import com.porflyo.domain.model.portfolio.SavedSection;
 import com.porflyo.infrastructure.adapters.output.dynamodb.Item.DdbSavedSectionItem;
+import com.porflyo.infrastructure.adapters.output.dynamodb.common.DataCompressor;
 
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
+
+@Singleton
 public final class DdbSavedSectionMapper {
 
+    private final DataCompressor dataCompressor;
+
+    @Inject
+    public DdbSavedSectionMapper(DataCompressor dataCompressor) {
+        this.dataCompressor = dataCompressor;
+    }
+
     // ────────────────────────── Domain -> Item ──────────────────────────
-    public static DdbSavedSectionItem toItem(UserId userId, SavedSection savedSection) {
+    public DdbSavedSectionItem toItem(SavedSection savedSection) {
         PortfolioSection section = savedSection.section();
         
         DdbSavedSectionItem item = new DdbSavedSectionItem();
-        item.setPK(pk(PK_PREFIX_USER, userId.value()));
-        item.setSK(sk(SK_PREFIX_SAVED_SECTION, savedSection.id().value()));
+        item.setPK(pk(USER_PK_PREFIX, savedSection.userId().value()));
+        item.setSK(sk(USER_SAVED_SECTION_SK_PREFIX, savedSection.id().value()));
 
-        item.setSectionId(savedSection.id().value());
-        item.setUserId(userId.value());
-        
         item.setName(savedSection.name());
         item.setVersion(savedSection.version());
-
-        item.setSectionType(section.sectionType());
-        item.setTitle(section.title());
-        item.setContentJson(section.content().toString());
-        item.setMedia(section.media());
+        
+        try{
+            byte[] compressedSection = dataCompressor.compress(section);
+            item.setSection(compressedSection);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to compress section data", e);
+        }
 
         return item;
     }
 
     // ────────────────────────── Item -> Domain ──────────────────────────
-    public static SavedSection toDomain(DdbSavedSectionItem item) {
-        PortfolioSection section = new PortfolioSection(
-            item.getSectionType(),
-            item.getTitle(),
-            item.getContentJson(),
-            item.getMedia()
-        );
-        
-        return new SavedSection(
-            new SectionId(item.getSectionId()),
-            new UserId(item.getUserId()),
-            item.getName(),
-            section,
-            item.getVersion()
-        );
+    public SavedSection toDomain(DdbSavedSectionItem item) {
+        try{
+
+            PortfolioSection section = dataCompressor
+            .decompress(item.getSection(), PortfolioSection.class);
+            
+            return new SavedSection(
+                new SectionId(idFrom(USER_SAVED_SECTION_SK_PREFIX, item.getSK())),
+                new UserId(idFrom(USER_PK_PREFIX, item.getPK())),
+                item.getName(),
+                section,
+                item.getVersion()
+                );
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to decompress section data", e);
+        }
     }
 
 }

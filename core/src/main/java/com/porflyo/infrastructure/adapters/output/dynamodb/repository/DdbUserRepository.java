@@ -41,19 +41,19 @@ public class DdbUserRepository implements UserRepository {
    
     private static final Logger log = LoggerFactory.getLogger(DdbUserRepository.class);
     private final DynamoDbTable<DdbUserItem> table;
-    //private DynamoDbConfig dynamoDbConfig;
+    private final DdbUserMapper ddbUserMapper;
 
     @Inject
-    public DdbUserRepository(DynamoDbEnhancedClient enhanced, DdbConfig dynamoDbConfig) {
-        //this.dynamoDbConfig = dynamoDbConfig;
+    public DdbUserRepository(DynamoDbEnhancedClient enhanced, DdbConfig dynamoDbConfig, DdbUserMapper ddbUserMapper) {
         this.table = enhanced.table(dynamoDbConfig.tableName(), UserTableSchema.SCHEMA);
+        this.ddbUserMapper = ddbUserMapper;
     }
 
     // ────────────────────────── Save ──────────────────────────
 
     @Override
     public void save(@NonNull User user) {
-        table.putItem(DdbUserMapper.toItem(user));
+        table.putItem(ddbUserMapper.toItem(user));
         log.debug("Saved user: {}", user.id().value());
     }
 
@@ -72,7 +72,7 @@ public class DdbUserRepository implements UserRepository {
         }
 
 
-        return Optional.ofNullable(dto).map(DdbUserMapper::toDomain);
+        return Optional.ofNullable(dto).map(ddbUserMapper::toDomain);
     }
 
     @Override
@@ -100,7 +100,7 @@ public class DdbUserRepository implements UserRepository {
             log.debug("Found user for provider ID: {}", providerId);
         }
 
-        return Optional.ofNullable(dto).map(DdbUserMapper::toDomain);
+        return Optional.ofNullable(dto).map(ddbUserMapper::toDomain);
     }
     
 
@@ -110,25 +110,24 @@ public class DdbUserRepository implements UserRepository {
     public User patch(@NonNull UserId id, @NonNull UserPatchDto patch) {
        
         // Dto with null fields except for the attributes in attrs
-        DdbUserItem updateItem = DdbUserMapper.PatchToItem(id, patch);
+        DdbUserItem updateItem = ddbUserMapper.patchToItem(id, patch);
         UpdateItemEnhancedRequest<DdbUserItem> request = createUpdateItemRequest(updateItem);
         
         DdbUserItem result = table.updateItem(request);
         log.debug("Patched user: {}", id.value());
 
-        return DdbUserMapper.toDomain(result);
+        return ddbUserMapper.toDomain(result);
     }
 
     @Override
     public User patchProviderAccount(@NonNull UserId id, @NonNull ProviderAccount providerAccount) {
-        DdbUserItem updateItem = DdbUserMapper.providerToItem(id, providerAccount);
-
+        DdbUserItem updateItem = ddbUserMapper.providerToItem(id, providerAccount);
         UpdateItemEnhancedRequest<DdbUserItem> request = createUpdateItemRequest(updateItem);
 
         DdbUserItem result = table.updateItem(request);
         log.debug("Patched provider account for user: {}", id.value());
-        
-        return DdbUserMapper.toDomain(result);
+
+        return ddbUserMapper.toDomain(result);
     }
 
 

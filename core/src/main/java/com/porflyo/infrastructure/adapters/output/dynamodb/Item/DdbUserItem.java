@@ -1,6 +1,6 @@
 package com.porflyo.infrastructure.adapters.output.dynamodb.Item;
 
-import static com.porflyo.infrastructure.adapters.output.dynamodb.common.DdbKeys.PK_PREFIX_USER;
+import static com.porflyo.infrastructure.adapters.output.dynamodb.common.DdbKeys.USER_PK_PREFIX;
 import static com.porflyo.infrastructure.adapters.output.dynamodb.common.DdbKeys.pk;
 
 import java.util.Map;
@@ -23,14 +23,14 @@ public class DdbUserItem {
     private String PK; // e.g., USER#123
     private String SK; // "PROFILE"
 
-    public static String pkOf(String userId) { return pk(PK_PREFIX_USER, userId); }
+    public static String pkOf(String userId) { return pk(USER_PK_PREFIX, userId); }
 
     // ────────────────────────── Attributes ──────────────────────────
 
     private String userId;
     private String name;
     private String email;
-    private String description;
+    private byte[] description; // Compressed description for WCU optimization
     private String profileImage; // S3 key
     private Map<String, String> socials;
 
@@ -64,9 +64,9 @@ public class DdbUserItem {
 
     public void setEmail(String email) { this.email = email; }
 
-    public String getDescription() { return description; }
+    public byte[] getDescription() { return description; }
 
-    public void setDescription(String description) { this.description = description; }
+    public void setDescription(byte[] description) { this.description = description; }
 
     public Map<String, String> getSocials() { return socials; }
 

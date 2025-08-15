@@ -2,7 +2,6 @@ package com.porflyo.infrastructure.adapters.output.dynamodb.schema;
 
 import com.porflyo.infrastructure.adapters.output.dynamodb.Item.DdbSavedSectionItem;
 
-import software.amazon.awssdk.enhanced.dynamodb.EnhancedType;
 import software.amazon.awssdk.enhanced.dynamodb.TableSchema;
 import software.amazon.awssdk.enhanced.dynamodb.mapper.StaticAttributeTags;
 
@@ -25,28 +24,12 @@ public final class SavedSectionTableSchema {
                     .tags(StaticAttributeTags.primarySortKey()))
 
             // ────────────────────────── Section Attributes ──────────────────────────
-            .addAttribute(String.class, a -> a.name("sectionId")
-                    .getter(DdbSavedSectionItem::getSectionId)
-                    .setter(DdbSavedSectionItem::setSectionId))
-            .addAttribute(String.class, a -> a.name("userId")
-                    .getter(DdbSavedSectionItem::getUserId)
-                    .setter(DdbSavedSectionItem::setUserId))
             .addAttribute(String.class, a -> a.name("name")
                     .getter(DdbSavedSectionItem::getName)
                     .setter(DdbSavedSectionItem::setName))
-            .addAttribute(String.class, a -> a.name("sectionType")
-                    .getter(DdbSavedSectionItem::getSectionType)
-                    .setter(DdbSavedSectionItem::setSectionType))
-            .addAttribute(String.class, a -> a.name("title")
-                    .getter(DdbSavedSectionItem::getTitle)
-                    .setter(DdbSavedSectionItem::setTitle))
-            .addAttribute(String.class, a -> a.name("content")
-                    .getter(DdbSavedSectionItem::getContentJson)
-                    .setter(DdbSavedSectionItem::setContentJson))
-            .addAttribute(EnhancedType.listOf(String.class), 
-                a -> a.name("media")
-                .getter(DdbSavedSectionItem::getMedia)
-                .setter(DdbSavedSectionItem::setMedia))
+            .addAttribute(byte[].class, a -> a.name("section")
+                    .getter(DdbSavedSectionItem::getSection)
+                    .setter(DdbSavedSectionItem::setSection))
             .addAttribute(Integer.class, a -> a.name("version")
                 .getter(DdbSavedSectionItem::getVersion)
                 .setter(DdbSavedSectionItem::setVersion))

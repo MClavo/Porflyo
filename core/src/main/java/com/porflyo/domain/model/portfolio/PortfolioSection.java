@@ -12,6 +12,6 @@ import jakarta.validation.constraints.NotNull;
 public record PortfolioSection(
     @NotBlank String sectionType,
     @NotBlank String title,
-    @NotNull Object content,
+    @NotNull String content,
     List<String> media
 ) {}
