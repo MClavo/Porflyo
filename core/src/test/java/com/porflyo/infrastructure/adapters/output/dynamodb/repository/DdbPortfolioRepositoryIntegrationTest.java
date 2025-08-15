@@ -109,7 +109,7 @@ public class DdbPortfolioRepositoryIntegrationTest implements TestPropertyProvid
         assertEquals(portfolioToSave.template(), saved.template());
         assertEquals(portfolioToSave.sections(), saved.sections());
         assertEquals(portfolioToSave.modelVersion(), saved.modelVersion());
-        assertEquals(portfolioToSave.desiredSlug(), saved.desiredSlug());
+        assertEquals(portfolioToSave.reservedSlug(), saved.reservedSlug());
         assertEquals(portfolioToSave.isPublished(), saved.isPublished());
 
         // Test findByUserId
@@ -200,12 +200,12 @@ public class DdbPortfolioRepositoryIntegrationTest implements TestPropertyProvid
 
         // Then
         assertNotNull(updatedPortfolio, "Updated portfolio should not be null");
-        assertEquals(newSlug, updatedPortfolio.desiredSlug());
+        assertEquals(newSlug, updatedPortfolio.reservedSlug());
         assertEquals(newVisibility, updatedPortfolio.isPublished());
 
         // Verify changes persist when retrieved again
         Portfolio retrieved = repository.findById(testUserId, testPortfolioId).orElseThrow();
-        assertEquals(newSlug, retrieved.desiredSlug());
+        assertEquals(newSlug, retrieved.reservedSlug());
         assertEquals(newVisibility, retrieved.isPublished());
         
         // Verify other fields remain unchanged
@@ -299,7 +299,7 @@ public class DdbPortfolioRepositoryIntegrationTest implements TestPropertyProvid
         
         // Verify unchanged fields
         assertEquals(testPortfolio.modelVersion(), patchedPortfolio.modelVersion());
-        assertEquals(testPortfolio.desiredSlug(), patchedPortfolio.desiredSlug());
+        assertEquals(testPortfolio.reservedSlug(), patchedPortfolio.reservedSlug());
         assertEquals(testPortfolio.isPublished(), patchedPortfolio.isPublished());
     }
 }
