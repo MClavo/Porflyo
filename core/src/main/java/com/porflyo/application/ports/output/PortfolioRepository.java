@@ -25,7 +25,7 @@ public interface PortfolioRepository {
         @NotNull PortfolioPatchDto patch
     );
 
-    @NotNull Portfolio setSlugAndVisibility(UserId userId, PortfolioId id, Slug slug, boolean published);
+    @NotNull Portfolio setUrlAndVisibility(UserId userId, PortfolioId id, Slug slugUrl, boolean published);
 
     void delete(UserId userId, PortfolioId portfolioId);
 }

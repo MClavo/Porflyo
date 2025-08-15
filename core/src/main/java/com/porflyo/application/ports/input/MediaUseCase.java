@@ -1,6 +1,10 @@
 package com.porflyo.application.ports.input;
 
+import java.util.List;
+import java.util.Map;
+
 import com.porflyo.application.dto.PresignedPostDto;
+import com.porflyo.domain.model.ids.UserId;
 
 import jakarta.validation.constraints.NotNull;
 
@@ -27,4 +31,16 @@ public interface MediaUseCase {
      * Does not verify if the object is used in more than one place.
      */
     void delete(String key);
+
+    /**
+     * Increment usage counts for the provided media keys. Returns the new counts for those keys.
+     */
+    Map<String, Integer> incrementUsage(UserId userId, List<String> mediaKeys);
+
+    /**
+     * Decrement usage counts and delete from storage any keys whose count reaches 0.
+     * Returns the list of keys that were actually deleted from storage.
+     */
+    List<String> decrementUsageAndDeleteUnused(UserId userId, List<String> mediaKeys);
+
 }
