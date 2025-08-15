@@ -27,7 +27,7 @@ public record Portfolio(
     // Schema version for future data migrations
     @Min(1) Integer modelVersion,
 
-    // Slug proposed by the user for their public URL. May be null untill publication
-    Slug desiredSlug,
+    // Slug reserved by the user for their public URL. May be null untill publication
+    Slug reservedSlug,
     Boolean isPublished
 ) {}
