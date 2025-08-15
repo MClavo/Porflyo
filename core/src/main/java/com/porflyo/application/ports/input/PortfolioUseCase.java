@@ -7,7 +7,6 @@ import com.porflyo.application.dto.PortfolioPatchDto;
 import com.porflyo.domain.model.ids.PortfolioId;
 import com.porflyo.domain.model.ids.UserId;
 import com.porflyo.domain.model.portfolio.Portfolio;
-import com.porflyo.domain.model.portfolio.Slug;
 
 import jakarta.validation.constraints.NotNull;
 
@@ -24,7 +23,7 @@ public interface PortfolioUseCase {
         @NotNull PortfolioPatchDto patch
     );
 
-    Portfolio setUrlAndVisibility(UserId userId, PortfolioId id, Slug slug, boolean published);
+    Portfolio setUrlAndVisibility(UserId userId, PortfolioId id, String urlString, boolean published);
 
     void delete(UserId userId, PortfolioId portfolioId);
 }

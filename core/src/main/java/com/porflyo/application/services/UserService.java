@@ -29,7 +29,6 @@ public class UserService implements UserUseCase{
         this.repository = userRepository;
     }
 
-
     @Override
     public @NonNull Optional<User> findById(@NonNull UserId id) {
         return repository.findById(id);

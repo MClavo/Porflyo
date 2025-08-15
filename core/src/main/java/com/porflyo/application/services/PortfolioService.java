@@ -10,7 +10,6 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import com.porflyo.application.dto.PortfolioPatchDto;
 import com.porflyo.application.ports.input.MediaUseCase;
@@ -18,6 +17,7 @@ import com.porflyo.application.ports.input.PortfolioUseCase;
 import com.porflyo.application.ports.output.PortfolioRepository;
 import com.porflyo.application.ports.output.PortfolioUrlRepository;
 import com.porflyo.application.ports.output.QuotaRepository;
+import com.porflyo.application.ports.output.SlugGeneratorPort;
 import com.porflyo.domain.model.ids.PortfolioId;
 import com.porflyo.domain.model.ids.UserId;
 import com.porflyo.domain.model.portfolio.Portfolio;
@@ -26,6 +26,7 @@ import com.porflyo.domain.model.portfolio.Slug;
 
 import io.micronaut.core.annotation.NonNull;
 import io.micronaut.core.annotation.Nullable;
+import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import jakarta.validation.constraints.NotNull;
 
@@ -42,17 +43,21 @@ public class PortfolioService implements PortfolioUseCase {
     private final PortfolioUrlRepository portfolioUrlRepository;
     private final MediaUseCase mediaUseCase;
     private final QuotaRepository quotaRepository;
+    private final SlugGeneratorPort slugGenerator;
 
+    @Inject
     public PortfolioService(
             PortfolioRepository portfolioRepository,
             PortfolioUrlRepository portfolioUrlRepository,
             MediaUseCase mediaUseCase,
-            QuotaRepository quotaRepository) {
+            QuotaRepository quotaRepository,
+            SlugGeneratorPort slugGenerator) {
 
         this.portfolioRepository = requireNonNull(portfolioRepository);
         this.portfolioUrlRepository = requireNonNull(portfolioUrlRepository);
         this.mediaUseCase = requireNonNull(mediaUseCase);
         this.quotaRepository = requireNonNull(quotaRepository);
+        this.slugGenerator = requireNonNull(slugGenerator);
     }
 
 
@@ -139,31 +144,40 @@ public class PortfolioService implements PortfolioUseCase {
     @Override
     public Portfolio setUrlAndVisibility(
             @NonNull UserId userId,
-            @NonNull PortfolioId id,
-            @NonNull Slug slugUrl,
+            @NonNull PortfolioId portfolioId,
+            @NonNull String url,
             boolean published) {
 
         requireNonNull(userId, "userId");
-        requireNonNull(id, "id");
-        requireNonNull(slugUrl, "slug");
+        requireNonNull(portfolioId, "id");
+        requireNonNull(url, "url");
+
+        Slug slugUrl = slugGenerator.normalize(url);
 
         // Load current (to know previous slug, if any)
-        Portfolio current = portfolioRepository.findById(userId, id)
-                .orElseThrow(() -> new NoSuchElementException("Portfolio not found"));
+        Portfolio current = portfolioRepository.findById(userId, portfolioId).orElse(null);
 
-        Slug oldSlug = current.desiredSlug();
+        if (current == null){
+            portfolioUrlRepository.reserve(slugUrl, userId, portfolioId, published);
+            return portfolioRepository.setUrlAndVisibility(userId, portfolioId, slugUrl, published);
+        } 
 
-        boolean slugChanged = oldSlug == null || !oldSlug.value().equals(slugUrl.value());
+        Slug oldSlug = current.reservedSlug();
 
-        // Change slug mapping if needed (atomic/conditional in repo)
-        if (slugChanged) 
-            portfolioUrlRepository.changeSlugAtomic(oldSlug, slugUrl, userId, id, current.isPublished());
+        if (!equalsSlug(oldSlug, slugUrl)) 
+            portfolioUrlRepository.changeSlugAtomic(
+                oldSlug, 
+                slugUrl,
+                userId, 
+                portfolioId, 
+                current.isPublished());
         
         // Update visibility in URL mapping
         if (current.isPublished() != published) 
             portfolioUrlRepository.updateVisibility(slugUrl, published);
         
-        return portfolioRepository.setUrlAndVisibility(userId, id, slugUrl, published);
+        
+        return portfolioRepository.setUrlAndVisibility(userId, portfolioId, slugUrl, published);
     }
 
 
@@ -187,7 +201,7 @@ public class PortfolioService implements PortfolioUseCase {
             mediaUseCase.decrementUsageAndDeleteUnused(userId, mediaKeys);
         
         // Release slug mapping if present
-        Slug slug = current.desiredSlug();
+        Slug slug = current.reservedSlug();
         if (slug != null) 
             portfolioUrlRepository.release(slug);
         
@@ -199,6 +213,12 @@ public class PortfolioService implements PortfolioUseCase {
 
     
     // ────────────────────────── Helpers ──────────────────────────
+
+    private static boolean equalsSlug(Slug a, Slug b) {
+        if (a == b) return true;
+        if (a == null || b == null) return false;
+        return a.value().equals(b.value());
+    }
 
     private static <T> List<T> safeList(@Nullable List<T> list) {
         return list == null ? List.of() : list;
