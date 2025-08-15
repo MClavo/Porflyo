@@ -14,7 +14,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import com.porflyo.domain.model.shared.EntityId;
+import com.porflyo.domain.model.ids.EntityId;
 
 @DisplayName("User Tests")
 class UserTest {

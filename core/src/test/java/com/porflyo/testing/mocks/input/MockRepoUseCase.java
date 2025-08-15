@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.function.Function;
 
 import com.porflyo.application.ports.input.ProviderUseCase;
-import com.porflyo.domain.model.ids.EntityId;
+import com.porflyo.domain.model.ids.UserId;
 import com.porflyo.domain.model.provider.ProviderRepo;
 import com.porflyo.testing.data.TestData;
 
@@ -13,7 +13,7 @@ import com.porflyo.testing.data.TestData;
  */
 public record MockRepoUseCase(
     Function<String, List<ProviderRepo>> getUserReposByToken,
-    Function<EntityId, List<ProviderRepo>> getUserReposById
+    Function<UserId, List<ProviderRepo>> getUserReposById
 ) implements ProviderUseCase {
 
     public static Builder builder() {
@@ -30,7 +30,7 @@ public record MockRepoUseCase(
     }
 
     @Override
-    public List<ProviderRepo> getUserRepos(EntityId userId) {
+    public List<ProviderRepo> getUserRepos(UserId userId) {
         return getUserReposById.apply(userId);
     }
 
@@ -39,14 +39,14 @@ public record MockRepoUseCase(
 
     public static class Builder {
         private Function<String, List<ProviderRepo>> getUserReposByToken = token -> TestData.DEFAULT_REPOS;
-        private Function<EntityId, List<ProviderRepo>> getUserReposById = id -> TestData.DEFAULT_REPOS;
+        private Function<UserId, List<ProviderRepo>> getUserReposById = id -> TestData.DEFAULT_REPOS;
 
         public Builder getUserReposByToken(Function<String, List<ProviderRepo>> function) {
             this.getUserReposByToken = function;
             return this;
         }
 
-        public Builder getUserReposById(Function<EntityId, List<ProviderRepo>> function) {
+        public Builder getUserReposById(Function<UserId, List<ProviderRepo>> function) {
             this.getUserReposById = function;
             return this;
         }

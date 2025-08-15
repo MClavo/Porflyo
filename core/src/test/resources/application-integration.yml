@@ -20,6 +20,11 @@ s3:
   bucket-name: media-test
   endpoint: ${s3.url:`http://localhost:8000`}
 
+quota:
+  max-saved-sections: 10
+  max-portfolios: 3
+
+
 logger:
   levels:
     com.porflyo: DEBUG
