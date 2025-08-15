@@ -10,7 +10,9 @@ import com.porflyo.domain.model.portfolio.PortfolioSection;
 import com.porflyo.domain.model.portfolio.SavedSection;
 
 import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 
+@Singleton
 public class SavedSectionService implements SavedSectionUseCase {
 
     private final SavedSectionRepository sRepository;
