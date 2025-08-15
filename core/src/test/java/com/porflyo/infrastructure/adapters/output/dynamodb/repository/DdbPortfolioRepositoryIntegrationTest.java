@@ -196,7 +196,7 @@ public class DdbPortfolioRepositoryIntegrationTest implements TestPropertyProvid
         boolean newVisibility = false;
 
         // When
-        Portfolio updatedPortfolio = repository.setSlugAndVisibility(testUserId, testPortfolioId, newSlug, newVisibility);
+        Portfolio updatedPortfolio = repository.setUrlAndVisibility(testUserId, testPortfolioId, newSlug, newVisibility);
 
         // Then
         assertNotNull(updatedPortfolio, "Updated portfolio should not be null");
