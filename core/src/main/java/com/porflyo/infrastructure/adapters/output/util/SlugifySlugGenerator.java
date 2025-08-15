@@ -24,7 +24,7 @@ public class SlugifySlugGenerator implements SlugGeneratorPort {
             .build();
 
     @Override
-    public Slug toBaseSlug(String text) {
+    public Slug normalize(String text) {
         String base = slugify.slugify(text);
         return new Slug(base.length() > 64 ? base.substring(0, 64) : base);
     }

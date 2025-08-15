@@ -3,8 +3,8 @@ package com.porflyo.infrastructure.adapters.output.dynamodb.repository;
 import static com.porflyo.infrastructure.adapters.output.dynamodb.common.DdbKeys.SLUG_PK_PREFIX;
 import static com.porflyo.infrastructure.adapters.output.dynamodb.common.DdbKeys.SLUG_PORTFOLIO_SK_PREFIX;
 import static com.porflyo.infrastructure.adapters.output.dynamodb.common.DdbKeys.pk;
-import static com.porflyo.infrastructure.adapters.output.dynamodb.common.DdbKeys.sk;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -12,6 +12,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.porflyo.application.ports.output.PortfolioUrlRepository;
+import com.porflyo.domain.exceptions.publicUrl.StaleUrlOwnershipException;
+import com.porflyo.domain.exceptions.publicUrl.UrlAlreadyTakenException;
+import com.porflyo.domain.exceptions.publicUrl.UrlNotFoundException;
 import com.porflyo.domain.model.ids.PortfolioId;
 import com.porflyo.domain.model.ids.UserId;
 import com.porflyo.domain.model.portfolio.PortfolioUrl;
@@ -36,11 +39,13 @@ import software.amazon.awssdk.enhanced.dynamodb.model.QueryConditional;
 import software.amazon.awssdk.enhanced.dynamodb.model.UpdateItemEnhancedRequest;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
+import software.amazon.awssdk.services.dynamodb.model.CancellationReason;
 import software.amazon.awssdk.services.dynamodb.model.ConditionalCheckFailedException;
 import software.amazon.awssdk.services.dynamodb.model.Delete;
 import software.amazon.awssdk.services.dynamodb.model.Put;
 import software.amazon.awssdk.services.dynamodb.model.TransactWriteItem;
 import software.amazon.awssdk.services.dynamodb.model.TransactWriteItemsRequest;
+import software.amazon.awssdk.services.dynamodb.model.TransactionCanceledException;
 
 @Singleton
 @Requires(beans = DdbConfig.class)
@@ -122,26 +127,85 @@ public class DdbPortfolioUrlRepository implements PortfolioUrlRepository {
     // ────────────────────────── Release (delete) ──────────────────────────
 
     @Override
-    public void release(@NonNull Slug slug) {
+    public void release(@NonNull Slug slugUrl) {
         Key key = Key.builder()
-            .partitionValue(pk(SLUG_PK_PREFIX, slug.value()))
+            .partitionValue(pk(SLUG_PK_PREFIX, slugUrl.value()))
             .sortValue(SLUG_PORTFOLIO_SK_PREFIX)
             .build();
 
-        table.deleteItem(r -> r.key(key));
-        log.debug("Released slug '{}'", slug.value());
+        try{
+            table.deleteItem(r -> r.key(key));
+            log.debug("Released slug '{}'", slugUrl.value());
+
+        } catch (ConditionalCheckFailedException e) {
+            throw new UrlNotFoundException(slugUrl.value());
+        }
     }
 
 
     // ────────────────────────── Change slug (atomic) ──────────────────────────
 
     @Override
-    public void changeSlugAtomic(@NonNull Slug oldSlug,
-                                 @NonNull Slug newSlug,
-                                 @NonNull UserId userId,
-                                 @NonNull PortfolioId portfolioId,
-                                 boolean isPublic) {
+    public void changeSlugAtomic(
+            @NonNull Slug oldSlug,
+            @NonNull Slug newSlug,
+            @NonNull UserId userId,
+            @NonNull PortfolioId portfolioId,
+            boolean isPublic) {
 
+        TransactWriteItemsRequest tx = buildSlugChangeTx(
+            oldSlug,
+            newSlug,
+            userId,
+            portfolioId,
+            isPublic
+        );
+
+        try {
+            lowLevel.transactWriteItems(tx);
+            log.debug("Changed slug atomically: {} -> {} for portfolio {} (user {})",
+                oldSlug != null ? oldSlug.value() : "(none)",
+                newSlug.value(),
+                portfolioId.value(),
+                userId.value());
+        } catch (TransactionCanceledException e) {
+            throw mapSlugChangeException(e, oldSlug, newSlug);
+        }
+    }
+
+
+    // ────────────────────────── Update visibility ──────────────────────────
+
+    @Override
+    public void updateVisibility(@NonNull Slug slug, boolean isPublic) {
+
+        DdbPortfolioUrlItem partial = mapper.toItem(slug, null, null, isPublic);
+
+        UpdateItemEnhancedRequest<DdbPortfolioUrlItem> req =
+            UpdateItemEnhancedRequest.builder(DdbPortfolioUrlItem.class)
+                .item(partial)
+                .ignoreNullsMode(IgnoreNullsMode.SCALAR_ONLY)
+                .build();
+
+        try {
+            table.updateItem(req);
+            log.debug("Updated visibility for slug '{}': {}", slug.value(), isPublic);
+        
+        } catch (ConditionalCheckFailedException e) {
+            throw new UrlNotFoundException(slug.value());
+        }
+    }
+
+
+    // ────────────────────────── Helpers ──────────────────────────
+
+    private TransactWriteItemsRequest buildSlugChangeTx(
+        Slug oldSlug,
+        Slug newSlug,
+        UserId userId,
+        PortfolioId portfolioId,
+        boolean isPublic) {
+        
         // Delete old mapping with condition (defensive: ensure user/portfolio match)
         Map<String, AttributeValue> deleteKey = Map.of(
             "PK", AttributeValue.fromS(pk(SLUG_PK_PREFIX, oldSlug.value())),
@@ -176,33 +240,30 @@ public class DdbPortfolioUrlRepository implements PortfolioUrlRepository {
             .build();
 
         // Transactional write for atomicity, ensure both operations succeed or fail together
-        TransactWriteItemsRequest tx = TransactWriteItemsRequest.builder()
+        return TransactWriteItemsRequest.builder()
             .transactItems(
                 TransactWriteItem.builder().delete(deleteOld).build(),
                 TransactWriteItem.builder().put(putNew).build()
             )
-            .build();
-
-        lowLevel.transactWriteItems(tx);
-        log.debug("Changed slug atomically: {} -> {} for portfolio {} (user {})",
-                oldSlug.value(), newSlug.value(), portfolioId.value(), userId.value());
+            .build();       
     }
 
+    private RuntimeException mapSlugChangeException(TransactionCanceledException e, Slug oldSlug, Slug newSlug) {
+        var reasons = e.cancellationReasons();
+        int idx = 0;
 
-    // ────────────────────────── Update visibility ──────────────────────────
+        if (oldSlug != null && isConditionalFailed(reasons, idx++)) {
+            return new StaleUrlOwnershipException(oldSlug.value());
+        }
+        if (isConditionalFailed(reasons, idx)) {
+            return new UrlAlreadyTakenException(newSlug.value());
+        }
 
-    @Override
-    public void updateVisibility(@NonNull Slug slug, boolean isPublic) {
-
-        DdbPortfolioUrlItem partial = mapper.toItem(slug, null, null, isPublic);
-
-        UpdateItemEnhancedRequest<DdbPortfolioUrlItem> req =
-            UpdateItemEnhancedRequest.builder(DdbPortfolioUrlItem.class)
-                .item(partial)
-                .ignoreNullsMode(IgnoreNullsMode.SCALAR_ONLY)
-                .build();
-
-        table.updateItem(req);
-        log.debug("Updated visibility for slug '{}': {}", slug.value(), isPublic);
+        return e; // Others: throughput, throttling, etc.
     }
+
+    private boolean isConditionalFailed(List<CancellationReason> reasons, int idx) {
+        return reasons.size() > idx && "ConditionalCheckFailed".equals(reasons.get(idx).code());
+    }
+
 }

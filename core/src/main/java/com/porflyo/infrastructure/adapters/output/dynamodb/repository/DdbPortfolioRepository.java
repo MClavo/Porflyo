@@ -113,7 +113,7 @@ public class DdbPortfolioRepository implements PortfolioRepository {
     }
 
     @Override
-    public @NotNull Portfolio setSlugAndVisibility(UserId userId, PortfolioId id, Slug slug, boolean published) {
+    public @NotNull Portfolio setUrlAndVisibility(UserId userId, PortfolioId id, Slug slug, boolean published) {
 
         DdbPortfolioItem updateItem = mapper.slugAndVisibilityToItem(userId, id, slug, published);
         UpdateItemEnhancedRequest<DdbPortfolioItem> request = createUpdateItemRequest(updateItem);

@@ -9,6 +9,7 @@ import static com.porflyo.infrastructure.adapters.output.dynamodb.common.DdbKeys
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.porflyo.application.ports.output.QuotaRepository;
 import com.porflyo.domain.model.ids.UserId;
 import com.porflyo.infrastructure.adapters.output.dynamodb.Item.DdbQuotaItem;
 import com.porflyo.infrastructure.adapters.output.dynamodb.schema.QuotaTableSchema;
@@ -24,7 +25,7 @@ import software.amazon.awssdk.enhanced.dynamodb.Key;
 
 @Singleton
 @Requires(beans = DdbConfig.class)
-public class DdbQuotaRepository {
+public class DdbQuotaRepository implements QuotaRepository {
     private final QuotaConfig quotaConfig;
     private final Logger log = LoggerFactory.getLogger(DdbQuotaRepository.class);
     private final DynamoDbTable<DdbQuotaItem> table;

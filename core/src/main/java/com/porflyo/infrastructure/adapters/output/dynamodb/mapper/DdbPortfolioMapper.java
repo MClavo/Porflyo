@@ -62,7 +62,7 @@ public final class DdbPortfolioMapper {
         item.setSections(sections);
 
         item.setModelVersion(portfolio.modelVersion());
-        item.setDesiredSlug(portfolio.desiredSlug().value());
+        item.setDesiredSlug(portfolio.reservedSlug().value());
         item.setIsPublished(portfolio.isPublished());
 
         return item;
