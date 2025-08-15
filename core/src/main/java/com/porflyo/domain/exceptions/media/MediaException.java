@@ -1,0 +1,9 @@
+package com.porflyo.domain.exceptions.media;
+
+import com.porflyo.domain.exceptions.shared.DomainException;
+
+public abstract class MediaException extends DomainException {
+    protected MediaException(int httpStatus, String code, String message) {
+        super(httpStatus, code, message);
+    }
+}
