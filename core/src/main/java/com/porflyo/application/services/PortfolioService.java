@@ -204,23 +204,6 @@ public class PortfolioService implements PortfolioUseCase {
         return list == null ? List.of() : list;
     }
 
-    /**
-     * Returns elements in a that are not contained in b (order-preserving,
-     * distinct).
-     */
-    private static List<String> diff(List<String> a, List<String> b) {
-        if (a.isEmpty())
-            return List.of();
-        if (b.isEmpty())
-            return distinctPreservingOrder(a);
-        Set<String> setB = new HashSet<>(b);
-        return a.stream().filter(k -> !setB.contains(k)).distinct().collect(Collectors.toCollection(ArrayList::new));
-    }
-
-    private static List<String> distinctPreservingOrder(List<String> input) {
-        return input.stream().distinct().collect(Collectors.toCollection(ArrayList::new));
-    }
-
     private void safeRollbackPortfolioQuota(UserId owner) {
         try {
             quotaRepository.updatePortfolioCount(owner, -1);
