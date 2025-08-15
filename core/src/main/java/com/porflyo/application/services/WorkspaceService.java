@@ -7,7 +7,9 @@ import com.porflyo.application.ports.output.SavedSectionRepository;
 import com.porflyo.domain.model.ids.UserId;
 
 import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 
+@Singleton
 public class WorkspaceService implements WorkspaceUseCase {
 
     private final PortfolioRepository portfolios;
