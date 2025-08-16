@@ -22,41 +22,45 @@ import com.porflyo.infrastructure.adapters.output.github.exception.GithubApiExce
 import com.porflyo.infrastructure.adapters.output.github.exception.GithubAuthenticationException;
 import com.porflyo.infrastructure.adapters.output.github.exception.GithubConfigurationException;
 import com.porflyo.infrastructure.adapters.output.github.mapper.GithubDtoMapper;
+import com.porflyo.infrastructure.configuration.GithubConfig;
 import com.porflyo.infrastructure.configuration.ProviderOAuthConfig;
 
-import io.micronaut.json.JsonMapper;
+import io.micronaut.serde.ObjectMapper;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 
 @Singleton
 public class GithubAdapter implements ProviderPort {
     
-    private static final String TOKEN_URL = "https://github.com/login/oauth/access_token";
-    private static final String USER_URL = "https://api.github.com/user";
-    private static final String REPOS_URL = "https://api.github.com/user/repos?sort=updated&direction=desc&per_page=100";
+    private static final Logger log = LoggerFactory.getLogger(GithubAdapter.class);
+    private final ObjectMapper mapper;
+    private final HttpClient httpClient;
+    private final ProviderOAuthConfig oauthConfig;
+    private final GithubConfig githubConfig;
     
     // HTTP Constants
     private static final int HTTP_TIMEOUT_SECONDS = 30;
     private static final int HTTP_SUCCESS_MIN = 200;
     private static final int HTTP_SUCCESS_MAX = 299;
     
-    private static final Logger log = LoggerFactory.getLogger(GithubAdapter.class);
-    private final JsonMapper jsonMapper;
-    private final HttpClient httpClient;
-    private final ProviderOAuthConfig oauthConfig;
+    private static final String TOKEN_URL_PATH = "/login/oauth/access_token";
+    private static final String USER_URL_PATH = "/user";
+    private static final String REPOS_URL_PATH = "/user/repos?sort=updated&direction=desc&per_page=100";
+
+    private String TOKEN_URL;
+    private String USER_URL;
+    private String REPOS_URL;
 
     @Inject
-    public GithubAdapter(ProviderOAuthConfig oauthConfig, JsonMapper jsonMapper) {
+    public GithubAdapter(ProviderOAuthConfig oauthConfig, ObjectMapper mapper, GithubConfig githubConfig) {
         this.oauthConfig = validateNotNull(oauthConfig, "GithubOAuthConfig cannot be null");
-        this.jsonMapper = validateNotNull(jsonMapper, "JsonMapper cannot be null");
+        this.mapper = validateNotNull(mapper, "ObjectMapper cannot be null");
+        this.githubConfig = validateNotNull(githubConfig, "GithubConfig cannot be null");
         this.httpClient = createConfiguredHttpClient();
-    }
 
-    // Package-private constructor for testing
-    GithubAdapter(ProviderOAuthConfig oauthConfig, JsonMapper jsonMapper, HttpClient httpClient) {
-        this.oauthConfig = oauthConfig;
-        this.jsonMapper = jsonMapper;
-        this.httpClient = httpClient;
+        this.TOKEN_URL = githubConfig.oauthBaseUrl() + TOKEN_URL_PATH;
+        this.USER_URL = githubConfig.baseUrl() + USER_URL_PATH;
+        this.REPOS_URL = githubConfig.baseUrl() + REPOS_URL_PATH;
     }
 
 
@@ -74,7 +78,8 @@ public class GithubAdapter implements ProviderPort {
         String scope = oauthConfig.scope();
 
         String loginUrl = String.format(
-            "https://github.com/login/oauth/authorize?client_id=%s&redirect_uri=%s&scope=%s&response_type=code",
+            "%s/login/oauth/authorize?client_id=%s&redirect_uri=%s&scope=%s&response_type=code",
+            githubConfig.oauthBaseUrl(),
             URLEncoder.encode(clientId, StandardCharsets.UTF_8),
             URLEncoder.encode(redirectUri, StandardCharsets.UTF_8),
             URLEncoder.encode(scope, StandardCharsets.UTF_8)
@@ -84,9 +89,7 @@ public class GithubAdapter implements ProviderPort {
     }
 
     @Override
-    public String exchangeCodeForAccessToken(String code) {
-        log.debug("Exchanging OAuth code for access token using native HTTP client");
-        
+    public String exchangeCodeForAccessToken(String code) {        
         // Validate inputs before making the request
         if (code == null || code.trim().isEmpty()) {
             throw new IllegalArgumentException("OAuth code cannot be null or empty");
@@ -262,25 +265,32 @@ public class GithubAdapter implements ProviderPort {
      * @throws GithubAuthenticationException if the response indicates authentication failure
      */
     private void validateResponse(HttpResponse<String> response, HttpRequest request) {
-        if (response.statusCode() >= HTTP_SUCCESS_MIN && response.statusCode() <= HTTP_SUCCESS_MAX) {
+        int status = response.statusCode();
+        if (status >= HTTP_SUCCESS_MIN && status <= HTTP_SUCCESS_MAX) {
             return; // Success, no validation needed
         }
 
         log.error("HTTP request failed with status code: {} and body: {}", response.statusCode(), response.body());
+        
+        String uri = request.uri().toString();
+        boolean isOAuthTokenExchange = uri.contains("/oauth/access_token");
 
-        // Handle OAuth-specific errors
-        if (request.uri().toString().contains("oauth/access_token")) {
-            logOAuthErrorDetails(request);
+
+        // Authentication/Authorization: 401/403 on any endpoint
+        // and also 400 specifically for the token exchange (bad_verification_code, etc.)
+        if (status == 401 || status == 403 || (isOAuthTokenExchange && status == 400)) {
+            if (isOAuthTokenExchange) {
+                logOAuthErrorDetails(request);
+            }
             throw new GithubAuthenticationException(
-                "OAuth token exchange failed with status code: " + response.statusCode() + 
-                ". Response: " + response.body()
+                "GitHub authentication failed with status code: " + status + ". Response: " + response.body()
             );
         }
 
         // Handle general API errors
         throw new GithubApiException(
             "GitHub API request failed. Response: " + response.body(),
-            response.statusCode()
+            status
         );
     }
 
@@ -309,7 +319,7 @@ public class GithubAdapter implements ProviderPort {
      */
     private <T> T parseResponse(HttpResponse<String> response, Class<T> clazz) {
         try {
-            return jsonMapper.readValue(response.body().getBytes(StandardCharsets.UTF_8), clazz);
+            return mapper.readValue(response.body().getBytes(StandardCharsets.UTF_8), clazz);
         } catch (Exception e) {
             log.error("Failed to parse JSON response. Status code: {}, Response body: {}", 
                 response.statusCode(), response.body());

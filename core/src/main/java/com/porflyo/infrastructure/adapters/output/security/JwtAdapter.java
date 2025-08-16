@@ -1,7 +1,10 @@
 package com.porflyo.infrastructure.adapters.output.security;
 
+import java.text.ParseException;
 import java.time.Instant;
+import java.util.Date;
 
+import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSHeader;
 import com.nimbusds.jose.JWSSigner;
@@ -12,6 +15,13 @@ import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import com.porflyo.application.configuration.JwtConfig;
 import com.porflyo.application.ports.output.JwtPort;
+import com.porflyo.domain.exceptions.auth.AuthException;
+import com.porflyo.domain.exceptions.auth.JwtExpiredException;
+import com.porflyo.domain.exceptions.auth.JwtGenerationException;
+import com.porflyo.domain.exceptions.auth.JwtInvalidIssuerException;
+import com.porflyo.domain.exceptions.auth.JwtInvalidSignatureException;
+import com.porflyo.domain.exceptions.auth.JwtMalformedException;
+import com.porflyo.domain.exceptions.auth.JwtVerificationException;
 import com.porflyo.domain.model.user.UserClaims;
 
 import jakarta.inject.Inject;
@@ -27,6 +37,9 @@ public class JwtAdapter implements JwtPort {
     public JwtAdapter(JwtConfig jwtConfig) {
         this.jwtConfig = jwtConfig;
     }
+
+
+    // ────────────────────────── Generate ──────────────────────────
 
     @Override
     public String generateToken(UserClaims claims) {
@@ -52,40 +65,40 @@ public class JwtAdapter implements JwtPort {
             return signedJWT.serialize();
 
         } catch (Exception e) {
-            throw new RuntimeException("Failed to generate JWT token", e);
+            throw new JwtGenerationException(e.getMessage(), e);
         }
     }
+    
 
-    @Override
-    public boolean validateToken(String token) {
+    // ────────────────────────── Verify ──────────────────────────
+    public void verifyTokenOrThrow(String token) {
         try {
-            // Parse the signed JWT
-            SignedJWT signedJWT = SignedJWT.parse(token);
+            SignedJWT jwt = SignedJWT.parse(token);
 
-            // Create HMAC verifier
+            // Firm
             JWSVerifier verifier = new MACVerifier(jwtConfig.secret());
+            if (!jwt.verify(verifier)) 
+                throw new JwtInvalidSignatureException();
 
-            // Verify the signature
-            if (!signedJWT.verify(verifier)) {
-                return false;
-            }
+            // Claims
+            JWTClaimsSet c = jwt.getJWTClaimsSet();
 
-            // Check issuer
-            JWTClaimsSet claims = signedJWT.getJWTClaimsSet();
-            if (!ISSUER.equals(claims.getIssuer())) {
-                return false;
-            }
+            // Issuer
+            String iss = c.getIssuer();
+            if (!ISSUER.equals(iss)) 
+                throw new JwtInvalidIssuerException(ISSUER);
 
-            // Check expiration
-            if (claims.getExpirationTime() != null && 
-                claims.getExpirationTime().before(new java.util.Date())) {
-                return false;
-            }
+            // Expiration
+            Date exp = c.getExpirationTime();
+            if (exp != null && exp.before(new Date())) 
+                throw new JwtExpiredException();
 
-            return true;
-
-        } catch (Exception e) {
-            return false;
+        } catch (ParseException pe) {
+            // malformed token/base64/structure
+            throw new JwtMalformedException("Token is malformed: " + pe.getMessage());
+        
+        } catch (JOSEException je) {
+            throw new JwtVerificationException("Signature verification failed: " + je.getMessage(), je);
         }
     }
 
@@ -93,24 +106,27 @@ public class JwtAdapter implements JwtPort {
     public UserClaims extractClaims(String token) {
         try {
 
-            SignedJWT signedJWT = SignedJWT.parse(token);
-            JWSVerifier verifier = new MACVerifier(jwtConfig.secret());
-
-            if (!signedJWT.verify(verifier)) {
-                throw new RuntimeException("Invalid JWT signature");
-            }
+            verifyTokenOrThrow(token);
 
             // Extract claims
-            JWTClaimsSet claims = signedJWT.getJWTClaimsSet();
+            SignedJWT jwt = SignedJWT.parse(token);
+            JWTClaimsSet claims = jwt.getJWTClaimsSet();
             
             String sub = claims.getSubject();
             Instant iat = claims.getIssueTime().toInstant();
             Instant exp = claims.getExpirationTime().toInstant();
 
+            if (sub == null || iat == null || exp == null) {
+                throw new JwtMalformedException("Missing required claims (sub/iat/exp)");
+            }
+
             return new UserClaims(sub, iat, exp);
 
+        } catch (AuthException ae) {
+             throw ae;
+
         } catch (Exception e) {
-            throw new RuntimeException("Invalid JWT token", e);
+            throw new JwtMalformedException("Invalid JWT claims: " + e.getMessage());
         }
     }
 }
