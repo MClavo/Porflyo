@@ -8,6 +8,7 @@ import com.amazonaws.services.lambda.runtime.events.APIGatewayV2HTTPResponse;
 import com.porflyo.application.configuration.JwtConfig;
 import com.porflyo.application.ports.input.AuthUseCase;
 import com.porflyo.application.ports.output.JwtPort;
+import com.porflyo.domain.exceptions.auth.JwtMalformedException;
 import com.porflyo.domain.model.user.UserClaims;
 import com.porflyo.domain.model.user.UserSession;
 import com.porflyo.infrastructure.adapters.input.lambda.utils.LambdaHttpUtils;
@@ -92,24 +93,15 @@ public class AuthLambdaHandler {
      * @return an {@code APIGatewayV2HTTPResponse} indicating the result of the token validation
      */
     public APIGatewayV2HTTPResponse handleTokenValidation(APIGatewayV2HTTPEvent input) {
-        try {
-            String token = LambdaHttpUtils.extractCookieValue(input, "session");
+        String token = LambdaHttpUtils.extractCookieValue(input, "session");
 
-            if (token == null || token.trim().isEmpty()) {
-                return LambdaHttpUtils.createErrorResponse(401, "Missing or invalid token");
-            }
-
-            boolean isValid = jwtService.validateToken(token);
-            if (!isValid) {
-                return LambdaHttpUtils.createErrorResponse(401, "Invalid token");
-            }
-
-            return LambdaHttpUtils.createResponse(200, "Valid token");
-
-        } catch (Exception e) {
-            log.error("Error validating token: {}", e.getMessage(), e);
-            return LambdaHttpUtils.createErrorResponse(500, e.getMessage());
+        if (token == null || token.trim().isEmpty()) {
+            throw new JwtMalformedException("Missing or empty session token");
         }
+
+        jwtService.verifyTokenOrThrow(token);
+
+        return LambdaHttpUtils.createResponse(200, "Valid token");
     }
 
     /**
@@ -129,7 +121,7 @@ public class AuthLambdaHandler {
         try {
             log.debug("Received OAuth callback with input: {}", input);
             String code = LambdaHttpUtils.extractQueryParameter(input, "code");
-            log.debug("Extracted OAuth code: {}", code);
+            log.debug("Extracted OAuth code");
 
             String frontend = frontendConfig.url();
             long expiration = jwtConfig.expiration();
