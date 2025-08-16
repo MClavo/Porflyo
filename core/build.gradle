@@ -65,11 +65,15 @@ dependencies {
     testImplementation("org.mockito:mockito-core")
     testImplementation("org.mockito:mockito-junit-jupiter")
     testImplementation("io.micronaut.test:micronaut-test-junit5")
+    testImplementation("org.assertj:assertj-core:3.27.3")
     
-    // TestContainers for DynamoDB testing
+    // TestContainers for DynamoDB and S3 testing
     testImplementation("org.testcontainers:junit-jupiter")
     testImplementation("org.testcontainers:localstack")
     testImplementation("org.testcontainers:testcontainers")
+
+    // WireMock for API mocking
+    testImplementation("org.wiremock:wiremock-standalone:3.13.1")
 
     // Test annotation processors
     testAnnotationProcessor("org.projectlombok:lombok:1.18.38")
