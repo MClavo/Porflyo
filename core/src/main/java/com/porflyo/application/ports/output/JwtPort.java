@@ -13,12 +13,12 @@ public interface JwtPort {
     String generateToken(UserClaims claims);
 
     /**
-     * Validates the provided JWT token.
+     * Validates the provided JWT token and throws an exception if the token is invalid or expired.
      *
-     * @param token The JWT token to validate.
-     * @return true if the token is valid, false otherwise.
+     * @param token the JWT token to validate
+     * @throws AuthException if the token is invalid, expired, or otherwise fails validation
      */
-    boolean validateToken(String token);
+    void verifyTokenOrThrow(String token);
 
     /**
      * Extracts claims from the provided JWT token.
