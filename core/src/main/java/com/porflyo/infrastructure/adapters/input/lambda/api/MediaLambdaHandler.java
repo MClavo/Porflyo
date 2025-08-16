@@ -5,8 +5,8 @@ import org.slf4j.LoggerFactory;
 
 import com.amazonaws.services.lambda.runtime.events.APIGatewayV2HTTPEvent;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayV2HTTPResponse;
+import com.porflyo.application.dto.PresignedPostDto;
 import com.porflyo.application.ports.input.MediaUseCase;
-import com.porflyo.domain.model.dto.PresignedPostDto;
 import com.porflyo.infrastructure.adapters.input.lambda.api.dto.PresignRequestDto;
 import com.porflyo.infrastructure.adapters.input.lambda.utils.LambdaHttpUtils;
 import com.porflyo.infrastructure.configuration.S3Config;

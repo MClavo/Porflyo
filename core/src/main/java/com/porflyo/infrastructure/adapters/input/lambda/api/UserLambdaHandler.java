@@ -8,13 +8,15 @@ import org.slf4j.LoggerFactory;
 
 import com.amazonaws.services.lambda.runtime.events.APIGatewayV2HTTPEvent;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayV2HTTPResponse;
+import com.porflyo.application.dto.UserPatchDto;
 import com.porflyo.application.ports.input.UserUseCase;
 import com.porflyo.application.ports.output.JwtPort;
-import com.porflyo.domain.model.shared.EntityId;
+import com.porflyo.domain.model.ids.UserId;
 import com.porflyo.domain.model.user.User;
 import com.porflyo.domain.model.user.UserClaims;
 import com.porflyo.infrastructure.adapters.input.lambda.api.dto.PublicUserDto;
 import com.porflyo.infrastructure.adapters.input.lambda.api.mapper.PublicUserDtoMapper;
+import com.porflyo.infrastructure.adapters.input.lambda.api.mapper.UserPatchDtoMapper;
 import com.porflyo.infrastructure.adapters.input.lambda.utils.LambdaHttpUtils;
 
 import io.micronaut.core.type.Argument;
@@ -59,7 +61,7 @@ public class UserLambdaHandler {
             // /api/user/{request}
             String pathRequest = LambdaHttpUtils.extractPathSegment(input, 2); 
 
-            EntityId id = getUserIdFromCookie(input);
+            UserId id = getUserIdFromCookie(input);
             String body = input.getBody();
 
             return processUserRequest(id, body, pathRequest);
@@ -73,7 +75,7 @@ public class UserLambdaHandler {
 
     // ────────────────────────── Gateway ──────────────────────────
 
-	private APIGatewayV2HTTPResponse processUserRequest(EntityId userId, String body, String pathRequest) {
+	private APIGatewayV2HTTPResponse processUserRequest(UserId userId, String body, String pathRequest) {
         log.debug("Handling user request for path: {}", pathRequest);
         
         // User only gets saved in the OAuth flow, so we can assume it exists
@@ -103,7 +105,7 @@ public class UserLambdaHandler {
      * @param userId the ID of the user to find
      * @return an {@link APIGatewayV2HTTPResponse} containing the user's public data or an error message
      */
-    private APIGatewayV2HTTPResponse findUser(EntityId userId) {
+    private APIGatewayV2HTTPResponse findUser(UserId userId) {
         try {
             Optional<User> userOpt = userService.findById(userId);
 
@@ -129,11 +131,13 @@ public class UserLambdaHandler {
      * @param body   the JSON body containing the fields to update
      * @return an {@link APIGatewayV2HTTPResponse} containing the updated user's public data or an error message
      */
-    private APIGatewayV2HTTPResponse patchUser(EntityId userId, String body) {
+    private APIGatewayV2HTTPResponse patchUser(UserId userId, String body) {
         try {
             Map<String, Object> attributes = extractAttributesFromBody(body);
 
-            User user = userService.patch(userId, attributes);
+            UserPatchDto patch = UserPatchDtoMapper.toPatch(attributes);
+
+            User user = userService.patch(userId, patch);
             PublicUserDto dto = publicUserDtoMapper.toDto(user);
 
             log.debug("Patched user: {}, Attributes: {}", userId.value(), attributes);
@@ -155,7 +159,7 @@ public class UserLambdaHandler {
      * @param userId the ID of the user to delete
      * @return an {@link APIGatewayV2HTTPResponse} indicating success or failure
      */
-    private APIGatewayV2HTTPResponse deleteUser(EntityId userId) {
+    private APIGatewayV2HTTPResponse deleteUser(UserId userId) {
         try {
             userService.delete(userId);
             log.debug("Deleted user: {}", userId.value());
@@ -170,10 +174,10 @@ public class UserLambdaHandler {
 
     // ────────────────────────── Helpers ──────────────────────────
 
-    private EntityId getUserIdFromCookie(APIGatewayV2HTTPEvent input) {
+    private UserId getUserIdFromCookie(APIGatewayV2HTTPEvent input) {
         String cookie = LambdaHttpUtils.extractCookieValue(input, "session");
         UserClaims claims = jwtService.extractClaims(cookie);
-        return new EntityId(claims.getSub());
+        return new UserId(claims.getSub());
     }
 
     /* Extracts attributes from the request body */

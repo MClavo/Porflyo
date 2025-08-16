@@ -4,10 +4,10 @@ import java.util.List;
 
 import com.amazonaws.services.lambda.runtime.events.APIGatewayV2HTTPEvent;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayV2HTTPResponse;
-import com.porflyo.application.ports.input.RepoUseCase;
+import com.porflyo.application.ports.input.ProviderUseCase;
 import com.porflyo.application.ports.output.JwtPort;
+import com.porflyo.domain.model.ids.UserId;
 import com.porflyo.domain.model.provider.ProviderRepo;
-import com.porflyo.domain.model.shared.EntityId;
 import com.porflyo.domain.model.user.UserClaims;
 import com.porflyo.infrastructure.adapters.input.lambda.utils.LambdaHttpUtils;
 
@@ -26,7 +26,7 @@ import jakarta.inject.Singleton;
  * <p>
  * Dependencies are injected via constructor:
  * <ul>
- *   <li>{@link RepoUseCase} for repository-related operations</li>
+ *   <li>{@link ProviderUseCase} for repository-related operations</li>
  *   <li>{@link JwtPort} for extracting JWT claims from session cookies</li>
  *   <li>{@link JsonMapper} for serializing responses to JSON</li>
  * </ul>
@@ -37,12 +37,12 @@ import jakarta.inject.Singleton;
 @Singleton
 public class ProviderRepoLambdaHandler {
 
-    private final RepoUseCase repoService;
+    private final ProviderUseCase repoService;
     private final JwtPort jwtService;
     private final JsonMapper jsonMapper;
 
     @Inject
-    public ProviderRepoLambdaHandler(RepoUseCase repoService, JwtPort jwtService, JsonMapper jsonMapper) {
+    public ProviderRepoLambdaHandler(ProviderUseCase repoService, JwtPort jwtService, JsonMapper jsonMapper) {
         this.repoService = repoService;
         this.jwtService = jwtService;
         this.jsonMapper = jsonMapper;
@@ -69,7 +69,7 @@ public class ProviderRepoLambdaHandler {
                 return LambdaHttpUtils.createErrorResponse(401, "Unauthorized: Invalid session");
             }
 
-            EntityId userId = new EntityId(claims.getSub());
+            UserId userId = new UserId(claims.getSub());
 
             // Get user data
             List<ProviderRepo> repos = repoService.getUserRepos(userId);
