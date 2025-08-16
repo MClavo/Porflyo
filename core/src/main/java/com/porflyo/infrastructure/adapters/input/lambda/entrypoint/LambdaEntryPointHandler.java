@@ -9,6 +9,7 @@ import com.porflyo.infrastructure.adapters.input.lambda.api.MediaLambdaHandler;
 import com.porflyo.infrastructure.adapters.input.lambda.api.ProviderRepoLambdaHandler;
 import com.porflyo.infrastructure.adapters.input.lambda.api.UserLambdaHandler;
 import com.porflyo.infrastructure.adapters.input.lambda.auth.AuthLambdaHandler;
+import com.porflyo.infrastructure.adapters.input.lambda.exception.LambdaExceptionTranslator;
 import com.porflyo.infrastructure.adapters.input.lambda.utils.LambdaHttpUtils;
 import com.porflyo.infrastructure.adapters.output.github.GithubAdapter;
 
@@ -66,30 +67,42 @@ public class LambdaEntryPointHandler extends MicronautRequestHandler<APIGatewayV
             
             String[] pathParts = path.split("/");
             String startingRoute = pathParts[1];
-            
-            // Route the request to the appropriate handlers based on path
-            switch (startingRoute) {
-                case "oauth":
-                return oauthHandler(path, input);
-                
-                case "api":
-                return apiHandler(path, input);
-                
-                case "logout":
-                return authLambdaHandler.handleLogout(input);
-                
-                default:
-                log.warn("No handler found for path: {}", path);
-                return LambdaHttpUtils.createErrorResponse(404, "Not Found");
-            }
-            
+
+            return processRequest(input, path);
+
         } catch (Exception e){
             log.error("Error processing request for path: {}, error: {}", input.getRawPath(), e.getMessage(), e);
-            return LambdaHttpUtils.createErrorResponse(500, e.getMessage());
+            return LambdaExceptionTranslator.toResponse(e, input);
         }
         
     }
 
+
+    // ────────────────────────── Gateway ──────────────────────────
+
+    private APIGatewayV2HTTPResponse processRequest(APIGatewayV2HTTPEvent input, String path) {
+        String[] pathParts = path.split("/");
+        String startingRoute = pathParts[1];
+        
+        // Route the request to the appropriate handlers based on path
+        switch (startingRoute) {
+            case "oauth":
+                return oauthHandler(path, input);
+            
+            case "api":
+                return apiHandler(path, input);
+            
+            case "logout":
+                return authLambdaHandler.handleLogout(input);
+            
+            default:
+                log.warn("No handler found for path: {}", path);
+                return LambdaHttpUtils.createErrorResponse(404, "Not Found");
+        }
+    }
+
+
+    //  ────────────────────────── OAUTH ──────────────────────────
     
     private APIGatewayV2HTTPResponse oauthHandler(String path, APIGatewayV2HTTPEvent input){
         
@@ -100,13 +113,13 @@ public class LambdaEntryPointHandler extends MicronautRequestHandler<APIGatewayV
 
     }
 
+
+    //  ────────────────────────── API ──────────────────────────
+    
     private APIGatewayV2HTTPResponse apiHandler(String path, APIGatewayV2HTTPEvent input){
         // Simulate API Gateway token validation,
         // SAM can not replicate the API Gateway's token validation process
-        APIGatewayV2HTTPResponse validation = authLambdaHandler.handleTokenValidation(input);
-
-        if(validation.getStatusCode() != 200)
-            return validation;
+        authLambdaHandler.handleTokenValidation(input);     // Throws AuthException if token is invalid
 
         // Extract the route from the path
         String route = LambdaHttpUtils.extractPathSegment(input, 1); // Extracts {segment} of /api/{segment}/whatever
