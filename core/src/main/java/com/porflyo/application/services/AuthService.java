@@ -66,7 +66,7 @@ public class AuthService implements AuthUseCase {
             User user = generateUserFromProviderAccount(providerUser, accessToken);
 
             // Save or update new user in the repository
-            saveOrUpdateUser(user);
+            user = saveOrUpdateUser(user);
 
             UserClaims claims = new UserClaims(
                 user.id().value(),
@@ -113,7 +113,7 @@ public class AuthService implements AuthUseCase {
         );
     }
 
-    private void saveOrUpdateUser(User user) {
+    private User saveOrUpdateUser(User user) {
         // Check if user already exists by provider ID
         User existingUser = userRepository.findByProviderId(
                 user.provider().providerUserId())
@@ -121,10 +121,11 @@ public class AuthService implements AuthUseCase {
 
         // Save new user or patch provider account if user already exists
         if (existingUser != null) {
-            user = updateProviderAccount(existingUser, user); // Update provider account if necessary
+            return updateProviderAccount(existingUser, user); // Update provider account if necessary
 
         } else {
             saveNewUser(user); // Save new user
+            return user;
         }
     }
 

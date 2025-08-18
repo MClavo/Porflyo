@@ -14,7 +14,7 @@ public interface ProviderPort {
     String getProviderName();
 
     /**
-     * Builds the authorization URL for GitHub OAuth.
+     * Builds the authorization URL for OAuth.
      *
      * @return The authorization URL as a String.
      */
