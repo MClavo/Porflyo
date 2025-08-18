@@ -1,5 +1,7 @@
 package com.porflyo.infrastructure.adapters.output.dynamodb.repository;
 
+import static com.porflyo.infrastructure.adapters.output.dynamodb.common.DdbKeys.GSI_PROVIDER_USER_ID;
+
 import java.util.Optional;
 
 import org.slf4j.Logger;
@@ -86,7 +88,7 @@ public class DdbUserRepository implements UserRepository {
 
         // Even if there is only one item, we need SdkIterable to handle pagination
         SdkIterable<Page<DdbUserItem>> result = table
-            .index("provider-user-id-index")
+            .index(GSI_PROVIDER_USER_ID)
             .query(query);
 
         DdbUserItem dto = result.stream()
@@ -95,9 +97,9 @@ public class DdbUserRepository implements UserRepository {
                 .orElse(null);
         
         if (dto == null) {
-            log.debug("User not found for provider ID: {}", providerId);
+            log.debug("User not found for provider ID: {}", providerId.value());
         } else {
-            log.debug("Found user for provider ID: {}", providerId);
+            log.debug("Found user for provider ID: {}", providerId.value());
         }
 
         return Optional.ofNullable(dto).map(ddbUserMapper::toDomain);

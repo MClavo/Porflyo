@@ -116,6 +116,7 @@ public class UserLambdaHandler {
             // User has sensitive data, so we return a PublicUserDto
             PublicUserDto dto = publicUserDtoMapper.toDto(userOpt.get());
             log.debug("User search: {}", userId.value());
+
             return LambdaHttpUtils.createResponse(200, jsonMapper.writeValueAsString(dto));
 
         } catch (java.io.IOException e) {

@@ -23,6 +23,11 @@ quota:
   max-saved-sections: 10
   max-portfolios: 3
 
+github:
+  api:
+    base-url: https://api.github.com
+    oauth-base-url: https://github.com
+    timeout: 30
   
 logger:
   levels:

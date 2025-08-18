@@ -24,13 +24,13 @@ public final class SavedSectionTableSchema {
                     .tags(StaticAttributeTags.primarySortKey()))
 
             // ────────────────────────── Section Attributes ──────────────────────────
-            .addAttribute(String.class, a -> a.name("name")
+            .addAttribute(String.class, a -> a.name("n")
                     .getter(DdbSavedSectionItem::getName)
                     .setter(DdbSavedSectionItem::setName))
-            .addAttribute(byte[].class, a -> a.name("section")
+            .addAttribute(byte[].class, a -> a.name("s")
                     .getter(DdbSavedSectionItem::getSection)
                     .setter(DdbSavedSectionItem::setSection))
-            .addAttribute(Integer.class, a -> a.name("version")
+            .addAttribute(Integer.class, a -> a.name("v")
                 .getter(DdbSavedSectionItem::getVersion)
                 .setter(DdbSavedSectionItem::setVersion))
             .build();

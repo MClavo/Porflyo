@@ -49,7 +49,10 @@ public final class DdbUserMapper {
         if(u.description() != null) {
             try {
                 byte[] compressedDescription = dataCompressor.compress(u.description());
+                byte[] compressedSocials = dataCompressor.compress(u.socials());
+
                 dto.setDescription(compressedDescription);
+                dto.setSocials(compressedSocials);
 
             } catch (Exception e) {
                 throw new RuntimeException("Failed to compress user description", e);
@@ -57,7 +60,6 @@ public final class DdbUserMapper {
         }
 
         dto.setProfileImage(u.profileImage());
-        dto.setSocials(u.socials());
         dto.setProviderUserId(u.provider().providerUserId().value());
         dto.setProviderUserName(u.provider().providerUserName());
         dto.setProviderAvatarUrl(u.provider().providerAvatarUrl() != null ? u.provider().providerAvatarUrl().toString() : null);
@@ -78,7 +80,8 @@ public final class DdbUserMapper {
 
         try {
             String description = dataCompressor.decompress(d.getDescription(), String.class);
-            
+            Map<String, String> socials = dataCompressor.decompressMap(d.getSocials(), String.class, String.class);
+
             return new User(
                     new UserId(idFrom(USER_PK_PREFIX, d.getPK())),
                     providerAccount,
@@ -86,7 +89,7 @@ public final class DdbUserMapper {
                     d.getEmail(),
                     description,
                     d.getProfileImage(),
-                    d.getSocials()
+                    socials
             );
 
         } catch (Exception e) {
@@ -99,40 +102,45 @@ public final class DdbUserMapper {
      * Map<String, Object> Used for patching user attributes.
      */
     public DdbUserItem patchToItem(@NonNull UserId id, UserPatchDto patch) {
-        DdbUserItem patchDto = new DdbUserItem();
+        DdbUserItem userItem = new DdbUserItem();
         String pk = pk(USER_PK_PREFIX, id.value());
         String sk = USER_SK_PREFIX;
 
-        patchDto.setPK(pk);
-        patchDto.setSK(sk);
+        userItem.setPK(pk);
+        userItem.setSK(sk);
         
-        patchDto.setName(patch.name().orElse(null));
+        userItem.setName(patch.name().orElse(null));
+        userItem.setEmail(patch.email().orElse(null));
 
         try {
             byte[] compressedDescription = patch.description().isPresent()
                 ? dataCompressor.compress(patch.description().get())
                 : null;
-            patchDto.setDescription(compressedDescription);
+            userItem.setDescription(compressedDescription);
 
         } catch (Exception e) {
             throw new RuntimeException("Failed to compress user description", e);
         }
 
-        patchDto.setProfileImage(patch.avatarUrl().orElse(null));
+        try {
+            byte[] compressedSocials = patch.socials().isPresent()
+                ? dataCompressor.compress(patch.socials().get())
+                : null;
+            userItem.setSocials(compressedSocials);
 
-        if (patch.socials().isPresent()) 
-            patchDto.setSocials(patch.socials().get());
-        else 
-            patchDto.setSocials(Map.of());
-        
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to compress user socials", e);
+        }
+
+        userItem.setProfileImage(patch.avatarUrl().orElse(null));
 
         // Provider-related fields are not included in UserPatchDto, so they remain null
-        patchDto.setProviderUserId(null);
-        patchDto.setProviderUserName(null);
-        patchDto.setProviderAvatarUrl(null);
-        patchDto.setProviderAccessToken(null);
+        userItem.setProviderUserId(null);
+        userItem.setProviderUserName(null);
+        userItem.setProviderAvatarUrl(null);
+        userItem.setProviderAccessToken(null);
 
-        return patchDto;
+        return userItem;
     }
 
     public DdbUserItem providerToItem(@NonNull UserId id, ProviderAccount providerAccount) {

@@ -1,8 +1,9 @@
 package com.porflyo.infrastructure.adapters.output.dynamodb.schema;
 
+import static com.porflyo.infrastructure.adapters.output.dynamodb.common.DdbKeys.GSI_PROVIDER_USER_ID;
+
 import com.porflyo.infrastructure.adapters.output.dynamodb.Item.DdbUserItem;
 
-import software.amazon.awssdk.enhanced.dynamodb.EnhancedType;
 import software.amazon.awssdk.enhanced.dynamodb.TableSchema;
 import software.amazon.awssdk.enhanced.dynamodb.mapper.StaticAttributeTags;
 
@@ -31,39 +32,38 @@ public final class UserTableSchema {
                     .tags(StaticAttributeTags.primarySortKey()))
             
             // GSI for provider user ID, used for queries in OAuth flow
-            .addAttribute(String.class, a -> a.name("providerUserId")
+            .addAttribute(String.class, a -> a.name("PID")
                 .getter(DdbUserItem::getProviderUserId)
                 .setter(DdbUserItem::setProviderUserId)
-                .tags(StaticAttributeTags.secondaryPartitionKey("provider-user-id-index")))
+                .tags(StaticAttributeTags.secondaryPartitionKey(GSI_PROVIDER_USER_ID)))
             
                 
             // ────────────────────────── User Attributes ──────────────────────────
             .addAttribute(String.class, a -> a.name("userId")
                     .getter(DdbUserItem::getUserId)
                     .setter(DdbUserItem::setUserId))
-            .addAttribute(String.class, a -> a.name("name")
+            .addAttribute(String.class, a -> a.name("nm")
                     .getter(DdbUserItem::getName)
                     .setter(DdbUserItem::setName))
-            .addAttribute(String.class, a -> a.name("email")
+            .addAttribute(String.class, a -> a.name("em")
                     .getter(DdbUserItem::getEmail)
                     .setter(DdbUserItem::setEmail))
-            .addAttribute(byte[].class, a -> a.name("description")
+            .addAttribute(byte[].class, a -> a.name("ds")
                     .getter(DdbUserItem::getDescription)
                     .setter(DdbUserItem::setDescription))
-            .addAttribute(String.class, a -> a.name("profileImage")
+            .addAttribute(String.class, a -> a.name("pi")
                     .getter(DdbUserItem::getProfileImage)
                     .setter(DdbUserItem::setProfileImage))
-            .addAttribute(EnhancedType.mapOf(String.class, String.class),
-                    a -> a.name("socials")
+            .addAttribute(byte[].class, a -> a.name("sc")
                         .getter(DdbUserItem::getSocials)
                         .setter(DdbUserItem::setSocials))
-            .addAttribute(String.class, a -> a.name("providerUserName")
+            .addAttribute(String.class, a -> a.name("pn")
                     .getter(DdbUserItem::getProviderUserName)
                     .setter(DdbUserItem::setProviderUserName))
-            .addAttribute(String.class, a -> a.name("providerAvatarUrl")
+            .addAttribute(String.class, a -> a.name("pa")
                     .getter(DdbUserItem::getProviderAvatarUrl)
                     .setter(DdbUserItem::setProviderAvatarUrl))
-            .addAttribute(String.class, a -> a.name("providerAccessToken")
+            .addAttribute(String.class, a -> a.name("pt")
                     .getter(DdbUserItem::getProviderAccessToken)
                     .setter(DdbUserItem::setProviderAccessToken))
             .build();

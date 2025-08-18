@@ -1,5 +1,6 @@
 package com.porflyo.infrastructure.adapters.output.dynamodb.repository;
 
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -140,6 +141,7 @@ public class DdbUserRepositoryIntegrationTest implements TestPropertyProvider {
         // When
         UserPatchDto patch = new UserPatchDto(
             Optional.of("User One Updated"),
+            Optional.empty(),
             Optional.of("NEW DESCRIPTION"),
             Optional.empty(),
             Optional.empty()
@@ -198,6 +200,117 @@ public class DdbUserRepositoryIntegrationTest implements TestPropertyProvider {
         assertTrue(repo.findById(userId1).isEmpty(), "User should not exist after deletion");
         assertTrue(repo.findByProviderId(providerId1).isEmpty(), "GSI should not find deleted user");
     }
-}
 
+    @Test
+    @DisplayName("should add socials when updating user")
+    void shouldAddAndChangeSocials_whenUpdatingUser() {
+        // Given
+        repo.save(user);
+        assertTrue(repo.findById(userId1).isPresent(), "Precondition: user exists");
+
+
+        Map<String, String> newSocials = Map.of(
+            "twitter", "new_twitter_handle",
+            "facebook", "new_facebook_handle",
+            "web", "new_web_handle"
+        );
+
+        Map<String, String> newSocials2 = Map.of(
+            "test", "only_one"
+        );
+
+        // When
+        UserPatchDto patch = new UserPatchDto(
+            Optional.empty(),
+            Optional.empty(),
+            Optional.empty(),
+            Optional.empty(),
+            Optional.of(newSocials)
+        );
+        
+        UserPatchDto patch2 = new UserPatchDto(
+            Optional.empty(),
+            Optional.empty(),
+            Optional.empty(),
+            Optional.empty(),
+            Optional.of(newSocials2)
+        );
+
+
+        User patched = repo.patch(userId1, patch);
+
+        // Then
+        assertEquals("new_twitter_handle", patched.socials().get("twitter"));
+        assertEquals("new_facebook_handle", patched.socials().get("facebook"));
+        assertEquals("new_web_handle", patched.socials().get("web"));
+
+        User patched2 = repo.patch(userId1, patch2);
+
+        assertEquals("only_one", patched2.socials().get("test"));
+        assertNull(patched2.socials().get("twitter"), "Old socials should be removed");
+        assertNull(patched2.socials().get("facebook"), "Old socials should be removed");
+        assertNull(patched2.socials().get("web"), "Old socials should be removed");
+    }
+
+
+    @Test
+    @DisplayName("should delete socials when updating user")
+    void shouldDeleteAndChangeSocials_whenUpdatingUser() {
+        // Given
+        repo.save(user);
+        assertTrue(repo.findById(userId1).isPresent(), "Precondition: user exists");
+
+
+        Map<String, String> newSocials = Map.of(
+            "twitter", "new_twitter_handle",
+            "facebook", "new_facebook_handle",
+            "web", "new_web_handle"
+         );
+
+         Map<String, String> newSocials2 = Map.of(
+            "twitter", "new_twitter_handle",
+            "facebook", "new_facebook_handle"
+         );
+
+        // When
+        UserPatchDto patch1 = new UserPatchDto(
+            Optional.empty(),
+            Optional.empty(),
+            Optional.empty(),
+            Optional.empty(),
+            Optional.of(newSocials)
+        );
+
+        UserPatchDto patch2 = new UserPatchDto(
+            Optional.empty(),
+            Optional.empty(),
+            Optional.empty(),
+            Optional.empty(),
+            Optional.of(Map.of()) // Empty map to delete socials
+        );
+
+        UserPatchDto patch3 = new UserPatchDto(
+            Optional.empty(),
+            Optional.empty(),
+            Optional.empty(),
+            Optional.empty(),
+            Optional.of(newSocials2)
+        );
+
+
+        repo.patch(userId1, patch1);
+        User patched = repo.patch(userId1, patch2);
+
+        // Then
+        assertTrue(patched.socials().isEmpty(), "Socials should be empty after deletion");
+
+        patched = repo.patch(userId1, patch3);
+
+        assertEquals("new_twitter_handle", patched.socials().get("twitter"));
+        assertEquals("new_facebook_handle", patched.socials().get("facebook"));
+        assertNull(patched.socials().get("web"));
+    }
+
+
+}
 

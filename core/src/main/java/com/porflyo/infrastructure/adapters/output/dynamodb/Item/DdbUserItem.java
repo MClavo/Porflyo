@@ -30,11 +30,11 @@ public class DdbUserItem {
     private String userId;
     private String name;
     private String email;
-    private byte[] description; // Compressed description for WCU optimization
-    private String profileImage; // S3 key
-    private Map<String, String> socials;
+    private byte[] description;     // Compressed description for WCU optimization
+    private String profileImage;    // S3 key
+    private byte[] socials;         // Map<String, String>
 
-    private String providerUserId; // used as GSI partition key
+    private String providerUserId;  // used as GSI partition key
     private String providerUserName;
     private String providerAvatarUrl;
     private String providerAccessToken; 
@@ -68,9 +68,9 @@ public class DdbUserItem {
 
     public void setDescription(byte[] description) { this.description = description; }
 
-    public Map<String, String> getSocials() { return socials; }
+    public byte[] getSocials() { return socials; }
 
-    public void setSocials(Map<String, String> socials) { this.socials = socials; }
+    public void setSocials(byte[] socials) { this.socials = socials; }
 
     public String getProfileImage() { return profileImage; }
 

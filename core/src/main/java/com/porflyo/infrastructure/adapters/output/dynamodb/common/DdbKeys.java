@@ -12,8 +12,8 @@ public final class DdbKeys {
     
     public static final String USER_PORTFOLIO_SK_PREFIX = "PORTFOLIO#";
     public static final String USER_SAVED_SECTION_SK_PREFIX = "SSECTION#";
-    public static final String USER_MEDIA_SK_PREFIX = "MEDIA";
     public static final String USER_QUOTA_SK_PREFIX = "QUOTA";
+    public static final String USER_MEDIA_SK_PREFIX = "MEDIA";
 
     
     // ────────────────────────── SLUG ──────────────────────────

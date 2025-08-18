@@ -11,6 +11,7 @@ public final class UserPatchDtoMapper {
     public static UserPatchDto toPatch(Map<String, Object> attributes) {
         return new UserPatchDto(
             extractOptionalString(attributes, "name"),
+            extractOptionalString(attributes, "email"),
             extractOptionalString(attributes, "description"),
             extractOptionalString(attributes, "avatarUrl"),
             extractOptionalSocials(attributes)
@@ -29,9 +30,10 @@ public final class UserPatchDtoMapper {
                     validatedSocials.put(key, value);
                 }
             }
-            if (!validatedSocials.isEmpty()) {
-                return Optional.of(validatedSocials);
-            }
+            // Return an Optional present even if the map is empty, because an explicit
+            // empty map (socials: {}) from the client should be treated as a deliberate
+            // update to clear socials.
+            return Optional.of(validatedSocials);
         }
         return Optional.empty();
     }

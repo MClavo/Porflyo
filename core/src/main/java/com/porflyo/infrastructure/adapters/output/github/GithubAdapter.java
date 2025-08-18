@@ -1,5 +1,6 @@
 package com.porflyo.infrastructure.adapters.output.github;
 
+import java.io.IOException;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.net.http.HttpClient;
@@ -21,15 +22,24 @@ import com.porflyo.infrastructure.adapters.output.github.dto.GithubUserResponseD
 import com.porflyo.infrastructure.adapters.output.github.exception.GithubApiException;
 import com.porflyo.infrastructure.adapters.output.github.exception.GithubAuthenticationException;
 import com.porflyo.infrastructure.adapters.output.github.exception.GithubConfigurationException;
+import com.porflyo.infrastructure.adapters.output.github.exception.TransientGithubException;
 import com.porflyo.infrastructure.adapters.output.github.mapper.GithubDtoMapper;
 import com.porflyo.infrastructure.configuration.GithubConfig;
 import com.porflyo.infrastructure.configuration.ProviderOAuthConfig;
 
+import io.micronaut.retry.annotation.Retryable;
 import io.micronaut.serde.ObjectMapper;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 
 @Singleton
+@Retryable(
+    attempts = "3",
+    delay = "300ms",
+    multiplier = "2",
+    maxDelay = "2s",
+    includes = { TransientGithubException.class }
+)
 public class GithubAdapter implements ProviderPort {
     
     private static final Logger log = LoggerFactory.getLogger(GithubAdapter.class);
@@ -251,9 +261,16 @@ public class GithubAdapter implements ProviderPort {
      * @throws Exception if an error occurs while sending the request or mapping the response
      */
     private <T> T send(HttpRequest request, Class<T> clazz) throws Exception {
-        HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-        validateResponse(response, request);
-        return parseResponse(response, clazz);
+        try {
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            validateResponse(response, request); 
+            
+            return parseResponse(response, clazz);
+         
+        } catch (IOException e) {
+            // Transitory fail -> retry
+            throw new TransientGithubException("Transient network error calling GitHub", e);
+    }
     }
 
     /**
@@ -273,19 +290,22 @@ public class GithubAdapter implements ProviderPort {
         log.error("HTTP request failed with status code: {} and body: {}", response.statusCode(), response.body());
         
         String uri = request.uri().toString();
-        boolean isOAuthTokenExchange = uri.contains("/oauth/access_token");
-
 
         // Authentication/Authorization: 401/403 on any endpoint
-        // and also 400 specifically for the token exchange (bad_verification_code, etc.)
-        if (status == 401 || status == 403 || (isOAuthTokenExchange && status == 400)) {
-            if (isOAuthTokenExchange) {
-                logOAuthErrorDetails(request);
-            }
+        // not retry
+        if (status == 401 || status == 403) {
             throw new GithubAuthenticationException(
                 "GitHub authentication failed with status code: " + status + ". Response: " + response.body()
             );
         }
+
+        // 5xx -> transient -> retry
+        if (status >= 500 && status <= 599) {
+            throw new TransientGithubException(
+                "GitHub transient error " + status + " for " + uri + ". Body: " + response.body()
+            );
+        }
+
 
         // Handle general API errors
         throw new GithubApiException(
@@ -294,20 +314,6 @@ public class GithubAdapter implements ProviderPort {
         );
     }
 
-    /**
-     * Logs detailed error information for OAuth failures.
-     *
-     * @param request the failed OAuth request
-     */
-    private void logOAuthErrorDetails(HttpRequest request) {
-        log.error("OAuth token exchange failed. This could be due to:");
-        log.error("1. Invalid or expired authorization code");
-        log.error("2. Incorrect OAuth client configuration");
-        log.error("3. Mismatched redirect URI");
-        log.error("4. Invalid client credentials");
-        log.error("Request URI: {}", request.uri());
-        // Note: Intentionally not logging headers as they may contain sensitive information
-    }
 
     /**
      * Parses the HTTP response body to the specified class type.
