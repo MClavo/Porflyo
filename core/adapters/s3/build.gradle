@@ -1,0 +1,10 @@
+plugins { id 'porflyo.application' }
+
+dependencies {
+    implementation 'io.micronaut.aws:micronaut-aws-sdk-v2'
+    implementation('software.amazon.awssdk:s3')
+
+    testImplementation 'org.testcontainers:junit-jupiter'
+    testImplementation 'org.testcontainers:localstack'
+    testImplementation 'io.micronaut.test:micronaut-test-junit5'
+}

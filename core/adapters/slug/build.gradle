@@ -1,0 +1,6 @@
+plugins { id 'porflyo.application' }
+
+dependencies {
+  implementation("com.github.slugify:slugify:3.0.7")
+  implementation("com.ibm.icu:icu4j:74.2")
+}

@@ -1,0 +1,5 @@
+plugins { id 'porflyo.lambda-handler' }
+
+application {
+    mainClass = 'com.porflyo.ApiNativeEntrypoint'
+}

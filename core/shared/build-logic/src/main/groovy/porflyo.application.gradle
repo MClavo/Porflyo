@@ -1,0 +1,21 @@
+plugins { 
+    id 'java'
+    id 'io.micronaut.library'
+    id 'porflyo.micronaut-base'
+}
+
+dependencies {
+    implementation project(':shared:domain')
+    implementation project(':shared:application')
+    testImplementation project(':shared:application').sourceSets.test.output
+}
+
+micronaut {
+    runtime("lambda_provided")
+    testRuntime("junit5")
+
+    processing {
+        incremental true
+        annotations 'com.porflyo.*'
+    }
+}

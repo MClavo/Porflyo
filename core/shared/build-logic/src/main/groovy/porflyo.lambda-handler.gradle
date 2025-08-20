@@ -1,0 +1,45 @@
+plugins {
+  id 'io.micronaut.application'
+  id 'io.micronaut.aot'
+  id 'com.gradleup.shadow'
+
+  id 'porflyo.micronaut-base'
+  id 'porflyo.application'
+}
+
+dependencies {
+    implementation project(':shared:environments')
+    
+    implementation project(':handlers:handlers-common')
+
+    implementation project(':adapters:dynamodb')
+    implementation project(':adapters:github')
+    implementation project(':adapters:jwt')
+    implementation project(':adapters:s3')
+    implementation project(':adapters:slug')
+}
+
+micronaut {
+    runtime("lambda_provided")
+    testRuntime("junit5")
+  
+    processing {
+        incremental true
+        annotations 'com.porflyo.*'
+    }
+  
+    aot {
+        optimizeServiceLoading = true
+        convertYamlToJava = true
+        precomputeOperations = true
+        cacheEnvironment = true
+        optimizeClassLoading = true
+        deduceEnvironment = false
+        optimizeNetty = false
+        replaceLogbackXml = false
+    }
+}
+
+tasks.named("dockerfileNative") {
+    jdkVersion = "21"
+}

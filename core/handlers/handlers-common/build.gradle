@@ -1,0 +1,16 @@
+plugins {
+    id 'porflyo.application' 
+} 
+
+dependencies {
+    implementation 'io.micronaut.aws:micronaut-aws-sdk-v2'
+    implementation("io.micronaut.aws:micronaut-aws-lambda-events-serde")
+    implementation("io.micronaut.aws:micronaut-function-aws") 
+    implementation("io.micronaut.aws:micronaut-function-aws-custom-runtime")
+    implementation("io.micronaut:micronaut-http-client-jdk") {
+        exclude group: 'io.netty' 
+    }
+    implementation("com.amazonaws:aws-lambda-java-events")
+    implementation 'software.amazon.awssdk:dynamodb-enhanced:2.32.13'
+    implementation 'software.amazon.awssdk:dynamodb'
+}

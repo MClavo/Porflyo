@@ -1,0 +1,5 @@
+plugins { id 'porflyo.application' }
+
+dependencies {
+    testImplementation("org.wiremock:wiremock-standalone:3.13.1")
+}

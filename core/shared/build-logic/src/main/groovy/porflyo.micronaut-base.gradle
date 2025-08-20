@@ -1,0 +1,50 @@
+plugins { 
+    id 'java'
+    id 'io.micronaut.library'
+}
+
+dependencies {
+
+    // Micronaut BOM
+    implementation platform("io.micronaut.platform:micronaut-platform:4.9.1")
+    
+    // Annotation processors
+    annotationProcessor("io.micronaut.serde:micronaut-serde-processor")
+    annotationProcessor("io.micronaut.validation:micronaut-validation-processor")
+
+    // Core Micronaut dependencies
+    implementation("io.micronaut:micronaut-core-processor")
+    implementation("io.micronaut.validation:micronaut-validation")
+    implementation("io.micronaut.serde:micronaut-serde-jackson")
+    implementation("io.micronaut:micronaut-retry")
+
+
+    // Runtime dependencies
+    runtimeOnly("org.yaml:snakeyaml")
+    runtimeOnly("ch.qos.logback:logback-classic")
+
+    // Test dependencies
+    testImplementation("org.junit.jupiter:junit-jupiter-api")
+    testImplementation("org.junit.jupiter:junit-jupiter-params")
+    testImplementation("org.junit.jupiter:junit-jupiter")
+    testImplementation(platform("org.junit:junit-bom:5.10.2"))
+    testImplementation("org.mockito:mockito-core")
+    testImplementation("org.mockito:mockito-junit-jupiter")
+    testImplementation("io.micronaut.test:micronaut-test-junit5")
+    testImplementation("org.assertj:assertj-core:3.27.3")
+
+    // Test annotation processors
+    testAnnotationProcessor("org.projectlombok:lombok:1.18.38")
+    
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
+}
+
+micronaut {
+    runtime("lambda_provided")
+    testRuntime("junit5")
+
+    processing {
+        incremental true
+        annotations 'com.porflyo.*'
+    }
+}

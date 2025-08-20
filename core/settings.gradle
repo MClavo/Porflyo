@@ -1,1 +1,24 @@
-rootProject.name = 'core'
+rootProject.name = "core"
+
+includeBuild('shared/build-logic')
+
+include(
+
+    // Core
+    "shared:domain",
+    "shared:application",
+    "shared:environments",
+
+    // Adapters 
+    "adapters:dynamodb",
+    "adapters:s3",
+    "adapters:github",
+    "adapters:jwt",
+    "adapters:slug",
+
+    // Handlers (1 lambda = 1 module)
+    "handlers:handlers-common",          // Common utilities for handlers
+    "handlers:authentication",
+    "handlers:oauth",
+    "handlers:api"
+)

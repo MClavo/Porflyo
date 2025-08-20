@@ -1,0 +1,11 @@
+plugins { id 'porflyo.lambda-handler' }
+
+application {
+    mainClass = 'com.porflyo.OauthNativeEntrypoint'
+}
+
+
+dependencies {
+
+}
+
