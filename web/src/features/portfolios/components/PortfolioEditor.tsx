@@ -24,6 +24,8 @@ import { SectionCard } from './SectionCard';
 import { SectionEditor } from './SectionEditor';
 import { PortfolioSaveAction } from './PortfolioSaveAction';
 import { SavedSectionsPanel } from './SavedSectionsPanel';
+import { SlugField } from './SlugField';
+import { PublishedToggle } from './PublishedToggle';
 import type { SavePipelineResult } from '../services/savePipeline';
 
 interface PortfolioEditorProps {
@@ -37,6 +39,7 @@ export function PortfolioEditor({ portfolioId, initialData, onSubmit, isLoading 
   const [showAddSectionMenu, setShowAddSectionMenu] = useState(false);
   const [showSavedSections, setShowSavedSections] = useState(false);
   const [saveResult, setSaveResult] = useState<SavePipelineResult | null>(null);
+  const [isSlugValidAndAvailable, setIsSlugValidAndAvailable] = useState(true);
 
   const methods = useForm<PortfolioFormData>({
     resolver: zodResolver(portfolioFormSchema),
@@ -105,13 +108,31 @@ export function PortfolioEditor({ portfolioId, initialData, onSubmit, isLoading 
     console.log('Saving section:', section, 'with name:', name);
   };
 
-  // Slug validation for publishing
-  const validateSlug = (inputSlug: string): boolean => {
-    const slugPattern = /^[a-zA-Z0-9_-]+$/;
-    return inputSlug.length >= 3 && inputSlug.length <= 50 && slugPattern.test(inputSlug);
+  // Handle slug validity changes
+  const handleSlugValidityChange = (isValid: boolean, isAvailable: boolean) => {
+    setIsSlugValidAndAvailable(isValid && isAvailable);
+    
+    // Force published=false if slug is empty
+    const slugValue = watch('slug');
+    const isEmpty = !slugValue || slugValue.trim() === '';
+    if (isEmpty && published) {
+      setValue('published', false);
+    }
   };
 
-  const isSlugValid = !published || (slug.trim().length > 0 && validateSlug(slug.trim()));
+  // Determine if published can be enabled
+  const canPublish = () => {
+    const isEmpty = !slug || slug.trim() === '';
+    if (isEmpty) return false; // Can't publish without a slug
+    return isSlugValidAndAvailable;
+  };
+
+  const getPublishedDisabledReason = () => {
+    const isEmpty = !slug || slug.trim() === '';
+    if (isEmpty) return 'Enter a valid slug to publish';
+    if (!isSlugValidAndAvailable) return 'Slug must be valid and available to publish';
+    return undefined;
+  };
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -318,33 +339,18 @@ export function PortfolioEditor({ portfolioId, initialData, onSubmit, isLoading 
                 </div>
 
                 <div className="form-grid">
-                  <div className="form-group">
-                    <label htmlFor="portfolio-slug" className="form-label">
-                      URL Slug *
-                    </label>
-                    <input
-                      type="text"
-                      id="portfolio-slug"
-                      {...methods.register('slug')}
-                      className={`form-input ${errors.slug ? 'error' : ''}`}
-                      placeholder="my-portfolio"
-                      maxLength={50}
-                    />
-                    {errors.slug && (
-                      <p className="error-message">{errors.slug.message}</p>
-                    )}
-                  </div>
+                  <SlugField
+                    control={methods.control}
+                    isEdit={portfolioId !== 'new'}
+                    currentSlug={initialData?.slug}
+                    onValidityChange={handleSlugValidityChange}
+                  />
 
-                  <div className="form-group">
-                    <label className="checkbox-label">
-                      <input
-                        type="checkbox"
-                        {...methods.register('published')}
-                        className="checkbox-input"
-                      />
-                      <span className="checkbox-text">Published</span>
-                    </label>
-                  </div>
+                  <PublishedToggle
+                    control={methods.control}
+                    disabled={!canPublish()}
+                    disabledReason={getPublishedDisabledReason()}
+                  />
                 </div>
               </div>
             </div>
@@ -455,7 +461,7 @@ export function PortfolioEditor({ portfolioId, initialData, onSubmit, isLoading 
                     <button
                       type="button"
                       onClick={() => save()}
-                      disabled={isSaving || isLoading || (published && !isSlugValid)}
+                      disabled={isSaving || isLoading || (published && !isSlugValidAndAvailable)}
                       className="btn btn-primary"
                     >
                       {isSaving ? (
@@ -468,9 +474,9 @@ export function PortfolioEditor({ portfolioId, initialData, onSubmit, isLoading 
                       )}
                     </button>
                     
-                    {published && !isSlugValid && (
+                    {published && !isSlugValidAndAvailable && (
                       <div className="save-warning">
-                        Please enter a valid slug to publish
+                        Please enter a valid and available slug to publish
                       </div>
                     )}
                   </div>
