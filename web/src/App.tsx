@@ -1,23 +1,19 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { QueryProvider } from './lib/query/QueryProvider';
 import { UserProvider } from './context/UserContext';
+import { AppRouter } from './routes/AppRouter';
 import Navbar from './components/Navbar';
-import HomePage from './components/HomePage';
-import ProfilePage from './components/ProfilePage';
 import './styles/modern.css';
 
 function App() {
   return (
-    <UserProvider>
-      <Router>
+    <QueryProvider>
+      <UserProvider>
         <div className="app-container">
           <Navbar />
-          <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/profile" element={<ProfilePage />} />
-          </Routes>
+          <AppRouter />
         </div>
-      </Router>
-    </UserProvider>
+      </UserProvider>
+    </QueryProvider>
   );
 }
 
