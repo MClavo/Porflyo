@@ -8,88 +8,50 @@ const HomePage: React.FC = () => {
   const { user, repos, loading, error, isAuthenticated, hasCheckedAuth, checkAuthStatus, fetchUserData } = useUser();
 
   useEffect(() => {
-    // Only check auth status on initial load if we haven't checked yet
-    if (!hasCheckedAuth && !loading) {
+    // Always check auth status in the background on initial load
+    if (!hasCheckedAuth) {
       checkAuthStatus();
     }
-  }, [hasCheckedAuth, loading, checkAuthStatus]);
+  }, [hasCheckedAuth, checkAuthStatus]);
 
   useEffect(() => {
-    // Fetch repos after authentication is confirmed and we have a user
-    if (isAuthenticated && user && repos.length === 0 && !loading) {
+    // Fetch repos in the background after authentication is confirmed
+    if (isAuthenticated && user && repos.length === 0) {
       fetchUserData();
     }
-  }, [isAuthenticated, user, repos.length, loading, fetchUserData]);
+  }, [isAuthenticated, user, repos.length, fetchUserData]);
 
-  // Show loading only if we're actually loading and haven't determined auth status
-  if (loading && !hasCheckedAuth) {
-    return (
-      <div className="main-content">
-        <div className="loading">
-          <div>Loading...</div>
-        </div>
-      </div>
-    );
-  }
-
-  // Show login page if not authenticated or no user after auth check
-  if (hasCheckedAuth && (!isAuthenticated || !user)) {
-    return (
-      <div className="main-content">
-        <div className="card text-center">
-          <div className="card-header">
-            <h1 className="card-title">Welcome to Porflyo</h1>
-            <p className="card-description">
-              Your personal platform to manage your development portfolio
-            </p>
-          </div>
-          {error && (
-            <div className="error mb-4">
-              Error: {error}
-            </div>
-          )}
-          <LoginButton />
-        </div>
-      </div>
-    );
-  }
-
-  // Show loading if we're fetching user data after authentication
-  if (loading) {
-    return (
-      <div className="main-content">
-        <div className="loading">
-          <div>Loading your data...</div>
-        </div>
-      </div>
-    );
-  }
-
+  // Always show the home page content - no loading screens
   return (
     <div className="main-content fade-in">
-      {error && (
-        <div className="error">
-          Error: {error}
-        </div>
-      )}
-
-      {/* User Welcome Section */}
-      {user && (
-        <div className="card">
-          <div className="card-header">
-            <div className="flex justify-between items-center">
-              <div>
-                <h1 className="card-title">Hello, {user.name}! 👋</h1>
-                <p className="card-description">
-                  Welcome back to your personal dashboard
-                </p>
-              </div>
+      {/* Welcome Section - Show immediately */}
+      <div className="card">
+        <div className="card-header">
+          <div className="flex justify-between items-center">
+            <div>
+              <h1 className="card-title">
+                {user ? `Hello, ${user.name}! 👋` : 'Welcome to Porflyo'}
+              </h1>
+              <p className="card-description">
+                {user 
+                  ? 'Welcome back to your personal dashboard'
+                  : 'Your personal platform to manage your development portfolio'
+                }
+              </p>
+            </div>
+            {user ? (
               <Link to="/profile" className="btn btn-outline">
                 Edit Profile
               </Link>
-            </div>
+            ) : (
+              // Show login button if we've checked auth and user is not authenticated
+              hasCheckedAuth && !isAuthenticated && <LoginButton />
+            )}
           </div>
-          
+        </div>
+        
+        {/* User Profile Section - Show when available */}
+        {user && (
           <div className="user-profile">
             <img 
               src={user.profileImage} 
@@ -100,38 +62,82 @@ const HomePage: React.FC = () => {
             <div className="user-info">
               <h3 className="text-lg font-semibold">{user.name}</h3>
               <p className="text-sm">{user.email}</p>
-              {/* Show all social links */}
-              <div className="social-links">
-                {user.socials && Object.keys(user.socials).length > 0 && Object.entries(user.socials).map(([platform, url]) => (
-                  <a 
-                    key={platform}
-                    href={url} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="text-sm nav-link"
-                  >
-                    {platform.charAt(0).toUpperCase() + platform.slice(1)} Profile
-                  </a>
-                ))}
-              </div>
+              {/* Show social links when available */}
+              {user.socials && Object.keys(user.socials).length > 0 && (
+                <div className="social-links">
+                  {Object.entries(user.socials).map(([platform, url]) => (
+                    <a 
+                      key={platform}
+                      href={url} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="text-sm nav-link"
+                    >
+                      {platform.charAt(0).toUpperCase() + platform.slice(1)} Profile
+                    </a>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
+        )}
+
+        {/* Show authentication prompt if needed */}
+        {hasCheckedAuth && !isAuthenticated && (
+          <div className="text-center" style={{ marginTop: '1rem' }}>
+            <p className="text-sm" style={{ color: 'var(--text-secondary)', marginBottom: '1rem' }}>
+              Sign in with GitHub to access your repositories and create portfolios
+            </p>
+          </div>
+        )}
+      </div>
+
+      {/* Error display if any */}
+      {error && (
+        <div className="error">
+          Error: {error}
         </div>
       )}
 
-      {/* Repositories Section */}
+      {/* Repositories Section - Always show, with appropriate content */}
       <div className="card">
         <div className="card-header">
-          <h2 className="card-title">My Repositories</h2>
-          <p className="card-description">
-            {repos.length > 0 
-              ? `You have ${repos.length} repositor${repos.length > 1 ? 'ies' : 'y'} available`
-              : 'No repositories found'
-            }
-          </p>
+          <div className="flex justify-between items-center">
+            <div>
+              <h2 className="card-title">
+                My Repositories
+                {loading && user && (
+                  <span className="text-sm" style={{ fontWeight: 'normal', color: 'var(--text-secondary)' }}>
+                    {' '} (updating...)
+                  </span>
+                )}
+              </h2>
+              <p className="card-description">
+                {!user 
+                  ? 'Sign in to view your GitHub repositories'
+                  : repos.length > 0 
+                    ? `You have ${repos.length} repositor${repos.length > 1 ? 'ies' : 'y'} available`
+                    : loading
+                      ? 'Getting your repositories in the background...'
+                      : 'No repositories found'
+                }
+              </p>
+            </div>
+          </div>
         </div>
 
-        {repos.length > 0 ? (
+        {/* Repository content based on state */}
+        {!user ? (
+          // Not authenticated - show placeholder
+          <div className="text-center" style={{ padding: '2rem' }}>
+            <div style={{ opacity: 0.6 }}>
+              <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
+                🔒 Connect your GitHub account to see your repositories here
+              </p>
+            </div>
+          </div>
+        ) : repos.length > 0 ? (
+          // Show repositories
           <div className="repo-grid">
             {repos.map((repo: Repository) => (
               <div key={repo.id} className="repo-card">
@@ -158,9 +164,10 @@ const HomePage: React.FC = () => {
             ))}
           </div>
         ) : (
+          // No repositories or still loading in background
           <div className="text-center" style={{ padding: '2rem' }}>
             <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
-              No repositories to display
+              {loading ? '📡 Loading repositories in the background...' : 'No repositories to display'}
             </p>
           </div>
         )}
