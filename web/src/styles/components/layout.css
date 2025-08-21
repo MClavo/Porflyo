@@ -1,0 +1,18 @@
+/* Layout components */
+.app-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, var(--surface) 0%, var(--background) 100%);
+}
+
+.main-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .main-content {
+    padding: 1rem;
+  }
+}
