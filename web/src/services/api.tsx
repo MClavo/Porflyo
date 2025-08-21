@@ -36,3 +36,58 @@ export const updateUser = async (updates: UserPatchDto) => {
 export const updateUserProfileImage = async (avatarUrl: string) => {
   return updateUser({ avatarUrl });
 };
+
+// Portfolio API functions
+export const portfoliosApi = {
+  createPortfolio: async (data: unknown) => {
+    const response = await axios.post('/api/portfolios', data, {
+      withCredentials: true,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    return response.data;
+  },
+
+  getPortfolio: async (id: string) => {
+    const res = await fetch(`/api/portfolios/${id}`, { credentials: 'include' });
+    if (!res.ok) {
+      if (res.status === 401) {
+        throw new Error('User not authenticated');
+      }
+      if (res.status === 404) {
+        throw new Error('Portfolio not found');
+      }
+      throw new Error('Failed to fetch portfolio');
+    }
+    return res.json();
+  },
+
+  updatePortfolio: async (id: string, data: unknown) => {
+    const response = await axios.put(`/api/portfolios/${id}`, data, {
+      withCredentials: true,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    return response.data;
+  },
+
+  deletePortfolio: async (id: string) => {
+    const response = await axios.delete(`/api/portfolios/${id}`, {
+      withCredentials: true,
+    });
+    return response.data;
+  },
+
+  getPortfolios: async () => {
+    const res = await fetch('/api/portfolios', { credentials: 'include' });
+    if (!res.ok) {
+      if (res.status === 401) {
+        throw new Error('User not authenticated');
+      }
+      throw new Error('Failed to fetch portfolios');
+    }
+    return res.json();
+  },
+};
