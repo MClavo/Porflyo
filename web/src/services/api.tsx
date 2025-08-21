@@ -1,4 +1,5 @@
 import axios from 'axios';
+import type { UserPatchDto } from '../types/dto';
 
 export const getUser = async () => {
   const res = await fetch('/api/user/get', { credentials: 'include' });
@@ -22,7 +23,7 @@ export const getRepos = async () => {
   return res.json(); // Returns array of repositories directly
 };
 
-export const updateUser = async (updates: Record<string, unknown>) => {
+export const updateUser = async (updates: UserPatchDto) => {
   const response = await axios.patch('/api/user/patch', updates, {
     withCredentials: true,
     headers: {
@@ -32,6 +33,6 @@ export const updateUser = async (updates: Record<string, unknown>) => {
   return response.data;
 };
 
-export const updateUserProfileImage = async (profileImage: string) => {
-  return updateUser({ profileImage });
+export const updateUserProfileImage = async (avatarUrl: string) => {
+  return updateUser({ avatarUrl });
 };
