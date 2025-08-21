@@ -617,3 +617,152 @@ body {
 .ReactCrop__drag-handle:after {
   display: none;
 }
+
+/* Additional form and layout components */
+.form-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+@media (min-width: 640px) {
+  .form-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.form-actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+  margin-top: 1.5rem;
+}
+
+.error-message {
+  color: var(--error-color);
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+  margin-bottom: 0;
+}
+
+.form-input.error {
+  border-color: var(--error-color);
+}
+
+.form-input.error:focus {
+  border-color: var(--error-color);
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+.error {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid var(--error-color);
+  border-radius: var(--radius);
+  padding: 1rem;
+  color: var(--error-color);
+  text-align: center;
+}
+
+.success {
+  background: rgba(34, 197, 94, 0.1);
+  border: 1px solid var(--success-color);
+  border-radius: var(--radius);
+  padding: 1rem;
+  color: var(--success-color);
+}
+
+.toast {
+  padding: 1rem;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  max-width: 400px;
+}
+
+.toast.success {
+  background: white;
+  border: 1px solid var(--success-color);
+  color: var(--success-color);
+}
+
+.repo-card {
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.repo-card:last-child {
+  border-bottom: none;
+}
+
+.repo-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin: 0 0 0.25rem 0;
+  color: var(--text-primary);
+}
+
+.repo-description {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  margin: 0;
+  line-height: 1.4;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-sm {
+  font-size: 0.875rem;
+}
+
+.mb-4 {
+  margin-bottom: 1rem;
+}
+
+.mb-6 {
+  margin-bottom: 1.5rem;
+}
+
+.flex {
+  display: flex;
+}
+
+.flex-1 {
+  flex: 1;
+}
+
+.gap-3 {
+  gap: 0.75rem;
+}
+
+.justify-between {
+  justify-content: space-between;
+}
+
+.items-start {
+  align-items: flex-start;
+}
+
+.items-center {
+  align-items: center;
+}
+
+/* Spinner animation */
+.spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}

@@ -107,6 +107,17 @@ export interface PresignRequestDto {
 }
 
 /**
+ * Mirrors UserPatchDto.java
+ */
+export interface UserPatchDto {
+  name?: string;
+  email?: string;
+  description?: string;
+  avatarUrl?: string;
+  socials?: Record<string, string>;
+}
+
+/**
  * Mirrors PublicPortfolioView.java
  */
 export interface PublicPortfolioView {
