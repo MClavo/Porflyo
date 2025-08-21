@@ -1,0 +1,25 @@
+/* Modern CSS - Modular Component System */
+
+/* Base styles */
+@import './components/variables.css';
+@import './components/reset.css';
+
+/* Layout */
+@import './components/layout.css';
+@import './components/navigation.css';
+
+/* Components */
+@import './components/buttons.css';
+@import './components/cards.css';
+@import './components/forms.css';
+@import './components/profile.css';
+@import './components/repository.css';
+@import './components/portfolio-editor.css';
+@import './components/image-cropper.css';
+
+/* States */
+@import './components/states.css';
+@import './components/animations.css';
+
+/* Utilities */
+@import './components/utilities.css';
