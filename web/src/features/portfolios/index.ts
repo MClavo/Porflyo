@@ -12,6 +12,18 @@ export { GallerySectionEditor } from './components/GallerySectionEditor';
 export { SectionCard } from './components/SectionCard';
 export { SectionEditor } from './components/SectionEditor';
 
+// Save Pipeline Components
+export { PortfolioSaveAction } from './components/PortfolioSaveAction';
+export { SavedSectionsPanel } from './components/SavedSectionsPanel';
+
+// Save Pipeline Services
+export * from './services/imagePipeline';
+export * from './services/savePipeline';
+
+// Hooks
+export { usePortfolioSave } from './hooks/usePortfolioSave';
+export { useListSavedSections, useCreateSavedSection, useDeleteSavedSection } from './hooks/useSavedSections';
+
 // Main Editor Components
 export { PortfolioEditor } from './components/PortfolioEditor';
 

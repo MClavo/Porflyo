@@ -93,6 +93,7 @@ export function EditPortfolioPage() {
 
   return (
     <PortfolioEditor
+      portfolioId={portfolioId || 'new'}
       initialData={getInitialData()}
       onSubmit={handleSubmit}
       isLoading={savePortfolioMutation.isPending}
