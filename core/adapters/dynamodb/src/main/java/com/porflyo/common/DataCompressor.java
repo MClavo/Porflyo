@@ -12,18 +12,18 @@ import java.util.zip.GZIPOutputStream;
 import com.github.javaparser.quality.NotNull;
 
 import io.micronaut.core.type.Argument;
-import io.micronaut.serde.ObjectMapper;
+import io.micronaut.json.JsonMapper;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 
 @Singleton
 public final class DataCompressor {
 
-    private final ObjectMapper objectMapper;
+    private final JsonMapper jsonMapper;
 
     @Inject
-    public DataCompressor(ObjectMapper objectMapper) {
-        this.objectMapper = objectMapper;
+    public DataCompressor(JsonMapper jsonMapper) {
+        this.jsonMapper = jsonMapper;
     }
 
     // ────────────────────────── Compress ──────────────────────────
@@ -32,7 +32,7 @@ public final class DataCompressor {
             throw new IllegalArgumentException("Object to compress cannot be null");
         }
 
-        String data = objectMapper.writeValueAsString(item);
+        String data = jsonMapper.writeValueAsString(item);
 
         // Compress with GZIP
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -62,7 +62,7 @@ public final class DataCompressor {
         ByteArrayInputStream bais = new ByteArrayInputStream(compressedData);
         try (GZIPInputStream gis = new GZIPInputStream(bais)) {
             String json = new String(gis.readAllBytes(), StandardCharsets.UTF_8);
-            return objectMapper.readValue(json, type);
+            return jsonMapper.readValue(json, type);
         }
     }
 

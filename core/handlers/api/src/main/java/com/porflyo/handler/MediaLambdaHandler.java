@@ -10,26 +10,26 @@ import com.porflyo.dto.PresignRequestDto;
 import com.porflyo.dto.PresignedPostDto;
 import com.porflyo.ports.input.MediaUseCase;
 
-import io.micronaut.serde.ObjectMapper;
+import io.micronaut.json.JsonMapper;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 
 @Singleton
 public class MediaLambdaHandler {
     private final Logger log = LoggerFactory.getLogger(MediaLambdaHandler.class);   
-    private final ObjectMapper objectMapper;
+    private final JsonMapper jsonMapper;
     private final MediaUseCase mediaService;
     
     @Inject
-    public MediaLambdaHandler(ObjectMapper objectMapper, MediaUseCase mediaService) {
-        this.objectMapper = objectMapper;
+    public MediaLambdaHandler(JsonMapper jsonMapper, MediaUseCase mediaService) {
+        this.jsonMapper = jsonMapper;
         this.mediaService = mediaService;
     }
 
     public APIGatewayV2HTTPResponse handleMediaRequest(APIGatewayV2HTTPEvent input) {
     try {
-        String method = input.getRequestContext().getHttp().getMethod();
-        String key = input.getPathParameters().get("key");
+        String method = LambdaHttpUtils.getMethod(input);
+        String key = LambdaHttpUtils.getPathParameter(input, "key");
         String body = input.getBody();
 
         return processMediaRequest(method, key, body);
@@ -46,11 +46,11 @@ public class MediaLambdaHandler {
     private APIGatewayV2HTTPResponse processMediaRequest(String method, String key, String body) {
         log.debug("Processing media request: {} {}", method, key);
 
-        switch (method.toLowerCase()) {
-            case "post":
+        switch (method) {
+            case "POST":
                 return generatePresignedPut(body);
 
-            case "delete":
+            case "DELETE":
                 return deleteMediaObject(key);
         
             default:
@@ -72,7 +72,7 @@ public class MediaLambdaHandler {
     APIGatewayV2HTTPResponse generatePresignedPut(String body) {
         try {
             // Parse the request body to extract bucket, key, contentType, size, and md5
-            PresignRequestDto requestDto = objectMapper.readValue(body, PresignRequestDto.class);
+            PresignRequestDto requestDto = jsonMapper.readValue(body, PresignRequestDto.class);
             
             // Generate the presigned PUT URL
             PresignedPostDto result = mediaService.createPresignedPut(
@@ -83,7 +83,7 @@ public class MediaLambdaHandler {
             );
 
             log.debug("Generated presigned PUT URL for key: {}", requestDto.key());
-            return LambdaHttpUtils.createResponse(200, objectMapper.writeValueAsString(result));
+            return LambdaHttpUtils.createResponse(200, jsonMapper.writeValueAsString(result));
         } catch (Exception e) {
             log.error("Failed to generate presigned PUT URL", e);
             return LambdaHttpUtils.createErrorResponse(500, "Internal Server Error");

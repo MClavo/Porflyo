@@ -48,7 +48,7 @@ public class UserLambdaHandler {
             PublicUserDtoMapper publicUserDtoMapper, 
             UserUseCase userService, 
             AuthUseCase authService) {
-                
+
         this.jsonMapper = jsonMapper;
         this.publicUserDtoMapper = publicUserDtoMapper;
         this.userService = userService;
@@ -64,12 +64,12 @@ public class UserLambdaHandler {
     public APIGatewayV2HTTPResponse handleUserRequest(APIGatewayV2HTTPEvent input) {
         try {
             // /api/user/{request}
-            String pathRequest = LambdaHttpUtils.extractPathSegment(input, 2); 
+            String method = LambdaHttpUtils.getMethod(input);
 
             UserId id = getUserIdFromCookie(input);
             String body = input.getBody();
 
-            return processUserRequest(id, body, pathRequest);
+            return processUserRequest(id, body, method);
 
         } catch (Exception e) {
             log.error("Error extracting path from input: {}", e.getMessage(), e);
@@ -80,22 +80,22 @@ public class UserLambdaHandler {
 
     // ────────────────────────── Gateway ──────────────────────────
 
-	private APIGatewayV2HTTPResponse processUserRequest(UserId userId, String body, String pathRequest) {
-        log.debug("Handling user request for path: {}", pathRequest);
-        
+	private APIGatewayV2HTTPResponse processUserRequest(UserId userId, String body, String method) {
+        log.debug("Handling user request for method: {}", method);
+
         // User only gets saved in the OAuth flow, so we can assume it exists
-        switch (pathRequest) {
-            case "get":
+        switch (method) {
+            case "GET":
                 return findUser(userId);    
 
-            case "patch":
+            case "PATCH":
                 return patchUser(userId, body);
 
-            case "delete":
+            case "DELETE":
                 return deleteUser(userId);
 
             default:
-                log.warn("Invalid path request: {}", pathRequest);
+                log.warn("Invalid method request: {}", method);
                 return LambdaHttpUtils.createErrorResponse(404, "Not Found");
         }
 

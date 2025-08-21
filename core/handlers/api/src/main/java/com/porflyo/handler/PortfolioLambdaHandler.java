@@ -77,7 +77,7 @@ public class PortfolioLambdaHandler {
             
             UserId userId = getUserIdFromCookie(input);
             String body = input.getBody();
-            String httpMethod = input.getRequestContext().getHttp().getMethod();
+            String httpMethod = LambdaHttpUtils.getMethod(input);
 
             return processPortfolioRequest(userId, body, pathRequest, httpMethod);
 
@@ -92,11 +92,11 @@ public class PortfolioLambdaHandler {
     private APIGatewayV2HTTPResponse processPortfolioRequest(UserId userId, String body, String pathRequest, String httpMethod) {
         log.debug("Handling portfolio request for path: {}, method: {}", pathRequest, httpMethod);
         
-        switch (pathRequest) {
-            case "create":
+        switch (pathRequest.toUpperCase()) {
+            case "CREATE":
                 return createPortfolio(userId, body);
                 
-            case "list":
+            case "LIST":
                 return listPortfolios(userId);
                 
             default:

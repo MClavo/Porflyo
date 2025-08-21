@@ -28,7 +28,7 @@ import com.porflyo.model.provider.ProviderUser;
 import com.porflyo.ports.output.ProviderPort;
 
 import io.micronaut.retry.annotation.Retryable;
-import io.micronaut.serde.ObjectMapper;
+import io.micronaut.json.JsonMapper;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 
@@ -43,7 +43,7 @@ import jakarta.inject.Singleton;
 public class GithubAdapter implements ProviderPort {
     
     private static final Logger log = LoggerFactory.getLogger(GithubAdapter.class);
-    private final ObjectMapper mapper;
+    private final JsonMapper mapper;
     private final HttpClient httpClient;
     private final ProviderOAuthConfig oauthConfig;
     private final GithubConfig githubConfig;
@@ -62,9 +62,9 @@ public class GithubAdapter implements ProviderPort {
     private String REPOS_URL;
 
     @Inject
-    public GithubAdapter(ProviderOAuthConfig oauthConfig, ObjectMapper mapper, GithubConfig githubConfig) {
+    public GithubAdapter(ProviderOAuthConfig oauthConfig, JsonMapper mapper, GithubConfig githubConfig) {
         this.oauthConfig = validateNotNull(oauthConfig, "GithubOAuthConfig cannot be null");
-        this.mapper = validateNotNull(mapper, "ObjectMapper cannot be null");
+        this.mapper = validateNotNull(mapper, "JsonMapper cannot be null");
         this.githubConfig = validateNotNull(githubConfig, "GithubConfig cannot be null");
         this.httpClient = createConfiguredHttpClient();
 

@@ -67,7 +67,7 @@ public class SavedSectionLambdaHandler {
             
             UserId userId = getUserIdFromCookie(input);
             String body = input.getBody();
-            String httpMethod = input.getRequestContext().getHttp().getMethod();
+            String httpMethod = LambdaHttpUtils.getMethod(input);
 
             return processSavedSectionRequest(userId, body, pathRequest, httpMethod);
 
@@ -82,11 +82,11 @@ public class SavedSectionLambdaHandler {
     private APIGatewayV2HTTPResponse processSavedSectionRequest(UserId userId, String body, String pathRequest, String httpMethod) {
         log.debug("Handling saved section request for path: {}, method: {}", pathRequest, httpMethod);
         
-        switch (pathRequest) {
-            case "create":
+        switch (pathRequest.toUpperCase()) {
+            case "CREATE":
                 return createSavedSection(userId, body);
                 
-            case "list":
+            case "LIST":
                 return listSavedSections(userId);
                 
             default:
