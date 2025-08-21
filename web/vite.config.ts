@@ -5,10 +5,30 @@ import react from '@vitejs/plugin-react';
 export default defineConfig({
   plugins: [react()],
   server: {
-  proxy: {
-    '^/api': 'http://localhost:8080',
-    '/oauth': 'http://localhost:8080',
-    '/logout': 'http://localhost:8080',
+    proxy: {
+      // API routes with credentials
+      '/api': {
+        target: 'http://localhost:8080',
+        changeOrigin: true,
+        secure: false,
+      },
+      // Public routes without credentials
+      '/public': {
+        target: 'http://localhost:8080',
+        changeOrigin: true,
+        secure: false,
+      },
+      // Authentication routes
+      '/oauth': {
+        target: 'http://localhost:8080',
+        changeOrigin: true,
+        secure: false,
+      },
+      '/logout': {
+        target: 'http://localhost:8080',
+        changeOrigin: true,
+        secure: false,
+      },
+    },
   },
-}
 });
