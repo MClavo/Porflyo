@@ -19,18 +19,24 @@ import {
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
 
 import { portfolioFormSchema, type PortfolioFormData } from '../schemas/sections.schema';
-import { SECTION_LIMITS, SECTION_DISPLAY_NAMES, type SectionKind } from '../types/sections';
+import { SECTION_LIMITS, SECTION_DISPLAY_NAMES, type SectionKind, type PortfolioSectionData } from '../types/sections';
 import { SectionCard } from './SectionCard';
 import { SectionEditor } from './SectionEditor';
+import { PortfolioSaveAction } from './PortfolioSaveAction';
+import { SavedSectionsPanel } from './SavedSectionsPanel';
+import type { SavePipelineResult } from '../services/savePipeline';
 
 interface PortfolioEditorProps {
+  portfolioId: string;
   initialData?: Partial<PortfolioFormData>;
-  onSubmit: (data: PortfolioFormData) => void;
+  onSubmit?: (data: PortfolioFormData) => void;
   isLoading?: boolean;
 }
 
-export function PortfolioEditor({ initialData, onSubmit, isLoading }: PortfolioEditorProps) {
+export function PortfolioEditor({ portfolioId, initialData, onSubmit, isLoading }: PortfolioEditorProps) {
   const [showAddSectionMenu, setShowAddSectionMenu] = useState(false);
+  const [showSavedSections, setShowSavedSections] = useState(false);
+  const [saveResult, setSaveResult] = useState<SavePipelineResult | null>(null);
 
   const methods = useForm<PortfolioFormData>({
     resolver: zodResolver(portfolioFormSchema),
@@ -54,8 +60,58 @@ export function PortfolioEditor({ initialData, onSubmit, isLoading }: PortfolioE
     },
   });
 
-  const { watch, setValue, handleSubmit, formState: { errors } } = methods;
+  const { watch, setValue, formState: { errors } } = methods;
   const sections = watch('sections') || [];
+  const title = watch('title');
+  const template = watch('template');
+  const slug = watch('slug');
+  const published = watch('published');
+
+  // Save pipeline handlers
+  const handleSaveComplete = (result: SavePipelineResult) => {
+    setSaveResult(result);
+    if (result.success) {
+      console.log('Portfolio saved successfully:', result);
+      // Optionally call the original onSubmit if provided
+      if (onSubmit) {
+        const formData = methods.getValues();
+        onSubmit(formData);
+      }
+    }
+  };
+
+  const handleSaveError = (errors: string[]) => {
+    console.error('Save failed:', errors);
+    setSaveResult({
+      success: false,
+      errors,
+      warnings: []
+    });
+  };
+
+  const handleInsertSection = (sectionData: PortfolioSectionData) => {
+    // Convert PortfolioSectionData to form section format and add at the end
+    const newSection = {
+      ...sectionData,
+      position: sections.length
+    };
+    const newSections = [...sections, newSection];
+    setValue('sections', newSections);
+    setShowSavedSections(false); // Close panel after inserting
+  };
+
+  const handleSaveSection = (section: PortfolioSectionData, name?: string) => {
+    // This would be called when user wants to save a section
+    console.log('Saving section:', section, 'with name:', name);
+  };
+
+  // Slug validation for publishing
+  const validateSlug = (inputSlug: string): boolean => {
+    const slugPattern = /^[a-zA-Z0-9_-]+$/;
+    return inputSlug.length >= 3 && inputSlug.length <= 50 && slugPattern.test(inputSlug);
+  };
+
+  const isSlugValid = !published || (slug.trim().length > 0 && validateSlug(slug.trim()));
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -212,16 +268,17 @@ export function PortfolioEditor({ initialData, onSubmit, isLoading }: PortfolioE
 
   return (
     <div className="app-container">
-      <div className="main-content">
-        <FormProvider {...methods}>
-          <form onSubmit={handleSubmit(onSubmit)} className="portfolio-editor">
-            {/* Portfolio Header */}
-            <div className="portfolio-header">
-              <h1 style={{ fontSize: '2rem', fontWeight: 'bold', marginBottom: '1rem' }}>
-                Portfolio Editor
-              </h1>
-              
-              {/* Portfolio Meta Fields */}
+      <div className="portfolio-editor-layout">
+        <div className="main-content">
+          <FormProvider {...methods}>
+            <div className="portfolio-editor">
+              {/* Portfolio Header */}
+              <div className="portfolio-header">
+                <h1 style={{ fontSize: '2rem', fontWeight: 'bold', marginBottom: '1rem' }}>
+                  Portfolio Editor
+                </h1>
+                
+                {/* Portfolio Meta Fields */}
               <div className="portfolio-meta">
                 <div className="form-grid">
                   <div className="form-group">
@@ -299,32 +356,42 @@ export function PortfolioEditor({ initialData, onSubmit, isLoading }: PortfolioE
                   Sections ({sections.length}/{SECTION_LIMITS.MAX_SECTIONS})
                 </h2>
                 
-                {sections.length < SECTION_LIMITS.MAX_SECTIONS && (
-                  <div className="add-section-container">
-                    <button
-                      type="button"
-                      onClick={() => setShowAddSectionMenu(!showAddSectionMenu)}
-                      className="btn"
-                    >
-                      Add Section
-                    </button>
-                    
-                    {showAddSectionMenu && (
-                      <div className="add-section-menu">
-                        {availableSectionTypes.map((sectionType) => (
-                          <button
-                            key={sectionType}
-                            type="button"
-                            onClick={() => addSection(sectionType)}
-                            className="add-section-item"
-                          >
-                            {SECTION_DISPLAY_NAMES[sectionType]}
-                          </button>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                )}
+                <div className="section-actions">
+                  {sections.length < SECTION_LIMITS.MAX_SECTIONS && (
+                    <div className="add-section-container">
+                      <button
+                        type="button"
+                        onClick={() => setShowAddSectionMenu(!showAddSectionMenu)}
+                        className="btn"
+                      >
+                        Add Section
+                      </button>
+                      
+                      {showAddSectionMenu && (
+                        <div className="add-section-menu">
+                          {availableSectionTypes.map((sectionType) => (
+                            <button
+                              key={sectionType}
+                              type="button"
+                              onClick={() => addSection(sectionType)}
+                              className="add-section-item"
+                            >
+                              {SECTION_DISPLAY_NAMES[sectionType]}
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                  
+                  <button
+                    type="button"
+                    onClick={() => setShowSavedSections(!showSavedSections)}
+                    className="btn btn-outline btn-sm"
+                  >
+                    {showSavedSections ? 'Hide' : 'Show'} Saved Sections
+                  </button>
+                </div>
               </div>
 
               <DndContext
@@ -357,33 +424,85 @@ export function PortfolioEditor({ initialData, onSubmit, isLoading }: PortfolioE
               </DndContext>
             </div>
 
-            {/* Form Actions */}
-            <div className="form-actions">
-              <button
-                type="button"
-                onClick={() => methods.reset()}
-                className="btn-secondary"
-                disabled={isLoading}
+            {/* Save Actions */}
+            <div className="save-actions">
+              <PortfolioSaveAction
+                portfolioId={portfolioId}
+                sections={sections as PortfolioSectionData[]}
+                title={title}
+                template={template}
+                publishSettings={published ? {
+                  shouldPublish: true,
+                  slug: slug.trim(),
+                  published: true
+                } : {
+                  shouldPublish: false
+                }}
+                onSaveComplete={handleSaveComplete}
+                onError={handleSaveError}
               >
-                Reset
-              </button>
-              <button
-                type="submit"
-                className="btn"
-                disabled={isLoading}
-              >
-                {isLoading ? (
-                  <>
-                    <svg className="spinner" style={{ width: '1.25rem', height: '1.25rem', marginRight: '0.75rem' }}>
-                      <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" className="opacity-25" />
-                      <path fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" className="opacity-75" />
-                    </svg>
-                    Saving...
-                  </>
-                ) : (
-                  'Save Portfolio'
+                {({ save, isSaving, progress }) => (
+                  <div className="save-button-group">
+                    <button
+                      type="button"
+                      onClick={() => methods.reset()}
+                      className="btn-secondary"
+                      disabled={isLoading || isSaving}
+                    >
+                      Reset
+                    </button>
+                    
+                    <button
+                      type="button"
+                      onClick={() => save()}
+                      disabled={isSaving || isLoading || (published && !isSlugValid)}
+                      className="btn btn-primary"
+                    >
+                      {isSaving ? (
+                        <>
+                          <div className="btn-spinner"></div>
+                          {progress?.stage === 'images' ? 'Uploading Images...' : 'Saving...'}
+                        </>
+                      ) : (
+                        published ? 'Save & Publish' : 'Save Draft'
+                      )}
+                    </button>
+                    
+                    {published && !isSlugValid && (
+                      <div className="save-warning">
+                        Please enter a valid slug to publish
+                      </div>
+                    )}
+                  </div>
                 )}
-              </button>
+              </PortfolioSaveAction>
+
+              {/* Save Result Display */}
+              {saveResult && (
+                <div className="save-result">
+                  {saveResult.success ? (
+                    <div className="save-success">
+                      <h4>✅ Portfolio saved successfully!</h4>
+                      {saveResult.warnings.length > 0 && (
+                        <ul className="save-warnings">
+                          {saveResult.warnings.map((warning, index) => (
+                            <li key={index}>{warning}</li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="save-error">
+                      <h4>❌ Save failed</h4>
+                      <ul className="save-errors">
+                        {saveResult.errors.map((error, index) => (
+                          <li key={index}>{error}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
 
             {/* Global Form Errors */}
@@ -404,8 +523,20 @@ export function PortfolioEditor({ initialData, onSubmit, isLoading }: PortfolioE
                 </ul>
               </div>
             )}
-          </form>
-        </FormProvider>
+            </div>
+          </FormProvider>
+        </div>
+
+        {/* Saved Sections Panel */}
+        {showSavedSections && (
+          <div className="editor-sidebar">
+            <SavedSectionsPanel
+              onInsertSection={handleInsertSection}
+              onSaveSection={handleSaveSection}
+              className="saved-sections-sidebar"
+            />
+          </div>
+        )}
       </div>
     </div>
   );
