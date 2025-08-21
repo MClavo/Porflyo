@@ -80,18 +80,6 @@ public final class TestData {
         Map.of("github", "https://github.com/testuser")
     );
 
-    /*  public static final PublicUserDto DEFAULT_PUBLIC_USER_DTO = new PublicUserDto(
-        DEFAULT_GITHUB_NAME,
-        DEFAULT_GITHUB_EMAIL,
-        "Test Description",
-        URI.create(DEFAULT_GITHUB_AVATAR_URL),
-        DEFAULT_GITHUB_AVATAR_URL,
-        DEFAULT_GITHUB_NAME,
-        URI.create(DEFAULT_GITHUB_AVATAR_URL),
-        Map.of("github", "https://github.com/testuser")
-    ); */
-
-
     public static final ProviderRepo REPO_1 = new ProviderRepo(
         "project-alpha",
         "My first repo",

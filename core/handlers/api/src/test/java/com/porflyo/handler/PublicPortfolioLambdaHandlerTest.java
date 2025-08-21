@@ -29,7 +29,7 @@ import com.porflyo.ports.output.SlugGeneratorPort;
 import io.micronaut.json.JsonMapper;
 
 @ExtendWith(MockitoExtension.class)
-@DisplayName("PublicPortfolioLambdaHandler (unit)")
+@DisplayName("Public Portfolio Lambda Handler Tests")
 class PublicPortfolioLambdaHandlerTest {
 
     @Mock JsonMapper jsonMapper;

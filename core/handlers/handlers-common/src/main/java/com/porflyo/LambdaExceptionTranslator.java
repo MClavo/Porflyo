@@ -12,7 +12,7 @@ import com.amazonaws.services.lambda.runtime.events.APIGatewayV2HTTPEvent;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayV2HTTPResponse;
 import com.porflyo.exceptions.shared.DomainException;
 
-import io.micronaut.serde.ObjectMapper;
+import io.micronaut.json.JsonMapper;
 import jakarta.inject.Inject;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
@@ -23,7 +23,7 @@ import software.amazon.awssdk.services.dynamodb.model.TransactionCanceledExcepti
 public final class LambdaExceptionTranslator {
 
     @Inject
-    private static ObjectMapper mapper;
+    private static JsonMapper mapper;
 
     @Inject
     private LambdaExceptionTranslator() {}

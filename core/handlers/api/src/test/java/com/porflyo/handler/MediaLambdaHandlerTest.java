@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -20,13 +21,15 @@ import com.porflyo.dto.PresignRequestDto;
 import com.porflyo.dto.PresignedPostDto;
 import com.porflyo.ports.input.MediaUseCase;
 
-import io.micronaut.serde.ObjectMapper;
+import io.micronaut.json.JsonMapper;
+
 
 @ExtendWith(MockitoExtension.class)
+@DisplayName("Media Lambda Handler Tests")
 class MediaLambdaHandlerTest {
 
     @Mock
-    private ObjectMapper objectMapper;
+    private JsonMapper jsonMapper;
 
     @Mock
     private MediaUseCase mediaUseCase;
@@ -35,7 +38,7 @@ class MediaLambdaHandlerTest {
 
     @BeforeEach
     void setUp() {
-        handler = new MediaLambdaHandler(objectMapper, mediaUseCase);
+        handler = new MediaLambdaHandler(jsonMapper, mediaUseCase);
     }
 
     @Test
@@ -64,10 +67,10 @@ class MediaLambdaHandlerTest {
         
         APIGatewayV2HTTPEvent event = createEvent("POST", null, requestBody);
         
-        given(objectMapper.readValue(requestBody, PresignRequestDto.class)).willReturn(requestDto);
+        given(jsonMapper.readValue(requestBody, PresignRequestDto.class)).willReturn(requestDto);
         given(mediaUseCase.createPresignedPut("test-image.jpg", "image/jpeg", 1024L, "abc123hash"))
                 .willReturn(presignedPost);
-        given(objectMapper.writeValueAsString(presignedPost)).willReturn("{\"url\":\"https://bucket.s3.amazonaws.com/\"}");
+        given(jsonMapper.writeValueAsString(presignedPost)).willReturn("{\"url\":\"https://bucket.s3.amazonaws.com/\"}");
 
         // when
         APIGatewayV2HTTPResponse response = handler.handleMediaRequest(event);
@@ -107,12 +110,12 @@ class MediaLambdaHandlerTest {
     }
 
     @Test
-    void should_returnInternalServerError_when_objectMapperThrowsException() throws Exception {
+    void should_returnInternalServerError_when_jsonMapperThrowsException() throws Exception {
         // given
         String requestBody = "invalid-json";
         APIGatewayV2HTTPEvent event = createEvent("POST", null, requestBody);
         
-        given(objectMapper.readValue(requestBody, PresignRequestDto.class))
+        given(jsonMapper.readValue(requestBody, PresignRequestDto.class))
                 .willThrow(new RuntimeException("JSON parsing error"));
 
         // when
@@ -144,7 +147,7 @@ class MediaLambdaHandlerTest {
         
         APIGatewayV2HTTPEvent event = createEvent("POST", null, requestBody);
         
-        given(objectMapper.readValue(requestBody, PresignRequestDto.class)).willReturn(requestDto);
+        given(jsonMapper.readValue(requestBody, PresignRequestDto.class)).willReturn(requestDto);
         given(mediaUseCase.createPresignedPut("test-image.jpg", "image/jpeg", 1024L, "abc123hash"))
                 .willThrow(new RuntimeException("Media service error"));
 

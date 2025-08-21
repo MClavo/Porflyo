@@ -156,6 +156,20 @@ public final class LambdaHttpUtils {
 
 
     /**
+     * Returns the HTTP method of the incoming API Gateway event in uppercase.
+     *
+     * @param input the API Gateway event
+     * @return the HTTP method in uppercase, or null if not found
+     */
+    public static String getMethod(APIGatewayV2HTTPEvent input) {
+        if (input.getRequestContext() != null && input.getRequestContext().getHttp().getMethod() != null) {
+            return input.getRequestContext().getHttp().getMethod().toUpperCase();
+        }
+        return null;
+    }
+
+
+    /**
      * Extracts a specific part of the path from the incoming API Gateway event.
      *
      * @param input     the API Gateway event
@@ -170,6 +184,21 @@ public final class LambdaHttpUtils {
             return null; // Invalid position
 
         return pathParts[adjustedPos];
+    }
+
+
+    /**
+     * Gets a specific path parameter from the incoming API Gateway event.
+     *
+     * @param input the API Gateway event
+     * @param key   the name of the path parameter to extract
+     * @return the value of the path parameter, or null if not found
+     */
+    public static String getPathParameter(APIGatewayV2HTTPEvent input, String key) {
+        if (input.getPathParameters() == null) {
+            return null;
+        }
+        return input.getPathParameters().get(key);
     }
 
     // ────────────────────────── helper methods ────────────────────────── 

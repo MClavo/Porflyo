@@ -36,7 +36,7 @@ import com.porflyo.ports.input.SavedSectionUseCase;
 import io.micronaut.json.JsonMapper;
 
 @ExtendWith(MockitoExtension.class)
-@DisplayName("SavedSectionLambdaHandler (unit)")
+@DisplayName("Saved Section Lambda Handler Tests")
 class SavedSectionLambdaHandlerTest {
 
     @Mock JsonMapper jsonMapper;

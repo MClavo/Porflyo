@@ -43,7 +43,7 @@ import io.micronaut.core.type.Argument;
 import io.micronaut.json.JsonMapper;
 
 @ExtendWith(MockitoExtension.class)
-@DisplayName("PortfolioLambdaHandler (unit)")
+@DisplayName("Portfolio Lambda Handler Tests")
 class PortfolioLambdaHandlerTest {
 
     @Mock JsonMapper jsonMapper;
