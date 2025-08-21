@@ -6,6 +6,7 @@ import { Layout } from '../components/layout/Layout';
 import { HomePage } from './pages/HomePage';
 import { DashboardPage } from './pages/DashboardPage';
 import ProfilePage from './pages/ProfilePage';
+import { SlugFieldTestPage } from '../SlugFieldTestPage';
 
 // Placeholder components for existing routes
 const LoginPage = () => <div>Login Page</div>;
@@ -24,6 +25,7 @@ export function AppRouter({ children }: AppRouterProps) {
         {/* Public routes */}
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/test-slug" element={<SlugFieldTestPage />} />
         
         {/* Public portfolio view */}
         <Route path="/p/:slug" element={<PublicPortfolioPage />} />
