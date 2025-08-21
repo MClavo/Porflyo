@@ -26,6 +26,7 @@ import { PortfolioSaveAction } from './PortfolioSaveAction';
 import { SavedSectionsPanel } from './SavedSectionsPanel';
 import { SlugField } from './SlugField';
 import { PublishedToggle } from './PublishedToggle';
+import { StickyHeader } from './StickyHeader';
 import type { SavePipelineResult } from '../services/savePipeline';
 
 interface PortfolioEditorProps {
@@ -40,6 +41,7 @@ export function PortfolioEditor({ portfolioId, initialData, onSubmit, isLoading 
   const [showSavedSections, setShowSavedSections] = useState(false);
   const [saveResult, setSaveResult] = useState<SavePipelineResult | null>(null);
   const [isSlugValidAndAvailable, setIsSlugValidAndAvailable] = useState(true);
+  const [lastSavedAt, setLastSavedAt] = useState<Date | undefined>();
 
   const methods = useForm<PortfolioFormData>({
     resolver: zodResolver(portfolioFormSchema),
@@ -75,6 +77,7 @@ export function PortfolioEditor({ portfolioId, initialData, onSubmit, isLoading 
     setSaveResult(result);
     if (result.success) {
       console.log('Portfolio saved successfully:', result);
+      setLastSavedAt(new Date());
       // Optionally call the original onSubmit if provided
       if (onSubmit) {
         const formData = methods.getValues();
@@ -288,20 +291,27 @@ export function PortfolioEditor({ portfolioId, initialData, onSubmit, isLoading 
   ];
 
   return (
-    <div className="app-container">
-      <div className="portfolio-editor-layout">
-        <div className="main-content">
-          <FormProvider {...methods}>
+    <FormProvider {...methods}>
+      <div className="min-h-screen bg-gray-50">
+        <StickyHeader 
+          onSave={() => {
+            // Trigger form submission through the save pipeline
+            const formData = methods.getValues();
+            onSubmit?.(formData);
+          }}
+          isSaving={isLoading || false}
+          lastSavedAt={lastSavedAt}
+          canSave={isSlugValidAndAvailable || !published}
+        />
+        
+        <div className="pt-16"> {/* Account for sticky header height */}
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
             <div className="portfolio-editor">
-              {/* Portfolio Header */}
-              <div className="portfolio-header">
-                <h1 style={{ fontSize: '2rem', fontWeight: 'bold', marginBottom: '1rem' }}>
-                  Portfolio Editor
-                </h1>
+              {/* Portfolio Meta Fields */}
+              <div className="bg-white rounded-lg shadow-sm border p-6 mb-6">
+                <h2 className="text-lg font-semibold text-gray-900 mb-4">Portfolio Settings</h2>
                 
-                {/* Portfolio Meta Fields */}
-              <div className="portfolio-meta">
-                <div className="form-grid">
+                <div className="space-y-6">
                   <div className="form-group">
                     <label htmlFor="portfolio-title" className="form-label">
                       Title *
@@ -336,214 +346,220 @@ export function PortfolioEditor({ portfolioId, initialData, onSubmit, isLoading 
                       <p className="error-message">{errors.template.message}</p>
                     )}
                   </div>
-                </div>
 
-                <div className="form-grid">
-                  <SlugField
-                    control={methods.control}
-                    isEdit={portfolioId !== 'new'}
-                    currentSlug={initialData?.slug}
-                    onValidityChange={handleSlugValidityChange}
-                  />
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <SlugField
+                      control={methods.control}
+                      isEdit={portfolioId !== 'new'}
+                      currentSlug={initialData?.slug}
+                      onValidityChange={handleSlugValidityChange}
+                    />
 
-                  <PublishedToggle
-                    control={methods.control}
-                    disabled={!canPublish()}
-                    disabledReason={getPublishedDisabledReason()}
-                  />
+                    <PublishedToggle
+                      control={methods.control}
+                      disabled={!canPublish()}
+                      disabledReason={getPublishedDisabledReason()}
+                    />
+                  </div>
                 </div>
               </div>
-            </div>
 
-            {/* Sections */}
-            <div className="sections-container">
-              <div className="sections-header">
-                <h2 style={{ fontSize: '1.5rem', fontWeight: '600', marginBottom: '1rem' }}>
-                  Sections ({sections.length}/{SECTION_LIMITS.MAX_SECTIONS})
-                </h2>
-                
-                <div className="section-actions">
-                  {sections.length < SECTION_LIMITS.MAX_SECTIONS && (
-                    <div className="add-section-container">
+              {/* Sections */}
+              <div className="bg-white rounded-lg shadow-sm border p-6">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
+                  <h2 className="text-lg font-semibold text-gray-900 mb-4 sm:mb-0">
+                    Sections ({sections.length}/{SECTION_LIMITS.MAX_SECTIONS})
+                  </h2>
+                  
+                  <div className="flex flex-col sm:flex-row gap-3">
+                    {sections.length < SECTION_LIMITS.MAX_SECTIONS && (
+                      <div className="relative">
+                        <button
+                          type="button"
+                          onClick={() => setShowAddSectionMenu(!showAddSectionMenu)}
+                          className="btn btn-primary w-full sm:w-auto"
+                        >
+                          Add Section
+                        </button>
+                        
+                        {showAddSectionMenu && (
+                          <div className="absolute top-full mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-20">
+                            <div className="py-1">
+                              {availableSectionTypes.map((sectionType) => (
+                                <button
+                                  key={sectionType}
+                                  type="button"
+                                  onClick={() => addSection(sectionType)}
+                                  className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                >
+                                  {SECTION_DISPLAY_NAMES[sectionType]}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                    
+                    <button
+                      type="button"
+                      onClick={() => setShowSavedSections(!showSavedSections)}
+                      className="btn btn-outline w-full sm:w-auto"
+                    >
+                      {showSavedSections ? 'Hide' : 'Show'} Saved Sections
+                    </button>
+                  </div>
+                </div>
+
+                <DndContext
+                  sensors={sensors}
+                  collisionDetection={closestCenter}
+                  onDragEnd={handleDragEnd}
+                  modifiers={[restrictToVerticalAxis]}
+                >
+                  <SortableContext
+                    items={sections.map(s => s.id)}
+                    strategy={verticalListSortingStrategy}
+                  >
+                    <div className="space-y-4">
+                      {sections.map((section, index) => (
+                        <SectionCard
+                          key={section.id}
+                          section={section}
+                          index={index}
+                          onMoveUp={moveSectionUp}
+                          onMoveDown={moveSectionDown}
+                          onDelete={deleteSection}
+                          canMoveUp={index > 1}
+                          canMoveDown={index > 0 && index < sections.length - 1}
+                        >
+                          <SectionEditor section={section} sectionIndex={index} />
+                        </SectionCard>
+                      ))}
+                    </div>
+                  </SortableContext>
+                </DndContext>
+              </div>
+
+              {/* Save Actions - Mobile friendly */}
+              <div className="bg-white rounded-lg shadow-sm border p-6">
+                <PortfolioSaveAction
+                  portfolioId={portfolioId}
+                  sections={sections as PortfolioSectionData[]}
+                  title={title}
+                  template={template}
+                  publishSettings={published ? {
+                    shouldPublish: true,
+                    slug: slug.trim(),
+                    published: true
+                  } : {
+                    shouldPublish: false
+                  }}
+                  onSaveComplete={handleSaveComplete}
+                  onError={handleSaveError}
+                >
+                  {({ save, isSaving, progress }) => (
+                    <div className="flex flex-col sm:flex-row gap-3">
                       <button
                         type="button"
-                        onClick={() => setShowAddSectionMenu(!showAddSectionMenu)}
-                        className="btn"
+                        onClick={() => methods.reset()}
+                        className="btn btn-outline order-2 sm:order-1"
+                        disabled={isLoading || isSaving}
                       >
-                        Add Section
+                        Reset
                       </button>
                       
-                      {showAddSectionMenu && (
-                        <div className="add-section-menu">
-                          {availableSectionTypes.map((sectionType) => (
-                            <button
-                              key={sectionType}
-                              type="button"
-                              onClick={() => addSection(sectionType)}
-                              className="add-section-item"
-                            >
-                              {SECTION_DISPLAY_NAMES[sectionType]}
-                            </button>
-                          ))}
-                        </div>
-                      )}
+                      <button
+                        type="button"
+                        onClick={() => save()}
+                        disabled={isSaving || isLoading || (published && !isSlugValidAndAvailable)}
+                        className="btn btn-primary flex-1 order-1 sm:order-2"
+                      >
+                        {isSaving ? (
+                          <div className="flex items-center justify-center space-x-2">
+                            <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                            <span>{progress?.stage === 'images' ? 'Uploading Images...' : 'Saving...'}</span>
+                          </div>
+                        ) : (
+                          published ? 'Save & Publish' : 'Save Draft'
+                        )}
+                      </button>
                     </div>
                   )}
-                  
-                  <button
-                    type="button"
-                    onClick={() => setShowSavedSections(!showSavedSections)}
-                    className="btn btn-outline btn-sm"
-                  >
-                    {showSavedSections ? 'Hide' : 'Show'} Saved Sections
-                  </button>
-                </div>
-              </div>
+                </PortfolioSaveAction>
 
-              <DndContext
-                sensors={sensors}
-                collisionDetection={closestCenter}
-                onDragEnd={handleDragEnd}
-                modifiers={[restrictToVerticalAxis]}
-              >
-                <SortableContext
-                  items={sections.map(s => s.id)}
-                  strategy={verticalListSortingStrategy}
-                >
-                  <div className="sections-list">
-                    {sections.map((section, index) => (
-                      <SectionCard
-                        key={section.id}
-                        section={section}
-                        index={index}
-                        onMoveUp={moveSectionUp}
-                        onMoveDown={moveSectionDown}
-                        onDelete={deleteSection}
-                        canMoveUp={index > 1}
-                        canMoveDown={index > 0 && index < sections.length - 1}
-                      >
-                        <SectionEditor section={section} sectionIndex={index} />
-                      </SectionCard>
-                    ))}
+                {published && !isSlugValidAndAvailable && (
+                  <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-md">
+                    <p className="text-sm text-amber-800">
+                      Please enter a valid and available slug to publish
+                    </p>
                   </div>
-                </SortableContext>
-              </DndContext>
-            </div>
+                )}
 
-            {/* Save Actions */}
-            <div className="save-actions">
-              <PortfolioSaveAction
-                portfolioId={portfolioId}
-                sections={sections as PortfolioSectionData[]}
-                title={title}
-                template={template}
-                publishSettings={published ? {
-                  shouldPublish: true,
-                  slug: slug.trim(),
-                  published: true
-                } : {
-                  shouldPublish: false
-                }}
-                onSaveComplete={handleSaveComplete}
-                onError={handleSaveError}
-              >
-                {({ save, isSaving, progress }) => (
-                  <div className="save-button-group">
-                    <button
-                      type="button"
-                      onClick={() => methods.reset()}
-                      className="btn-secondary"
-                      disabled={isLoading || isSaving}
-                    >
-                      Reset
-                    </button>
-                    
-                    <button
-                      type="button"
-                      onClick={() => save()}
-                      disabled={isSaving || isLoading || (published && !isSlugValidAndAvailable)}
-                      className="btn btn-primary"
-                    >
-                      {isSaving ? (
-                        <>
-                          <div className="btn-spinner"></div>
-                          {progress?.stage === 'images' ? 'Uploading Images...' : 'Saving...'}
-                        </>
-                      ) : (
-                        published ? 'Save & Publish' : 'Save Draft'
-                      )}
-                    </button>
-                    
-                    {published && !isSlugValidAndAvailable && (
-                      <div className="save-warning">
-                        Please enter a valid and available slug to publish
+                {/* Save Result Display */}
+                {saveResult && (
+                  <div className="mt-4">
+                    {saveResult.success ? (
+                      <div className="p-3 bg-green-50 border border-green-200 rounded-md">
+                        <h4 className="text-sm font-medium text-green-800">✅ Portfolio saved successfully!</h4>
+                        {saveResult.warnings.length > 0 && (
+                          <ul className="mt-2 text-sm text-green-700">
+                            {saveResult.warnings.map((warning, index) => (
+                              <li key={index}>• {warning}</li>
+                            ))}
+                          </ul>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="p-3 bg-red-50 border border-red-200 rounded-md">
+                        <h4 className="text-sm font-medium text-red-800">❌ Save failed</h4>
+                        <ul className="mt-2 text-sm text-red-700">
+                          {saveResult.errors.map((error, index) => (
+                            <li key={index}>• {error}</li>
+                          ))}
+                        </ul>
                       </div>
                     )}
                   </div>
                 )}
-              </PortfolioSaveAction>
+              </div>
 
-              {/* Save Result Display */}
-              {saveResult && (
-                <div className="save-result">
-                  {saveResult.success ? (
-                    <div className="save-success">
-                      <h4>✅ Portfolio saved successfully!</h4>
-                      {saveResult.warnings.length > 0 && (
-                        <ul className="save-warnings">
-                          {saveResult.warnings.map((warning, index) => (
-                            <li key={index}>{warning}</li>
-                          ))}
-                        </ul>
-                      )}
-                    </div>
-                  ) : (
-                    <div className="save-error">
-                      <h4>❌ Save failed</h4>
-                      <ul className="save-errors">
-                        {saveResult.errors.map((error, index) => (
-                          <li key={index}>{error}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
+              {/* Global Form Errors */}
+              {errors.sections && (
+                <div className="bg-red-50 border border-red-200 rounded-md p-4">
+                  <p className="font-medium text-red-800">Portfolio Validation Errors:</p>
+                  <ul className="mt-2 text-sm text-red-700">
+                    {Array.isArray(errors.sections) && errors.sections.map((sectionError, index) => (
+                      sectionError && (
+                        <li key={index}>
+                          Section {index + 1}: {typeof sectionError === 'object' && 'message' in sectionError ? sectionError.message : 'Invalid section'}
+                        </li>
+                      )
+                    ))}
+                    {typeof errors.sections === 'object' && 'message' in errors.sections && (
+                      <li>{errors.sections.message}</li>
+                    )}
+                  </ul>
                 </div>
               )}
             </div>
-
-            {/* Global Form Errors */}
-            {errors.sections && (
-              <div className="error">
-                <p className="font-bold">Portfolio Validation Errors:</p>
-                <ul>
-                  {Array.isArray(errors.sections) && errors.sections.map((sectionError, index) => (
-                    sectionError && (
-                      <li key={index}>
-                        Section {index + 1}: {typeof sectionError === 'object' && 'message' in sectionError ? sectionError.message : 'Invalid section'}
-                      </li>
-                    )
-                  ))}
-                  {typeof errors.sections === 'object' && 'message' in errors.sections && (
-                    <li>{errors.sections.message}</li>
-                  )}
-                </ul>
-              </div>
-            )}
-            </div>
-          </FormProvider>
+          </div>
         </div>
 
-        {/* Saved Sections Panel */}
+        {/* Saved Sections Panel - Mobile responsive */}
         {showSavedSections && (
-          <div className="editor-sidebar">
-            <SavedSectionsPanel
-              onInsertSection={handleInsertSection}
-              onSaveSection={handleSaveSection}
-              className="saved-sections-sidebar"
-            />
+          <div className="fixed inset-0 z-50 lg:relative lg:inset-auto lg:z-auto">
+            <div className="absolute inset-0 bg-black bg-opacity-50 lg:hidden" onClick={() => setShowSavedSections(false)}></div>
+            <div className="absolute right-0 top-0 h-full w-80 bg-white shadow-lg lg:relative lg:w-auto lg:shadow-none">
+              <SavedSectionsPanel
+                onInsertSection={handleInsertSection}
+                onSaveSection={handleSaveSection}
+                className="h-full overflow-y-auto"
+              />
+            </div>
           </div>
         )}
       </div>
-    </div>
+    </FormProvider>
   );
 }
