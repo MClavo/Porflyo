@@ -2,10 +2,12 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import type { ReactNode } from 'react';
 import { PortfoliosListPage, PortfolioEditorPage, PublicPortfolioPage } from '../features/portfolios/pages';
 import { NotFoundPage } from '../components/NotFoundPage';
+import { Layout } from '../components/layout/Layout';
+import { HomePage } from './pages/HomePage';
+import { DashboardPage } from './pages/DashboardPage';
+import ProfilePage from './pages/ProfilePage';
 
 // Placeholder components for existing routes
-const HomePage = () => <div>Home Page</div>;
-const ProfilePage = () => <div>Profile Page</div>;
 const LoginPage = () => <div>Login Page</div>;
 
 interface AppRouterProps {
@@ -31,11 +33,14 @@ export function AppRouter({ children }: AppRouterProps) {
         <Route path="/u/:username" element={<ProfilePage />} />
         
         {/* Authenticated routes */}
-        <Route path="/dashboard" element={<Navigate to="/app/portfolios" replace />} />
-        <Route path="/app/portfolios" element={<PortfoliosListPage />} />
-        <Route path="/app/portfolios/new" element={<PortfolioEditorPage />} />
-        <Route path="/app/portfolios/:id/edit" element={<PortfolioEditorPage />} />
-        <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/dashboard" element={<Layout><DashboardPage /></Layout>} />
+        <Route path="/app/portfolios" element={<Layout><PortfoliosListPage /></Layout>} />
+        <Route path="/app/portfolios/new" element={<Layout><PortfolioEditorPage /></Layout>} />
+        <Route path="/app/portfolios/:id/edit" element={<Layout><PortfolioEditorPage /></Layout>} />
+        <Route path="/app/profile" element={<Layout><ProfilePage /></Layout>} />
+        
+        {/* Legacy profile route */}
+        <Route path="/profile" element={<Navigate to="/app/profile" replace />} />
         
         {/* Legacy routes (redirect to new format) */}
         <Route path="/portfolios" element={<Navigate to="/app/portfolios" replace />} />

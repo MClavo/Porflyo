@@ -1,19 +1,32 @@
-import { QueryProvider } from './lib/query/QueryProvider';
-import { UserProvider } from './context/UserContext';
-import { AppRouter } from './routes/AppRouter';
-import Navbar from './components/Navbar';
-import './styles/modern.css';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { HomePage } from './routes/pages/HomePage';
+import { DashboardPage } from './routes/pages/DashboardPage';
+import ProfilePage from './routes/pages/ProfilePage';
+import { Layout } from './components/layout/Layout';
+
+const queryClient = new QueryClient();
 
 function App() {
   return (
-    <QueryProvider>
-      <UserProvider>
-        <div className="app-container">
-          <Navbar />
-          <AppRouter />
-        </div>
-      </UserProvider>
-    </QueryProvider>
+    <QueryClientProvider client={queryClient}>
+      <BrowserRouter>
+        <Routes>
+          {/* Public routes */}
+          <Route path="/" element={<HomePage />} />
+          
+          {/* Authenticated routes with Layout */}
+          <Route path="/dashboard" element={<Layout><DashboardPage /></Layout>} />
+          <Route path="/app/profile" element={<Layout><ProfilePage /></Layout>} />
+          
+          {/* Legacy redirects */}
+          <Route path="/profile" element={<Navigate to="/app/profile" replace />} />
+          
+          {/* 404 */}
+          <Route path="*" element={<div>Page not found</div>} />
+        </Routes>
+      </BrowserRouter>
+    </QueryClientProvider>
   );
 }
 
