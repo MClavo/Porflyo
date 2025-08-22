@@ -103,7 +103,7 @@ export function HomePage() {
 
         {/* Create new portfolio button */}
         <div className="mt-4">
-          <button className="btn btn-primary" onClick={() => navigate('/app/portfolios/new')} aria-label="Create portfolio">
+          <button className="btn btn-primary" onClick={() => navigate('/portfolios/new')} aria-label="Create portfolio">
             + Create portfolio
           </button>
         </div>

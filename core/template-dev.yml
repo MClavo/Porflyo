@@ -48,6 +48,11 @@ Resources:
           Properties:
             Path: /api/media/{key+}
             Method: DELETE
+        GetPublicPortfolio:
+          Type: HttpApi
+          Properties:
+            Path: /public/portfolio/{proxy+}
+            Method: GET
 
   # OAuth Handler Lambda
   PorflyoOauth:

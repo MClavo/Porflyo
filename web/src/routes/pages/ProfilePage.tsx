@@ -2,7 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthUser } from '../../features/auth/hooks/useAuthUser';
 import { useUpdateUser } from '../../features/auth/hooks/useUpdateUser';
-import ProfilePictureUploader from '../../components/ProfilePictureUploader';
+import ProfileHeader from '../../components/profile/ProfileHeader';
+import ProfilePictureCard from '../../components/profile/ProfilePictureCard';
+import ProviderInfoCard from '../../components/profile/ProviderInfoCard';
+import EditFormCard from '../../components/profile/EditFormCard';
+import { normalizeSocials, ensureHttps } from '../../utils/profileUtils';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -12,6 +16,7 @@ import type { UserPatchDto } from '../../types/dto';
 const profileFormSchema = z.object({
   name: z.string().min(1, 'Name is required').max(100, 'Name must be 100 characters or less'),
   email: z.string().email('Invalid email format').max(100, 'Email must be 100 characters or less'),
+  description: z.string().max(1200, 'Bio must be 1200 characters or less'),
 });
 
 type ProfileFormData = z.infer<typeof profileFormSchema>;
@@ -23,7 +28,8 @@ const ProfilePage: React.FC = () => {
   const [formData, setFormData] = useState({
     name: user?.name || '',
     email: user?.email || '',
-    socials: user?.socials || {}
+    socials: user?.socials || {},
+    description: user?.description || ''
   });
   const [newSocialPlatform, setNewSocialPlatform] = useState('');
   const [newSocialUrl, setNewSocialUrl] = useState('');
@@ -32,13 +38,7 @@ const ProfilePage: React.FC = () => {
   const [avatarUploadMessage, setAvatarUploadMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [imageTimestamp, setImageTimestamp] = useState(Date.now());
 
-  // Helper function to get image URL with timestamp to force reload
-  const getImageUrlWithTimestamp = (imageUrl: string | null | undefined) => {
-    if (!imageUrl) return '/default-avatar.png';
-    // Only add timestamp for profile images (not default avatar)
-    if (imageUrl === '/default-avatar.png') return imageUrl;
-    return `${imageUrl}?t=${imageTimestamp}`;
-  };
+  // imageTimestamp state is passed to util getImageUrlWithTimestamp when needed
 
   // Use react-hook-form for validation only
   const {
@@ -57,10 +57,12 @@ const ProfilePage: React.FC = () => {
       setFormData({
         name: user.name || '',
         email: user.email || '',
-        socials: user.socials || {}
+        socials: user.socials || {},
+        description: user.description || ''
       });
       setValue('name', user.name || '');
       setValue('email', user.email || '');
+      setValue('description', user.description || '');
       clearErrors();
     }
   }, [user, setValue, clearErrors]);
@@ -88,44 +90,10 @@ const ProfilePage: React.FC = () => {
     );
   }
 
-  // Helper function to ensure URL has protocol
-  const ensureHttps = (url: string): string => {
-    if (!url) return url;
-    const trimmedUrl = url.trim();
-    if (trimmedUrl.startsWith('http://') || trimmedUrl.startsWith('https://')) {
-      return trimmedUrl;
-    }
-    return `https://${trimmedUrl}`;
-  };
+  // Using helpers from ../../utils/profileUtils
 
-  // Type for socials stored in the form/user
-  type SocialsLike = Record<string, string> | string[] | undefined | null;
-
-  // Normalize socials into a plain object with only non-empty values.
-  // This converts arrays (if any) into objects and removes empty/null values.
-  const normalizeSocials = (s: SocialsLike): Record<string, string> => {
-    if (!s) return {};
-    // If it's an array, convert numeric indices to string keys but skip empty entries
-    if (Array.isArray(s)) {
-      const obj: Record<string, string> = {};
-      s.forEach((v, i) => {
-        if (v !== undefined && v !== null && String(v).trim() !== '') {
-          obj[String(i)] = String(v);
-        }
-      });
-      return obj;
-    }
-    // If it's already an object, copy only non-empty values
-    return Object.entries(s as Record<string, unknown> || {}).reduce((acc: Record<string, string>, [k, v]) => {
-      if (v !== undefined && v !== null && String(v).trim() !== '') {
-        acc[k] = String(v);
-      }
-      return acc;
-    }, {});
-  };
-
-  const handleInputChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
+  const handleInputChange = async (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target as HTMLInputElement | HTMLTextAreaElement;
     
     if (name.startsWith('socials.')) {
       const socialKey = name.split('.')[1];
@@ -143,7 +111,7 @@ const ProfilePage: React.FC = () => {
       }));
       
       // Trigger validation for basic fields
-      if (name === 'name' || name === 'email') {
+  if (name === 'name' || name === 'email' || name === 'description') {
         setValue(name as keyof ProfileFormData, value);
         await trigger(name as keyof ProfileFormData);
       }
@@ -151,7 +119,7 @@ const ProfilePage: React.FC = () => {
   };
 
   const handleSocialBlur = (platform: string, value: string) => {
-    const urlWithProtocol = ensureHttps(value);
+  const urlWithProtocol = ensureHttps(value);
     setFormData(prev => ({
       ...prev,
       socials: {
@@ -163,7 +131,7 @@ const ProfilePage: React.FC = () => {
 
   const addSocialNetwork = () => {
     if (newSocialPlatform.trim() && newSocialUrl.trim()) {
-      const urlWithProtocol = ensureHttps(newSocialUrl.trim());
+  const urlWithProtocol = ensureHttps(newSocialUrl.trim());
       setFormData(prev => ({
         ...prev,
         socials: {
@@ -178,8 +146,8 @@ const ProfilePage: React.FC = () => {
 
   const removeSocialNetwork = (platform: string) => {
     setFormData(prev => {
-      // Ensure we're working with a normalized object (not an array)
-      const newSocials = { ...normalizeSocials(prev.socials) };
+  // Ensure we're working with a normalized object (not an array)
+  const newSocials = { ...normalizeSocials(prev.socials) };
       delete newSocials[platform];
       // If there are no keys left, return an empty object to signal "cleared"
       return {
@@ -196,8 +164,9 @@ const ProfilePage: React.FC = () => {
 
     try {
       // Validate basic fields first
-      setValue('name', formData.name);
-      setValue('email', formData.email);
+  setValue('name', formData.name);
+  setValue('email', formData.email);
+  setValue('description', formData.description as string);
       
       const isValid = await trigger();
       if (!isValid) {
@@ -216,9 +185,14 @@ const ProfilePage: React.FC = () => {
         changes.email = formData.email;
       }
 
-      // Normalize socials for reliable comparison and sending
-      const normalizedFormSocials = normalizeSocials(formData.socials);
-      const normalizedUserSocials = normalizeSocials(user?.socials);
+      if (formData.description !== user?.description) {
+        // send description (labelled Bio in UI) even if empty string to clear it on server
+        changes.description = formData.description;
+      }
+
+  // Normalize socials for reliable comparison and sending
+  const normalizedFormSocials = normalizeSocials(formData.socials);
+  const normalizedUserSocials = normalizeSocials(user?.socials);
       const socialsChanged = JSON.stringify(normalizedFormSocials) !== JSON.stringify(normalizedUserSocials);
 
       if (socialsChanged) {
@@ -288,191 +262,35 @@ const ProfilePage: React.FC = () => {
 
   return (
     <>
-      <div className="profile-header">
-        <img 
-          src={getImageUrlWithTimestamp(user?.profileImage)} 
-          alt="Avatar" 
-          className="profile-avatar"
-        />
-        <h1 className="card-title">Edit Profile</h1>
-        <p className="card-description">Update your personal information</p>
-      </div>
-
-      {/* Profile Picture Upload Section */}
-      <div className="card">
-        <div className="card-header">
-          <h2 className="card-title">Profile Picture</h2>
-          <p className="card-description">Change your profile picture. It will be displayed as a circle on your profile.</p>
-        </div>
-
-        {avatarUploadMessage && (
-          <div className={avatarUploadMessage.type === 'success' ? 'success' : 'error'}>
-            {avatarUploadMessage.text}
-          </div>
-        )}
-
-        <ProfilePictureUploader
-          currentUser={{
-            profileImage: getImageUrlWithTimestamp(user?.profileImage),
-            profileImageKey: user?.profileImageKey || '',
-            providerAvatarUrl: user?.providerAvatarUrl || ''
-          }}
-          onUploadSuccess={handleAvatarUploadSuccess}
-          onUploadError={handleAvatarUploadError}
-        />
-      </div>
-
-      {/* Provider Information (read only) */}
-      <div className="card">
-        <div className="card-header">
-          <h2 className="card-title">Provider Information</h2>
-          <p className="card-description">This information comes from your GitHub account and cannot be modified here</p>
-        </div>
-        <div className="profile-provider-info">
-          <div className="provider-info-row">
-            <span className="provider-info-title">GitHub Name:</span>
-            <span>{user?.providerUserName}</span>
-          </div>
-          <div className="provider-info-row">
-            <span className="provider-info-title">GitHub Avatar:</span>
-            <img 
-              src={user?.providerAvatarUrl || '/default-avatar.png'} 
-              alt="Provider Avatar" 
-              style={{ width: '32px', height: '32px', borderRadius: '50%' }}
-            />
-          </div>
-        </div>
-      </div>
-
-      {/* Edit Form */}
-      <div className="card">
-        <div className="card-header">
-          <h2 className="card-title">Personal Information</h2>
-          <p className="card-description">Modify your personal information visible on your profile</p>
-        </div>
-
-        {message && (
-          <div className={message.type === 'success' ? 'success' : 'error'}>
-            {message.text}
-          </div>
-        )}
-
-        <form onSubmit={handleSubmit} className="profile-form">
-          <div className="form-group">
-            <label htmlFor="name" className="form-label">Name</label>
-            <input
-              type="text"
-              id="name"
-              name="name"
-              value={formData.name}
-              onChange={handleInputChange}
-              className={`form-input ${errors.name ? 'error' : ''}`}
-              required
-            />
-            {errors.name && (
-              <p className="error-message">{errors.name.message}</p>
-            )}
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="email" className="form-label">Email</label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              value={formData.email}
-              onChange={handleInputChange}
-              className={`form-input ${errors.email ? 'error' : ''}`}
-              required
-            />
-            {errors.email && (
-              <p className="error-message">{errors.email.message}</p>
-            )}
-          </div>
-
-          {/* Dynamic Social Networks */}
-          <div className="form-group">
-            <label className="form-label">Social Networks</label>
-            
-            {/* Existing social networks */}
-            {Object.entries(normalizeSocials(formData.socials)).map(([platform, url]) => (
-              <div key={platform} className="flex gap-2 mb-2">
-                <input
-                  type="text"
-                  value={platform}
-                  className="form-input"
-                  style={{ width: '120px' }}
-                  disabled
-                />
-                <input
-                  type="url"
-                  name={`socials.${platform}`}
-                  value={url}
-                  onChange={handleInputChange}
-                  onBlur={(e) => handleSocialBlur(platform, e.target.value)}
-                  className="form-input"
-                  placeholder={`${platform.charAt(0).toUpperCase() + platform.slice(1)} URL`}
-                />
-                <button
-                  type="button"
-                  onClick={() => removeSocialNetwork(platform)}
-                  className="btn btn-secondary btn-sm"
-                  style={{ minWidth: 'auto', padding: '0.5rem' }}
-                >
-                  ✕
-                </button>
-              </div>
-            ))}
-            
-            {/* Add new social network */}
-            <div className="flex gap-2 mt-4">
-              <input
-                type="text"
-                value={newSocialPlatform}
-                onChange={(e) => setNewSocialPlatform(e.target.value)}
-                className="form-input"
-                style={{ width: '120px' }}
-                placeholder="Platform"
-              />
-              <input
-                type="url"
-                value={newSocialUrl}
-                onChange={(e) => setNewSocialUrl(e.target.value)}
-                onBlur={(e) => setNewSocialUrl(ensureHttps(e.target.value))}
-                className="form-input"
-                placeholder="URL"
-              />
-              <button
-                type="button"
-                onClick={addSocialNetwork}
-                className="btn btn-secondary btn-sm"
-                disabled={!newSocialPlatform.trim() || !newSocialUrl.trim()}
-              >
-                Add
-              </button>
-            </div>
-          </div>
-
-          <div className="flex gap-4">
-            <button
-              type="submit"
-              className="btn"
-              disabled={saving || updateUserMutation.isPending}
-            >
-              {saving || updateUserMutation.isPending ? 'Saving...' : 'Save Changes'}
-            </button>
-            
-            <button
-              type="button"
-              onClick={() => navigate('/')}
-              className="btn-outline btn"
-              disabled={saving || updateUserMutation.isPending}
-            >
-              Cancel
-            </button>
-          </div>
-        </form>
-      </div>
+      <ProfileHeader profileImage={user?.profileImage} imageTimestamp={imageTimestamp} />
+      <ProfilePictureCard
+        profileImage={user?.profileImage}
+        profileImageKey={user?.profileImageKey}
+        providerAvatarUrl={user?.providerAvatarUrl}
+        imageTimestamp={imageTimestamp}
+        avatarUploadMessage={avatarUploadMessage}
+        onUploadSuccess={handleAvatarUploadSuccess}
+        onUploadError={handleAvatarUploadError}
+      />
+      <ProviderInfoCard providerUserName={user?.providerUserName} providerAvatarUrl={user?.providerAvatarUrl} />
+      <EditFormCard
+        formData={formData}
+        errors={errors}
+        newSocialPlatform={newSocialPlatform}
+        newSocialUrl={newSocialUrl}
+        setNewSocialPlatform={setNewSocialPlatform}
+        setNewSocialUrl={setNewSocialUrl}
+        handleInputChange={handleInputChange}
+        handleSocialBlur={handleSocialBlur}
+        addSocialNetwork={addSocialNetwork}
+        removeSocialNetwork={removeSocialNetwork}
+        handleSubmit={handleSubmit}
+        saving={saving}
+        updateUserPending={updateUserMutation.isPending}
+        message={message}
+        navigateToHome={() => navigate('/')}
+        normalizeSocials={normalizeSocials}
+      />
     </>
   );
 };

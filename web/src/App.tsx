@@ -5,6 +5,8 @@ import Root from './routes/pages/root';
 import { DashboardPage } from './routes/pages/DashboardPage';
 import ProfilePage from './routes/pages/ProfilePage';
 import { Layout } from './components/layout/Layout';
+//import { createPortfolio } from './features/portfolios/api/portfolios.api';
+import { PortfolioEditorPage } from './features/portfolios/pages';
 
 const queryClient = new QueryClient();
 
@@ -21,7 +23,8 @@ function App() {
             <Route path="/home" element={<HomePage />} />
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/profile" element={<ProfilePage />} />
-
+            <Route path="/portfolios/new" element={<PortfolioEditorPage />} />
+            <Route path="/portfolios/:id/edit" element={<PortfolioEditorPage />} />
 
             {/* 404 */}
             <Route path="*" element={<div>Page not found</div>} />

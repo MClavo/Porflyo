@@ -150,7 +150,7 @@ export function DashboardPage() {
                   Edit Profile
                 </Link>
                 <Link
-                  to="/app/portfolios"
+                  to="/portfolios"
                   className="btn-secondary flex-1"
                   style={{ textDecoration: 'none', textAlign: 'center' }}
                 >

@@ -59,7 +59,7 @@ export function PortfoliosListPage() {
               </p>
             </div>
             <Link
-              to="/app/portfolios/new"
+              to="/portfolios/new"
               className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors duration-200"
             >
               Create Portfolio
@@ -78,7 +78,7 @@ export function PortfoliosListPage() {
                 Create your first portfolio to showcase your work
               </p>
               <Link
-                to="/app/portfolios/new"
+                to="/portfolios/new"
                 className="bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700 transition-colors duration-200"
               >
                 Create Your First Portfolio
@@ -168,7 +168,7 @@ function PortfolioCard({
           {!isConfirmingDelete ? (
             <>
               <Link
-                to={`/app/portfolios/${portfolio.id}/edit`}
+                to={`/portfolios/${portfolio.id}/edit`}
                 className="flex-1 bg-blue-600 text-white text-center py-2 px-4 rounded-md hover:bg-blue-700 transition-colors duration-200 text-sm"
               >
                 Edit
