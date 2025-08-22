@@ -1,321 +1,480 @@
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuthUser } from '../../features/auth/hooks/useAuthUser';
+import { useUpdateUser } from '../../features/auth/hooks/useUpdateUser';
+import ProfilePictureUploader from '../../components/ProfilePictureUploader';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { useState } from 'react';
-import { useAuthUser } from '../../features/auth/hooks/useAuthUser';
-import { useUpdateUser } from '../../features/auth/hooks/useUpdateUser';
 import type { UserPatchDto } from '../../types/dto';
 
-// Schema matching UserPatchDto.java - all fields optional
+// Schema for validation - all fields optional
 const profileFormSchema = z.object({
-  name: z.string().max(100, 'Name must be 100 characters or less'),
-  email: z.string().email('Invalid email format').max(100, 'Email must be 100 characters or less').or(z.literal('')),
-  description: z.string().max(500, 'Description must be 500 characters or less'),
-  avatarUrl: z.string().url('Invalid URL format').or(z.literal('')),
-  // Socials as individual fields for better UX
-  githubUrl: z.string().url('Invalid GitHub URL').or(z.literal('')),
-  linkedinUrl: z.string().url('Invalid LinkedIn URL').or(z.literal('')),
-  twitterUrl: z.string().url('Invalid Twitter URL').or(z.literal('')),
-  websiteUrl: z.string().url('Invalid website URL').or(z.literal('')),
+  name: z.string().min(1, 'Name is required').max(100, 'Name must be 100 characters or less'),
+  email: z.string().email('Invalid email format').max(100, 'Email must be 100 characters or less'),
 });
 
 type ProfileFormData = z.infer<typeof profileFormSchema>;
 
-export default function ProfilePage() {
+const ProfilePage: React.FC = () => {
   const { user, isLoading } = useAuthUser();
   const updateUserMutation = useUpdateUser();
-  const [showSuccessToast, setShowSuccessToast] = useState(false);
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    name: user?.name || '',
+    email: user?.email || '',
+    socials: user?.socials || {}
+  });
+  const [newSocialPlatform, setNewSocialPlatform] = useState('');
+  const [newSocialUrl, setNewSocialUrl] = useState('');
+  const [saving, setSaving] = useState(false);
+  const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const [avatarUploadMessage, setAvatarUploadMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const [imageTimestamp, setImageTimestamp] = useState(Date.now());
 
+  // Helper function to get image URL with timestamp to force reload
+  const getImageUrlWithTimestamp = (imageUrl: string | null | undefined) => {
+    if (!imageUrl) return '/default-avatar.png';
+    // Only add timestamp for profile images (not default avatar)
+    if (imageUrl === '/default-avatar.png') return imageUrl;
+    return `${imageUrl}?t=${imageTimestamp}`;
+  };
+
+  // Use react-hook-form for validation only
   const {
-    register,
-    handleSubmit,
-    formState: { errors, isDirty, isSubmitting },
-    reset,
+    formState: { errors },
+    trigger,
+    setValue,
+    clearErrors
   } = useForm<ProfileFormData>({
     resolver: zodResolver(profileFormSchema),
-    defaultValues: {
-      name: user?.name || '',
-      email: user?.email || '',
-      description: user?.description || '',
-      avatarUrl: user?.providerAvatarUrl || '',
-      githubUrl: user?.socials?.github || '',
-      linkedinUrl: user?.socials?.linkedin || '',
-      twitterUrl: user?.socials?.twitter || '',
-      websiteUrl: user?.socials?.website || '',
-    },
-    // Reset form when user data loads
-    values: user ? {
-      name: user.name || '',
-      email: user.email || '',
-      description: user.description || '',
-      avatarUrl: user.providerAvatarUrl || '',
-      githubUrl: user.socials?.github || '',
-      linkedinUrl: user.socials?.linkedin || '',
-      twitterUrl: user.socials?.twitter || '',
-      websiteUrl: user.socials?.website || '',
-    } : undefined,
+    mode: 'onChange'
   });
 
-  const onSubmit = async (data: ProfileFormData) => {
-    try {
-      // Transform form data to UserPatchDto format, filtering out empty strings
-      const updates: UserPatchDto = {};
-      
-      if (data.name && data.name.trim()) updates.name = data.name.trim();
-      if (data.email && data.email.trim()) updates.email = data.email.trim();
-      if (data.description && data.description.trim()) updates.description = data.description.trim();
-      if (data.avatarUrl && data.avatarUrl.trim()) updates.avatarUrl = data.avatarUrl.trim();
-      
-      // Build socials object only if there are social URLs
-      const socials: Record<string, string> = {};
-      if (data.githubUrl && data.githubUrl.trim()) socials.github = data.githubUrl.trim();
-      if (data.linkedinUrl && data.linkedinUrl.trim()) socials.linkedin = data.linkedinUrl.trim();
-      if (data.twitterUrl && data.twitterUrl.trim()) socials.twitter = data.twitterUrl.trim();
-      if (data.websiteUrl && data.websiteUrl.trim()) socials.website = data.websiteUrl.trim();
-      
-      if (Object.keys(socials).length > 0) {
-        updates.socials = socials;
-      }
-
-      await updateUserMutation.mutateAsync(updates);
-      
-      // Show success toast
-      setShowSuccessToast(true);
-      setTimeout(() => setShowSuccessToast(false), 3000);
-      
-    } catch (error) {
-      console.error('Failed to update profile:', error);
-      // Error handling is done by the mutation
+  // Update form data when user data changes
+  useEffect(() => {
+    if (user) {
+      setFormData({
+        name: user.name || '',
+        email: user.email || '',
+        socials: user.socials || {}
+      });
+      setValue('name', user.name || '');
+      setValue('email', user.email || '');
+      clearErrors();
     }
-  };
+  }, [user, setValue, clearErrors]);
 
   if (isLoading) {
     return (
-      <div className="app-container">
-        <div className="loading">
-          <div className="spinner"></div>
-          Loading profile...
+      <div className="main-content">
+        <div className="card">
+          <div className="loading">
+            <div className="spinner"></div>
+            Loading profile...
+          </div>
         </div>
       </div>
     );
   }
 
+  if (!user) {
+    return (
+      <div className="main-content">
+        <div className="card">
+          <p>No authenticated user</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Helper function to ensure URL has protocol
+  const ensureHttps = (url: string): string => {
+    if (!url) return url;
+    const trimmedUrl = url.trim();
+    if (trimmedUrl.startsWith('http://') || trimmedUrl.startsWith('https://')) {
+      return trimmedUrl;
+    }
+    return `https://${trimmedUrl}`;
+  };
+
+  // Type for socials stored in the form/user
+  type SocialsLike = Record<string, string> | string[] | undefined | null;
+
+  // Normalize socials into a plain object with only non-empty values.
+  // This converts arrays (if any) into objects and removes empty/null values.
+  const normalizeSocials = (s: SocialsLike): Record<string, string> => {
+    if (!s) return {};
+    // If it's an array, convert numeric indices to string keys but skip empty entries
+    if (Array.isArray(s)) {
+      const obj: Record<string, string> = {};
+      s.forEach((v, i) => {
+        if (v !== undefined && v !== null && String(v).trim() !== '') {
+          obj[String(i)] = String(v);
+        }
+      });
+      return obj;
+    }
+    // If it's already an object, copy only non-empty values
+    return Object.entries(s as Record<string, unknown> || {}).reduce((acc: Record<string, string>, [k, v]) => {
+      if (v !== undefined && v !== null && String(v).trim() !== '') {
+        acc[k] = String(v);
+      }
+      return acc;
+    }, {});
+  };
+
+  const handleInputChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    
+    if (name.startsWith('socials.')) {
+      const socialKey = name.split('.')[1];
+      setFormData(prev => ({
+        ...prev,
+        socials: {
+          ...normalizeSocials(prev.socials),
+          [socialKey]: value
+        }
+      }));
+    } else {
+      setFormData(prev => ({
+        ...prev,
+        [name]: value
+      }));
+      
+      // Trigger validation for basic fields
+      if (name === 'name' || name === 'email') {
+        setValue(name as keyof ProfileFormData, value);
+        await trigger(name as keyof ProfileFormData);
+      }
+    }
+  };
+
+  const handleSocialBlur = (platform: string, value: string) => {
+    const urlWithProtocol = ensureHttps(value);
+    setFormData(prev => ({
+      ...prev,
+      socials: {
+        ...normalizeSocials(prev.socials),
+        [platform]: urlWithProtocol
+      }
+    }));
+  };
+
+  const addSocialNetwork = () => {
+    if (newSocialPlatform.trim() && newSocialUrl.trim()) {
+      const urlWithProtocol = ensureHttps(newSocialUrl.trim());
+      setFormData(prev => ({
+        ...prev,
+        socials: {
+          ...normalizeSocials(prev.socials),
+          [newSocialPlatform.toLowerCase().trim()]: urlWithProtocol
+        }
+      }));
+      setNewSocialPlatform('');
+      setNewSocialUrl('');
+    }
+  };
+
+  const removeSocialNetwork = (platform: string) => {
+    setFormData(prev => {
+      // Ensure we're working with a normalized object (not an array)
+      const newSocials = { ...normalizeSocials(prev.socials) };
+      delete newSocials[platform];
+      // If there are no keys left, return an empty object to signal "cleared"
+      return {
+        ...prev,
+        socials: Object.keys(newSocials).length ? newSocials : {}
+      };
+    });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSaving(true);
+    setMessage(null);
+
+    try {
+      // Validate basic fields first
+      setValue('name', formData.name);
+      setValue('email', formData.email);
+      
+      const isValid = await trigger();
+      if (!isValid) {
+        setSaving(false);
+        return;
+      }
+
+      // Only send fields that have changed
+      const changes: UserPatchDto = {};
+
+      if (formData.name !== user?.name) {
+        changes.name = formData.name;
+      }
+
+      if (formData.email !== user?.email) {
+        changes.email = formData.email;
+      }
+
+      // Normalize socials for reliable comparison and sending
+      const normalizedFormSocials = normalizeSocials(formData.socials);
+      const normalizedUserSocials = normalizeSocials(user?.socials);
+      const socialsChanged = JSON.stringify(normalizedFormSocials) !== JSON.stringify(normalizedUserSocials);
+
+      if (socialsChanged) {
+        // If there are no socials left, send an explicit empty object {}
+        changes.socials = Object.keys(normalizedFormSocials).length ? normalizedFormSocials : {};
+      }
+
+      if (Object.keys(changes).length === 0) {
+        setMessage({ type: 'success', text: 'No changes to save' });
+        setSaving(false);
+        return;
+      }
+
+      await updateUserMutation.mutateAsync(changes);
+      setMessage({ type: 'success', text: 'Profile updated successfully' });
+      
+      // Redirect to home after a short delay
+      setTimeout(() => {
+        navigate('/');
+      }, 2000);
+      
+    } catch (error) {
+      setMessage({ 
+        type: 'error', 
+        text: error instanceof Error ? error.message : 'Error updating profile' 
+      });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleAvatarUploadSuccess = async () => {
+    try {
+      setAvatarUploadMessage(null);
+      
+      // Force image reload by updating timestamp
+      setImageTimestamp(Date.now());
+      
+      // Use updateUserInCache to force refresh the user data
+      if (user) {
+        updateUserMutation.updateUserInCache({
+          profileImage: user.profileImage,
+        });
+      }
+
+      setAvatarUploadMessage({ type: 'success', text: 'Profile picture updated successfully' });
+
+      // Clear the message after 3 seconds
+      setTimeout(() => {
+        setAvatarUploadMessage(null);
+      }, 3000);
+    } catch (error) {
+      setAvatarUploadMessage({ 
+        type: 'error', 
+        text: error instanceof Error ? error.message : 'Error updating profile picture' 
+      });
+    }
+  };
+
+  const handleAvatarUploadError = (error: string) => {
+    setAvatarUploadMessage({ type: 'error', text: error });
+    // Clear the error message after 5 seconds
+    setTimeout(() => {
+      setAvatarUploadMessage(null);
+    }, 5000);
+  };
+
   return (
-    <div className="app-container">
-      <div className="main-content" style={{ maxWidth: '48rem', margin: '0 auto' }}>
-        {/* Success Toast */}
-        {showSuccessToast && (
-          <div className="toast success" style={{ position: 'fixed', top: '1rem', right: '1rem', zIndex: 50 }}>
-            <div style={{ display: 'flex' }}>
-              <div style={{ paddingTop: '0.25rem' }}>
-                <svg style={{ width: '1.5rem', height: '1.5rem', color: 'var(--success-color)', marginRight: '1rem' }} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"/>
-                </svg>
-              </div>
-              <div>
-                <p style={{ fontWeight: 'bold' }}>Profile updated successfully!</p>
-              </div>
-            </div>
+    <div className="main-content fade-in">
+      <div className="profile-header">
+        <img 
+          src={getImageUrlWithTimestamp(user?.profileImage)} 
+          alt="Avatar" 
+          className="profile-avatar"
+        />
+        <h1 className="card-title">Edit Profile</h1>
+        <p className="card-description">Update your personal information</p>
+      </div>
+
+      {/* Profile Picture Upload Section */}
+      <div className="card">
+        <div className="card-header">
+          <h2 className="card-title">Profile Picture</h2>
+          <p className="card-description">Change your profile picture. It will be displayed as a circle on your profile.</p>
+        </div>
+
+        {avatarUploadMessage && (
+          <div className={avatarUploadMessage.type === 'success' ? 'success' : 'error'}>
+            {avatarUploadMessage.text}
           </div>
         )}
 
-        <h1 style={{ fontSize: '2rem', fontWeight: 'bold', marginBottom: '2rem' }}>Edit Profile</h1>
+        <ProfilePictureUploader
+          currentUser={{
+            profileImage: getImageUrlWithTimestamp(user?.profileImage),
+            profileImageKey: user?.profileImageKey || '',
+            providerAvatarUrl: user?.providerAvatarUrl || ''
+          }}
+          onUploadSuccess={handleAvatarUploadSuccess}
+          onUploadError={handleAvatarUploadError}
+        />
+      </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="form-container">
-          {/* Basic Information */}
-          <div className="card">
-            <div className="card-header">
-              <h2 className="card-title">Basic Information</h2>
-            </div>
-            <div>
-              <div className="form-grid">
-                {/* Name */}
-                <div className="form-group">
-                  <label htmlFor="name" className="form-label">
-                    Name
-                  </label>
-                  <input
-                    type="text"
-                    id="name"
-                    {...register('name')}
-                    className={`form-input ${errors.name ? 'error' : ''}`}
-                    placeholder="Your display name"
-                  />
-                  {errors.name && (
-                    <p className="error-message">{errors.name.message}</p>
-                  )}
-                </div>
+      {/* Provider Information (read only) */}
+      <div className="card">
+        <div className="card-header">
+          <h2 className="card-title">Provider Information</h2>
+          <p className="card-description">This information comes from your GitHub account and cannot be modified here</p>
+        </div>
+        <div className="profile-provider-info">
+          <div className="provider-info-row">
+            <span className="provider-info-title">GitHub Name:</span>
+            <span>{user?.providerUserName}</span>
+          </div>
+          <div className="provider-info-row">
+            <span className="provider-info-title">GitHub Avatar:</span>
+            <img 
+              src={user?.providerAvatarUrl || '/default-avatar.png'} 
+              alt="Provider Avatar" 
+              style={{ width: '32px', height: '32px', borderRadius: '50%' }}
+            />
+          </div>
+        </div>
+      </div>
 
-                {/* Email */}
-                <div className="form-group">
-                  <label htmlFor="email" className="form-label">
-                    Email
-                  </label>
-                  <input
-                    type="email"
-                    id="email"
-                    {...register('email')}
-                    className={`form-input ${errors.email ? 'error' : ''}`}
-                    placeholder="your.email@example.com"
-                  />
-                  {errors.email && (
-                    <p className="error-message">{errors.email.message}</p>
-                  )}
-                </div>
-              </div>
+      {/* Edit Form */}
+      <div className="card">
+        <div className="card-header">
+          <h2 className="card-title">Personal Information</h2>
+          <p className="card-description">Modify your personal information visible on your profile</p>
+        </div>
 
-              {/* Description */}
-              <div className="form-group">
-                <label htmlFor="description" className="form-label">
-                  Description
-                </label>
-                <textarea
-                  id="description"
-                  rows={4}
-                  {...register('description')}
-                  className={`form-input ${errors.description ? 'error' : ''}`}
-                  placeholder="Tell us about yourself..."
+        {message && (
+          <div className={message.type === 'success' ? 'success' : 'error'}>
+            {message.text}
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit} className="profile-form">
+          <div className="form-group">
+            <label htmlFor="name" className="form-label">Name</label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              value={formData.name}
+              onChange={handleInputChange}
+              className={`form-input ${errors.name ? 'error' : ''}`}
+              required
+            />
+            {errors.name && (
+              <p className="error-message">{errors.name.message}</p>
+            )}
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="email" className="form-label">Email</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              value={formData.email}
+              onChange={handleInputChange}
+              className={`form-input ${errors.email ? 'error' : ''}`}
+              required
+            />
+            {errors.email && (
+              <p className="error-message">{errors.email.message}</p>
+            )}
+          </div>
+
+          {/* Dynamic Social Networks */}
+          <div className="form-group">
+            <label className="form-label">Social Networks</label>
+            
+            {/* Existing social networks */}
+            {Object.entries(normalizeSocials(formData.socials)).map(([platform, url]) => (
+              <div key={platform} className="flex gap-2 mb-2">
+                <input
+                  type="text"
+                  value={platform}
+                  className="form-input"
+                  style={{ width: '120px' }}
+                  disabled
                 />
-                {errors.description && (
-                  <p className="error-message">{errors.description.message}</p>
-                )}
-              </div>
-
-              {/* Avatar URL */}
-              <div className="form-group">
-                <label htmlFor="avatarUrl" className="form-label">
-                  Avatar URL
-                </label>
                 <input
                   type="url"
-                  id="avatarUrl"
-                  {...register('avatarUrl')}
-                  className={`form-input ${errors.avatarUrl ? 'error' : ''}`}
-                  placeholder="https://example.com/avatar.jpg"
+                  name={`socials.${platform}`}
+                  value={url}
+                  onChange={handleInputChange}
+                  onBlur={(e) => handleSocialBlur(platform, e.target.value)}
+                  className="form-input"
+                  placeholder={`${platform.charAt(0).toUpperCase() + platform.slice(1)} URL`}
                 />
-                {errors.avatarUrl && (
-                  <p className="error-message">{errors.avatarUrl.message}</p>
-                )}
+                <button
+                  type="button"
+                  onClick={() => removeSocialNetwork(platform)}
+                  className="btn btn-secondary btn-sm"
+                  style={{ minWidth: 'auto', padding: '0.5rem' }}
+                >
+                  ✕
+                </button>
               </div>
+            ))}
+            
+            {/* Add new social network */}
+            <div className="flex gap-2 mt-4">
+              <input
+                type="text"
+                value={newSocialPlatform}
+                onChange={(e) => setNewSocialPlatform(e.target.value)}
+                className="form-input"
+                style={{ width: '120px' }}
+                placeholder="Platform"
+              />
+              <input
+                type="url"
+                value={newSocialUrl}
+                onChange={(e) => setNewSocialUrl(e.target.value)}
+                onBlur={(e) => setNewSocialUrl(ensureHttps(e.target.value))}
+                className="form-input"
+                placeholder="URL"
+              />
+              <button
+                type="button"
+                onClick={addSocialNetwork}
+                className="btn btn-secondary btn-sm"
+                disabled={!newSocialPlatform.trim() || !newSocialUrl.trim()}
+              >
+                Add
+              </button>
             </div>
           </div>
 
-          {/* Social Links */}
-          <div className="card">
-            <div className="card-header">
-              <h2 className="card-title">Social Links</h2>
-            </div>
-            <div>
-              <div className="form-grid">
-                {/* GitHub */}
-                <div className="form-group">
-                  <label htmlFor="githubUrl" className="form-label">
-                    GitHub URL
-                  </label>
-                  <input
-                    type="url"
-                    id="githubUrl"
-                    {...register('githubUrl')}
-                    className={`form-input ${errors.githubUrl ? 'error' : ''}`}
-                    placeholder="https://github.com/username"
-                  />
-                  {errors.githubUrl && (
-                    <p className="error-message">{errors.githubUrl.message}</p>
-                  )}
-                </div>
-
-                {/* LinkedIn */}
-                <div className="form-group">
-                  <label htmlFor="linkedinUrl" className="form-label">
-                    LinkedIn URL
-                  </label>
-                  <input
-                    type="url"
-                    id="linkedinUrl"
-                    {...register('linkedinUrl')}
-                    className={`form-input ${errors.linkedinUrl ? 'error' : ''}`}
-                    placeholder="https://linkedin.com/in/username"
-                  />
-                  {errors.linkedinUrl && (
-                    <p className="error-message">{errors.linkedinUrl.message}</p>
-                  )}
-                </div>
-
-                {/* Twitter */}
-                <div className="form-group">
-                  <label htmlFor="twitterUrl" className="form-label">
-                    Twitter URL
-                  </label>
-                  <input
-                    type="url"
-                    id="twitterUrl"
-                    {...register('twitterUrl')}
-                    className={`form-input ${errors.twitterUrl ? 'error' : ''}`}
-                    placeholder="https://twitter.com/username"
-                  />
-                  {errors.twitterUrl && (
-                    <p className="error-message">{errors.twitterUrl.message}</p>
-                  )}
-                </div>
-
-                {/* Website */}
-                <div className="form-group">
-                  <label htmlFor="websiteUrl" className="form-label">
-                    Website URL
-                  </label>
-                  <input
-                    type="url"
-                    id="websiteUrl"
-                    {...register('websiteUrl')}
-                    className={`form-input ${errors.websiteUrl ? 'error' : ''}`}
-                    placeholder="https://yourwebsite.com"
-                  />
-                  {errors.websiteUrl && (
-                    <p className="error-message">{errors.websiteUrl.message}</p>
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Form Actions */}
-          <div className="form-actions">
-            <button
-              type="button"
-              onClick={() => reset()}
-              disabled={!isDirty || isSubmitting}
-              className="btn-secondary"
-            >
-              Reset
-            </button>
+          <div className="flex gap-4">
             <button
               type="submit"
-              disabled={!isDirty || isSubmitting || updateUserMutation.isPending}
               className="btn"
+              disabled={saving || updateUserMutation.isPending}
             >
-              {isSubmitting || updateUserMutation.isPending ? (
-                <>
-                  <svg className="spinner" style={{ width: '1.25rem', height: '1.25rem', marginRight: '0.75rem' }} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
-                  Saving...
-                </>
-              ) : (
-                'Save Changes'
-              )}
+              {saving || updateUserMutation.isPending ? 'Saving...' : 'Save Changes'}
+            </button>
+            
+            <button
+              type="button"
+              onClick={() => navigate('/')}
+              className="btn-outline btn"
+              disabled={saving || updateUserMutation.isPending}
+            >
+              Cancel
             </button>
           </div>
-
-          {/* Error message */}
-          {updateUserMutation.isError && (
-            <div className="error">
-              <p style={{ fontWeight: 'bold' }}>Error updating profile</p>
-              <p>{updateUserMutation.error?.message || 'An unexpected error occurred. Please try again.'}</p>
-            </div>
-          )}
         </form>
       </div>
     </div>
   );
-}
+};
+
+export default ProfilePage;

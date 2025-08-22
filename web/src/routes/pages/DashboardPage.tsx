@@ -143,7 +143,7 @@ export function DashboardPage() {
               {/* Actions */}
               <div className="flex gap-3">
                 <Link
-                  to="/app/profile"
+                  to="/profile"
                   className="btn flex-1"
                   style={{ textDecoration: 'none', textAlign: 'center' }}
                 >
