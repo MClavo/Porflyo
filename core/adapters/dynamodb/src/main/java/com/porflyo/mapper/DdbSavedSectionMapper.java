@@ -51,16 +51,23 @@ public final class DdbSavedSectionMapper {
     public SavedSection toDomain(DdbSavedSectionItem item) {
         try{
 
-            PortfolioSection section = dataCompressor
-            .decompress(item.getSection(), PortfolioSection.class);
-            
+            PortfolioSection section = dataCompressor.decompress(item.getSection(), PortfolioSection.class);
+
+            // Defensive: ensure PK and SK have expected prefixes before extracting ids
+            String sk = item.getSK();
+            String pk = item.getPK();
+
+            if (sk == null || !sk.startsWith(USER_SAVED_SECTION_SK_PREFIX) || pk == null || !pk.startsWith(USER_PK_PREFIX)) {
+                throw new IllegalArgumentException("Item keys are not saved-section keys");
+            }
+
             return new SavedSection(
-                new SectionId(idFrom(USER_SAVED_SECTION_SK_PREFIX, item.getSK())),
-                new UserId(idFrom(USER_PK_PREFIX, item.getPK())),
+                new SectionId(idFrom(USER_SAVED_SECTION_SK_PREFIX, sk)),
+                new UserId(idFrom(USER_PK_PREFIX, pk)),
                 item.getName(),
                 section,
                 item.getVersion()
-                );
+            );
         } catch (Exception e) {
             throw new RuntimeException("Failed to decompress section data", e);
         }

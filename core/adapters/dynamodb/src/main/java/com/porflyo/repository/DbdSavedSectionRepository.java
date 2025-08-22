@@ -62,9 +62,9 @@ public class DbdSavedSectionRepository implements SavedSectionRepository {
         
         String pk = pk(USER_PK_PREFIX, userId.value());
 
-        // Query for all saved sections of the user
-        QueryConditional query = QueryConditional
-        .keyEqualTo(k -> k.partitionValue(pk));
+    // Query for all saved sections of the user: restrict sort keys to saved-section prefix
+    QueryConditional query = QueryConditional
+    .sortBeginsWith(k -> k.partitionValue(pk).sortValue(USER_SAVED_SECTION_SK_PREFIX));
 
         List<SavedSection> sections = table.query(r -> r.queryConditional(query))
             .items()
