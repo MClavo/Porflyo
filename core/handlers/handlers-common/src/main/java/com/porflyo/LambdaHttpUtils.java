@@ -156,14 +156,14 @@ public final class LambdaHttpUtils {
 
 
     /**
-     * Returns the HTTP method of the incoming API Gateway event in uppercase.
+     * Returns the HTTP method of the incoming API Gateway event in lowercase.
      *
      * @param input the API Gateway event
-     * @return the HTTP method in uppercase, or null if not found
+     * @return the HTTP method in lowercase, or null if not found
      */
     public static String getMethod(APIGatewayV2HTTPEvent input) {
         if (input.getRequestContext() != null && input.getRequestContext().getHttp().getMethod() != null) {
-            return input.getRequestContext().getHttp().getMethod().toUpperCase();
+            return input.getRequestContext().getHttp().getMethod().toLowerCase();
         }
         return null;
     }
@@ -174,16 +174,16 @@ public final class LambdaHttpUtils {
      *
      * @param input     the API Gateway event
      * @param position  the position of the path part to extract (0 is the first segment)
-     * @return the extracted path part, or null if the position is invalid
+     * @return the extracted path part to lower case, or empty string if the position is invalid
      */
     public static String extractPathSegment(APIGatewayV2HTTPEvent input, int position) {
         String[] pathParts = input.getRawPath().split("/");
         int adjustedPos = position + 1; // Adjust for the leading slash in the path
 
         if (adjustedPos < 0 || adjustedPos >= pathParts.length)
-            return null; // Invalid position
+            return ""; // Invalid position
 
-        return pathParts[adjustedPos];
+        return pathParts[adjustedPos].toLowerCase();
     }
 
 

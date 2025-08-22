@@ -91,12 +91,12 @@ public class PortfolioLambdaHandler {
 
     private APIGatewayV2HTTPResponse processPortfolioRequest(UserId userId, String body, String pathRequest, String httpMethod) {
         log.debug("Handling portfolio request for path: {}, method: {}", pathRequest, httpMethod);
-        
-        switch (pathRequest.toUpperCase()) {
-            case "CREATE":
+
+        switch (pathRequest) {
+            case "create":
                 return createPortfolio(userId, body);
-                
-            case "LIST":
+
+            case "list":
                 return listPortfolios(userId);
                 
             default:
@@ -109,17 +109,17 @@ public class PortfolioLambdaHandler {
         try {
             PortfolioId id = new PortfolioId(portfolioId);
             
-            switch (httpMethod.toUpperCase()) {
-                case "GET":
+            switch (httpMethod) {
+                case "get":
                     return getPortfolio(userId, id);
-                    
-                case "PATCH":
+
+                case "patch":
                     return patchPortfolio(userId, id, body);
-                    
-                case "DELETE":
+
+                case "delete":
                     return deletePortfolio(userId, id);
-                    
-                case "POST":
+
+                case "post":
                     // Handle publish/unpublish
                     return publishPortfolio(userId, id, body);
                     

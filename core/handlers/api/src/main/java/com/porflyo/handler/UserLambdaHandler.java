@@ -85,13 +85,13 @@ public class UserLambdaHandler {
 
         // User only gets saved in the OAuth flow, so we can assume it exists
         switch (method) {
-            case "GET":
+            case "get":
                 return findUser(userId);    
 
-            case "PATCH":
+            case "patch":
                 return patchUser(userId, body);
 
-            case "DELETE":
+            case "delete":
                 return deleteUser(userId);
 
             default:

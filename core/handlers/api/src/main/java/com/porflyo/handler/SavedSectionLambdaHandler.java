@@ -82,11 +82,11 @@ public class SavedSectionLambdaHandler {
     private APIGatewayV2HTTPResponse processSavedSectionRequest(UserId userId, String body, String pathRequest, String httpMethod) {
         log.debug("Handling saved section request for path: {}, method: {}", pathRequest, httpMethod);
         
-        switch (pathRequest.toUpperCase()) {
-            case "CREATE":
+        switch (pathRequest) {
+            case "create":
                 return createSavedSection(userId, body);
-                
-            case "LIST":
+
+            case "list":
                 return listSavedSections(userId);
                 
             default:
@@ -98,9 +98,9 @@ public class SavedSectionLambdaHandler {
     private APIGatewayV2HTTPResponse handleSectionSpecificRequest(UserId userId, String sectionId, String httpMethod) {
         try {
             SectionId id = new SectionId(sectionId);
-            
-            switch (httpMethod.toUpperCase()) {
-                case "DELETE":
+
+            switch (httpMethod) {
+                case "delete":
                     return deleteSavedSection(userId, id);
                     
                 default:

@@ -47,10 +47,10 @@ public class MediaLambdaHandler {
         log.debug("Processing media request: {} {}", method, key);
 
         switch (method) {
-            case "POST":
+            case "post":
                 return generatePresignedPut(body);
 
-            case "DELETE":
+            case "delete":
                 return deleteMediaObject(key);
         
             default:
