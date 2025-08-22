@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import type { PublicPortfolioDto } from '../../../types/dto';
 import {
   createPortfolio,
   listPortfolios,
@@ -27,10 +28,14 @@ export const portfolioKeys = {
 /**
  * List portfolios query
  */
-export function useListPortfolios() {
-  return useQuery({
+// Allow callers to pass react-query options; use any to avoid fragile generic mismatches
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function useListPortfolios(options?: any) {
+  return useQuery<PublicPortfolioDto[]>({
     queryKey: portfolioKeys.list(),
     queryFn: listPortfolios,
+    // Allow callers to override options like enabled, staleTime, refetch behavior
+    ...options,
   });
 }
 

@@ -9,7 +9,7 @@ export function Layout({ children }: LayoutProps) {
   return (
     <div className="app-container">
       <TopNav />
-      <main className="main-content">
+      <main className="main-content fade-in">
         {children}
       </main>
     </div>

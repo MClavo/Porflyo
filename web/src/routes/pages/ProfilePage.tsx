@@ -287,7 +287,7 @@ const ProfilePage: React.FC = () => {
   };
 
   return (
-    <div className="main-content fade-in">
+    <>
       <div className="profile-header">
         <img 
           src={getImageUrlWithTimestamp(user?.profileImage)} 
@@ -473,7 +473,7 @@ const ProfilePage: React.FC = () => {
           </div>
         </form>
       </div>
-    </div>
+    </>
   );
 };
 
