@@ -42,7 +42,7 @@ import jakarta.inject.Inject;
  */
 public class AuthenticationLambdaEntrypoint extends MicronautRequestHandler<APIGatewayV2HTTPEvent, APIGatewayV2HTTPResponse>{
     private static final Logger log = LoggerFactory.getLogger(AuthenticationLambdaEntrypoint.class);
-    private final JwtPort jwtService;
+    private final AuthUseCase authService;
 
     private final FrontendConfig frontendConfig;
 
@@ -52,8 +52,7 @@ public class AuthenticationLambdaEntrypoint extends MicronautRequestHandler<APIG
             builder(Environment.FUNCTION)
             .deduceEnvironment(false)
             .start();
-        //this.authLambdaHandler = applicationContext.getBean(AuthLambdaHandler.class);
-        this.jwtService = applicationContext.getBean(JwtPort.class);
+        this.authService = applicationContext.getBean(AuthUseCase.class);
         this.frontendConfig = applicationContext.getBean(FrontendConfig.class);
     }
 
@@ -93,7 +92,7 @@ public class AuthenticationLambdaEntrypoint extends MicronautRequestHandler<APIG
             throw new JwtMalformedException("Missing or empty session token");
         }
 
-        jwtService.verifyTokenOrThrow(token);
+       authService.verifyTokenOrThrow(token);
 
         return LambdaHttpUtils.createResponse(200, "Valid token");
     }
@@ -120,7 +119,7 @@ public class AuthenticationLambdaEntrypoint extends MicronautRequestHandler<APIG
 
     private String getUserId(APIGatewayV2HTTPEvent input) {
         String cookie = LambdaHttpUtils.extractCookieValue(input, "session");
-        UserClaims claims = jwtService.extractClaims(cookie);
+        UserClaims claims = authService.extractClaims(cookie);
         return claims.getSub();
     }
 

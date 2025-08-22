@@ -97,18 +97,6 @@ public class ApiLambdaEntrypoint extends MicronautRequestHandler<APIGatewayV2HTT
     }
 
 
-    //  ────────────────────────── OAUTH ──────────────────────────
-    
-    /* private APIGatewayV2HTTPResponse oauthHandler(String path, APIGatewayV2HTTPEvent input){
-        
-        if(path.equals("/oauth/login/github"))
-            return authLambdaHandler.handleOauthLogin(input);
-        else
-            return authLambdaHandler.handleOAuthCallback(input);
-
-    } */
-
-
     //  ────────────────────────── API ──────────────────────────
     
     private APIGatewayV2HTTPResponse apiHandler(String path, APIGatewayV2HTTPEvent input){
