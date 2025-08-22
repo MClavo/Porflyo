@@ -45,15 +45,40 @@ public final class DataCompressor {
 
     // ────────────────────────── Decompress ──────────────────────────
     public <T> T decompress(@NotNull byte[] compressedData, @NotNull Class<T> clazz) throws IOException {
+        if (compressedData == null) {
+            return null;
+        }
+
         return decompressDataStream(compressedData, Argument.of(clazz));
     }
 
     public <T> List<T> decompressList(byte[] compressedData, Class<T> clazz) throws IOException {
-        return decompressDataStream(compressedData, Argument.listOf(clazz));
+        if (compressedData == null) {
+            return List.of();
+        }
+
+        try {
+            return decompressDataStream(compressedData, Argument.listOf(clazz));
+        } catch (RuntimeException | IOException e) {
+            // Fallback: sometimes the stored JSON is a single object instead of an array.
+            // Try to decode a single object and wrap it into a list.
+            try {
+                T single = decompressDataStream(compressedData, Argument.of(clazz));
+                return List.of(single);
+            } catch (Exception ex) {
+                // If fallback fails, rethrow the original exception as IOException to keep signature
+                if (e instanceof IOException) throw (IOException) e;
+                throw new IOException("Failed to decompress list and single-object fallback failed", e);
+            }
+        }
     }
 
 
     public <K, V> Map<K, V> decompressMap(byte[] compressedData, Class<K> keyClass, Class<V> valueClass) throws IOException {
+        if (compressedData == null) {
+            return Map.of();
+        }
+
         return decompressDataStream(compressedData, Argument.mapOf(keyClass, valueClass));
     }
 
