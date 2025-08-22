@@ -86,10 +86,17 @@ public final class DdbPortfolioMapper {
         String portfolioId = idFrom(USER_PORTFOLIO_SK_PREFIX, item.getSK());
         String userId = idFrom(USER_PK_PREFIX, item.getPK());
 
-        List<String> media = new ArrayList<>();
+        // Defensive: if sections is null or empty, use empty list and no media
+        if (sections == null) {
+            sections = List.of();
+        }
 
-        for(var s : sections)
-            media.addAll(s.media());
+        List<String> media = new ArrayList<>();
+        for (var s : sections) {
+            if (s != null && s.media() != null) {
+                media.addAll(s.media());
+            }
+        }
 
         return new Portfolio(
             new PortfolioId(portfolioId),

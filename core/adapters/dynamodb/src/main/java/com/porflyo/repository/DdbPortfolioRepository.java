@@ -79,9 +79,9 @@ public class DdbPortfolioRepository implements PortfolioRepository {
     public @NotNull List<Portfolio> findByUserId(UserId userId) {
         String pk = pk(USER_PK_PREFIX, userId.value());
 
-        // Query for all portfolios of the user
+        // Query for all portfolios of the user: restrict to sort keys that begin with the portfolio prefix
         QueryConditional query = QueryConditional
-            .keyEqualTo(k -> k.partitionValue(pk));
+            .sortBeginsWith(k -> k.partitionValue(pk).sortValue(USER_PORTFOLIO_SK_PREFIX));
 
         List<Portfolio> portfolios = table.query(r -> r.queryConditional(query))
             .items()
