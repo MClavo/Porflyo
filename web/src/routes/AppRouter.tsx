@@ -39,10 +39,7 @@ export function AppRouter({ children }: AppRouterProps) {
         <Route path="/app/portfolios" element={<Layout><PortfoliosListPage /></Layout>} />
         <Route path="/app/portfolios/new" element={<Layout><PortfolioEditorPage /></Layout>} />
         <Route path="/app/portfolios/:id/edit" element={<Layout><PortfolioEditorPage /></Layout>} />
-        <Route path="/app/profile" element={<Layout><ProfilePage /></Layout>} />
-        
-        {/* Legacy profile route */}
-        <Route path="/profile" element={<Navigate to="/app/profile" replace />} />
+        <Route path="/profile" element={<Layout><ProfilePage /></Layout>} />
         
         {/* Legacy routes (redirect to new format) */}
         <Route path="/portfolios" element={<Navigate to="/app/portfolios" replace />} />
