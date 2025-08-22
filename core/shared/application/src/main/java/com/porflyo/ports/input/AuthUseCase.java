@@ -6,6 +6,13 @@ import com.porflyo.model.user.UserSession;
 public interface AuthUseCase {
 
     /**
+     * Verifies the JWT token and throws an exception if it's invalid.
+     *
+     * @param token The JWT token to verify.
+     */
+    void verifyTokenOrThrow(String token);
+
+    /**
      * Extracts user claims from the JWT token.
      *
      * @param token The JWT token.

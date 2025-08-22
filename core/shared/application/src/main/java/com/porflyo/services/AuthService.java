@@ -52,6 +52,11 @@ public class AuthService implements AuthUseCase {
     // ────────────────────────── Implementation ──────────────────────────
 
     @Override
+    public void verifyTokenOrThrow(String token) {
+        jwt.verifyTokenOrThrow(token);
+    }
+
+    @Override
     public UserClaims extractClaims(String token) {
         return jwt.extractClaims(token);
     }
