@@ -24,7 +24,7 @@ import software.amazon.awssdk.services.s3.model.CreateBucketRequest;
  */
 @Singleton
 @Requires(beans = {S3Config.class})
-@Requires(env = {"s3-integration", "local"}) // Only loads in s3-integration and local environments
+@Requires(env = {"s3-integration"}) // Only loads in s3-integration environments
 public class S3Bootstrap implements ApplicationEventListener<StartupEvent> {
 
     private static final Logger logger = LoggerFactory.getLogger(S3Bootstrap.class);
