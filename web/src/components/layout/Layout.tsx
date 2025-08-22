@@ -7,9 +7,9 @@ interface LayoutProps {
 
 export function Layout({ children }: LayoutProps) {
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="app-container">
       <TopNav />
-      <main className="py-8">
+      <main className="main-content">
         {children}
       </main>
     </div>
