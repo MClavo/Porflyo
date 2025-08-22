@@ -23,7 +23,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: handlers\api
-      Handler: com.porflyo.ApiLambdaEntrypoint::execute
+      Handler: com.porflyo.LocalLambdaEntrypoint::execute
       Runtime: java21
       MemorySize: 256
       Environment:

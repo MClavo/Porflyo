@@ -1,0 +1,15 @@
+services:
+  localstack:
+    build:
+      context: .
+      dockerfile: Dockerfile.localstack
+    ports:
+      - "8000:4566"
+    environment:
+      - SERVICES=s3,dynamodb
+      - GATEWAY_LISTEN=0.0.0.0:4566
+      - PERSISTENCE=1
+    volumes:
+      - localstack-data:/var/lib/localstack
+volumes:
+  localstack-data:

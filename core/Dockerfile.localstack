@@ -2,6 +2,7 @@ FROM localstack/localstack:latest
 
 ENV SERVICES=s3,dynamodb
 ENV GATEWAY_LISTEN=0.0.0.0:4566
+ENV PERSISTENCE=1
 
 USER root
 
