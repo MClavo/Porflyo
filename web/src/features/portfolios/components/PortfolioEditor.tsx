@@ -12,6 +12,10 @@ const PortfolioEditor: React.FC = () => {
     const {
         sections,
         setSections,
+        activeId,
+        setActiveId,
+        previewSections,
+        setPreviewSections,
         typeDialog,
         setTypeDialog,
         sensors
@@ -23,18 +27,27 @@ const PortfolioEditor: React.FC = () => {
         closeTypeDialog,
         handleTypeSelection,
         handleDragStart,
+        handleDragOver,
         handleDragEnd
     } = usePortfolioCallbacks({
         sections,
         setSections,
+        activeId,
+        setActiveId,
+        previewSections,
+        setPreviewSections,
         typeDialog,
         setTypeDialog
     });
 
     const renderLogic = (): React.ReactNode => {
+        // Usar previewSections durante el drag para mostrar posiciones en tiempo real
+        // Usar sections normales cuando no hay drag activo
+        const sectionsToRender = activeId ? previewSections : sections;
+        
         return (
             <div className="portfolio-editor-container">
-                {sections.map(section => 
+                {sectionsToRender.map(section => 
                     PortfolioSectionRenderer.renderSection(section, callbacks)
                 )}
             </div>
@@ -46,6 +59,7 @@ const PortfolioEditor: React.FC = () => {
             sensors={sensors}
             collisionDetection={pointerWithin}
             onDragStart={handleDragStart}
+            onDragOver={handleDragOver}
             onDragEnd={handleDragEnd}
         >
             <section className="portfolio-editor">

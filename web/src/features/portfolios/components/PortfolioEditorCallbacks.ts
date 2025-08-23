@@ -1,13 +1,18 @@
-import type { DragStartEvent, DragEndEvent } from '@dnd-kit/core';
+import type { DragStartEvent, DragEndEvent, DragOverEvent } from '@dnd-kit/core';
 import type { SectionConfig, ItemType } from '../types/itemDto';
 import type { DropResult, DropTargetData } from '../types/dragDto';
 import type { TypeDialogState } from './PortfolioEditorTypes';
 import type { SectionRendererCallbacks } from './PortfolioSectionRenderer';
 import { PortfolioEditorState } from './PortfolioEditorState';
+import { arrayMove } from '@dnd-kit/sortable';
 
 interface UsePortfolioCallbacksProps {
     sections: SectionConfig[];
     setSections: React.Dispatch<React.SetStateAction<SectionConfig[]>>;
+    activeId: string | null;
+    setActiveId: React.Dispatch<React.SetStateAction<string | null>>;
+    previewSections: SectionConfig[];
+    setPreviewSections: React.Dispatch<React.SetStateAction<SectionConfig[]>>;
     typeDialog: TypeDialogState;
     setTypeDialog: React.Dispatch<React.SetStateAction<TypeDialogState>>;
 }
@@ -15,6 +20,10 @@ interface UsePortfolioCallbacksProps {
 export const usePortfolioCallbacks = ({
     sections,
     setSections,
+    activeId,
+    setActiveId,
+    previewSections,
+    setPreviewSections,
     typeDialog,
     setTypeDialog
 }: UsePortfolioCallbacksProps) => {
@@ -73,93 +82,191 @@ export const usePortfolioCallbacks = ({
 
     // DnD handlers
     const handleDragStart = (event: DragStartEvent) => {
-        // Could be used for visual feedback during drag
+        setActiveId(String(event.active.id));
+        // Inicializar preview con el estado actual (sin cambiar IDs)
+        setPreviewSections([...sections]);
         console.log('Drag started:', event.active.id);
     };
 
-    const handleDragEnd = (event: DragEndEvent) => {
+    const handleDragOver = (event: DragOverEvent) => {
         const { active, over } = event;
-
-        if (!over) return;
+        
+        if (!over || !activeId) return;
 
         const dragId = String(active.id);
-
-        // Parse the drag ID to get source information
         const dragData = PortfolioEditorState.parseDragId(dragId);
         if (!dragData) return;
 
         const { sectionId: sourceSectionId, itemId } = dragData;
-        
-        // Get the drop target data
         const dropTargetData = over.data.current as DropTargetData;
         if (!dropTargetData) return;
 
         const { type: dropType, sectionId: targetSectionId } = dropTargetData;
 
-        // Find the item being moved and source section
-        const sourceSection = sections.find(s => s.id === sourceSectionId);
-        const targetSection = sections.find(s => s.id === targetSectionId);
+        // Solo actualizar si es un drop válido
+        const sourceSection = previewSections.find(s => s.id === sourceSectionId);
+        const targetSection = previewSections.find(s => s.id === targetSectionId);
         const item = sourceSection?.items.find(i => i.id === itemId);
         
         if (!item || !sourceSection || !targetSection) return;
 
-        const sourceIndex = sourceSection.items.findIndex(i => i.id === itemId);
+        // Verificar compatibilidad de tipos
+        if (sourceSectionId !== targetSectionId && !targetSection.allowedItemTypes.includes(item.type)) {
+            return;
+        }
 
-        // Handle different drop types
+        const sourceIndex = sourceSection.items.findIndex(i => i.id === itemId);
         let targetIndex: number;
 
         if (dropType === 'item') {
-            // Dropping on top of another item
             const targetItemId = dropTargetData.itemId!;
             targetIndex = targetSection.items.findIndex(i => i.id === targetItemId);
-            
-            // If dropping on the same section and same item, do nothing
-            if (sourceSectionId === targetSectionId && sourceIndex === targetIndex) {
-                return;
-            }
         } else if (dropType === 'section') {
-            // Dropping on section (not on an item) - check compatibility and space
-            if (sourceSectionId === targetSectionId) {
-                // Same section - do nothing if dropped on empty area
-                return;
-            }
-            
-            // Different section - check if item type is allowed
-            if (!targetSection.allowedItemTypes.includes(item.type)) {
-                return;
-            }
-            
-            // Check if target section has space
-            if (targetSection.items.length >= targetSection.maxItems) {
-                return;
-            }
-            
-            // Add to end of target section
+            if (sourceSectionId === targetSectionId) return;
             targetIndex = targetSection.items.length;
-        } else if (dropType === 'drop-zone') {
-            // Dropping on a specific drop zone
-            targetIndex = dropTargetData.index!;
-            
-            // If dropping on the same section and adjacent positions, do nothing
-            if (sourceSectionId === targetSectionId) {
-                if (targetIndex === sourceIndex || targetIndex === sourceIndex + 1) {
-                    return;
-                }
-            } else {
-                // Different section - check compatibility and space
-                if (!targetSection.allowedItemTypes.includes(item.type)) {
-                    return;
-                }
-                
-                if (targetSection.items.length >= targetSection.maxItems) {
-                    return;
-                }
-            }
         } else {
             return;
         }
 
-        // Create drop result and execute the move
+        // Actualizar las posiciones de preview SIN cambiar IDs originales
+        setPreviewSections(prevSections => {
+            const newSections = [...prevSections];
+            
+            if (sourceSectionId === targetSectionId) {
+                // Mismo sección - reordenar con arrayMove (preserva IDs)
+                const sectionIndex = newSections.findIndex(s => s.id === sourceSectionId);
+                if (sectionIndex !== -1) {
+                    const newItems = arrayMove(newSections[sectionIndex].items, sourceIndex, targetIndex);
+                    newSections[sectionIndex] = { ...newSections[sectionIndex], items: newItems };
+                }
+            } else {
+                // Diferente sección - mover entre secciones MANTENIENDO la ID original durante preview
+                const sourceSectionIndex = newSections.findIndex(s => s.id === sourceSectionId);
+                const targetSectionIndex = newSections.findIndex(s => s.id === targetSectionId);
+                
+                if (sourceSectionIndex !== -1 && targetSectionIndex !== -1) {
+                    // Verificar límites de espacio
+                    if (newSections[targetSectionIndex].items.length >= newSections[targetSectionIndex].maxItems) {
+                        return prevSections; // No cambiar si no hay espacio
+                    }
+                    
+                    // Remover del origen
+                    const newSourceItems = [...newSections[sourceSectionIndex].items];
+                    const [movedItem] = newSourceItems.splice(sourceIndex, 1);
+                    
+                    // Agregar al destino CON LA MISMA ID (solo para preview visual)
+                    const newTargetItems = [...newSections[targetSectionIndex].items];
+                    newTargetItems.splice(targetIndex, 0, movedItem);
+                    
+                    newSections[sourceSectionIndex] = { ...newSections[sourceSectionIndex], items: newSourceItems };
+                    newSections[targetSectionIndex] = { ...newSections[targetSectionIndex], items: newTargetItems };
+                }
+            }
+            
+            return newSections;
+        });
+    };
+
+    const handleDragEnd = (event: DragEndEvent) => {
+        const { active, over } = event;
+
+        if (!over || !activeId) {
+            // Resetear si no hay drop válido
+            setActiveId(null);
+            setPreviewSections([...sections]);
+            return;
+        }
+
+        const dragId = String(active.id);
+        const dragData = PortfolioEditorState.parseDragId(dragId);
+        if (!dragData) {
+            setActiveId(null);
+            setPreviewSections([...sections]);
+            return;
+        }
+
+        const { sectionId: sourceSectionId, itemId } = dragData;
+        const dropTargetData = over.data.current as DropTargetData;
+        if (!dropTargetData) {
+            setActiveId(null);
+            setPreviewSections([...sections]);
+            return;
+        }
+
+        const { type: dropType, sectionId: targetSectionId } = dropTargetData;
+
+        // Encontrar el item y validar el movimiento usando sections (no previewSections)
+        const sourceSection = sections.find(s => s.id === sourceSectionId);
+        const targetSection = sections.find(s => s.id === targetSectionId);
+        const item = sourceSection?.items.find(i => i.id === itemId);
+        
+        if (!item || !sourceSection || !targetSection) {
+            setActiveId(null);
+            setPreviewSections([...sections]);
+            return;
+        }
+
+        const sourceIndex = sourceSection.items.findIndex(i => i.id === itemId);
+        let targetIndex: number;
+
+        if (dropType === 'item') {
+            const targetItemId = dropTargetData.itemId!;
+            targetIndex = targetSection.items.findIndex(i => i.id === targetItemId);
+            
+            if (sourceSectionId === targetSectionId && sourceIndex === targetIndex) {
+                setActiveId(null);
+                setPreviewSections([...sections]);
+                return;
+            }
+        } else if (dropType === 'section') {
+            if (sourceSectionId === targetSectionId) {
+                setActiveId(null);
+                setPreviewSections([...sections]);
+                return;
+            }
+            
+            if (!targetSection.allowedItemTypes.includes(item.type)) {
+                setActiveId(null);
+                setPreviewSections([...sections]);
+                return;
+            }
+            
+            if (targetSection.items.length >= targetSection.maxItems) {
+                setActiveId(null);
+                setPreviewSections([...sections]);
+                return;
+            }
+            
+            targetIndex = targetSection.items.length;
+        } else if (dropType === 'drop-zone') {
+            targetIndex = dropTargetData.index!;
+            
+            if (sourceSectionId === targetSectionId) {
+                if (targetIndex === sourceIndex || targetIndex === sourceIndex + 1) {
+                    setActiveId(null);
+                    setPreviewSections([...sections]);
+                    return;
+                }
+            } else {
+                if (!targetSection.allowedItemTypes.includes(item.type)) {
+                    setActiveId(null);
+                    setPreviewSections([...sections]);
+                    return;
+                }
+                
+                if (targetSection.items.length >= targetSection.maxItems) {
+                    setActiveId(null);
+                    setPreviewSections([...sections]);
+                    return;
+                }
+            }
+        } else {
+            setActiveId(null);
+            setPreviewSections([...sections]);
+            return;
+        }
+
+        // Crear drop result y ejecutar el movimiento usando PortfolioEditorState (maneja IDs correctamente)
         const dropResult: DropResult = {
             sourceSectionId,
             targetSectionId,
@@ -169,9 +276,13 @@ export const usePortfolioCallbacks = ({
             itemType: item.type
         };
 
+        // Aplicar el cambio real con IDs correctas (cross-section moves obtienen nuevas IDs)
         setSections(prevSections => 
             PortfolioEditorState.moveItem(prevSections, dropResult)
         );
+        
+        // Limpiar el estado de drag
+        setActiveId(null);
     };
 
     return {
@@ -179,6 +290,7 @@ export const usePortfolioCallbacks = ({
         closeTypeDialog,
         handleTypeSelection,
         handleDragStart,
+        handleDragOver,
         handleDragEnd
     };
 };

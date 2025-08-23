@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { 
     KeyboardSensor,
     PointerSensor,
@@ -14,6 +14,13 @@ import { PortfolioEditorState } from './PortfolioEditorState';
 
 export const usePortfolioEditor = () => {
     const [sections, setSections] = useState<SectionConfig[]>(
+        PortfolioEditorState.getInitialSections()
+    );
+    
+    const [activeId, setActiveId] = useState<string | null>(null);
+    
+    // Estado virtual para mostrar posiciones durante el drag (sin cambiar IDs originales)
+    const [previewSections, setPreviewSections] = useState<SectionConfig[]>(
         PortfolioEditorState.getInitialSections()
     );
     
@@ -47,9 +54,20 @@ export const usePortfolioEditor = () => {
         })
     );
 
+    // Sincronizar previewSections cuando sections cambie (excepto durante drag activo)
+    useEffect(() => {
+        if (!activeId) {
+            setPreviewSections([...sections]);
+        }
+    }, [sections, activeId]);
+
     return {
         sections,
         setSections,
+        activeId,
+        setActiveId,
+        previewSections,
+        setPreviewSections,
         typeDialog,
         setTypeDialog,
         sensors
