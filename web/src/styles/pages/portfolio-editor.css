@@ -1,34 +1,170 @@
 /* Portfolio Editor Styles */
-.portfolio-editor {
-  min-height: 100vh;
-  background: linear-gradient(135deg, var(--surface) 0%, var(--background) 100%);
+
+.portfolio-main {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.portfolio-preview {
+  flex: 1;
+  background: var(--background);
+  padding: 1rem; /* reduced vertical padding to avoid viewport overflow */
+  overflow-y: auto;
+  min-height: 0; /* Allow flex child to shrink */
 }
 
 .portfolio-editor-content {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 2rem;
+  width: 100%;
+  height: 100vh; /* occupy viewport height */
+  padding: 0.5rem; /* smaller outer padding to avoid overflow */
+  overflow: hidden; /* prevent page scrolling - children handle scrolling */
+  display: flex;
+  flex-direction: column;
+  min-height: 0; /* allow children to shrink correctly */
 }
 
 .portfolio-editor-grid {
   display: grid;
-  grid-template-columns: 350px 1fr;
-  gap: 2rem;
-  min-height: calc(100vh - 8rem);
+  grid-template-columns: 30% 1fr;
+  gap: 0.75rem;
+  height: 100%; /* take full height of .portfolio-editor-content */
+  position: relative;
+  --sidebar-width: 30%;
+}
+
+.portfolio-editor-grid.sidebar-collapsed {
+  grid-template-columns: 0 1fr;
+  gap: 0;
+  --sidebar-width: 0%;
+}
+
+/* Sidebar Toggle Button */
+.sidebar-toggle {
+  position: absolute;
+  top: 1rem;
+  left: calc(var(--sidebar-width) - 0.375rem);
+  z-index: 100;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  width: 2rem;
+  height: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: var(--text-secondary);
+  box-shadow: var(--shadow);
+}
+
+.sidebar-toggle:hover {
+  background: var(--background);
+  color: var(--text-primary);
+}
+
+.sidebar-toggle.collapsed {
+  left: 0;
+  border-radius: 0 var(--radius) var(--radius) 0;
+}
+
+.toggle-icon {
+  font-size: 0.75rem;
+  transition: transform 0.3s ease;
 }
 
 /* Left Sidebar */
 .portfolio-sidebar {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1rem; /* reduce spacing */
+  width: 100%; /* Use full width of the grid column */
+  height: 100%;
+  min-height: 0; /* allow proper flex/grid clipping */
+  overflow-y: auto; /* sidebar scrolls internally */
+  transition: transform 0.3s ease, opacity 0.3s ease;
+  transform: translateX(0);
+  opacity: 1;
+}
+
+.portfolio-sidebar.collapsed {
+  transform: translateX(-100%);
+  opacity: 0;
+  pointer-events: none;
 }
 
 .template-settings-card {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  padding: 1.5rem;
+  padding: 0.5rem; /* small padding to reduce outer space */
+  box-shadow: var(--shadow);
+}
+
+/* Collapsible functionality */
+.collapsible-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem; /* reduce vertical padding */
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.2s ease;
+  /* Ensure header preserves rounded corners of the parent */
+  border-top-left-radius: var(--radius);
+  border-top-right-radius: var(--radius);
+  border-bottom-left-radius: var(--radius);
+  border-bottom-right-radius: var(--radius);
+  /* Prevent background from bleeding outside rounded corners */
+  background-clip: padding-box;
+}
+
+.collapsible-header:hover {
+  background: var(--background);
+}
+
+.collapsible-header .card-title {
+  margin: 0;
+  flex: 1;
+}
+
+.collapse-icon {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  transition: transform 0.3s ease;
+  margin-left: 0.5rem;
+}
+
+.collapse-icon.collapsed {
+  transform: rotate(-90deg);
+}
+
+.collapsible-content {
+  padding: 0 1rem 1rem 1rem; /* tighter padding */
+  overflow: hidden;
+  transition: max-height 0.3s ease, opacity 0.3s ease;
+  max-height: 1000px;
+  opacity: 1;
+}
+
+.collapsible-content.collapsed {
+  max-height: 0;
+  opacity: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.zones-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem;
   box-shadow: var(--shadow);
 }
 
@@ -36,7 +172,7 @@
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  padding: 1.5rem;
+  padding: 1rem;
   box-shadow: var(--shadow);
   flex: 1;
 }
@@ -50,21 +186,23 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  height: 100%;
+  min-height: 0; /* ensure children with overflow behave */
 }
-
 .portfolio-preview {
   flex: 1;
   background: var(--background);
-  padding: 2rem;
+  padding: 1rem; /* reduced */
   overflow-y: auto;
+  min-height: 0;
 }
 
 /* Portfolio User Header */
 .portfolio-user-header {
   background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
-  padding: 2rem;
+  padding: 1rem; /* reduce padding */
   color: white;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem; /* reduced margin */
   border-radius: var(--radius);
 }
 
@@ -95,7 +233,7 @@
 .section-placeholder {
   border: 2px dashed var(--border);
   border-radius: var(--radius);
-  padding: 2rem;
+  padding: 1rem; /* reduced */
   text-align: center;
   color: var(--text-secondary);
   background: var(--surface);
@@ -109,7 +247,7 @@
 
 .add-section-btn {
   width: 100%;
-  padding: 1rem;
+  padding: 0.75rem;
   border: 2px dashed var(--border);
   border-radius: var(--radius);
   background: transparent;
@@ -126,30 +264,73 @@
 }
 
 /* Responsive Design */
+@media (min-width: 1400px) {
+  .portfolio-editor-grid {
+    --sidebar-width: 25%;
+    grid-template-columns: 25% 1fr;
+  }
+}
+
 @media (max-width: 1024px) {
   .portfolio-editor-grid {
+    grid-template-rows: auto 1fr;
     grid-template-columns: 1fr;
-    gap: 1.5rem;
+    grid-template-areas:
+      "sidebar"
+      "portfolio";
+  }
+
+  .portfolio-sidebar {
+    grid-area: sidebar;
+    order: 1; /* Sidebar arriba */
+  }
+
+  .portfolio-main {
+    grid-area: portfolio;
+    order: 2; /* Portfolio abajo */
+  }
+  
+  .portfolio-editor-grid.sidebar-collapsed {
+    grid-template-columns: 1fr;
+  }
+  
+  .sidebar-toggle {
+    display: none; /* Hide toggle on mobile/tablet */
   }
   
   .portfolio-sidebar {
-    order: 2;
-    flex-direction: row;
+    order: 1;
+    flex-direction: column; /* Asegura que siempre estén apilados verticalmente */
+    width: auto;
+    transform: none;
+    opacity: 1;
+    pointer-events: auto;
+    gap: 0.5rem;
+  }
+  
+  .portfolio-sidebar.collapsed {
+    transform: none;
+    opacity: 1;
+    pointer-events: auto;
   }
   
   .template-settings-card,
   .saved-sections-card {
-    flex: 1;
+    flex: none; /* Evita que se ajusten uno al lado del otro */
+    width: 100%; /* Asegura que ocupen todo el ancho disponible */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Ajusta el contenido dentro */
   }
   
   .portfolio-main {
-    order: 1;
+    order: 2;
   }
 }
 
 @media (max-width: 768px) {
   .portfolio-editor-content {
-    padding: 1rem;
+  padding: 0.5rem;
   }
   
   .portfolio-sidebar {
@@ -162,7 +343,21 @@
   }
   
   .portfolio-preview {
-    padding: 1rem;
+  padding: 0.75rem;
+  }
+  
+  .portfolio-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem; /* Espaciado entre Settings y Saved Sections */
+  }
+
+  .template-settings-card,
+  .saved-sections-card {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Ajusta el contenido dentro */
   }
 }
 
@@ -400,15 +595,26 @@
   box-shadow: var(--shadow);
 }
 
+
+.sections-container {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem; /* reduced */
+  margin-bottom: 1rem;
+  box-shadow: var(--shadow);
+  min-height: 0;
+}
 .sections-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem; /* reduced */
 }
 
-.add-section-container {
-  position: relative;
+
+.section-content {
+  padding: 1rem; /* reduced */
 }
 
 .add-section-menu {

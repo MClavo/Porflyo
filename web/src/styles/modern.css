@@ -45,7 +45,12 @@ body {
 
 /* Layout components */
 .app-container {
-  min-height: 100vh;
+  /* Account for #root vertical padding (2rem top + 2rem bottom = 4rem) so inner 100vh content
+     doesn't cause the page to overflow and show global scroll. If #root padding changes, update
+     this calc accordingly. */
+  min-height: calc(100vh - 4rem);
+  display: flex;
+  flex-direction: column;
   background: linear-gradient(135deg, var(--surface) 0%, var(--background) 100%);
 }
 

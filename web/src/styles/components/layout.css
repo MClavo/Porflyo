@@ -1,6 +1,8 @@
 /* Layout components */
 .app-container {
-  min-height: 100vh;
+  min-height: calc(100vh - 4rem);
+  display: flex;
+  flex-direction: column;
   background: linear-gradient(135deg, var(--surface) 0%, var(--background) 100%);
 }
 

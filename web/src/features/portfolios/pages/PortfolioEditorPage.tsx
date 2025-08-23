@@ -1,75 +1,114 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useMemo, useState, useCallback } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
 import { useAuthUser } from '../../auth/hooks/useAuthUser';
-import { usePatchPortfolio } from '../hooks/usePortfolios';
-import { useCreatePortfolio } from '../hooks/usePortfolios';
-import { getPortfolio } from '../api/portfolios.api';
+import { usePatchPortfolio, useCreatePortfolio, useGetPortfolio } from '../hooks/usePortfolios';
 import { useDebouncedSlugAvailability } from '../hooks/usePublicPortfolio';
 import { useListSavedSections } from '../hooks/useSavedSections';
 import { toSlug } from '../../../lib/slug/toSlug';
 import { TemplateSelector } from '../components/TemplateSelector';
-import { DEFAULT_TEMPLATE } from '../templates';
-import type { PortfolioPatchDto, PortfolioSection, PortfolioCreateDto } from '../../../types/dto';
 import type { TemplateId } from '../templates';
+import { getTemplate, DEFAULT_TEMPLATE } from '../templates';
+import type { PortfolioSection, PortfolioCreateDto, PortfolioPatchDto } from '../../../types/dto';
+import { normalizeSectionsToZones, serializeSectionsForSave, readMeta } from '../../../components/portfolio/utils';
+import type { PortfolioDraft } from '../../../components/portfolio/types';
 
-/**
- * Portfolio editor page with modern two-panel layout
- */
-export function PortfolioEditorPage() {
+// Small presentational header used in the editor preview
+function PortfolioUserHeader({ title }: { title: string }) {
+  const { user } = useAuthUser();
+  if (!user) return null;
+
+  return (
+    <div className="portfolio-user-header">
+      <div className="portfolio-user-info">
+        <img src={user.profileImage ?? undefined} alt="Avatar" className="portfolio-avatar" />
+        <div>
+          <h1 className="text-2xl font-bold text-white">{user.name}</h1>
+          <p className="text-blue-100">{user.email}</p>
+          {title && <p className="text-blue-200 mt-2 text-lg">{title}</p>}
+        </div>
+      </div>
+      {user.socials && Object.keys(user.socials).length > 0 && (
+        <div className="portfolio-meta mt-2">
+          <div className="flex flex-wrap gap-3">
+            {Object.entries(user.socials).map(([platform, url]) => (
+              <a key={platform} href={String(url)} target="_blank" rel="noopener noreferrer" className="text-blue-100 hover:text-white text-sm underline">
+                {platform.charAt(0).toUpperCase() + platform.slice(1)}
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default function PortfolioEditorPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const location = useLocation();
-  // Treat both routes '/portfolios/new' and '/portfolios/:id/edit' where id === 'new' as new portfolio
-  const isNewPortfolio = id === 'new' || location.pathname.endsWith('/new');
   
-  // Only fetch portfolio if we have a real ID (not "new")
-  const portfolioQuery = useQuery({
-    queryKey: ['portfolios', 'detail', id],
-    queryFn: () => getPortfolio(id!),
-    enabled: !isNewPortfolio && !!id,
-  });
-  
-  const { data: portfolio, isLoading, error } = portfolioQuery;
-  const patchMutation = usePatchPortfolio();
-  const createMutation = useCreatePortfolio();
-  const { data: savedSections } = useListSavedSections();
+  // Check if we're on the "new" route by looking at the current path
+  const isNewPortfolio = location.pathname.endsWith('/new');
 
-  // Form state
+  const { data: portfolio, isLoading, error } = useGetPortfolio(isNewPortfolio ? '' : id || '');
+  const savedSectionsQuery = useListSavedSections();
+  const savedSections = useMemo(() => savedSectionsQuery.data || [], [savedSectionsQuery.data]);
+
+  const [template, setTemplate] = useState<TemplateId>(DEFAULT_TEMPLATE);
   const [title, setTitle] = useState('');
   const [slug, setSlug] = useState('');
-  const [template, setTemplate] = useState<TemplateId>(DEFAULT_TEMPLATE);
-  const [sections, setSections] = useState<PortfolioSection[]>([]);
-  const [isPublished, setIsPublished] = useState(false);
+  const [isSettingsCollapsed, setIsSettingsCollapsed] = useState(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
-  // Slug availability check
-  const { data: isSlugAvailable, isLoading: isCheckingSlug } = useDebouncedSlugAvailability(
-    slug,
-    slug.length > 0 && slug !== portfolio?.reservedSlug
-  );
+  // Draft state: zoned representation
+  const [draft, setDraft] = useState<PortfolioDraft | null>(null);
 
-  // Initialize form when portfolio loads
+  // MVP Zones for the template (temporary implementation)
+  const getMvpTemplateZones = useCallback(() => {
+    return [
+      { id: 'profile', label: 'Perfil', zoneType: 'about' as const, allowed: ['about' as const], maxItems: 3, variants: [], defaultVariant: '' },
+      { id: 'projects', label: 'Proyectos', zoneType: 'cards-grid' as const, allowed: ['project' as const], maxItems: 3, variants: [], defaultVariant: '' },
+      { id: 'experience', label: 'Experiencia', zoneType: 'list' as const, allowed: ['skillGroup' as const], maxItems: 3, variants: [], defaultVariant: '' },
+    ];
+  }, []);
+
+  const getMockTemplate = useCallback((templateId: TemplateId) => {
+    return {
+      id: templateId,
+      version: 1,
+      name: templateId,
+      zones: getMvpTemplateZones()
+    };
+  }, [getMvpTemplateZones]);
+
+  // Initialize draft when portfolio loads or when creating a new one
   useEffect(() => {
-    if (portfolio) {
+    if (!isNewPortfolio && portfolio) {
+      const tplId = (portfolio.template as TemplateId) || DEFAULT_TEMPLATE;
+      setTemplate(tplId);
       setTitle(portfolio.title || '');
       setSlug(portfolio.reservedSlug || '');
-      setTemplate((portfolio.template as TemplateId) || DEFAULT_TEMPLATE);
-      setSections(portfolio.sections || []);
-      setIsPublished(portfolio.isPublished || false);
+      const mockTpl = getMockTemplate(tplId);
+      setDraft(normalizeSectionsToZones(portfolio.sections || [], mockTpl));
     }
-  }, [portfolio]);
-
-  // Auto-generate slug from title
-  const handleTitleChange = (newTitle: string) => {
-    setTitle(newTitle);
-    if (!slug || slug === toSlug(title)) {
-      setSlug(toSlug(newTitle));
+    if (isNewPortfolio) {
+      const mockTpl = getMockTemplate(DEFAULT_TEMPLATE);
+      setDraft(normalizeSectionsToZones([], mockTpl));
     }
-  };
+  }, [portfolio, isNewPortfolio, getMockTemplate]);
 
-  const handleSlugChange = (newSlug: string) => {
-    setSlug(toSlug(newSlug));
-  };
+  const saved = useMemo(() => savedSections, [savedSections]);
+
+  // slug availability (debounced)
+  const slugQuery = useDebouncedSlugAvailability(slug);
+  const isCheckingSlug = slugQuery.isLoading;
+  const isSlugAvailable = slugQuery.data;
+
+  const createMutation = useCreatePortfolio();
+  const patchMutation = usePatchPortfolio();
+
+  const handleTitleChange = (newTitle: string) => { setTitle(newTitle); if (!slug || slug === toSlug(title)) setSlug(toSlug(newTitle)); };
+  const handleSlugChange = (newSlug: string) => setSlug(toSlug(newSlug));
 
   const getSlugStatus = () => {
     if (!slug) return null;
@@ -81,285 +120,172 @@ export function PortfolioEditorPage() {
   };
 
   const handleSave = async () => {
-    // Create new portfolio flow
     if (isNewPortfolio) {
-        const createBody: PortfolioCreateDto = {
-          title: title,
-          description: '',
-          template,
-          sections,
-        };
-
+      const sectionsToSave: PortfolioSection[] = draft ? serializeSectionsForSave(draft) : [];
+      const createBody: PortfolioCreateDto = { 
+        title, 
+        description: '', 
+        template, 
+        sections: sectionsToSave 
+      };
       try {
         const created = await createMutation.mutateAsync(createBody);
-        // After creation, navigate to the editor for the new portfolio
-        if (created && created.id) {
-          navigate(`/portfolios/${created.id}/edit`);
-        } else {
-          // Fallback: go back to list
-          navigate('/portfolios');
-        }
-      } catch (error) {
-        console.error('Failed to create portfolio:', error);
+        if (created && created.id) navigate(`/portfolios/${created.id}/edit`);
+        else navigate('/portfolios');
+      } catch (err) { 
+        console.error('Failed to create portfolio:', err); 
       }
-
       return;
     }
 
-    // Update existing portfolio flow
     if (!id || !portfolio) return;
-
-    const patch: PortfolioPatchDto = {
-      title: title || undefined,
-      template: template,
-      sections,
+    const sectionsToSave: PortfolioSection[] = draft ? serializeSectionsForSave(draft) : [];
+    const patch: PortfolioPatchDto = { 
+      title: title || undefined, 
+      template, 
+      sections: sectionsToSave 
     };
-
-    try {
-      await patchMutation.mutateAsync({ id, patch });
-      // TODO: Show success message
-    } catch (error) {
-      // TODO: Show error message
-      console.error('Failed to save portfolio:', error);
+    try { 
+      await patchMutation.mutateAsync({ id, patch }); 
+    } catch (err) { 
+      console.error('Failed to save portfolio:', err); 
     }
   };
 
-  const canPublish = Boolean(slug && slug.length > 0 && (isSlugAvailable || slug === portfolio?.reservedSlug));
-
-  if (!isNewPortfolio && isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-lg text-gray-600">Loading portfolio...</div>
-      </div>
-    );
-  }
-
-  if (!isNewPortfolio && (error || !portfolio)) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">Portfolio Not Found</h2>
-          <button
-            onClick={() => navigate('/portfolios')}
-            className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
-          >
-            Back to Portfolios
-          </button>
-        </div>
-      </div>
-    );
-  }
+  if (!isNewPortfolio && isLoading) return (<div className="min-h-screen flex items-center justify-center"><div className="text-lg text-gray-600">Loading portfolio...</div></div>);
+  if (!isNewPortfolio && (error || !portfolio)) return (<div className="min-h-screen flex items-center justify-center"><div className="text-center"><h2 className="text-2xl font-bold text-gray-900 mb-4">Portfolio Not Found</h2><button onClick={() => navigate('/portfolios')} className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Back to Portfolios</button></div></div>);
 
   return (
-    <div className="portfolio-editor">
-      <div className="portfolio-editor-content">
-        <div className="portfolio-editor-grid">
-          {/* Left Sidebar */}
-          <div className="portfolio-sidebar">
-            {/* Template & Settings Card */}
+        <div className={`portfolio-editor-grid ${isSidebarCollapsed ? 'sidebar-collapsed' : ''}`}>
+          {/* Sidebar Toggle Button */}
+          <button 
+            className={`sidebar-toggle ${isSidebarCollapsed ? 'collapsed' : ''}`}
+            onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+          >
+            <span className="toggle-icon">
+              {isSidebarCollapsed ? '▶' : '◀'}
+            </span>
+          </button>
+
+          <aside className={`portfolio-sidebar ${isSidebarCollapsed ? 'collapsed' : ''}`}>
             <div className="template-settings-card">
-              <h2 className="card-title">Settings</h2>
-              
-              {/* Template Selector */}
-              <TemplateSelector 
-                selectedTemplate={template}
-                onTemplateChange={setTemplate}
-                className="mb-6"
-              />
-
-              {/* Title Input */}
-              <div className="form-group">
-                <label className="form-label">
-                  Title <span className="text-gray-500">(max 50 characters)</span>
-                </label>
-                <input
-                  type="text"
-                  value={title}
-                  onChange={(e) => handleTitleChange(e.target.value)}
-                  maxLength={50}
-                  className="form-input"
-                  placeholder="Portfolio Title"
-                />
-                <div className="text-xs text-gray-500 mt-1">
-                  {title.length}/50 characters
-                </div>
-              </div>
-
-              {/* Slug Input */}
-              <div className="form-group">
-                <label className="form-label">URL Slug</label>
-                <div className="flex">
-                  <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">
-                    /p/
-                  </span>
-                  <input
-                    type="text"
-                    value={slug}
-                    onChange={(e) => handleSlugChange(e.target.value)}
-                    className="flex-1 form-input rounded-l-none"
-                    placeholder="portfolio-slug"
-                  />
-                </div>
-                {getSlugStatus() && (
-                  <div className="text-xs mt-1 text-gray-600">
-                    {getSlugStatus()}
-                  </div>
-                )}
-              </div>
-
-              {/* Published Toggle */}
-              <div className="form-group">
-                <label className="flex items-center">
-                  <input
-                    type="checkbox"
-                    checked={isPublished}
-                    onChange={(e) => setIsPublished(e.target.checked)}
-                    disabled={!canPublish}
-                    className="mr-2 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded disabled:opacity-50"
-                  />
-                  <span className="form-label mb-0">Published</span>
-                </label>
-                {!canPublish && (
-                  <div className="text-xs text-gray-500 mt-1">
-                    Set a valid slug to enable publishing
-                  </div>
-                )}
-              </div>
-
-              {/* Save Button */}
-              <button
-                onClick={handleSave}
-                disabled={createMutation.isPending || patchMutation.isPending}
-                className="btn w-full"
+              <div 
+                className="collapsible-header" 
+                onClick={() => setIsSettingsCollapsed(!isSettingsCollapsed)}
               >
-                {createMutation.isPending || patchMutation.isPending ? 'Saving...' : 'Save Portfolio'}
-              </button>
+                <h2 className="card-title">Settings</h2>
+                <span className={`collapse-icon ${isSettingsCollapsed ? 'collapsed' : ''}`}>
+                  ▼
+                </span>
+              </div>
+              <div className={`collapsible-content ${isSettingsCollapsed ? 'collapsed' : ''}`}>
+                <TemplateSelector selectedTemplate={template} onTemplateChange={(t) => setTemplate(t as TemplateId)} className="mb-6" />
+
+                <div className="form-group">
+                  <label className="form-label">Title</label>
+                  <input type="text" value={title} onChange={(e) => handleTitleChange(e.target.value)} className="form-input" />
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label">URL Slug</label>
+                  <div className="flex">
+                    <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">/p/</span>
+                    <input type="text" value={slug} onChange={(e) => handleSlugChange(e.target.value)} className="flex-1 form-input rounded-l-none" />
+                  </div>
+                  {getSlugStatus() && <div className="text-xs mt-1 text-gray-600">{getSlugStatus()}</div>}
+                </div>
+
+                <div className="form-group mt-4">
+                  <button onClick={handleSave} className="btn w-full">Save Portfolio</button>
+                </div>
+              </div>
             </div>
 
-            {/* Saved Sections Card */}
-            <div className="saved-sections-card">
+            {template === 'mvp-01' && draft && (
+              <div className="zones-card mt-6">
+                <h3 className="card-title">Zones</h3>
+                <div className="space-y-3 mt-3">
+                  {['profile', 'projects', 'experience'].map(zoneId => {
+                    const count = draft?.zones?.[zoneId]?.items?.length ?? 0;
+                    return (
+                      <div key={zoneId} className="p-3 border border-gray-200 rounded-md flex items-center justify-between">
+                        <div className="font-medium text-sm">{zoneId}</div>
+                        <div className="flex items-center gap-2">
+                          <div className="text-xs text-gray-500">{count}/3</div>
+                          <button className="px-2 py-1 bg-green-500 text-white rounded text-xs" onClick={() => {
+                            if (!draft) return;
+                            if (draft.zones[zoneId] && draft.zones[zoneId].items.length >= 3) return;
+                            const mapKind: Record<string, string> = { 
+                              profile: 'about', 
+                              projects: 'project', 
+                              experience: 'skillGroup' 
+                            };
+                            const newSection: PortfolioSection = { 
+                              title: '', 
+                              content: '', 
+                              _meta: { 
+                                sectionType: mapKind[zoneId], 
+                                zoneId 
+                              } 
+                            };
+                            setDraft(prev => {
+                              if (!prev) return prev;
+                              const next = { ...prev, zones: { ...prev.zones } } as PortfolioDraft;
+                              const zone = next.zones[zoneId] || { variant: '', items: [] };
+                              zone.items = [...(zone.items || []), newSection];
+                              next.zones[zoneId] = zone;
+                              return next;
+                            });
+                          }}>+ Add</button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            <div className="saved-sections-card mt-6">
               <h2 className="card-title">Saved Sections</h2>
-              
-              {savedSections && savedSections.length === 0 ? (
-                <div className="text-center py-8 text-gray-500">
-                  <p className="text-sm">No saved sections yet</p>
-                  <p className="text-xs mt-1">Create reusable sections for your portfolios</p>
-                </div>
-              ) : (
-                <div className="space-y-3">
-                  {savedSections?.map((savedSection) => (
-                    <div key={savedSection.id} className="p-3 border border-gray-200 rounded-md hover:border-gray-300 transition-colors cursor-pointer"
-                         onClick={() => setSections(prev => [...prev, savedSection.section])}>
-                      <div className="font-medium text-sm">{savedSection.name}</div>
-                      <div className="text-xs text-gray-500">{String(savedSection.section.type || 'unknown')}</div>
-                    </div>
-                  ))}
-                </div>
-              )}
+              <div className="space-y-3 mt-3">
+                {saved?.length ? saved.map(s => (
+                  <div key={s.id} className="p-3 border border-gray-200 rounded-md hover:border-gray-300 cursor-pointer" onClick={() => {
+                    if (!draft) return; const zoneId = draft.zones['profile'] ? 'profile' : Object.keys(draft.zones)[0]; setDraft(prev => { if (!prev) return prev; const next = { ...prev, zones: { ...prev.zones } } as PortfolioDraft; const zone = next.zones[zoneId] || { variant: '', items: [] }; zone.items = [...(zone.items || []), s.section]; next.zones[zoneId] = zone; return next; });
+                  }}>
+                    <div className="font-medium text-sm">{s.name}</div>
+                    <div className="text-xs text-gray-500">{String(readMeta(s.section)?.sectionType || 'unknown')}</div>
+                  </div>
+                )) : (<div className="text-center text-gray-500 py-4">No saved sections</div>)}
+              </div>
             </div>
-          </div>
+          </aside>
 
-          {/* Main Portfolio Preview */}
-          <div className="portfolio-main">
+          <main className="portfolio-main">
             <div className="portfolio-preview">
-              {/* Portfolio User Header */}
               <PortfolioUserHeader title={title} />
 
-              {/* Sections Container */}
-              <div className="sections-container">
-                <h2 className="card-title">Portfolio Sections</h2>
-                
-                {/* About Section (Fixed) */}
-                <div className="section-placeholder">
-                  <div className="flex items-center justify-between mb-2">
-                    <h3 className="font-semibold">About Section</h3>
-                    <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">Fixed</span>
-                  </div>
-                  <p className="text-sm text-gray-600">
-                    This section is always first and cannot be moved or deleted.
-                  </p>
-                </div>
-
-                {/* Other Sections */}
-                {sections.map((section, index) => (
-                  <div key={index} className="section-placeholder">
-                    <div className="flex items-center justify-between mb-2">
-                      <h3 className="font-semibold">Section {index + 1}</h3>
-                      <button
-                        onClick={() => setSections(prev => prev.filter((_, i) => i !== index))}
-                        className="text-red-600 hover:text-red-800 text-sm"
-                      >
-                        Remove
-                      </button>
+              <div className="sections-container mt-4">
+                <h2 className="card-title">Portfolio Preview</h2>
+                {(() => {
+                  const templateIdForPreview = template as TemplateId;
+                  const templateMeta = getTemplate(templateIdForPreview);
+                  const previewPortfolio = {
+                    portfolioId: portfolio?.id || 'preview',
+                    template: templateIdForPreview,
+                    title,
+                    description: '',
+                    sections: draft ? serializeSectionsForSave(draft) : (portfolio?.sections || [])
+                  };
+                  const Render = templateMeta.Render;
+                  return (
+                    <div className="template-preview-root mt-4">
+                      <Render portfolio={previewPortfolio} />
                     </div>
-                    <p className="text-sm text-gray-600">
-                      Type: {String(section.type || 'unknown')} | Content: {String(section.content || '').substring(0, 50)}...
-                    </p>
-                  </div>
-                ))}
-
-                {/* Add Section Button */}
-                <button 
-                  onClick={() => {
-                    const newSection: PortfolioSection = { type: 'custom', content: 'New section' };
-                    setSections(prev => [...prev, newSection]);
-                  }}
-                  className="add-section-btn"
-                >
-                  + Add Section
-                </button>
+                  );
+                })()}
               </div>
             </div>
-          </div>
+          </main>
         </div>
-      </div>
-    </div>
-  );
-}
-
-// Portfolio User Header Component
-interface PortfolioUserHeaderProps {
-  title: string;
-}
-
-function PortfolioUserHeader({ title }: PortfolioUserHeaderProps) {
-  const { user } = useAuthUser();
-  
-  if (!user) return null;
-
-  return (
-    <div className="portfolio-user-header">
-      <div className="portfolio-user-info">
-        <img 
-          src={user.profileImage ?? undefined} 
-          alt="Avatar" 
-          className="portfolio-avatar"
-        />
-        <div>
-          <h1 className="text-2xl font-bold text-white">{user.name}</h1>
-          <p className="text-blue-100">{user.email}</p>
-          {title && <p className="text-blue-200 mt-2 text-lg">{title}</p>}
-        </div>
-      </div>
-      
-      {/* Social Links */}
-      {user.socials && Object.keys(user.socials).length > 0 && (
-        <div className="portfolio-meta">
-          <div className="flex flex-wrap gap-3">
-            {Object.entries(user.socials).map(([platform, url]) => (
-              <a 
-                key={platform} 
-                href={url} 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                className="text-blue-100 hover:text-white text-sm underline"
-              >
-                {platform.charAt(0).toUpperCase() + platform.slice(1)}
-              </a>
-            ))}
-          </div>
-        </div>
-      )}
-    </div>
   );
 }

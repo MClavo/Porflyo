@@ -1,7 +1,7 @@
 import React from 'react';
 import type { PublicPortfolioView } from '../../../types/dto';
 
-export type TemplateId = 'default' | 'ats' | 'slots';
+export type TemplateId = 'default' | 'ats' | 'slots' | 'mvp-01';
 
 export interface TemplateMeta {
   id: TemplateId;
