@@ -1,7 +1,7 @@
 import React from 'react';
-import { useDraggable } from '@dnd-kit/core';
+import { useDraggable, useDroppable } from '@dnd-kit/core';
 import type { PortfolioItem } from '../types/itemDto';
-import type { DragData } from '../types/dragDto';
+import type { DragData, DropTargetData } from '../types/dragDto';
 import { PortfolioItemRenderer, type ItemRendererCallbacks } from '../components/PortfolioItemRenderer';
 
 interface DraggableItemProps {
@@ -18,6 +18,7 @@ export const DraggableItem: React.FC<DraggableItemProps> = ({
   callbacks
 }) => {
   const dragId = `${sectionId}-${item.id}`;
+  const dropId = `item-${sectionId}-${item.id}`;
   
   const dragData: DragData = {
     sectionId,
@@ -26,16 +27,37 @@ export const DraggableItem: React.FC<DraggableItemProps> = ({
     originalIndex: index
   };
 
+  const dropData: DropTargetData = {
+    type: 'item',
+    sectionId,
+    itemId: item.id,
+    index
+  };
+
   const {
     attributes,
     listeners,
-    setNodeRef,
+    setNodeRef: setDragNodeRef,
     transform,
     isDragging,
   } = useDraggable({
     id: dragId,
     data: dragData
   });
+
+  const {
+    isOver,
+    setNodeRef: setDropNodeRef
+  } = useDroppable({
+    id: dropId,
+    data: dropData
+  });
+
+  // Combine refs for both drag and drop functionality
+  const setNodeRef = (node: HTMLElement | null) => {
+    setDragNodeRef(node);
+    setDropNodeRef(node);
+  };
 
   const style = transform ? {
     transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
@@ -53,7 +75,7 @@ export const DraggableItem: React.FC<DraggableItemProps> = ({
     <div
       ref={setNodeRef}
       style={style}
-      className={`draggable-item ${isDragging ? 'dragging' : ''}`}
+      className={`draggable-item ${isDragging ? 'dragging' : ''} ${isOver ? 'drop-target' : ''}`}
       {...listeners}
       {...attributes}
     >

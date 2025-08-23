@@ -1,5 +1,6 @@
 import React from 'react';
 import { useDroppable } from '@dnd-kit/core';
+import type { DropTargetData } from '../types/dragDto';
 
 interface DropZoneProps {
   sectionId: string;
@@ -12,18 +13,20 @@ export const DropZone: React.FC<DropZoneProps> = ({
   index, 
   isVisible = false 
 }) => {
-  const dropId = `${sectionId}-drop-${index}`;
+  const dropId = `drop-zone-${sectionId}-${index}`;
+  
+  const dropData: DropTargetData = {
+    type: 'drop-zone',
+    sectionId,
+    index
+  };
   
   const {
     isOver,
     setNodeRef
   } = useDroppable({
     id: dropId,
-    data: {
-      sectionId,
-      index,
-      type: 'drop-zone'
-    }
+    data: dropData
   });
 
   return (

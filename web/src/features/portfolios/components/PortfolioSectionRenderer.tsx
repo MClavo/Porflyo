@@ -4,7 +4,6 @@ import type { ItemRendererCallbacks } from './PortfolioItemRenderer';
 import { SectionHeader } from './SectionHeader';
 import { DraggableItem } from '../dnd/DraggableItem';
 import { DroppableSection } from '../dnd/DroppableSection';
-import { DropZone } from '../dnd/DropZone';
 
 // Type definitions for section renderer callback functions
 export interface SectionRendererCallbacks extends ItemRendererCallbacks {
@@ -39,29 +38,22 @@ export class PortfolioSectionRenderer {
                 <div className="portfolio-editor-section">
                     <SectionHeader section={section} />
                     <div className="portfolio-editor-items">
-                        {/* Drop zone at the beginning */}
-                        <DropZone sectionId={section.id} index={0} />
-                        
                         {section.items.map((item, index) => (
-                            <React.Fragment key={`${section.id}-${item.id}`}>
-                                <div className="portfolio-editor-item-wrapper">
-                                    <DraggableItem
-                                        item={item}
-                                        sectionId={section.id}
-                                        index={index}
-                                        callbacks={callbacks}
-                                    />
-                                    <button 
-                                        className="remove-btn"
-                                        onClick={() => callbacks.removeItem(section.id, item.id)}
-                                        aria-label={`Remove item from ${section.title}`}
-                                    >
-                                        -
-                                    </button>
-                                </div>
-                                {/* Drop zone after each item */}
-                                <DropZone sectionId={section.id} index={index + 1} />
-                            </React.Fragment>
+                            <div key={`${section.id}-${item.id}`} className="portfolio-editor-item-wrapper">
+                                <DraggableItem
+                                    item={item}
+                                    sectionId={section.id}
+                                    index={index}
+                                    callbacks={callbacks}
+                                />
+                                <button 
+                                    className="remove-btn"
+                                    onClick={() => callbacks.removeItem(section.id, item.id)}
+                                    aria-label={`Remove item from ${section.title}`}
+                                >
+                                    -
+                                </button>
+                            </div>
                         ))}
                         
                         {canAddMore && (

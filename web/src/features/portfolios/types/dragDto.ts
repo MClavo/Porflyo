@@ -15,3 +15,15 @@ export interface DropResult {
   itemId: number;
   itemType: import('./itemDto').ItemType;
 }
+
+export type DropTargetType = 
+  | 'item' // Dropping on top of another item
+  | 'section' // Dropping on section (append to end)
+  | 'drop-zone'; // Dropping on specific position
+
+export interface DropTargetData {
+  type: DropTargetType;
+  sectionId: string;
+  itemId?: number; // Only for 'item' type
+  index?: number; // For 'drop-zone' type, or calculated for 'item' type
+}

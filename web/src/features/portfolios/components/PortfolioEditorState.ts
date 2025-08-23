@@ -131,20 +131,32 @@ export class PortfolioEditorState {
                 if (sourceSectionId === targetSectionId) {
                     const adjustedTargetIndex = targetIndex > sourceIndex ? targetIndex - 1 : targetIndex;
                     newItems.splice(adjustedTargetIndex, 0, itemToMove);
+                    
+                    return {
+                        ...section,
+                        items: newItems
+                        // nextId remains the same for same-section moves
+                    };
                 }
                 
+                // Cross-section move: just remove from source
                 return {
                     ...section,
                     items: newItems
+                    // nextId remains the same when removing items
                 };
             } else if (section.id === targetSectionId && sourceSectionId !== targetSectionId) {
-                // Add item to target section at specified position
+                // Cross-section move: add item to target section with new ID
+                const newItemId = section.nextId;
+                const newItem = { ...itemToMove, id: newItemId };
+                
                 const newItems = [...section.items];
-                newItems.splice(targetIndex, 0, itemToMove);
+                newItems.splice(targetIndex, 0, newItem);
                 
                 return {
                     ...section,
-                    items: newItems
+                    items: newItems,
+                    nextId: section.nextId + 1 // Increment counter for next item
                 };
             }
             return section;
