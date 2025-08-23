@@ -6,6 +6,11 @@ export { PortfolioEditorState } from './PortfolioEditorState';
 export { PortfolioItemRenderer } from './PortfolioItemRenderer';
 export { PortfolioSectionRenderer } from './PortfolioSectionRenderer';
 
+// New modular exports
+export { usePortfolioEditor } from './PortfolioEditorHooks';
+export { usePortfolioCallbacks } from './PortfolioEditorCallbacks';
+export type { TypeDialogState } from './PortfolioEditorTypes';
+
 // Re-export types for convenience
 export type { ItemRendererCallbacks } from './PortfolioItemRenderer';
 export type { SectionRendererCallbacks } from './PortfolioSectionRenderer';

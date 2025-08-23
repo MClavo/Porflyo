@@ -1,222 +1,35 @@
-import React, { useState } from 'react';
+import React from 'react';
 import '../../../styles/portfolio/portfolioEditor.css';
-import type { SectionConfig, ItemType } from '../types/itemDto';
-import type { DropResult, DropTargetData } from '../types/dragDto';
-import { PortfolioEditorState } from './PortfolioEditorState';
-import { PortfolioSectionRenderer, type SectionRendererCallbacks } from './PortfolioSectionRenderer';
+import { DndContext, pointerWithin } from '@dnd-kit/core';
+import { PortfolioSectionRenderer } from './PortfolioSectionRenderer';
 import { ItemTypeDialog } from './ItemTypeDialog';
-import { 
-    DndContext, 
-    closestCenter,
-    KeyboardSensor,
-    PointerSensor,
-    useSensor,
-    useSensors,
-    type DragStartEvent,
-    type DragEndEvent,
-    MouseSensor,
-    TouchSensor,
-} from '@dnd-kit/core';
-import { 
-    sortableKeyboardCoordinates,
-} from '@dnd-kit/sortable';
-
-interface TypeDialogState {
-    isOpen: boolean;
-    sectionId: string;
-    position: { x: number; y: number };
-    allowedTypes: ItemType[];
-}
+import { usePortfolioEditor } from './PortfolioEditorHooks';
+import { usePortfolioCallbacks } from './PortfolioEditorCallbacks';
 
 // Main Portfolio Editor Component - orchestrates all the editor functionality
 const PortfolioEditor: React.FC = () => {
-    const [sections, setSections] = useState<SectionConfig[]>(
-        PortfolioEditorState.getInitialSections()
-    );
-    const [typeDialog, setTypeDialog] = useState<TypeDialogState>({
-        isOpen: false,
-        sectionId: '',
-        position: { x: 0, y: 0 },
-        allowedTypes: []
+    // Custom hooks for state management
+    const {
+        sections,
+        setSections,
+        typeDialog,
+        setTypeDialog,
+        sensors
+    } = usePortfolioEditor();
+
+    // Custom hooks for callbacks and event handlers
+    const {
+        callbacks,
+        closeTypeDialog,
+        handleTypeSelection,
+        handleDragStart,
+        handleDragEnd
+    } = usePortfolioCallbacks({
+        sections,
+        setSections,
+        typeDialog,
+        setTypeDialog
     });
-
-    // DnD sensors for handling different input methods with optimized settings
-    const sensors = useSensors(
-        useSensor(MouseSensor, {
-            activationConstraint: {
-                distance: 0, // Start dragging immediately
-            },
-        }),
-        useSensor(TouchSensor, {
-            activationConstraint: {
-                delay: 0, // No delay for touch
-                tolerance: 0,
-            },
-        }),
-        useSensor(PointerSensor, {
-            activationConstraint: {
-                distance: 0, // Start dragging immediately
-            },
-        }),
-        useSensor(KeyboardSensor, {
-            coordinateGetter: sortableKeyboardCoordinates,
-        })
-    );
-
-    // Callback handlers that delegate to the state management class
-    const callbacks: SectionRendererCallbacks = {
-        addItem: (sectionId: string, itemType: ItemType) => {
-            setSections(prevSections => 
-                PortfolioEditorState.addItem(prevSections, sectionId, itemType)
-            );
-        },
-
-        removeItem: (sectionId: string, itemId: number) => {
-            setSections(prevSections => 
-                PortfolioEditorState.removeItem(prevSections, sectionId, itemId)
-            );
-        },
-
-        updateTextItem: (sectionId: string, itemId: number, newText: string) => {
-            setSections(prevSections => 
-                PortfolioEditorState.updateTextItem(prevSections, sectionId, itemId, newText)
-            );
-        },
-
-        updateDoubleTextItem: (sectionId: string, itemId: number, field: 'text1' | 'text2', newText: string) => {
-            setSections(prevSections => 
-                PortfolioEditorState.updateDoubleTextItem(prevSections, sectionId, itemId, field, newText)
-            );
-        },
-
-        openTypeDialog: (sectionId: string, position: { x: number; y: number }) => {
-            const section = sections.find(s => s.id === sectionId);
-            if (section && section.allowedItemTypes.length > 1) {
-                setTypeDialog({
-                    isOpen: true,
-                    sectionId,
-                    position,
-                    allowedTypes: section.allowedItemTypes
-                });
-            }
-        }
-    };
-
-    const closeTypeDialog = () => {
-        setTypeDialog(prev => ({
-            ...prev,
-            isOpen: false
-        }));
-    };
-
-    const handleTypeSelection = (itemType: ItemType) => {
-        const { sectionId } = typeDialog;
-        callbacks.addItem(sectionId, itemType);
-        closeTypeDialog();
-    };
-
-    // DnD handlers
-    const handleDragStart = (event: DragStartEvent) => {
-        // Could be used for visual feedback during drag
-        console.log('Drag started:', event.active.id);
-    };
-
-    const handleDragEnd = (event: DragEndEvent) => {
-        const { active, over } = event;
-
-        if (!over) return;
-
-        const dragId = String(active.id);
-
-        // Parse the drag ID to get source information
-        const dragData = PortfolioEditorState.parseDragId(dragId);
-        if (!dragData) return;
-
-        const { sectionId: sourceSectionId, itemId } = dragData;
-        
-        // Get the drop target data
-        const dropTargetData = over.data.current as DropTargetData;
-        if (!dropTargetData) return;
-
-        const { type: dropType, sectionId: targetSectionId } = dropTargetData;
-
-        // Find the item being moved and source section
-        const sourceSection = sections.find(s => s.id === sourceSectionId);
-        const targetSection = sections.find(s => s.id === targetSectionId);
-        const item = sourceSection?.items.find(i => i.id === itemId);
-        
-        if (!item || !sourceSection || !targetSection) return;
-
-        const sourceIndex = sourceSection.items.findIndex(i => i.id === itemId);
-
-        // Handle different drop types
-        let targetIndex: number;
-
-        if (dropType === 'item') {
-            // Dropping on top of another item
-            const targetItemId = dropTargetData.itemId!;
-            targetIndex = targetSection.items.findIndex(i => i.id === targetItemId);
-            
-            // If dropping on the same section and same item, do nothing
-            if (sourceSectionId === targetSectionId && sourceIndex === targetIndex) {
-                return;
-            }
-        } else if (dropType === 'section') {
-            // Dropping on section (not on an item) - check compatibility and space
-            if (sourceSectionId === targetSectionId) {
-                // Same section - do nothing if dropped on empty area
-                return;
-            }
-            
-            // Different section - check if item type is allowed
-            if (!targetSection.allowedItemTypes.includes(item.type)) {
-                return;
-            }
-            
-            // Check if target section has space
-            if (targetSection.items.length >= targetSection.maxItems) {
-                return;
-            }
-            
-            // Add to end of target section
-            targetIndex = targetSection.items.length;
-        } else if (dropType === 'drop-zone') {
-            // Dropping on a specific drop zone
-            targetIndex = dropTargetData.index!;
-            
-            // If dropping on the same section and adjacent positions, do nothing
-            if (sourceSectionId === targetSectionId) {
-                if (targetIndex === sourceIndex || targetIndex === sourceIndex + 1) {
-                    return;
-                }
-            } else {
-                // Different section - check compatibility and space
-                if (!targetSection.allowedItemTypes.includes(item.type)) {
-                    return;
-                }
-                
-                if (targetSection.items.length >= targetSection.maxItems) {
-                    return;
-                }
-            }
-        } else {
-            return;
-        }
-
-        // Create drop result and execute the move
-        const dropResult: DropResult = {
-            sourceSectionId,
-            targetSectionId,
-            sourceIndex,
-            targetIndex,
-            itemId,
-            itemType: item.type
-        };
-
-        setSections(prevSections => 
-            PortfolioEditorState.moveItem(prevSections, dropResult)
-        );
-    };
 
     const renderLogic = (): React.ReactNode => {
         return (
@@ -231,7 +44,7 @@ const PortfolioEditor: React.FC = () => {
     return (
         <DndContext
             sensors={sensors}
-            collisionDetection={closestCenter}
+            collisionDetection={pointerWithin}
             onDragStart={handleDragStart}
             onDragEnd={handleDragEnd}
         >
