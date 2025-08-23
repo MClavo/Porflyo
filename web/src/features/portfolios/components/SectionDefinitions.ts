@@ -47,7 +47,7 @@ export class SectionDefinitions {
         return [
             this.createSectionConfig('text', { 
                 id: 'section1', 
-                title: 'About Me',
+                title: 'text',
                 maxItems: 2,
                 allowedItemTypes: ['text']
             }),
@@ -57,12 +57,37 @@ export class SectionDefinitions {
                 maxItems: 6,
                 allowedItemTypes: ['character', 'doubleText']
             }),
+            this.createSectionConfig('text', { 
+                id: 'a', 
+                title: 'text - doubleText',
+                maxItems: 4,
+                allowedItemTypes: ['text', 'doubleText']
+            }),
             this.createSectionConfig('projects', { 
-                id: 'section3', 
+                id: 'b', 
                 title: 'Featured Projects',
+                maxItems: 4,
+                allowedItemTypes: ['doubleText']
+            }),
+            this.createSectionConfig('text', { 
+                id: 'v', 
+                title: 'doubleText',
                 maxItems: 2,
-                allowedItemTypes: ['text', 'character', 'doubleText']
+                allowedItemTypes: ['doubleText']
+            }),
+            this.createSectionConfig('text', { 
+                id: 'section5', 
+                title: 'Text Section',
+                maxItems: 2,
+                allowedItemTypes: ['text', 'doubleText']
+            }),
+            this.createSectionConfig('education', { 
+                id: 'section6', 
+                title: 'Education',
+                maxItems: 2,
+                allowedItemTypes: ['text', 'character']
             })
+
         ];
     }
 

@@ -1,4 +1,5 @@
 import type { SectionConfig, PortfolioItem, ItemType } from '../types/itemDto';
+import type { DropResult } from '../types/dragDto';
 import { SectionDefinitions } from './SectionDefinitions';
 
 // Class that handles all state operations for portfolio sections
@@ -91,5 +92,80 @@ export class PortfolioEditorState {
     // Gets initial sections configuration with multiple allowed item types
     static getInitialSections(): SectionConfig[] {
         return SectionDefinitions.getInitialSections();
+    }
+
+    // Moves an item within the same section or between sections
+    static moveItem(sections: SectionConfig[], dropResult: DropResult): SectionConfig[] {
+        const { sourceSectionId, targetSectionId, sourceIndex, targetIndex, itemId, itemType } = dropResult;
+        
+        // Find source and target sections
+        const sourceSection = sections.find(s => s.id === sourceSectionId);
+        const targetSection = sections.find(s => s.id === targetSectionId);
+        
+        if (!sourceSection || !targetSection) {
+            return sections;
+        }
+
+        // Find the item to move
+        const itemToMove = sourceSection.items.find(item => item.id === itemId);
+        if (!itemToMove) {
+            return sections;
+        }
+
+        // Check if the item type is allowed in the target section
+        if (sourceSectionId !== targetSectionId && !targetSection.allowedItemTypes.includes(itemType)) {
+            return sections;
+        }
+
+        // Check if target section has space (only for cross-section moves)
+        if (sourceSectionId !== targetSectionId && targetSection.items.length >= targetSection.maxItems) {
+            return sections;
+        }
+
+        return sections.map(section => {
+            if (section.id === sourceSectionId) {
+                // Remove item from source section
+                const newItems = section.items.filter(item => item.id !== itemId);
+                
+                // If moving within the same section, insert at new position
+                if (sourceSectionId === targetSectionId) {
+                    const adjustedTargetIndex = targetIndex > sourceIndex ? targetIndex - 1 : targetIndex;
+                    newItems.splice(adjustedTargetIndex, 0, itemToMove);
+                }
+                
+                return {
+                    ...section,
+                    items: newItems
+                };
+            } else if (section.id === targetSectionId && sourceSectionId !== targetSectionId) {
+                // Add item to target section at specified position
+                const newItems = [...section.items];
+                newItems.splice(targetIndex, 0, itemToMove);
+                
+                return {
+                    ...section,
+                    items: newItems
+                };
+            }
+            return section;
+        });
+    }
+
+    // Helper method to create a unique drag ID for an item
+    static createDragId(sectionId: string, itemId: number): string {
+        return `${sectionId}-${itemId}`;
+    }
+
+    // Helper method to parse a drag ID back to section and item IDs
+    static parseDragId(dragId: string): { sectionId: string; itemId: number } | null {
+        const parts = dragId.split('-');
+        if (parts.length < 2) return null;
+        
+        const itemId = parseInt(parts[parts.length - 1]);
+        const sectionId = parts.slice(0, -1).join('-');
+        
+        if (isNaN(itemId)) return null;
+        
+        return { sectionId, itemId };
     }
 }

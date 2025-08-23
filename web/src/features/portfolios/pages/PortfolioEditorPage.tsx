@@ -11,7 +11,7 @@ import {  DEFAULT_TEMPLATE } from '../templates';
 import type { PortfolioSection, PortfolioCreateDto, PortfolioPatchDto } from '../../../types/dto';
 import { normalizeSectionsToZones, serializeSectionsForSave, readMeta } from '../../../components/portfolio/utils';
 import type { PortfolioDraft } from '../../../components/portfolio/types';
-import PortfolioEditor from '../components/portfolioEditor';
+import PortfolioEditor from '../components/PortfolioEditor';
 
 // Small presentational header used in the editor preview
 /* function PortfolioUserHeader({ title }: { title: string }) {
