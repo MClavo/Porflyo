@@ -50,7 +50,8 @@ export const DraggableItem: React.FC<DraggableItemProps> = ({
     setNodeRef: setDropNodeRef
   } = useDroppable({
     id: dropId,
-    data: dropData
+    data: dropData,
+    disabled: isDragging // Disable drop when this item is being dragged
   });
 
   // Combine refs for both drag and drop functionality
@@ -63,8 +64,9 @@ export const DraggableItem: React.FC<DraggableItemProps> = ({
     transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
     opacity: isDragging ? 0.7 : 1,
     zIndex: isDragging ? 1000 : 'auto',
-    transition: 'none', // Remove transitions during drag for immediate response
-    willChange: 'transform, opacity', // Optimize for frequent changes
+    transition: 'none',
+    willChange: 'transform, opacity',
+    pointerEvents: (isDragging ? 'none' : 'auto') as React.CSSProperties['pointerEvents'],
   } : {
     opacity: 1,
     transition: 'none',
@@ -75,11 +77,13 @@ export const DraggableItem: React.FC<DraggableItemProps> = ({
     <div
       ref={setNodeRef}
       style={style}
-      className={`draggable-item ${isDragging ? 'dragging' : ''} ${isOver ? 'drop-target' : ''}`}
-      {...listeners}
-      {...attributes}
+      className={`draggable-item ${isDragging ? 'dragging' : ''} ${isOver && !isDragging ? 'drop-target' : ''}`}
+      {...(!isDragging ? listeners : {})} // Only apply listeners when not dragging
+      {...(!isDragging ? attributes : {})}
     >
-      <div className="drag-handle">⋮⋮</div>
+      <div className="drag-handle" {...(isDragging ? {} : listeners)} {...(isDragging ? {} : attributes)}>
+        ⋮⋮
+      </div>
       <div className="item-content">
         {PortfolioItemRenderer.renderItem(item, sectionId, callbacks)}
       </div>

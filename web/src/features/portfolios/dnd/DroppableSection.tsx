@@ -29,6 +29,14 @@ export const DroppableSection: React.FC<DroppableSectionProps> = ({
     <div
       ref={setNodeRef}
       className={`droppable-section ${isOver ? 'drop-target-active' : ''}`}
+      style={{
+        position: 'relative',
+        minHeight: '50px', // Ensure minimum height for dropping
+        width: '100%',
+        // Add padding to make the drop area larger
+        padding: '8px',
+        boxSizing: 'border-box'
+      }}
     >
       {children}
     </div>
