@@ -1,7 +1,7 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
-import { PortfolioEditor } from '../components/PortfolioEditor';
+import { PortfolioEditor } from '../componentsOld/PortfolioEditor';
 import { type PortfolioFormData } from '../schemas/sections.schema';
 import { portfoliosApi } from '../../../services/api';
 
