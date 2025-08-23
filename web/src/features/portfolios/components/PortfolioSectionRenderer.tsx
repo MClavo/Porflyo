@@ -2,9 +2,9 @@ import React from 'react';
 import type { SectionConfig, ItemType } from '../types/itemDto';
 import type { ItemRendererCallbacks } from './PortfolioItemRenderer';
 import { SectionHeader } from './SectionHeader';
-import { DraggableItem } from './DraggableItem';
-import { DroppableSection } from './DroppableSection';
-import { DropZone } from './DropZone';
+import { DraggableItem } from '../dnd/DraggableItem';
+import { DroppableSection } from '../dnd/DroppableSection';
+import { DropZone } from '../dnd/DropZone';
 
 // Type definitions for section renderer callback functions
 export interface SectionRendererCallbacks extends ItemRendererCallbacks {

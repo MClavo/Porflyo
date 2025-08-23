@@ -2,7 +2,7 @@ import React from 'react';
 import { useDraggable } from '@dnd-kit/core';
 import type { PortfolioItem } from '../types/itemDto';
 import type { DragData } from '../types/dragDto';
-import { PortfolioItemRenderer, type ItemRendererCallbacks } from './PortfolioItemRenderer';
+import { PortfolioItemRenderer, type ItemRendererCallbacks } from '../components/PortfolioItemRenderer';
 
 interface DraggableItemProps {
   item: PortfolioItem;
