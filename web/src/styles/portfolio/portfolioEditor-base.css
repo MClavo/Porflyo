@@ -1,0 +1,21 @@
+/* Estilos base para el componente PortfolioEditor principal */
+
+.portfolio-editor {
+  padding: 1.5rem;
+  background-color: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+}
+
+.portfolio-editor-container {
+  width: 100%;
+  max-width: 42rem;
+  margin: 0 auto;
+}
+
+/* Estados responsive para el contenedor principal */
+@media (max-width: 640px) {
+  .portfolio-editor {
+    padding: 1rem;
+  }
+}
