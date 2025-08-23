@@ -1,19 +1,20 @@
 import { useEffect, useMemo, useState, useCallback } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
-import { useAuthUser } from '../../auth/hooks/useAuthUser';
+/* import { useAuthUser } from '../../auth/hooks/useAuthUser'; */
 import { usePatchPortfolio, useCreatePortfolio, useGetPortfolio } from '../hooks/usePortfolios';
 import { useDebouncedSlugAvailability } from '../hooks/usePublicPortfolio';
 import { useListSavedSections } from '../hooks/useSavedSections';
 import { toSlug } from '../../../lib/slug/toSlug';
-import { TemplateSelector } from '../components/TemplateSelector';
+import { TemplateSelector } from '../componentsOld/TemplateSelector';
 import type { TemplateId } from '../templates';
-import { getTemplate, DEFAULT_TEMPLATE } from '../templates';
+import {  DEFAULT_TEMPLATE } from '../templates';
 import type { PortfolioSection, PortfolioCreateDto, PortfolioPatchDto } from '../../../types/dto';
 import { normalizeSectionsToZones, serializeSectionsForSave, readMeta } from '../../../components/portfolio/utils';
 import type { PortfolioDraft } from '../../../components/portfolio/types';
+import PortfolioEditor from '../components/portfolioEditor';
 
 // Small presentational header used in the editor preview
-function PortfolioUserHeader({ title }: { title: string }) {
+/* function PortfolioUserHeader({ title }: { title: string }) {
   const { user } = useAuthUser();
   if (!user) return null;
 
@@ -40,7 +41,7 @@ function PortfolioUserHeader({ title }: { title: string }) {
       )}
     </div>
   );
-}
+} */
 
 export default function PortfolioEditorPage() {
   const { id } = useParams<{ id: string }>();
@@ -201,50 +202,6 @@ export default function PortfolioEditorPage() {
               </div>
             </div>
 
-            {template === 'mvp-01' && draft && (
-              <div className="zones-card mt-6">
-                <h3 className="card-title">Zones</h3>
-                <div className="space-y-3 mt-3">
-                  {['profile', 'projects', 'experience'].map(zoneId => {
-                    const count = draft?.zones?.[zoneId]?.items?.length ?? 0;
-                    return (
-                      <div key={zoneId} className="p-3 border border-gray-200 rounded-md flex items-center justify-between">
-                        <div className="font-medium text-sm">{zoneId}</div>
-                        <div className="flex items-center gap-2">
-                          <div className="text-xs text-gray-500">{count}/3</div>
-                          <button className="px-2 py-1 bg-green-500 text-white rounded text-xs" onClick={() => {
-                            if (!draft) return;
-                            if (draft.zones[zoneId] && draft.zones[zoneId].items.length >= 3) return;
-                            const mapKind: Record<string, string> = { 
-                              profile: 'about', 
-                              projects: 'project', 
-                              experience: 'skillGroup' 
-                            };
-                            const newSection: PortfolioSection = { 
-                              title: '', 
-                              content: '', 
-                              _meta: { 
-                                sectionType: mapKind[zoneId], 
-                                zoneId 
-                              } 
-                            };
-                            setDraft(prev => {
-                              if (!prev) return prev;
-                              const next = { ...prev, zones: { ...prev.zones } } as PortfolioDraft;
-                              const zone = next.zones[zoneId] || { variant: '', items: [] };
-                              zone.items = [...(zone.items || []), newSection];
-                              next.zones[zoneId] = zone;
-                              return next;
-                            });
-                          }}>+ Add</button>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-
             <div className="saved-sections-card mt-6">
               <h2 className="card-title">Saved Sections</h2>
               <div className="space-y-3 mt-3">
@@ -259,31 +216,12 @@ export default function PortfolioEditorPage() {
               </div>
             </div>
           </aside>
-
+                
           <main className="portfolio-main">
             <div className="portfolio-preview">
-              <PortfolioUserHeader title={title} />
+              <h1 className="profile-header">Portfolio</h1>
+                  <PortfolioEditor />
 
-              <div className="sections-container mt-4">
-                <h2 className="card-title">Portfolio Preview</h2>
-                {(() => {
-                  const templateIdForPreview = template as TemplateId;
-                  const templateMeta = getTemplate(templateIdForPreview);
-                  const previewPortfolio = {
-                    portfolioId: portfolio?.id || 'preview',
-                    template: templateIdForPreview,
-                    title,
-                    description: '',
-                    sections: draft ? serializeSectionsForSave(draft) : (portfolio?.sections || [])
-                  };
-                  const Render = templateMeta.Render;
-                  return (
-                    <div className="template-preview-root mt-4">
-                      <Render portfolio={previewPortfolio} />
-                    </div>
-                  );
-                })()}
-              </div>
             </div>
           </main>
         </div>
