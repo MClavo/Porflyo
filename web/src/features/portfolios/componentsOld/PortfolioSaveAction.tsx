@@ -6,7 +6,7 @@
 import { useState } from 'react';
 import { usePortfolioSave } from '../hooks/usePortfolioSave';
 import type { SavePipelineProgress, SavePipelineResult } from '../services/savePipeline';
-import type { PortfolioSectionData } from '../types/sections';
+import type { PortfolioSectionData } from '../types/sectionsOLD';
 
 export interface PortfolioSaveActionProps {
   portfolioId: string;

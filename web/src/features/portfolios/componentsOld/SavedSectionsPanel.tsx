@@ -9,7 +9,7 @@ import {
   useCreateSavedSection, 
   useDeleteSavedSection 
 } from '../hooks/useSavedSections';
-import type { PortfolioSectionData } from '../types/sections';
+import type { PortfolioSectionData } from '../types/sectionsOLD';
 import type { PublicSavedSectionDto, PortfolioSection } from '../../../types/dto';
 
 export interface SavedSectionsPanelProps {

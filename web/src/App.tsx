@@ -6,7 +6,8 @@ import { DashboardPage } from './routes/pages/DashboardPage';
 import ProfilePage from './routes/pages/ProfilePage';
 import { Layout } from './components/layout/Layout';
 //import { createPortfolio } from './features/portfolios/api/portfolios.api';
-import { PortfolioEditorPage } from './features/portfolios/pages';
+//import { PortfolioEditorPage } from './routes/pages/PortfolioEditorPage';
+import PortfolioEditorPage from './features/portfolios/pages/PortfolioEditorPage';
 
 const queryClient = new QueryClient();
 

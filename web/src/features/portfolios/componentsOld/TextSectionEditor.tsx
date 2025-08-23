@@ -1,18 +1,16 @@
 import { useFormContext, useFieldArray } from 'react-hook-form';
 import type { PortfolioFormData } from '../schemas/sections.schema';
-import { SECTION_LIMITS } from '../types/sections';
+import { SECTION_LIMITS } from '../types/sectionsOLD';
 
-interface TextWithImageSectionEditorProps {
+interface TextSectionEditorProps {
   sectionIndex: number;
 }
 
-export function TextWithImageSectionEditor({ sectionIndex }: TextWithImageSectionEditorProps) {
+export function TextSectionEditor({ sectionIndex }: TextSectionEditorProps) {
   const { register, control, formState: { errors }, watch } = useFormContext<PortfolioFormData>();
   
   const sectionPath = `sections.${sectionIndex}` as const;
   const content = watch(`${sectionPath}.content`);
-  const image = watch(`${sectionPath}.image`);
-  const sectionKind = watch(`${sectionPath}.kind`);
   
   // Field array for links
   const { fields: linkFields, append: appendLink, remove: removeLink } = useFieldArray({
@@ -53,35 +51,6 @@ export function TextWithImageSectionEditor({ sectionIndex }: TextWithImageSectio
         <p className="field-hint">
           {watch(`${sectionPath}.title`)?.length || 0}/{SECTION_LIMITS.MAX_TITLE_LENGTH} characters
         </p>
-      </div>
-
-      {/* Image */}
-      <div className="form-group">
-        <label htmlFor={`section-${sectionIndex}-image`} className="form-label">
-          Image * ({sectionKind === 'TEXT_WITH_IMAGE_LEFT' ? 'Left aligned' : 'Right aligned'})
-        </label>
-        <input
-          type="url"
-          id={`section-${sectionIndex}-image`}
-          {...register(`${sectionPath}.image`)}
-          className={`form-input ${getFieldError('image') ? 'error' : ''}`}
-          placeholder="https://example.com/image.jpg"
-        />
-        {getFieldError('image') && (
-          <p className="error-message">{getFieldError('image')?.message}</p>
-        )}
-        {image && (
-          <div className="image-preview">
-            <img 
-              src={image} 
-              alt="Preview" 
-              className="preview-image"
-              onError={(e) => {
-                e.currentTarget.style.display = 'none';
-              }}
-            />
-          </div>
-        )}
       </div>
 
       {/* Content */}

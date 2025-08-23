@@ -6,7 +6,7 @@
 import { compressImage, validateImageFile } from '../../../lib/images/compression';
 import { requestPresignedPost, uploadToS3, calculateMD5 } from '../../../services/mediaService';
 import type { PresignRequestDto } from '../../../types/dto';
-import type { PortfolioSectionData } from '../types/sections';
+import type { PortfolioSectionData } from '../types/sectionsOLD';
 
 export interface ImageUploadJob {
   file: File;

@@ -1,0 +1,254 @@
+/* Clean Template Styles - Modern Card-based Design */
+.tpl-clean {
+  /* Use the same design tokens as the main app */
+  --pf-background: var(--background, #ffffff);
+  --pf-surface: var(--surface, #f8fafc);
+  --pf-primary: var(--primary-color, #3b82f6);
+  --pf-primary-dark: var(--primary-dark, #2563eb);
+  --pf-text-primary: var(--text-primary, #1e293b);
+  --pf-text-secondary: var(--text-secondary, #64748b);
+  --pf-border: var(--border, #e2e8f0);
+  --pf-radius: var(--radius, 8px);
+  --pf-shadow: var(--shadow, 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1));
+  
+  background: var(--pf-background);
+  color: var(--pf-text-primary);
+  line-height: 1.6;
+  padding: 1.5rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Card-based sections for clean template */
+.tpl-clean .portfolio-section {
+  background: var(--pf-surface);
+  border: 1px solid var(--pf-border);
+  border-radius: var(--pf-radius);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: var(--pf-shadow);
+}
+
+/* Hero Section Styling */
+.tpl-clean .hero-section {
+  background: linear-gradient(135deg, var(--pf-surface) 0%, var(--pf-background) 100%);
+  border: 1px solid var(--pf-border);
+  border-radius: var(--pf-radius);
+  padding: 2rem;
+  margin-bottom: 1.5rem;
+  box-shadow: var(--pf-shadow);
+}
+
+.tpl-clean .hero-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--pf-text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.tpl-clean .hero-subtitle {
+  font-size: 1.125rem;
+  color: var(--pf-text-secondary);
+  margin-bottom: 1rem;
+}
+
+.tpl-clean .hero-description {
+  color: var(--pf-text-secondary);
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+/* About Section */
+.tpl-clean .about-section {
+  background: var(--pf-surface);
+  border: 1px solid var(--pf-border);
+  border-radius: var(--pf-radius);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: var(--pf-shadow);
+}
+
+.tpl-clean .section-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--pf-text-primary);
+  margin-bottom: 1rem;
+  border-bottom: 2px solid var(--pf-primary);
+  padding-bottom: 0.5rem;
+  display: inline-block;
+}
+
+/* Project Cards */
+.tpl-clean .projects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.tpl-clean .project-card {
+  background: var(--pf-surface);
+  border: 1px solid var(--pf-border);
+  border-radius: var(--pf-radius);
+  padding: 1.5rem;
+  box-shadow: var(--pf-shadow);
+  transition: all 0.2s ease;
+}
+
+.tpl-clean .project-card:hover {
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  transform: translateY(-2px);
+}
+
+.tpl-clean .project-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--pf-text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.tpl-clean .project-description {
+  color: var(--pf-text-secondary);
+  margin-bottom: 1rem;
+  line-height: 1.5;
+}
+
+.tpl-clean .project-tech {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.tpl-clean .tech-tag {
+  background: var(--pf-primary);
+  color: white;
+  padding: 0.25rem 0.75rem;
+  border-radius: calc(var(--pf-radius) / 2);
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.tpl-clean .project-links {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.tpl-clean .project-link {
+  color: var(--pf-primary);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.tpl-clean .project-link:hover {
+  color: var(--pf-primary-dark);
+}
+
+/* Skills Section */
+.tpl-clean .skills-section {
+  background: var(--pf-surface);
+  border: 1px solid var(--pf-border);
+  border-radius: var(--pf-radius);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: var(--pf-shadow);
+}
+
+.tpl-clean .skills-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.tpl-clean .skill-chip {
+  background: var(--pf-background);
+  border: 1px solid var(--pf-border);
+  color: var(--pf-text-primary);
+  padding: 0.5rem 1rem;
+  border-radius: var(--pf-radius);
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.tpl-clean .skill-chip:hover {
+  background: var(--pf-primary);
+  color: white;
+  border-color: var(--pf-primary);
+}
+
+/* Social Links */
+.tpl-clean .socials-section {
+  background: var(--pf-surface);
+  border: 1px solid var(--pf-border);
+  border-radius: var(--pf-radius);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: var(--pf-shadow);
+  text-align: center;
+}
+
+.tpl-clean .social-links {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.tpl-clean .social-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: var(--pf-background);
+  border: 1px solid var(--pf-border);
+  border-radius: var(--pf-radius);
+  color: var(--pf-text-primary);
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.tpl-clean .social-link:hover {
+  background: var(--pf-primary);
+  color: white;
+  border-color: var(--pf-primary);
+  transform: translateY(-1px);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .tpl-clean {
+    padding: 1rem;
+  }
+  
+  .tpl-clean .hero-section,
+  .tpl-clean .portfolio-section {
+    padding: 1rem;
+  }
+  
+  .tpl-clean .hero-title {
+    font-size: 1.75rem;
+  }
+  
+  .tpl-clean .projects-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .tpl-clean .social-links {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .tpl-clean {
+    --pf-background: var(--background, #0f172a);
+    --pf-surface: var(--surface, #1e293b);
+    --pf-text-primary: var(--text-primary, #f1f5f9);
+    --pf-text-secondary: var(--text-secondary, #94a3b8);
+    --pf-border: var(--border, #334155);
+  }
+}

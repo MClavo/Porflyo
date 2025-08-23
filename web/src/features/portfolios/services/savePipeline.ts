@@ -20,7 +20,7 @@ import type {
   PublicPortfolioDto,
   PortfolioSection
 } from '../../../types/dto';
-import type { PortfolioSectionData } from '../types/sections';
+import type { PortfolioSectionData } from '../types/sectionsOLD';
 
 export interface SavePipelineOptions {
   portfolioId: string;

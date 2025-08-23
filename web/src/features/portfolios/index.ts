@@ -1,20 +1,20 @@
 // Section Types and Schemas
-export * from './types/sections';
+export * from './types/sectionsOLD';
 export * from './schemas/sections.schema';
 
 // Section Editor Components
-export { AboutSectionEditor } from './components/AboutSectionEditor';
-export { TextSectionEditor } from './components/TextSectionEditor';
-export { TextWithImageSectionEditor } from './components/TextWithImageSectionEditor';
-export { RepoSectionEditor } from './components/RepoSectionEditor';
-export { RepoListSectionEditor } from './components/RepoListSectionEditor';
-export { GallerySectionEditor } from './components/GallerySectionEditor';
-export { SectionCard } from './components/SectionCard';
-export { SectionEditor } from './components/SectionEditor';
+export { AboutSectionEditor } from './componentsOld/AboutSectionEditor';
+export { TextSectionEditor } from './componentsOld/TextSectionEditor';
+export { TextWithImageSectionEditor } from './componentsOld/TextWithImageSectionEditor';
+export { RepoSectionEditor } from './componentsOld/RepoSectionEditor';
+export { RepoListSectionEditor } from './componentsOld/RepoListSectionEditor';
+export { GallerySectionEditor } from './componentsOld/GallerySectionEditor';
+export { SectionCard } from './componentsOld/SectionCard';
+export { SectionEditor } from './componentsOld/SectionEditor';
 
 // Save Pipeline Components
-export { PortfolioSaveAction } from './components/PortfolioSaveAction';
-export { SavedSectionsPanel } from './components/SavedSectionsPanel';
+export { PortfolioSaveAction } from './componentsOld/PortfolioSaveAction';
+export { SavedSectionsPanel } from './componentsOld/SavedSectionsPanel';
 
 // Save Pipeline Services
 export * from './services/imagePipeline';
@@ -25,7 +25,7 @@ export { usePortfolioSave } from './hooks/usePortfolioSave';
 export { useListSavedSections, useCreateSavedSection, useDeleteSavedSection } from './hooks/useSavedSections';
 
 // Main Editor Components
-export { PortfolioEditor } from './components/PortfolioEditor';
+export { PortfolioEditor } from './componentsOld/PortfolioEditor';
 
 // Pages
 export { EditPortfolioPage } from './pages/EditPortfolioPage';

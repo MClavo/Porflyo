@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import type { SectionFormData } from '../schemas/sections.schema';
-import { SECTION_DISPLAY_NAMES } from '../types/sections';
+import { SECTION_DISPLAY_NAMES } from '../types/sectionsOLD';
 import { MobileSectionControls, KeyboardControls } from './MobileControls';
 
 interface SectionCardProps {

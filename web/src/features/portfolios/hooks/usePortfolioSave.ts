@@ -5,7 +5,7 @@
 
 import { useState } from 'react';
 import { executeSavePipeline, type SavePipelineProgress, type SavePipelineResult } from '../services/savePipeline';
-import type { PortfolioSectionData } from '../types/sections';
+import type { PortfolioSectionData } from '../types/sectionsOLD';
 
 /**
  * Portfolio Save Action Hook

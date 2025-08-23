@@ -1,6 +1,6 @@
 import { useFormContext } from 'react-hook-form';
 import type { PortfolioFormData } from '../schemas/sections.schema';
-import { SECTION_LIMITS, IMAGE_CONTAINING_SECTIONS } from '../types/sections';
+import { SECTION_LIMITS, IMAGE_CONTAINING_SECTIONS } from '../types/sectionsOLD';
 
 interface GallerySectionEditorProps {
   sectionIndex: number;

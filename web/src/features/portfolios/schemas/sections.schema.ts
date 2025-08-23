@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { SECTION_LIMITS } from '../types/sections';
+import { SECTION_LIMITS } from '../types/sectionsOLD';
 
 /**
  * Base section schema
