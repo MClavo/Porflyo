@@ -28,7 +28,8 @@ export type PortfolioItem = TextItem | CharacterItem | DoubleTextItem;
 export interface SectionConfig {
   id: string;
   title: string;
-  allowedItemTypes: ItemType[]; // Changed from single itemType to array of allowed types
+  sectionType: import('./sectionDto').SectionType; // Type of section (user, projects, etc.)
+  allowedItemTypes: ItemType[]; // Types of items allowed in this section
   maxItems: number;
   items: PortfolioItem[];
   nextId: number;

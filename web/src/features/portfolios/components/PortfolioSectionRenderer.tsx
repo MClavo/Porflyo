@@ -1,6 +1,7 @@
 import React from 'react';
 import type { SectionConfig, ItemType } from '../types/itemDto';
 import { PortfolioItemRenderer, type ItemRendererCallbacks } from './PortfolioItemRenderer';
+import { SectionHeader } from './SectionHeader';
 
 // Type definitions for section renderer callback functions
 export interface SectionRendererCallbacks extends ItemRendererCallbacks {
@@ -32,7 +33,7 @@ export class PortfolioSectionRenderer {
 
         return (
             <div key={section.id} className="portfolio-editor-section">
-                <h3 className="section-title">{section.title} ({section.items.length}/{section.maxItems})</h3>
+                <SectionHeader section={section} />
                 <div className="portfolio-editor-items">
                     {section.items.map(item => (
                         <div key={`${section.id}-${item.id}`} className="portfolio-editor-item">

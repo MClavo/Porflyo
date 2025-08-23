@@ -1,4 +1,5 @@
 import type { SectionConfig, PortfolioItem, ItemType } from '../types/itemDto';
+import { SectionDefinitions } from './SectionDefinitions';
 
 // Class that handles all state operations for portfolio sections
 export class PortfolioEditorState {
@@ -89,31 +90,6 @@ export class PortfolioEditorState {
 
     // Gets initial sections configuration with multiple allowed item types
     static getInitialSections(): SectionConfig[] {
-        return [
-            { 
-                id: 'section1', 
-                title: 'Section Text', 
-                allowedItemTypes: ['text'], 
-                maxItems: 3, 
-                items: [], 
-                nextId: 1 
-            },
-            { 
-                id: 'section2', 
-                title: 'Section Mixed', 
-                allowedItemTypes: ['character', 'doubleText'], 
-                maxItems: 6, 
-                items: [], 
-                nextId: 1 
-            },
-            { 
-                id: 'section3', 
-                title: 'Section All', 
-                allowedItemTypes: ['text', 'character', 'doubleText'], 
-                maxItems: 2, 
-                items: [], 
-                nextId: 1 
-            }
-        ];
+        return SectionDefinitions.getInitialSections();
     }
 }
