@@ -12,7 +12,7 @@ import type { PortfolioSection, PortfolioCreateDto, PortfolioPatchDto } from '..
 import { normalizeSectionsToZones, serializeSectionsForSave, readMeta } from '../../../components/portfolio/utils';
 import type { PortfolioDraft } from '../../../components/portfolio/types';
 // import PortfolioEditor from '../components/PortfolioEditor';
-import { GridExample } from '../../../components/dnd/PortfolioGridExample';
+import { PortfolioGrid } from '../../../components/dnd/PortfolioGrid';
 
 // Small presentational header used in the editor preview
 /* function PortfolioUserHeader({ title }: { title: string }) {
@@ -224,7 +224,7 @@ export default function PortfolioEditorPage() {
             <div className="portfolio-preview">
               <h1 className="profile-header">Portfolio</h1>
                   {/* <PortfolioEditor /> */}
-                  <GridExample />
+                  <PortfolioGrid />
 
             </div>
           </main>
