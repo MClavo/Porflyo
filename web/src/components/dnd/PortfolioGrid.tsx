@@ -52,6 +52,13 @@ export function PortfolioGrid() {
   const lastOverId = useRef<UniqueIdentifier | null>(null);
   const recentlyMovedToNewZone = useRef(false);
 
+  const findZone = useCallback((id: UniqueIdentifier) => {
+    if (id in items) {
+      return id as string;
+    }
+    return Object.keys(items).find((key) => items[key].includes(id));
+  }, [items]);
+
   const collisionDetectionStrategy: CollisionDetection = useCallback(
     (args) => {
       // Start by finding any intersecting droppable
@@ -63,9 +70,18 @@ export function PortfolioGrid() {
       let overId = getFirstCollision(intersections, 'id');
 
       if (overId != null) {
-        // If we're over a zone, check if it has items
+        // Check if we're trying to move between zones
+        const activeZone = args.active ? findZone(args.active.id) : null;
+        
+        // If we're over a zone, check constraints
         if (overId in items) {
           const zoneItems = items[overId];
+          const zoneConfig = PORTFOLIO_ZONES.find(zone => zone.id === overId);
+          
+          // Don't allow drop on a full zone when moving from a different zone
+          if (activeZone && activeZone !== overId && zoneConfig && zoneItems.length >= zoneConfig.maxItems) {
+            return [];
+          }
 
           // If zone has items, find the closest item within the zone
           if (zoneItems.length > 0) {
@@ -87,7 +103,7 @@ export function PortfolioGrid() {
       // If no droppable is matched, return the last match
       return lastOverId.current ? [{ id: lastOverId.current }] : [];
     },
-    [items]
+    [items, findZone]
   );
 
   const [clonedItems, setClonedItems] = useState<PortfolioItems | null>(null);
@@ -98,13 +114,6 @@ export function PortfolioGrid() {
       coordinateGetter: multipleContainersCoordinateGetter,
     })
   );
-
-  const findZone = (id: UniqueIdentifier) => {
-    if (id in items) {
-      return id as string;
-    }
-    return Object.keys(items).find((key) => items[key].includes(id));
-  };
 
   const onDragCancel = () => {
     if (clonedItems) {
@@ -140,6 +149,15 @@ export function PortfolioGrid() {
     }
 
     if (activeZone !== overZone) {
+      // Check if the destination zone has reached its maximum capacity
+      const zoneConfig = PORTFOLIO_ZONES.find(zone => zone.id === overZone);
+      const overItems = items[overZone];
+      
+      if (zoneConfig && overItems.length >= zoneConfig.maxItems) {
+        // Don't allow drop if zone is at capacity
+        return;
+      }
+
       setItems((items) => {
         const activeItems = items[activeZone];
         const overItems = items[overZone];

@@ -13,18 +13,32 @@ export function PortfolioZone({ zone, items }: Omit<DroppableZoneProps, 'childre
     },
   });
 
+  const isFull = items.length >= zone.maxItems;
+  const isValidDrop = isOver && !isFull;
+  const isInvalidDrop = isOver && isFull;
+
   return (
     <Container
       ref={setNodeRef}
       style={{
         minHeight: '300px',
-        backgroundColor: isOver ? '#f0f9ff' : '#fafafa',
-        borderColor: isOver ? zone.color : '#e5e7eb',
+        backgroundColor: isInvalidDrop 
+          ? '#fef2f2' 
+          : isValidDrop 
+            ? '#f0f9ff' 
+            : '#fafafa',
+        borderColor: isInvalidDrop 
+          ? '#ef4444' 
+          : isValidDrop 
+            ? zone.color 
+            : isFull 
+              ? '#f59e0b' 
+              : '#e5e7eb',
         borderWidth: '2px',
-        borderStyle: isOver ? 'solid' : 'dashed',
+        borderStyle: (isValidDrop || isInvalidDrop) ? 'solid' : 'dashed',
       }}
       hover={isOver}
-      label={`${zone.label} (${items.length}/${zone.maxItems})`}
+      label={`${zone.label} (${items.length}/${zone.maxItems})${isFull ? ' - LLENO' : ''}`}
       columns={zone.zoneType === 'cards-grid' ? 2 : 1}
     >
       <SortableContext 
