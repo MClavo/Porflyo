@@ -23,9 +23,8 @@ import {
   useSortable,
   arrayMove,
   rectSortingStrategy,
-  horizontalListSortingStrategy,
+  verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
 import { coordinateGetter as multipleContainersCoordinateGetter } from './multipleContainersKeyboardCoordinates';
 
 import { Item } from './Item';
@@ -42,66 +41,85 @@ const dropAnimation: DropAnimation = {
   }),
 };
 
-type Items = Record<UniqueIdentifier, UniqueIdentifier[]>;
+// Portfolio zones structure
+type PortfolioZones = Record<UniqueIdentifier, UniqueIdentifier[]>;
 
-const TRASH_ID = 'void';
-const PLACEHOLDER_ID = 'placeholder';
-const empty: UniqueIdentifier[] = [];
+interface PortfolioZone {
+  id: string;
+  label: string;
+  zoneType: 'about' | 'cards-grid' | 'list';
+  allowed: string[];
+  maxItems: number;
+  color: string;
+}
+
+const PORTFOLIO_ZONES: PortfolioZone[] = [
+  {
+    id: 'profile',
+    label: 'Perfil',
+    zoneType: 'about',
+    allowed: ['about'],
+    maxItems: 3,
+    color: '#7193f1'
+  },
+  {
+    id: 'projects',
+    label: 'Proyectos', 
+    zoneType: 'cards-grid',
+    allowed: ['project'],
+    maxItems: 6,
+    color: '#ffda6c'
+  },
+  {
+    id: 'experience',
+    label: 'Experiencia',
+    zoneType: 'list',
+    allowed: ['skillGroup'],
+    maxItems: 5,
+    color: '#00bcd4'
+  }
+];
 
 function DroppableContainer({
   children,
-  columns = 1,
-  disabled,
   id,
   items,
   style,
+  zone,
   ...props
 }: {
   children: React.ReactNode;
-  columns?: number;
-  disabled?: boolean;
   id: UniqueIdentifier;
   items: UniqueIdentifier[];
   style?: React.CSSProperties;
+  zone: PortfolioZone;
   [key: string]: unknown;
 }) {
   const {
-    active,
-    attributes,
-    isDragging,
-    listeners,
-    over,
     setNodeRef,
-    transition,
-    transform,
+    isOver,
   } = useSortable({
     id,
     data: {
       type: 'container',
       children: items,
     },
-    animateLayoutChanges: () => false,
+    disabled: true, // Containers are not draggable
   });
-  const isOverContainer = over
-    ? (id === over.id && active?.data.current?.type !== 'container') ||
-      items.includes(over.id)
-    : false;
+
+  const isOverContainer = isOver;
 
   return (
     <Container
-      ref={disabled ? undefined : setNodeRef}
+      ref={setNodeRef}
       style={{
         ...style,
-        transition,
-        transform: CSS.Translate.toString(transform),
-        opacity: isDragging ? 0.5 : undefined,
+        minHeight: '300px',
+        backgroundColor: isOverContainer ? '#f0f9ff' : '#fafafa',
       }}
       hover={isOverContainer}
-      handleProps={{
-        ...attributes,
-        ...listeners,
-      }}
-      columns={columns}
+      label={zone.label}
+      columns={zone.zoneType === 'cards-grid' ? 2 : 1}
       {...props}
     >
       {children}
