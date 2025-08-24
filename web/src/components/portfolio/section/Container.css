@@ -25,6 +25,36 @@
   margin: 0;
 }
 
+/* Reserve space at the bottom for the footer add button and keep button out of flow */
+.container {
+  position: relative;
+}
+.container ul {
+  padding-bottom: 60px; /* space for the floating add button */
+}
+
+.zone-add-button-wrapper {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 12px;
+  pointer-events: none; /* wrapper shouldn't intercept pointer events, button will */
+}
+.zone-add-button {
+  pointer-events: auto;
+  width: 36px;
+  height: 36px;
+  border-radius: 18px;
+  font-size: 20px;
+  line-height: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+}
+
 .container.scrollable ul {
   overflow-y: auto;
 }

@@ -40,19 +40,6 @@ export function PortfolioZone({ section, items, itemsData, onItemUpdate, onAddIt
       columns={section.layoutType === 'grid' ? 2 : 1}
       horizontal={section.layoutType === 'row'}
     >
-      {/* Add button: only show when section is not full */}
-      {!isFull && onAddItem ? (
-        <div style={{ marginBottom: '8px' }}>
-          <button
-            type="button"
-            onClick={() => onAddItem(section.id)}
-            aria-label={`Add item to ${section.title}`}
-            style={{ padding: '6px 10px', borderRadius: 6, cursor: 'pointer' }}
-          >
-            Add {section.allowedItemTypes[0] ?? 'item'}
-          </button>
-        </div>
-      ) : null}
       <SortableContext 
         items={items} 
         strategy={
@@ -75,6 +62,19 @@ export function PortfolioZone({ section, items, itemsData, onItemUpdate, onAddIt
           />
         ))}
       </SortableContext>
+      {/* Footer add button: centered, does not interfere with the items list */}
+      {!isFull && onAddItem ? (
+        <div className="zone-add-button-wrapper" role="presentation">
+          <button
+            type="button"
+            className="zone-add-button"
+            onClick={() => onAddItem(section.id)}
+            aria-label={`Add item to ${section.title}`}
+          >
+            +
+          </button>
+        </div>
+      ) : null}
     </Container>
   );
 }
