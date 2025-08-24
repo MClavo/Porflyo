@@ -49,6 +49,7 @@ export function PortfolioGrid() {
   }));
   
   const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
+  const [activeOriginalZone, setActiveOriginalZone] = useState<string | null>(null);
   const lastOverId = useRef<UniqueIdentifier | null>(null);
   const recentlyMovedToNewZone = useRef(false);
 
@@ -120,6 +121,7 @@ export function PortfolioGrid() {
       setItems(clonedItems);
     }
     setActiveId(null);
+    setActiveOriginalZone(null);
     setClonedItems(null);
   };
 
@@ -131,6 +133,7 @@ export function PortfolioGrid() {
 
   const handleDragStart = ({ active }: DragStartEvent) => {
     setActiveId(active.id);
+    setActiveOriginalZone(findZone(active.id) || null);
     setClonedItems(items);
   };
 
@@ -206,6 +209,7 @@ export function PortfolioGrid() {
 
     if (!activeZone) {
       setActiveId(null);
+      setActiveOriginalZone(null);
       return;
     }
 
@@ -213,6 +217,7 @@ export function PortfolioGrid() {
 
     if (overId == null) {
       setActiveId(null);
+      setActiveOriginalZone(null);
       return;
     }
 
@@ -235,11 +240,12 @@ export function PortfolioGrid() {
     }
 
     setActiveId(null);
+    setActiveOriginalZone(null);
   };
 
   const renderSortableItemDragOverlay = (id: UniqueIdentifier) => {
-    const zone = findZone(id);
-    const zoneInfo = PORTFOLIO_ZONES.find(z => z.id === zone);
+    // Use the original zone instead of the current zone during drag
+    const zoneInfo = PORTFOLIO_ZONES.find(z => z.id === activeOriginalZone);
     
     return (
       <Item
