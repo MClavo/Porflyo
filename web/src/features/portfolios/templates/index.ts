@@ -2,7 +2,7 @@ import type { TemplateMeta, TemplateId, TemplatesRegistry } from './types';
 import { DefaultTemplate } from './default/DefaultTemplate';
 import { AtsTemplate } from './ats/AtsTemplate';
 import { SlotsTemplate } from './slots/SlotsTemplate';
-import MvpTemplate from '../../../templates/mvp-01/MvpTemplate';
+//import MvpTemplate from '../../../templates/mvp-01/MvpTemplate';
 
 // Re-export types
 export type { TemplateMeta, TemplateId, TemplatesRegistry } from './types';
@@ -51,24 +51,24 @@ const slotsTemplateMeta: TemplateMeta = {
 /**
  * MVP-01 template - minimal zones for editor MVP
  */
-const mvpTemplateMeta: TemplateMeta = {
+/* const mvpTemplateMeta: TemplateMeta = {
   id: 'mvp-01',
   name: 'MVP 01',
   supportsImages: true,
   layout: 'vertical',
   notes: 'Minimal MVP template with profile, projects and experience zones',
   Render: MvpTemplate,
-};
+}; */
 
 /**
  * Registry of all available templates
  */
-export const TEMPLATES: TemplatesRegistry = {
+/* export const TEMPLATES: TemplatesRegistry = {
   default: defaultTemplateMeta,
   ats: atsTemplateMeta,
   slots: slotsTemplateMeta,
   'mvp-01': mvpTemplateMeta,
-};
+}; */
 
 /**
  * Default template ID

@@ -1,9 +1,9 @@
-// Types for drag and drop functionality
+/* // Types for drag and drop functionality
 
 export interface DragData {
   sectionId: string;
   itemId: number;
-  itemType: import('./itemDto').ItemType;
+  itemType: import('../../../types/itemDto').ItemType;
   originalIndex: number;
 }
 
@@ -13,7 +13,7 @@ export interface DropResult {
   sourceIndex: number;
   targetIndex: number;
   itemId: number;
-  itemType: import('./itemDto').ItemType;
+  itemType: import('../../../types/itemDto').ItemType;
 }
 
 export type DropTargetType = 
@@ -27,3 +27,4 @@ export interface DropTargetData {
   itemId?: number; // Only for 'item' type
   index?: number; // For 'drop-zone' type, or calculated for 'item' type
 }
+ */

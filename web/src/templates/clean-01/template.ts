@@ -1,4 +1,4 @@
-import type { Template } from "../../components/portfolio/types";
+import type { Template } from "../../../../../../Users/mauro/Desktop/Nueva carpeta/components/portfolio/types";
 
 export const CLEAN_01: Template = {
   id: "clean-01",

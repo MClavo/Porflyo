@@ -1,4 +1,4 @@
-// Section Types and Schemas
+/* // Section Types and Schemas
 export * from './types/sectionsOLD';
 export * from './schemas/sections.schema';
 
@@ -29,3 +29,4 @@ export { PortfolioEditor } from './componentsOld/PortfolioEditor';
 
 // Pages
 export { EditPortfolioPage } from './pages/EditPortfolioPage';
+ */

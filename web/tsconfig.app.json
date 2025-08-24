@@ -23,5 +23,5 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true
   },
-  "include": ["src"]
+  "include": ["src", "../../../Users/mauro/Desktop/Nueva carpeta/components/portfolio/utils.ts", "../../../Users/mauro/Desktop/Nueva carpeta/components/portfolio/types.ts"]
 }

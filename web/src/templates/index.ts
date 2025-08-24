@@ -1,4 +1,4 @@
-import type { Template } from "../components/portfolio/types";
+import type { Template } from "../../../../../Users/mauro/Desktop/Nueva carpeta/components/portfolio/types";
 import CLEAN_01 from "./clean-01/template";
 import BOLD_01 from "./bold-01/template";
 
