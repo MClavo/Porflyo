@@ -124,7 +124,8 @@
 }
 
 .remove {
-  visibility: hidden;
+  visibility: visible;
+  margin-left: 8px;
 }
 
 .actions {

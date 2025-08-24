@@ -4,7 +4,7 @@ import type { DroppableZoneProps } from '../layout/LayoutTypes';
 import { PortfolioItem } from '../item/PortfolioItem';
 import { Container } from './Container';
 
-export function PortfolioZone({ section, items, itemsData, onItemUpdate, onAddItem }: Omit<DroppableZoneProps, 'children'> & { onAddItem?: (sectionId: string) => void }) {
+export function PortfolioZone({ section, items, itemsData, onItemUpdate, onAddItem, onRemove }: Omit<DroppableZoneProps, 'children'> & { onAddItem?: (sectionId: string) => void; onRemove?: (id: string | number) => void }) {
   const { setNodeRef, isOver } = useDroppable({
     id: section.id,
     data: {
@@ -71,6 +71,7 @@ export function PortfolioZone({ section, items, itemsData, onItemUpdate, onAddIt
             index={index}
             section={section}
             onItemUpdate={onItemUpdate}
+            onRemove={onRemove}
           />
         ))}
       </SortableContext>

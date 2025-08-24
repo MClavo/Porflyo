@@ -20,6 +20,7 @@ export interface PresentationalItemProps {
   index: number;
   section: PortfolioSection;
   onItemUpdate?: (id: string | number, updatedItem: Partial<PortfolioItem>) => void;
+  onRemove?: (id: string | number) => void;
 }
 
 export interface DroppableZoneProps {
@@ -29,4 +30,5 @@ export interface DroppableZoneProps {
   itemsData: PortfolioItemsData;
   onItemUpdate?: (id: string | number, updatedItem: Partial<PortfolioItem>) => void;
   onAddItem?: (sectionId: string) => void;
+  onRemove?: (id: string | number) => void;
 }

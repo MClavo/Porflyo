@@ -91,6 +91,23 @@ export function usePortfolioGrid() {
     });
   }, [setItems, setItemsData]);
 
+  const removeItem = useCallback((id: UniqueIdentifier) => {
+    setItems((prev) => {
+      const updated = Object.keys(prev).reduce((acc, key) => {
+        acc[key] = prev[key].filter((item) => item !== id);
+        return acc;
+      }, {} as PortfolioItems);
+
+      return updated;
+    });
+
+    setItemsData((prev) => {
+      const copy = { ...prev } as PortfolioItemsData;
+      delete copy[id];
+      return copy;
+    });
+  }, [setItems, setItemsData]);
+
   const findZone = useCallback((id: UniqueIdentifier) => {
     if (id in items) {
       return id as string;
@@ -319,6 +336,7 @@ export function usePortfolioGrid() {
     handleDragEnd,
     activeId,
     renderSortableItemDragOverlay,
-    handleItemUpdate,
+  handleItemUpdate,
+  removeItem,
   } as const;
 }

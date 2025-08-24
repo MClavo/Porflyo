@@ -35,6 +35,7 @@ export function PortfolioEditor() {
     renderSortableItemDragOverlay,
   handleItemUpdate,
   addItemToSection,
+  removeItem,
   } = usePortfolioGrid();
 
   // Convert UniqueIdentifier -> string for the presentational component.
@@ -64,6 +65,7 @@ export function PortfolioEditor() {
         itemDataMap={presentationalItemsData}
         onItemUpdate={(id, updated) => handleItemUpdate(id, updated as PortfolioItem)}
   onAddItem={(sectionId) => addItemToSection(sectionId)}
+  onRemove={(id) => removeItem(id as import('@dnd-kit/core').UniqueIdentifier)}
       />
 
       {createPortal(

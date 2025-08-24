@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import type { EditorSortableItemProps as SortableItemProps } from '../dnd/EditorTypes';
 import { Item } from './Item';
 
-export function PortfolioItem({ id, item, index, section, onItemUpdate }: SortableItemProps) {
+export function PortfolioItem({ id, item, index, section, onItemUpdate, onRemove }: SortableItemProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
   const {
@@ -142,7 +142,8 @@ export function PortfolioItem({ id, item, index, section, onItemUpdate }: Sortab
       transition={transition}
       transform={transform}
       fadeIn={mountedWhileDragging}
-      listeners={isEditing ? undefined : listeners} // Only pass listeners when not editing
+  listeners={isEditing ? undefined : listeners} // Only pass listeners when not editing
+  onRemove={onRemove ? () => onRemove(id) : undefined}
     />
   );
 }

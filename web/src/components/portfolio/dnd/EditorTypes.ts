@@ -12,6 +12,7 @@ export interface EditorSortableItemProps {
   index: number;
   section: PortfolioSection;
   onItemUpdate?: (id: UniqueIdentifier, updatedItem: Partial<PortfolioItem>) => void;
+  onRemove?: (id: UniqueIdentifier) => void;
 }
 
 export interface EditorDroppableZoneProps {
@@ -20,4 +21,5 @@ export interface EditorDroppableZoneProps {
   items: UniqueIdentifier[];
   itemsData: EditorPortfolioItemsData;
   onItemUpdate?: (id: UniqueIdentifier, updatedItem: Partial<PortfolioItem>) => void;
+  onRemove?: (id: UniqueIdentifier) => void;
 }

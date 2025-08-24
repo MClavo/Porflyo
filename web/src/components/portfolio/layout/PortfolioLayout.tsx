@@ -34,6 +34,7 @@ type Props = {
     content: React.ReactNode
   ) => React.ReactNode;
   onAddItem?: (sectionId: string) => void;
+  onRemove?: (id: string | number) => void;
 };
 
 export function PortfolioLayout({
@@ -45,6 +46,7 @@ export function PortfolioLayout({
   containerStyle,
   renderSection,
   onAddItem,
+  onRemove,
 }: Props) {
   return (
     <div className={`portfolio-grid ${className ?? ''}`.trim()}>
@@ -58,6 +60,7 @@ export function PortfolioLayout({
               itemsData={itemsData}
               onItemUpdate={onItemUpdate}
               onAddItem={onAddItem}
+              onRemove={onRemove}
             />
           );
 
