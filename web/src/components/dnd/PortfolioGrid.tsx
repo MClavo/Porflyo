@@ -26,9 +26,9 @@ import { coordinateGetter as multipleContainersCoordinateGetter } from './multip
 
 import { Item } from './Item';
 import { PortfolioZone } from './PortfolioZone';
-import { createRange } from '../../utils/createRange';
 import { PORTFOLIO_ZONES } from './portfolioGridData';
-import type { PortfolioItems } from './portfolioGridTypes';
+import type { PortfolioItems, PortfolioItemsData } from './portfolioGridTypes';
+import type { PortfolioItem } from '../../features/portfolios/types/itemDto';
 
 const dropAnimation: DropAnimation = {
   sideEffects: defaultDropAnimationSideEffects({
@@ -41,17 +41,38 @@ const dropAnimation: DropAnimation = {
 };
 
 export function PortfolioGrid() {
-  // Initialize with sample data for each zone
+  // Initialize with sample data using simple IDs
   const [items, setItems] = useState<PortfolioItems>(() => ({
-    profile: createRange(2, (index) => `profile_${index + 1}`),
-    projects: createRange(4, (index) => `project_${index + 1}`),
-    experience: createRange(3, (index) => `skill_${index + 1}`),
+    profile: ['item_1', 'item_2'],
+    projects: ['item_3', 'item_4', 'item_5', 'item_6'],
+    experience: ['item_7', 'item_8', 'item_9'],
+  }));
+
+  // Separate state for the actual portfolio item data
+  const [itemsData, setItemsData] = useState<PortfolioItemsData>(() => ({
+    'item_1': { id: 1, type: 'text', text: 'Full Stack Developer' },
+    'item_2': { id: 2, type: 'character', character: '🚀' },
+    'item_3': { id: 3, type: 'doubleText', text1: 'Portfolio App', text2: 'React + TypeScript' },
+    'item_4': { id: 4, type: 'text', text: 'E-commerce Platform' },
+    'item_5': { id: 5, type: 'doubleText', text1: 'API Gateway', text2: 'Node.js + AWS' },
+    'item_6': { id: 6, type: 'character', character: '💻' },
+    'item_7': { id: 7, type: 'doubleText', text1: 'Senior Developer', text2: '2020-2024' },
+    'item_8': { id: 8, type: 'text', text: 'JavaScript Expert' },
+    'item_9': { id: 9, type: 'character', character: '⭐' },
   }));
   
   const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
   const [activeOriginalZone, setActiveOriginalZone] = useState<string | null>(null);
   const lastOverId = useRef<UniqueIdentifier | null>(null);
   const recentlyMovedToNewZone = useRef(false);
+
+  // Function to update item data
+  const handleItemUpdate = useCallback((id: UniqueIdentifier, updatedItem: PortfolioItem) => {
+    setItemsData(prev => ({
+      ...prev,
+      [id]: updatedItem
+    }));
+  }, []);
 
   const findZone = useCallback((id: UniqueIdentifier) => {
     if (id in items) {
@@ -109,8 +130,16 @@ export function PortfolioGrid() {
 
   const [clonedItems, setClonedItems] = useState<PortfolioItems | null>(null);
   const sensors = useSensors(
-    useSensor(MouseSensor),
-    useSensor(TouchSensor),
+    useSensor(MouseSensor, {
+      activationConstraint: {
+        distance: 10,
+      },
+    }),
+    useSensor(TouchSensor, {
+      activationConstraint: {
+        distance: 10,
+      },
+    }),
     useSensor(KeyboardSensor, {
       coordinateGetter: multipleContainersCoordinateGetter,
     })
@@ -246,10 +275,32 @@ export function PortfolioGrid() {
   const renderSortableItemDragOverlay = (id: UniqueIdentifier) => {
     // Use the original zone instead of the current zone during drag
     const zoneInfo = PORTFOLIO_ZONES.find(z => z.id === activeOriginalZone);
+    const item = itemsData[id];
+    
+    // Function to render the content based on item type (static version for drag overlay)
+    const renderItemContent = () => {
+      if (!item) return id;
+      
+      switch (item.type) {
+        case 'text':
+          return item.text || 'Introduce texto...';
+        case 'character':
+          return item.character || '?';
+        case 'doubleText':
+          return (
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <div style={{ fontWeight: 'bold' }}>{item.text1 || 'Título principal...'}</div>
+              <div style={{ fontSize: '0.8em', color: '#666' }}>{item.text2 || 'Subtítulo...'}</div>
+            </div>
+          );
+        default:
+          return id;
+      }
+    };
     
     return (
       <Item
-        value={id}
+        value={renderItemContent()}
         handle={false}
         style={{}}
         color={zoneInfo?.color}
@@ -291,6 +342,8 @@ export function PortfolioGrid() {
             key={zone.id}
             zone={zone}
             items={items[zone.id]}
+            itemsData={itemsData}
+            onItemUpdate={handleItemUpdate}
           />
         ))}
       </div>

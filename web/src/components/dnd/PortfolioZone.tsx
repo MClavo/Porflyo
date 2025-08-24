@@ -4,7 +4,7 @@ import { Container } from './Container';
 import { PortfolioItem } from './PortfolioItem';
 import type { DroppableZoneProps } from './portfolioGridTypes';
 
-export function PortfolioZone({ zone, items }: Omit<DroppableZoneProps, 'children'>) {
+export function PortfolioZone({ zone, items, itemsData, onItemUpdate }: Omit<DroppableZoneProps, 'children'>) {
   const { setNodeRef, isOver } = useDroppable({
     id: zone.id,
     data: {
@@ -45,12 +45,14 @@ export function PortfolioZone({ zone, items }: Omit<DroppableZoneProps, 'childre
         items={items} 
         strategy={zone.zoneType === 'cards-grid' ? rectSortingStrategy : verticalListSortingStrategy}
       >
-        {items.map((value, index) => (
+        {items.map((itemId, index) => (
           <PortfolioItem
-            key={value}
-            id={value}
+            key={itemId}
+            id={itemId}
+            item={itemsData[itemId]}
             index={index}
             zone={zone}
+            onItemUpdate={onItemUpdate}
           />
         ))}
       </SortableContext>
