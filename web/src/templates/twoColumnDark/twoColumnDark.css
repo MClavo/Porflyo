@@ -1,0 +1,54 @@
+/* Dark two-column template styles */
+.tpl-two-column-dark {
+  --bg: #0b0f14;
+  --panel-bg: #0f1720;
+  --accent: #2dd4bf;
+  --text: #e6eef6;
+  background: var(--bg);
+  color: var(--text);
+  width: 100%;
+  box-sizing: border-box;
+  padding: 20px;
+}
+
+.tpl-two-column-dark .two-top {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.tpl-two-column-dark .col {
+  flex: 1 1 0;
+  background: var(--panel-bg);
+  padding: 18px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+  min-height: 120px;
+  box-sizing: border-box;
+}
+
+.tpl-two-column-dark .bottom {
+  background: var(--panel-bg);
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+}
+
+.tpl-two-column-dark .tpl-section {
+  width: 100%;
+}
+
+.tpl-two-column-dark .tpl-item {
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.03);
+  padding: 8px 10px;
+  margin-bottom: 8px;
+  border-radius: 6px;
+  color: var(--text);
+}
+
+.tpl-two-column-dark .section-title {
+  color: var(--accent);
+  font-weight: 600;
+  margin-bottom: 10px;
+}

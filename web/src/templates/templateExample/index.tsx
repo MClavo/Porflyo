@@ -1,7 +1,9 @@
-import { registerTemplate } from '../registry';
 import type { TemplateDefinition } from '../types';
 import TemplateLayout from './TemplateLayout';
 
+// Export the template definition directly. Do not attempt to register via a
+// side-effect call to the registry — that causes a circular import/runtime
+// initialization issue. The registry should import known templates directly.
 const def: TemplateDefinition = {
   id: 'template-example',
   title: 'Template Example',
@@ -13,7 +15,5 @@ const def: TemplateDefinition = {
   ],
   Layout: TemplateLayout,
 };
-
-registerTemplate(def);
 
 export default def;

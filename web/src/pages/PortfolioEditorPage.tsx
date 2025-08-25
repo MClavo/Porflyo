@@ -10,6 +10,8 @@ import type { PortfolioDraft } from '../../../../../Users/mauro/Desktop/Nueva ca
 import { normalizeSectionsToZones, readMeta, serializeSectionsForSave } from '../../../../../Users/mauro/Desktop/Nueva carpeta/components/portfolio/utils';
 import type { TemplateId } from '../features/portfolios/templates';
 import { DEFAULT_TEMPLATE } from '../features/portfolios/templates';
+import { listTemplates } from '../templates/registry';
+import type { TemplateDefinition } from '../templates/types';
 import type { PortfolioCreateDto, PortfolioPatchDto, PortfolioSection } from '../types/dto';
 // import PortfolioEditor from '../components/PortfolioEditor';
 import { PortfolioEditor } from '../components/portfolio/dnd/PortfolioEditor';
@@ -181,7 +183,15 @@ export default function PortfolioEditorPage() {
                 </span>
               </div>
               <div className={`collapsible-content ${isSettingsCollapsed ? 'collapsed' : ''}`}>
-                {/* TODO: ADD TEMPLATE SELECTOR */}
+                {/* Template selector */}
+                <div className="form-group">
+                  <label className="form-label">Template</label>
+                  <select value={template} onChange={(e) => setTemplate(e.target.value as TemplateId)} className="form-input">
+                    {listTemplates().map((t: TemplateDefinition) => (
+                      <option key={t.id} value={t.id}>{t.title || t.id}</option>
+                    ))}
+                  </select>
+                </div>
 
                 <div className="form-group">
                   <label className="form-label">Title</label>
@@ -224,7 +234,7 @@ export default function PortfolioEditorPage() {
             <div className="portfolio-preview">
               <h1 className="profile-header">Portfolio</h1>
                   {/* <PortfolioEditor /> */}
-                  <PortfolioEditor />
+                  <PortfolioEditor templateId={template} />
 
             </div>
           </main>

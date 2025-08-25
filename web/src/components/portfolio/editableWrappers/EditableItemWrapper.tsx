@@ -1,6 +1,7 @@
 import React from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import type { EditorSortableItemProps } from '../dnd/EditorTypes';
+import { Remove } from '../item/Remove';
 
 type Props = EditorSortableItemProps & {
   children: React.ReactNode; // TemplateItem render output
@@ -22,7 +23,9 @@ export const EditableItemWrapper: React.FC<Props> = ({ id, children, editorMode 
         {children}
       </div>
       {onRemove ? (
-        <button type="button" className="editable-remove" onClick={() => onRemove(id)}>Remove</button>
+        <div className="editable-remove">
+          <Remove onClick={() => onRemove(id)} />
+        </div>
       ) : null}
     </div>
   );
