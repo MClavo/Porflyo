@@ -1,10 +1,11 @@
 import React from 'react';
 import type { TemplateLayoutComponentProps } from '../types';
 import type { PortfolioItemsData } from '../../components/portfolio/layout/LayoutTypes';
-import TemplateSection from './TemplateSection.tsx';
+import type { PortfolioSection } from '../../types/sectionDto';
+import TemplateSection from './TemplateSection';
 import './templateExample.css';
 
-const TemplateLayout: React.FC<TemplateLayoutComponentProps> = ({ sections, itemMap, itemDataMap, themeClass }) => {
+const TemplateLayout: React.FC<TemplateLayoutComponentProps & { renderSection?: (section: PortfolioSection, content: React.ReactNode) => React.ReactNode }> = ({ sections, itemMap, itemDataMap, themeClass, renderSection }) => {
   return (
     <div className={`tpl-example-root ${themeClass ?? ''}`.trim()}>
       <header className="tpl-example-header">
@@ -17,11 +18,15 @@ const TemplateLayout: React.FC<TemplateLayoutComponentProps> = ({ sections, item
       </header>
 
       <main className="tpl-example-main">
-        {sections.map((section) => (
-          <div key={section.id} id={section.id} className={`tpl-section section-${section.id} layout-${section.layoutType}`}>
-            <TemplateSection section={section} items={itemMap[section.id] || []} itemsData={itemDataMap as PortfolioItemsData} />
-          </div>
-        ))}
+        {sections.map((section) => {
+          const content = (
+            <div key={section.id} id={section.id} className={`tpl-section section-${section.id} layout-${section.layoutType}`}>
+              <TemplateSection section={section} items={itemMap[section.id] || []} itemsData={itemDataMap as PortfolioItemsData} />
+            </div>
+          );
+
+          return renderSection ? renderSection(section, content) : content;
+        })}
       </main>
     </div>
   );

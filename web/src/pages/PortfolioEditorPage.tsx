@@ -181,7 +181,7 @@ export default function PortfolioEditorPage() {
                 </span>
               </div>
               <div className={`collapsible-content ${isSettingsCollapsed ? 'collapsed' : ''}`}>
-                {/* <TemplateSelector selectedTemplate={template} onTemplateChange={(t) => setTemplate(t as TemplateId)} className="mb-6" /> */}
+                {/* TODO: ADD TEMPLATE SELECTOR */}
 
                 <div className="form-group">
                   <label className="form-label">Title</label>
