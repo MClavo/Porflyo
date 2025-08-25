@@ -3,8 +3,10 @@ import { SortableContext, rectSortingStrategy, verticalListSortingStrategy, hori
 import type { DroppableZoneProps } from '../layout/LayoutTypes';
 import { PortfolioItem } from '../item/PortfolioItem';
 import { Container } from './Container';
+import AddItemPopup from '../layout/AddItemPopup';
+import { useState } from 'react';
 
-export function PortfolioZone({ section, items, itemsData, onItemUpdate, onAddItem, onRemove }: Omit<DroppableZoneProps, 'children'> & { onAddItem?: (sectionId: string) => void; onRemove?: (id: string | number) => void }) {
+export function PortfolioZone({ section, items, itemsData, onItemUpdate, onAddItem, onRemove }: Omit<DroppableZoneProps, 'children'> & { onAddItem?: (sectionId: string, itemType?: import('../../../types/itemDto').ItemType) => void; onRemove?: (id: string | number) => void }) {
   const { setNodeRef, isOver } = useDroppable({
     id: section.id,
     data: {
@@ -16,6 +18,8 @@ export function PortfolioZone({ section, items, itemsData, onItemUpdate, onAddIt
   const isFull = items.length >= section.maxItems;
   const isValidDrop = isOver && !isFull;
   const isInvalidDrop = isOver && isFull;
+
+  const [popupOpen, setPopupOpen] = useState(false);
 
   return (
     <Container
@@ -65,14 +69,33 @@ export function PortfolioZone({ section, items, itemsData, onItemUpdate, onAddIt
       {/* Footer add button: centered, does not interfere with the items list */}
       {!isFull && onAddItem ? (
         <div className="zone-add-button-wrapper" role="presentation">
-          <button
-            type="button"
-            className="zone-add-button"
-            onClick={() => onAddItem(section.id)}
-            aria-label={`Add item to ${section.title}`}
-          >
-            +
-          </button>
+          <div className="zone-add-button-inner">
+            <button
+              type="button"
+              className="zone-add-button"
+              onClick={() => {
+                if (section.allowedItemTypes.length <= 1) {
+                  onAddItem(section.id, section.allowedItemTypes[0]);
+                } else {
+                  setPopupOpen(v => !v);
+                }
+              }}
+              aria-label={`Add item to ${section.title}`}
+            >
+              +
+            </button>
+            {popupOpen && section.allowedItemTypes.length > 1 && (
+              <AddItemPopup
+                sectionId={section.id}
+                allowedItemTypes={section.allowedItemTypes}
+                onSelect={(secId, type) => {
+                  if (onAddItem) onAddItem(secId, type);
+                  setPopupOpen(false);
+                }}
+                onClose={() => setPopupOpen(false)}
+              />
+            )}
+          </div>
         </div>
       ) : null}
     </Container>

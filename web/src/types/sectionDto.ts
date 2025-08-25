@@ -108,7 +108,7 @@ export const DEFAULT_SECTIONS: PortfolioSection[] = [
     title: 'Proyectos',
     layoutType: 'grid',
     maxItems: 6,
-    allowedItemTypes: ['doubleText'],
+    allowedItemTypes: ['doubleText', 'text'],
     
     items: []
   },
@@ -118,7 +118,7 @@ export const DEFAULT_SECTIONS: PortfolioSection[] = [
     title: 'Experiencia',
     layoutType: 'row',
     maxItems: 5,
-    allowedItemTypes: ['text'],
+    allowedItemTypes: ['text', 'character'],
     
     items: []
   }

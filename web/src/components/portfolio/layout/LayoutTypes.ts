@@ -29,6 +29,6 @@ export interface DroppableZoneProps {
   items: string[];
   itemsData: PortfolioItemsData;
   onItemUpdate?: (id: string | number, updatedItem: Partial<PortfolioItem>) => void;
-  onAddItem?: (sectionId: string) => void;
+  onAddItem?: (sectionId: string, itemType?: import('../../../types/itemDto').ItemType) => void;
   onRemove?: (id: string | number) => void;
 }

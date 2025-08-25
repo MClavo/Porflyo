@@ -33,7 +33,7 @@ type Props = {
     section: typeof PORTFOLIO_SECTIONS[number],
     content: React.ReactNode
   ) => React.ReactNode;
-  onAddItem?: (sectionId: string) => void;
+  onAddItem?: (sectionId: string, itemType?: import('../../../types/itemDto').ItemType) => void;
   onRemove?: (id: string | number) => void;
 };
 

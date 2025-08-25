@@ -64,8 +64,8 @@ export function PortfolioEditor() {
         itemMap={presentationalItems}
         itemDataMap={presentationalItemsData}
         onItemUpdate={(id, updated) => handleItemUpdate(id, updated as PortfolioItem)}
-  onAddItem={(sectionId) => addItemToSection(sectionId)}
-  onRemove={(id) => removeItem(id as import('@dnd-kit/core').UniqueIdentifier)}
+        onAddItem={(sectionId, itemType) => addItemToSection(sectionId, itemType)}
+        onRemove={(id) => removeItem(id as import('@dnd-kit/core').UniqueIdentifier)}
       />
 
       {createPortal(

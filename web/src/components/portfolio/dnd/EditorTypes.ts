@@ -22,4 +22,5 @@ export interface EditorDroppableZoneProps {
   itemsData: EditorPortfolioItemsData;
   onItemUpdate?: (id: UniqueIdentifier, updatedItem: Partial<PortfolioItem>) => void;
   onRemove?: (id: UniqueIdentifier) => void;
+  onAddItem?: (sectionId: string, itemType?: import('../../../types/itemDto').ItemType) => void;
 }

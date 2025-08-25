@@ -38,7 +38,6 @@
   left: 50%;
   transform: translateX(-50%);
   bottom: 12px;
-  pointer-events: none; /* wrapper shouldn't intercept pointer events, button will */
 }
 .zone-add-button {
   pointer-events: auto;

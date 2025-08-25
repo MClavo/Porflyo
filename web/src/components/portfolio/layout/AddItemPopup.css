@@ -1,0 +1,34 @@
+.addItemPopup {
+  position: absolute;
+  bottom: 44px; /* place above the floating + button */
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+  background: var(--bg, #ffffff);
+  border: 1px solid rgba(0,0,0,0.08);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+  padding: 6px;
+  border-radius: 6px;
+  z-index: 1000; /* ensure it's above other elements */
+  pointer-events: auto; /* allow clicks inside the popup even if parent wrapper disables events */
+}
+
+.addItemPopup__option {
+  padding: 6px 10px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 13px;
+  border-radius: 4px;
+}
+
+.addItemPopup__option:hover { background: rgba(0,0,0,0.04); }
+
+.addItemPopup__option {
+  transition: transform 120ms ease, background-color 120ms ease, box-shadow 120ms ease;
+}
+
+.addItemPopup__option:hover { background: rgba(0,0,0,0.04); transform: translateY(-2px); box-shadow: 0 6px 12px rgba(0,0,0,0.06); }
+
+.addItemPopup__option:active { transform: translateY(0); box-shadow: none; }

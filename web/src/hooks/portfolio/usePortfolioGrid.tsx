@@ -59,7 +59,7 @@ export function usePortfolioGrid() {
     }));
   }, []);
 
-  const addItemToSection = useCallback((sectionId: string) => {
+  const addItemToSection = useCallback((sectionId: string, itemType?: import('../../types/itemDto').ItemType) => {
     const sectionConfig = PORTFOLIO_SECTIONS.find(s => s.id === sectionId);
     if (!sectionConfig) return;
 
@@ -70,8 +70,8 @@ export function usePortfolioGrid() {
       // Create a new unique id using timestamp + random
       const newId = `${Date.now()}-${Math.random().toString(36).slice(2, 9)}` as UniqueIdentifier;
 
-      // Create a default item based on allowed types (use first allowed type)
-      const defaultType = sectionConfig.allowedItemTypes[0] || 'text';
+  // Determine item type: prefer explicit itemType, otherwise first allowed type
+  const defaultType = itemType || sectionConfig.allowedItemTypes[0] || 'text';
       const defaultItem: PortfolioItem = defaultType === 'character'
         ? { id: Date.now(), type: 'character', character: '?' }
         : defaultType === 'doubleText'
