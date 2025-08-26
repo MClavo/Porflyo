@@ -18,6 +18,7 @@ import { createPortal } from 'react-dom';
 import { dropAnimation as exportedDropAnimation, usePortfolioGrid } from '../../../hooks/portfolio/usePortfolioGrid';
 import { getTemplate } from '../../../templates/registry';
 import type { PortfolioItem } from '../../../types/itemDto';
+import type { PortfolioSection } from '../../../types/sectionDto';
 import { Item } from '../item/Item';
 import { PortfolioLayout } from '../layout/PortfolioLayout';
 import { PortfolioZone } from '../section/PortfolioZone';
@@ -27,7 +28,22 @@ export function PortfolioEditor({ templateId = 'template-example' }: { templateI
   const template = getTemplate(templateId);
   const tpl = template ? template : getTemplate('dark');
 
-  const sections = tpl.sections;
+  // Append a saved-items section to the template sections if not present.
+  const sections = tpl.sections.some((s) => s.id === 'saved-items')
+    ? tpl.sections
+    : ([
+        ...tpl.sections,
+        ({
+          id: 'saved-items',
+          type: 'savedItems' as const,
+          title: 'Saved',
+          columns: 1,
+          rows: 10,
+          // ensure a mutable array type matches PortfolioSection.allowedItemTypes
+          allowedItemTypes: ['text', 'doubleText', 'character'] as import('../../../types/itemDto').ItemType[],
+          items: [],
+        } as PortfolioSection),
+      ] as PortfolioSection[]);
 
 
   const {
@@ -40,10 +56,10 @@ export function PortfolioEditor({ templateId = 'template-example' }: { templateI
     handleDragEnd,
     activeId,
     renderSortableItemDragOverlay,
-  handleItemUpdate,
-  sectionDropStates,
-  addItemToSection,
-  removeItem,
+    handleItemUpdate,
+    sectionDropStates,
+    addItemToSection,
+    removeItem,
   } = usePortfolioGrid(sections);
 
   // Convert UniqueIdentifier -> string for the presentational component.

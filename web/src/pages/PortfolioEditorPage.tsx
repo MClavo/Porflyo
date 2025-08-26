@@ -6,8 +6,6 @@ import { useDebouncedSlugAvailability } from '../features/portfolios/hooks/usePu
 import { useListSavedSections } from '../features/portfolios/hooks/useSavedSections';
 import { toSlug } from '../lib/slug/toSlug';
 //import { TemplateSelector } from '../componentsOld/TemplateSelector';
-import type { PortfolioDraft } from '../../../../../Users/mauro/Desktop/Nueva carpeta/components/portfolio/types';
-import { normalizeSectionsToZones, readMeta, serializeSectionsForSave } from '../../../../../Users/mauro/Desktop/Nueva carpeta/components/portfolio/utils';
 import type { TemplateId } from '../features/portfolios/templates';
 import { DEFAULT_TEMPLATE } from '../features/portfolios/templates';
 import { listTemplates } from '../templates/registry';
@@ -15,6 +13,7 @@ import type { TemplateDefinition } from '../templates/types';
 import type { PortfolioCreateDto, PortfolioPatchDto, PortfolioSection } from '../types/dto';
 // import PortfolioEditor from '../components/PortfolioEditor';
 import { PortfolioEditor } from '../components/portfolio/dnd/PortfolioEditor';
+import { SavedItemsSideBar } from '../components/portfolio/dnd/SavedItemsSideBar';
 
 // Small presentational header used in the editor preview
 /* function PortfolioUserHeader({ title }: { title: string }) {
@@ -55,8 +54,8 @@ export default function PortfolioEditorPage() {
   const isNewPortfolio = location.pathname.endsWith('/new');
 
   const { data: portfolio, isLoading, error } = useGetPortfolio(isNewPortfolio ? '' : id || '');
-  const savedSectionsQuery = useListSavedSections();
-  const savedSections = useMemo(() => savedSectionsQuery.data || [], [savedSectionsQuery.data]);
+  //const savedSectionsQuery = useListSavedSections();
+  //const savedSections = useMemo(() => savedSectionsQuery.data || [], [savedSectionsQuery.data]);
 
   const [template, setTemplate] = useState<TemplateId>(DEFAULT_TEMPLATE);
   const [title, setTitle] = useState('');
@@ -65,7 +64,7 @@ export default function PortfolioEditorPage() {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
   // Draft state: zoned representation
-  const [draft, setDraft] = useState<PortfolioDraft | null>(null);
+  //const [draft, setDraft] = useState<PortfolioDraft | null>(null);
 
   // MVP Zones for the template (temporary implementation)
   const getMvpTemplateZones = useCallback(() => {
@@ -92,16 +91,16 @@ export default function PortfolioEditorPage() {
       setTemplate(tplId);
       setTitle(portfolio.title || '');
       setSlug(portfolio.reservedSlug || '');
-      const mockTpl = getMockTemplate(tplId);
-      setDraft(normalizeSectionsToZones(portfolio.sections || [], mockTpl));
+      //const mockTpl = getMockTemplate(tplId);
+      //setDraft(normalizeSectionsToZones(portfolio.sections || [], mockTpl));
     }
     if (isNewPortfolio) {
-      const mockTpl = getMockTemplate(DEFAULT_TEMPLATE);
-      setDraft(normalizeSectionsToZones([], mockTpl));
+      //const mockTpl = getMockTemplate(DEFAULT_TEMPLATE);
+      //setDraft(normalizeSectionsToZones([], mockTpl));
     }
   }, [portfolio, isNewPortfolio, getMockTemplate]);
 
-  const saved = useMemo(() => savedSections, [savedSections]);
+  //const saved = useMemo(() => savedSections, [savedSections]);
 
   // slug availability (debounced)
   const slugQuery = useDebouncedSlugAvailability(slug);
@@ -125,12 +124,12 @@ export default function PortfolioEditorPage() {
 
   const handleSave = async () => {
     if (isNewPortfolio) {
-      const sectionsToSave: PortfolioSection[] = draft ? serializeSectionsForSave(draft) : [];
+      //const sectionsToSave: PortfolioSection[] = draft ? serializeSectionsForSave(draft) : [];
       const createBody: PortfolioCreateDto = { 
         title, 
         description: '', 
         template, 
-        sections: sectionsToSave 
+        sections: []
       };
       try {
         const created = await createMutation.mutateAsync(createBody);
@@ -143,11 +142,11 @@ export default function PortfolioEditorPage() {
     }
 
     if (!id || !portfolio) return;
-    const sectionsToSave: PortfolioSection[] = draft ? serializeSectionsForSave(draft) : [];
+    //const sectionsToSave: PortfolioSection[] = draft ? serializeSectionsForSave(draft) : [];
     const patch: PortfolioPatchDto = { 
       title: title || undefined, 
       template, 
-      sections: sectionsToSave 
+      sections: [] 
     };
     try { 
       await patchMutation.mutateAsync({ id, patch }); 
@@ -213,19 +212,7 @@ export default function PortfolioEditorPage() {
               </div>
             </div>
 
-            <div className="saved-sections-card mt-6">
-              <h2 className="card-title">Saved Sections</h2>
-              <div className="space-y-3 mt-3">
-                {saved?.length ? saved.map(s => (
-                  <div key={s.id} className="p-3 border border-gray-200 rounded-md hover:border-gray-300 cursor-pointer" onClick={() => {
-                    if (!draft) return; const zoneId = draft.zones['profile'] ? 'profile' : Object.keys(draft.zones)[0]; setDraft(prev => { if (!prev) return prev; const next = { ...prev, zones: { ...prev.zones } } as PortfolioDraft; const zone = next.zones[zoneId] || { variant: '', items: [] }; zone.items = [...(zone.items || []), s.section]; next.zones[zoneId] = zone; return next; });
-                  }}>
-                    <div className="font-medium text-sm">{s.name}</div>
-                    <div className="text-xs text-gray-500">{String(readMeta(s.section)?.sectionType || 'unknown')}</div>
-                  </div>
-                )) : (<div className="text-center text-gray-500 py-4">No saved sections</div>)}
-              </div>
-            </div>
+            <SavedItemsSideBar />
           </aside>
                 
 
@@ -241,3 +228,5 @@ export default function PortfolioEditorPage() {
         </div>
   );
 }
+
+

@@ -46,25 +46,6 @@ export function PortfolioZone({ section, items, itemsData, onItemUpdate, onAddIt
         setNodeRef(el as HTMLElement | null);
         containerRef.current = el as HTMLDivElement | null;
       }}
-      /* style={{
-        minHeight: '300px',
-        backgroundColor: isInvalidDrop 
-          ? '#00ff44' 
-          : isValidDrop 
-            ? '#f0f9ff' 
-            : '#fafafa',
-        borderColor: isInvalidDrop 
-          ? '#ef4444' 
-          : isValidDrop 
-            ? '#3b82f6' 
-            : '#e5e7eb',
-        borderWidth: '2px',
-        borderStyle: (isValidDrop || isInvalidDrop) ? 'solid' : 'dashed',
-      }} */
-      //hover={isOver}
-      //label={`${section.title} (${items.length}/${section.maxItems})${isFull ? ' - LLENO' : ''}`}
-      /* columns={section.layoutType === 'grid' ? 2 : 1}
-      horizontal={section.layoutType === 'row'} */
       columns={section.columns}
       
     >

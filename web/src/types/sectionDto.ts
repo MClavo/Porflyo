@@ -1,6 +1,7 @@
 // Types for different kinds of portfolio sections
 
 export type SectionType = 
+  | 'savedItems'
   | 'user' 
   | 'experience' 
   | 'projects' 
@@ -94,6 +95,13 @@ export const SECTION_DEFINITIONS: Record<SectionType, SectionDefinition> = {
     description: 'Contact details and social links',
     defaultMaxItems: 8,
     defaultAllowedItemTypes: ['text', 'doubleText'],
+  },
+  savedItems: {
+    type: 'savedItems',
+    title: 'Saved Items',
+    description: 'Items saved for later use or reference',
+    defaultMaxItems: 10,
+    defaultAllowedItemTypes: ['text', 'doubleText', 'character'],
   }
 };
 

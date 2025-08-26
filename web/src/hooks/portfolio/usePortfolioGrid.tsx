@@ -11,7 +11,7 @@ import {
 import { arrayMove } from '@dnd-kit/sortable';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { PortfolioItem } from '../../types/itemDto';
-import { getMaxItems, DEFAULT_SECTIONS as PORTFOLIO_SECTIONS } from '../../types/sectionDto';
+import { getMaxItems, DEFAULT_SECTIONS as PORTFOLIO_SECTIONS, /* SectionType */ } from '../../types/sectionDto';
 import type { EditorPortfolioItems as PortfolioItems, EditorPortfolioItemsData as PortfolioItemsData } from '../../components/portfolio/dnd/EditorTypes';
 import type { DropAnimation } from '@dnd-kit/core';
 import { defaultDropAnimationSideEffects as _defaultDropAnimationSideEffects } from '@dnd-kit/core';
@@ -66,10 +66,10 @@ export function usePortfolioGrid(sectionsConfig = PORTFOLIO_SECTIONS as typeof P
         const defaultType = itemType || sectionConfig.allowedItemTypes[0] || 'text';
         const defaultItem: PortfolioItem =
           defaultType === 'character'
-            ? { id: Date.now(), type: 'character', character: '?' }
+            ? { id: Date.now(), type: 'character', sectionType: sectionConfig.type, character: '?' }
             : defaultType === 'doubleText'
-            ? { id: Date.now(), type: 'doubleText', text1: 'Title', text2: 'Subtitle' }
-            : { id: Date.now(), type: 'text', text: 'New text' };
+            ? { id: Date.now(), type: 'doubleText', sectionType: sectionConfig.type, text1: 'Title', text2: 'Subtitle' }
+            : { id: Date.now(), type: 'text', sectionType: sectionConfig.type, text: 'New text' };
 
         setItemsData((data) => ({ ...data, [newId]: defaultItem }));
 
@@ -139,7 +139,7 @@ export function usePortfolioGrid(sectionsConfig = PORTFOLIO_SECTIONS as typeof P
           return;
         }
         // allowed only if same section type and destination allows item type
-        if (srcSection.type === destSection.type && destSection.allowedItemTypes.includes(draggedItem.type)) {
+        if (destSection.type === 'savedItems' || (draggedItem.sectionType === destSection.type && destSection.allowedItemTypes.includes(draggedItem.type))) {
           out[sectionId] = 'allowed';
         } else {
           out[sectionId] = 'forbidden';
@@ -172,7 +172,7 @@ export function usePortfolioGrid(sectionsConfig = PORTFOLIO_SECTIONS as typeof P
 
       // Only allow move if the destination section has the same `type` as the source section
       // AND the destination's allowedItemTypes includes the dragged item's type.
-      if (destSection.type !== srcSection.type) return;
+      if (destSection.type !== "savedItems" && destSection.type !== draggedItem.sectionType) return;
       if (!destSection.allowedItemTypes.includes(draggedItem.type)) return;
 
       const overItems = items[overZone];
@@ -208,15 +208,26 @@ export function usePortfolioGrid(sectionsConfig = PORTFOLIO_SECTIONS as typeof P
   const handleDragEnd = ({ active, over }: DragEndEvent) => {
     const activeZone = findZone(active.id);
 
-    if (!activeZone) {
+    const resetDrops = (opts?: { revert?: boolean }) => {
+      setSectionDropStates((prev) => {
+        const out = { ...prev };
+        Object.keys(out).forEach((k) => (out[k] = 'none'));
+        return out;
+      });
+      if (opts?.revert && clonedItems) setItems(clonedItems);
       setActiveId(null);
+      setClonedItems(null);
+    };
+
+    if (!activeZone) {
+      resetDrops();
       return;
     }
 
     const overId = over?.id;
 
     if (overId == null) {
-      setActiveId(null);
+      resetDrops();
       return;
     }
 
@@ -227,22 +238,20 @@ export function usePortfolioGrid(sectionsConfig = PORTFOLIO_SECTIONS as typeof P
       const destSection = sectionsConfig.find((section) => section.id === overZone);
       const srcSection = sectionsConfig.find((section) => section.id === activeZone);
       if (!destSection || !srcSection) {
-        setActiveId(null);
+        resetDrops();
         return;
       }
 
       const draggedItem = itemsData[active.id];
       if (!draggedItem) {
-        setActiveId(null);
+        resetDrops();
         return;
       }
 
-      if (destSection.type !== srcSection.type || !destSection.allowedItemTypes.includes(draggedItem.type)) {
-  // Not allowed to move to this section; revert to original
-  setItems((prev) => (clonedItems ? clonedItems : prev));
-  setActiveId(null);
-  setClonedItems(null);
-  return;
+      if (destSection.type !== 'savedItems' && (destSection.type !== draggedItem.sectionType || !destSection.allowedItemTypes.includes(draggedItem.type))) {
+        // Not allowed to move to this section; revert to original
+        resetDrops({ revert: true });
+        return;
       }
 
       const activeIndex = items[activeZone].indexOf(active.id as string);
@@ -253,13 +262,8 @@ export function usePortfolioGrid(sectionsConfig = PORTFOLIO_SECTIONS as typeof P
       }
     }
 
-    setActiveId(null);
-    // reset drop indicators immediately after drop
-    setSectionDropStates((prev) => {
-      const out = { ...prev };
-      Object.keys(out).forEach((k) => (out[k] = 'none'));
-      return out;
-    });
+    // Always reset drops and clear active id at the end
+    resetDrops();
   };
 
   const renderSortableItemDragOverlay = (

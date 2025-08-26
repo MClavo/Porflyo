@@ -70,8 +70,17 @@ export function PortfolioLayout({
     }
 
     sections.forEach((section) => {
-      const el = siteRef.current!.querySelector(`#${section.id}`) as HTMLElement | null;
-      newTargets[section.id] = el;
+        // Prefer placeholders inside the rendered site component
+        let el: HTMLElement | null = siteRef.current
+          ? (siteRef.current.querySelector(`#${section.id}`) as HTMLElement | null)
+          : null;
+
+        // Fallback: global lookup in document (useful for sidebars / external containers)
+        if (!el && typeof document !== 'undefined') {
+          el = document.getElementById(section.id);
+        }
+
+        newTargets[section.id] = el;
     });
 
     setTargets(newTargets);

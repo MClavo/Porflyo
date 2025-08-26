@@ -27,6 +27,14 @@
 .container {
   position: relative;
 }
+
+.saved-sections-card .container{
+  min-height: 90%;
+  padding-top: 30px;
+  scroll-behavior: smooth;
+}
+
+
 .container ul {
   padding-bottom: 60px; /* space for the floating add button */
 }

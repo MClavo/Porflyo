@@ -5,6 +5,7 @@ export type ItemType = 'text' | 'character' | 'doubleText';
 export interface BaseItem {
   id: number;
   type: ItemType;
+  sectionType: import('./sectionDto').SectionType;
 }
 
 export interface TextItem extends BaseItem {
