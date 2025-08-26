@@ -1,12 +1,10 @@
 import {
   closestCenter,
   type CollisionDetection,
-  // drop animation side effects not required here
   type DragEndEvent,
   type DragOverEvent,
   type DragStartEvent,
   getFirstCollision,
-  // MeasuringStrategy not required in the hook file
   MouseSensor,
   pointerWithin,
   rectIntersection,
@@ -18,12 +16,11 @@ import {
 import { arrayMove } from '@dnd-kit/sortable';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { PortfolioItem } from '../../types/itemDto';
-import { DEFAULT_SECTIONS as PORTFOLIO_SECTIONS } from '../../types/sectionDto';
+import { getMaxItems, DEFAULT_SECTIONS as PORTFOLIO_SECTIONS } from '../../types/sectionDto';
 import type { EditorPortfolioItems as PortfolioItems, EditorPortfolioItemsData as PortfolioItemsData } from '../../components/portfolio/dnd/EditorTypes';
 import type { DropAnimation } from '@dnd-kit/core';
 import { defaultDropAnimationSideEffects as _defaultDropAnimationSideEffects } from '@dnd-kit/core';
 
-// Exported drop animation (kept for consistency if needed elsewhere)
 export const dropAnimation: DropAnimation = {
   sideEffects: _defaultDropAnimationSideEffects({
     styles: {
@@ -34,10 +31,10 @@ export const dropAnimation: DropAnimation = {
   }),
 };
 
-export function usePortfolioGrid() {
+export function usePortfolioGrid(sectionsConfig = PORTFOLIO_SECTIONS as typeof PORTFOLIO_SECTIONS) {
   // Initialize with empty sections based on the section definitions
-  const [items, setItems] = useState<PortfolioItems>(() => 
-    PORTFOLIO_SECTIONS.reduce((acc, section) => {
+  const [items, setItems] = useState<PortfolioItems>(() =>
+    sectionsConfig.reduce((acc, section) => {
       acc[section.id] = [];
       return acc;
     }, {} as PortfolioItems)
@@ -53,43 +50,35 @@ export function usePortfolioGrid() {
   const [clonedItems, setClonedItems] = useState<PortfolioItems | null>(null);
 
   const handleItemUpdate = useCallback((id: UniqueIdentifier, updatedItem: PortfolioItem) => {
-    setItemsData(prev => ({
-      ...prev,
-      [id]: updatedItem,
-    }));
+    setItemsData((prev) => ({ ...prev, [id]: updatedItem }));
   }, []);
 
-  const addItemToSection = useCallback((sectionId: string, itemType?: import('../../types/itemDto').ItemType) => {
-    const sectionConfig = PORTFOLIO_SECTIONS.find(s => s.id === sectionId);
-    if (!sectionConfig) return;
+  const addItemToSection = useCallback(
+    (sectionId: string, itemType?: import('../../types/itemDto').ItemType) => {
+      const sectionConfig = sectionsConfig.find((s) => s.id === sectionId);
+      if (!sectionConfig) return;
 
-    setItems((prev) => {
-      const sectionItems = prev[sectionId] || [];
-      if (sectionItems.length >= sectionConfig.maxItems) return prev;
+      setItems((prev) => {
+        const sectionItems = prev[sectionId] || [];
+        if (sectionItems.length >= getMaxItems(sectionConfig)) return prev;
 
-      // Create a new unique id using timestamp + random
-      const newId = `${Date.now()}-${Math.random().toString(36).slice(2, 9)}` as UniqueIdentifier;
+        const newId = `${Date.now()}-${Math.random().toString(36).slice(2, 9)}` as UniqueIdentifier;
 
-  // Determine item type: prefer explicit itemType, otherwise first allowed type
-  const defaultType = itemType || sectionConfig.allowedItemTypes[0] || 'text';
-      const defaultItem: PortfolioItem = defaultType === 'character'
-        ? { id: Date.now(), type: 'character', character: '?' }
-        : defaultType === 'doubleText'
-          ? { id: Date.now(), type: 'doubleText', text1: 'Title', text2: 'Subtitle' }
-          : { id: Date.now(), type: 'text', text: 'New text' };
+        const defaultType = itemType || sectionConfig.allowedItemTypes[0] || 'text';
+        const defaultItem: PortfolioItem =
+          defaultType === 'character'
+            ? { id: Date.now(), type: 'character', character: '?' }
+            : defaultType === 'doubleText'
+            ? { id: Date.now(), type: 'doubleText', text1: 'Title', text2: 'Subtitle' }
+            : { id: Date.now(), type: 'text', text: 'New text' };
 
-      // Update itemsData with the new item
-      setItemsData((data) => ({
-        ...data,
-        [newId]: defaultItem,
-      }));
+        setItemsData((data) => ({ ...data, [newId]: defaultItem }));
 
-      return {
-        ...prev,
-        [sectionId]: [...sectionItems, newId],
-      };
-    });
-  }, [setItems, setItemsData]);
+        return { ...prev, [sectionId]: [...sectionItems, newId] };
+      });
+    },
+    [sectionsConfig]
+  );
 
   const removeItem = useCallback((id: UniqueIdentifier) => {
     setItems((prev) => {
@@ -106,22 +95,20 @@ export function usePortfolioGrid() {
       delete copy[id];
       return copy;
     });
-  }, [setItems, setItemsData]);
+  }, []);
 
-  const findZone = useCallback((id: UniqueIdentifier) => {
-    if (id in items) {
-      return id as string;
-    }
-    return Object.keys(items).find((key) => items[key].includes(id));
-  }, [items]);
+  const findZone = useCallback(
+    (id: UniqueIdentifier) => {
+      if (id in items) return id as string;
+      return Object.keys(items).find((key) => items[key].includes(id));
+    },
+    [items]
+  );
 
   const collisionDetectionStrategy: CollisionDetection = useCallback(
     (args) => {
       const pointerIntersections = pointerWithin(args);
-      const intersections =
-        pointerIntersections.length > 0
-          ? pointerIntersections
-          : rectIntersection(args);
+      const intersections = pointerIntersections.length > 0 ? pointerIntersections : rectIntersection(args);
       let overId = getFirstCollision(intersections, 'id');
 
       if (overId != null) {
@@ -129,20 +116,16 @@ export function usePortfolioGrid() {
 
         if (overId in items) {
           const zoneItems = items[overId];
-          const sectionConfig = PORTFOLIO_SECTIONS.find(section => section.id === overId);
+          const sectionConfig = sectionsConfig.find((section) => section.id === overId);
 
-          if (activeZone && activeZone !== overId && sectionConfig && zoneItems.length >= sectionConfig.maxItems) {
+          if (activeZone && activeZone !== overId && sectionConfig && zoneItems.length >= getMaxItems(sectionConfig)) {
             return [];
           }
 
           if (zoneItems.length > 0) {
             overId = closestCenter({
               ...args,
-              droppableContainers: args.droppableContainers.filter(
-                (container) =>
-                  container.id !== overId &&
-                  zoneItems.includes(container.id)
-              ),
+              droppableContainers: args.droppableContainers.filter((container) => container.id !== overId && zoneItems.includes(container.id)),
             })[0]?.id;
           }
         }
@@ -153,18 +136,13 @@ export function usePortfolioGrid() {
 
       return lastOverId.current ? [{ id: lastOverId.current }] : [];
     },
-    [items, findZone]
+    [items, findZone, sectionsConfig]
   );
 
-  const sensors = useSensors(
-    useSensor(MouseSensor, { activationConstraint: { distance: 10 } }),
-    useSensor(TouchSensor, { activationConstraint: { distance: 10 } })
-  );
+  const sensors = useSensors(useSensor(MouseSensor, { activationConstraint: { distance: 10 } }), useSensor(TouchSensor, { activationConstraint: { distance: 10 } }));
 
   const onDragCancel = () => {
-    if (clonedItems) {
-      setItems(clonedItems);
-    }
+    if (clonedItems) setItems(clonedItems);
     setActiveId(null);
     setActiveOriginalZone(null);
     setClonedItems(null);
@@ -185,46 +163,33 @@ export function usePortfolioGrid() {
   const handleDragOver = ({ active, over }: DragOverEvent) => {
     const overId = over?.id;
 
-    if (overId == null || active.id in items) {
-      return;
-    }
+    if (overId == null || active.id in items) return;
 
     const overZone = findZone(overId);
     const activeZone = findZone(active.id);
 
-    if (!overZone || !activeZone) {
-      return;
-    }
+    if (!overZone || !activeZone) return;
 
     if (activeZone !== overZone) {
-      const sectionConfig = PORTFOLIO_SECTIONS.find(section => section.id === overZone);
+      const sectionConfig = sectionsConfig.find((section) => section.id === overZone);
       const overItems = items[overZone];
 
-      if (sectionConfig && overItems.length >= sectionConfig.maxItems) {
-        return;
-      }
+      if (sectionConfig && overItems.length >= getMaxItems(sectionConfig)) return;
 
       setItems((items) => {
         const activeItems = items[activeZone];
         const overItems = items[overZone];
-        const overIndex = overItems.indexOf(overId);
-        const activeIndex = activeItems.indexOf(active.id);
+        const overIndex = overItems.indexOf(overId as string);
+        const activeIndex = activeItems.indexOf(active.id as string);
 
         let newIndex: number;
 
         if (overId in items) {
           newIndex = overItems.length + 1;
         } else {
-          const isBelowOverItem =
-            over &&
-            active.rect.current.translated &&
-            active.rect.current.translated.top >
-              over.rect.top + over.rect.height;
-
+          const isBelowOverItem = over && active.rect.current.translated && active.rect.current.translated.top > over.rect.top + over.rect.height;
           const modifier = isBelowOverItem ? 1 : 0;
-
-          newIndex =
-            overIndex >= 0 ? overIndex + modifier : overItems.length + 1;
+          newIndex = overIndex >= 0 ? overIndex + modifier : overItems.length + 1;
         }
 
         recentlyMovedToNewZone.current = true;
@@ -232,11 +197,7 @@ export function usePortfolioGrid() {
         return {
           ...items,
           [activeZone]: items[activeZone].filter((item) => item !== active.id),
-          [overZone]: [
-            ...items[overZone].slice(0, newIndex),
-            items[activeZone][activeIndex],
-            ...items[overZone].slice(newIndex, items[overZone].length),
-          ],
+          [overZone]: [...items[overZone].slice(0, newIndex), items[activeZone][activeIndex], ...items[overZone].slice(newIndex, items[overZone].length)],
         };
       });
     }
@@ -262,14 +223,11 @@ export function usePortfolioGrid() {
     const overZone = findZone(overId);
 
     if (overZone) {
-      const activeIndex = items[activeZone].indexOf(active.id);
-      const overIndex = items[overZone].indexOf(overId);
+      const activeIndex = items[activeZone].indexOf(active.id as string);
+      const overIndex = items[overZone].indexOf(overId as string);
 
       if (activeIndex !== overIndex) {
-        setItems((items) => ({
-          ...items,
-          [overZone]: arrayMove(items[overZone], activeIndex, overIndex),
-        }));
+        setItems((items) => ({ ...items, [overZone]: arrayMove(items[overZone], activeIndex, overIndex) }));
       }
     }
 
@@ -288,7 +246,7 @@ export function usePortfolioGrid() {
       dragOverlay?: boolean;
     }>
   ) => {
-    const sectionInfo = PORTFOLIO_SECTIONS.find((s) => s.id === activeOriginalZone);
+    //const sectionInfo = sectionsConfig.find((s) => s.id === activeOriginalZone);
     const item = itemsData[id];
 
     const renderItemContent = () => {
@@ -316,7 +274,7 @@ export function usePortfolioGrid() {
         value={renderItemContent()}
         handle={false}
         style={{}}
-        wrapperStyle={{ width: sectionInfo?.layoutType === 'grid' ? 150 : 300, height: 100 }}
+        wrapperStyle={{ width: 100, height: 100 }}
         dragOverlay
       />
     );
@@ -327,7 +285,7 @@ export function usePortfolioGrid() {
     setItems,
     itemsData,
     setItemsData,
-  addItemToSection,
+    addItemToSection,
     sensors,
     collisionDetectionStrategy,
     onDragCancel,
@@ -336,7 +294,7 @@ export function usePortfolioGrid() {
     handleDragEnd,
     activeId,
     renderSortableItemDragOverlay,
-  handleItemUpdate,
-  removeItem,
+    handleItemUpdate,
+    removeItem,
   } as const;
 }

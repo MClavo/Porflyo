@@ -108,6 +108,17 @@
   box-shadow: var(--shadow);
 }
 
+/* Ensure form controls in the template settings are clickable and above overlays */
+.template-settings-card,
+.template-settings-card .collapsible-content,
+.template-settings-card .form-group,
+.template-settings-card .form-input,
+.template-settings-card select {
+  position: relative;
+  z-index: 30; /* above drag overlays */
+  pointer-events: auto;
+}
+
 /* Collapsible functionality */
 .collapsible-header {
   display: flex;

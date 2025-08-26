@@ -17,6 +17,71 @@
   min-height: 120px;
 }
 
+.editable-section {
+  min-height: 140px;
+  padding: 8px;
+  box-sizing: border-box;
+}
+
+.editable-section {
+  min-height: 140px;
+  padding: 8px;
+  box-sizing: border-box;
+  position: relative; /* anchor absolute children like the add button and popup */
+}
+
+.editable-section-add {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 8px;
+  display: flex;
+  justify-content: center;
+  z-index: 60;
+}
+
+.editable-section .zone-add-button {
+  background: #efefef;
+  border-radius: 6px;
+  width: 36px;
+  height: 36px;
+  border: none;
+  cursor: pointer;
+}
+
+/* Preserve template layout flows (grid/row) by making the wrapper act as if it's not there */
+.editable-item-wrapper {
+  display: contents;
+}
+
+.editable-item-contents {
+  display: contents; /* ensure internal DOM remains unaltered for layout */
+}
+
+.editable-remove {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 40;
+}
+
+/* When template expects .tpl-section-items we must preserve layout; make the
+   editable variant visible and ensure add button and popup position correctly */
+.editable-tpl-items {
+  position: relative;
+  padding-bottom: 36px; /* room for the add button */
+}
+
+
+
+.editable-section-popup-wrapper {
+  position: absolute;
+  bottom: 48px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 40;
+}
+
 .sortable-section.section-hover {
   border-color: #2196f3;
   background: #e3f2fd;

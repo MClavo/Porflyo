@@ -7,10 +7,12 @@ import type { TemplateDefinition } from './types';
 // static registry map. Add new templates here as they are created.
 import templateExample from './templateExample';
 import twoColumnDark from './twoColumnDark';
+import twoColumnWhite from './twoColumnWhite';
 
 const registry: Record<string, TemplateDefinition> = {
   [templateExample.id]: templateExample,
   [twoColumnDark.id]: twoColumnDark,
+  [twoColumnWhite.id]: twoColumnWhite,
 };
 
 export function getTemplate(id: string) {

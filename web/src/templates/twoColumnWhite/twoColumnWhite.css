@@ -1,7 +1,7 @@
-/* Dark two-column template styles */
-.tpl-two-column-dark {
-  --bg: #2a303d;
-  --panel-bg: #47494c;
+/* white two-column template styles */
+.tpl-two-column-white {
+/*   --bg: #2a303d;
+  --panel-bg: #47494c; */
   --accent: #2dd4bf;
   --text: #e6eef6;
   background: var(--bg);
@@ -11,13 +11,13 @@
   padding: 20px;
 }
 
-.tpl-two-column-dark .two-top {
+.tpl-two-column-white .two-top {
   display: flex;
   gap: 16px;
   margin-bottom: 16px;
 }
 
-.tpl-two-column-dark .col {
+.tpl-two-column-white .col {
   flex: 1 1 0;
   background: var(--panel-bg);
   padding: 0px;
@@ -27,7 +27,7 @@
   box-sizing: border-box;
 }
 
-.tpl-two-column-dark .bottom {
+.tpl-two-column-white .bottom {
   display: flex;
   flex-direction: column;
   background: var(--panel-bg);
@@ -36,11 +36,11 @@
   box-shadow: 0 2px 8px rgba(0,0,0,0.4);
 }
 
-.tpl-two-column-dark .tpl-section {
+.tpl-two-column-white .tpl-section {
   width: 100%;
 }
 
-.tpl-two-column-dark .tpl-item {
+.tpl-two-column-white .tpl-item {
   background: rgba(255,255,255,0.02);
   border: 1px solid rgba(255,255,255,0.03);
   padding: 8px 10px;
@@ -49,7 +49,7 @@
   color: var(--text);
 }
 
-.tpl-two-column-dark .section-title {
+.tpl-two-column-white .section-title {
   color: var(--accent);
   font-weight: 600;
   margin: 16px;

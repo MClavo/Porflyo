@@ -1,25 +1,18 @@
-import type { LayoutType, PortfolioSection } from '../types/sectionDto';
-import type { ItemType } from '../types/itemDto';
+import type { PortfolioSection } from '../types/sectionDto';
 
-export type TemplateSectionDefinition = {
-  id: string;
-  title: string;
-  layoutType?: LayoutType;
-  maxItems?: number;
-  allowedItemTypes?: ItemType[];
-};
 
 export type TemplateLayoutComponentProps = {
   sections: PortfolioSection[];
   itemMap: Record<string, string[]>;
   itemDataMap: Record<string, unknown>;
   themeClass?: string;
+  renderItems?: (section: PortfolioSection, items: string[], itemsData: Record<string, unknown>) => React.ReactNode;
 };
 
 export type TemplateDefinition = {
   id: string;
   title: string;
-  defaultSections: TemplateSectionDefinition[];
+  sections: PortfolioSection[];
   ThemeClass?: string;
   Layout: React.FC<TemplateLayoutComponentProps>;
 };

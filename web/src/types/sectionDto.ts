@@ -10,8 +10,6 @@ export type SectionType =
   | 'achievements' 
   | 'contact';
 
-export type LayoutType = 'grid' | 'column' | 'row';
-
 export interface SectionDefinition {
   type: SectionType;
   title: string;
@@ -24,11 +22,20 @@ export interface PortfolioSection {
   id: string;
   type: SectionType;
   title: string;
-  layoutType: LayoutType;
-  maxItems: number;
+  columns: number;
+  rows: number;
   allowedItemTypes: import('./itemDto').ItemType[];
   items: string[]; // Array of item IDs for DnD compatibility
 }
+
+/**
+ * Compute max items for a section as rows * columns.
+ */
+export function getMaxItems(section: PortfolioSection): number {
+  return section.columns * section.rows;
+}
+
+
 
 // Predefined section definitions
 export const SECTION_DEFINITIONS: Record<SectionType, SectionDefinition> = {
@@ -96,8 +103,8 @@ export const DEFAULT_SECTIONS: PortfolioSection[] = [
     id: 'user',
     type: 'user',
     title: 'Perfil',
-    layoutType: 'column',
-    maxItems: 3,
+    columns: 3,
+    rows: 1,
     allowedItemTypes: ['text'],
     
     items: []
@@ -106,8 +113,8 @@ export const DEFAULT_SECTIONS: PortfolioSection[] = [
     id: 'projects',
     type: 'projects',
     title: 'Proyectos',
-    layoutType: 'grid',
-    maxItems: 6,
+    columns: 2,
+    rows: 3,
     allowedItemTypes: ['doubleText', 'text'],
     
     items: []
@@ -116,8 +123,8 @@ export const DEFAULT_SECTIONS: PortfolioSection[] = [
     id: 'experience',
     type: 'experience',
     title: 'Experiencia',
-    layoutType: 'row',
-    maxItems: 5,
+    columns: 1,
+    rows: 5,
     allowedItemTypes: ['text', 'character'],
     
     items: []

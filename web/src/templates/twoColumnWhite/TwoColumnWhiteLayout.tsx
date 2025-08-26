@@ -1,8 +1,8 @@
 import React from 'react';
 import type { TemplateLayoutComponentProps } from '../types';
-import './twoColumnDark.css';
+import './twoColumnWhite.css';
 
-const TwoColumnDarkLayout: React.FC<TemplateLayoutComponentProps> = ({ sections }) => {
+const TwoColumnWhiteLayout: React.FC<TemplateLayoutComponentProps> = ({ sections }) => {
   // Expect first two sections to be the left and right top columns; third is bottom full-width
   const left = sections[0];
   const right = sections[1];
@@ -12,7 +12,7 @@ const TwoColumnDarkLayout: React.FC<TemplateLayoutComponentProps> = ({ sections 
   // content. Placeholders are simple elements with id === section.id. The
   // editor will portal the editable section content into those nodes.
   return (
-    <div className="tpl-two-column-dark">
+    <div className="tpl-two-column-white">
       <div className="two-top">
         <div className="col tpl-section" id={left?.id}>
           <div className="section-title">{left?.title}</div>
@@ -32,4 +32,4 @@ const TwoColumnDarkLayout: React.FC<TemplateLayoutComponentProps> = ({ sections 
   );
 };
 
-export default TwoColumnDarkLayout;
+export default TwoColumnWhiteLayout;

@@ -1,10 +1,10 @@
 import type { TemplateDefinition } from "../types";
-import TwoColumnDarkLayout from "./TwoColumnDarkLayout";
+import TwoColumnWhiteLayout from "./TwoColumnWhiteLayout";
 
 const def: TemplateDefinition = {
-  id: "dark",
-  title: "Dark",
-  ThemeClass: "tpl-two-column-dark",
+  id: "white",
+  title: "White",
+  ThemeClass: "tpl-two-column-white",
   sections: [
     {
       id: "left",
@@ -34,7 +34,7 @@ const def: TemplateDefinition = {
       items: [],
     },
   ],
-  Layout: TwoColumnDarkLayout,
+  Layout: TwoColumnWhiteLayout,
 };
 
 export default def;
