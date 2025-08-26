@@ -17,6 +17,7 @@ import com.porflyo.ports.input.AuthUseCase;
 import com.porflyo.ports.output.JwtPort;
 import com.porflyo.ports.output.MediaRepository;
 import com.porflyo.ports.output.ProviderPort;
+import com.porflyo.ports.output.QuotaRepository;
 import com.porflyo.ports.output.UserRepository;
 
 import jakarta.inject.Inject;
@@ -28,6 +29,7 @@ public class AuthService implements AuthUseCase {
     private static final Logger log = LoggerFactory.getLogger(AuthService.class);
     private final UserRepository userRepository;
     private final MediaRepository mediaRepository;
+    private final QuotaRepository quotaRepository;
 
     private final JwtConfig jwtConfig;
     private final ProviderPort authProvider;
@@ -39,13 +41,16 @@ public class AuthService implements AuthUseCase {
             JwtPort jwtPort,
             JwtConfig jwtConfig,
             UserRepository userRepository,
-            MediaRepository mediaRepository) {
+            MediaRepository mediaRepository,
+            QuotaRepository quotaRepository
+            ) {
 
         this.authProvider = providerPort;
         this.jwt = jwtPort;
         this.jwtConfig = jwtConfig;
         this.userRepository = userRepository;
         this.mediaRepository = mediaRepository;
+        this.quotaRepository = quotaRepository;
     }
 
 
@@ -142,6 +147,7 @@ public class AuthService implements AuthUseCase {
     private void saveNewUser(User user) {
         mediaRepository.putFromUrl(user.profileImage(), user.provider().providerAvatarUrl());
         userRepository.save(user);
+        quotaRepository.create(user.id());
 
         log.debug("Successfully saved new user: {}", user.id().value());
     }

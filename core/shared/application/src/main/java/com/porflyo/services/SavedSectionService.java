@@ -2,12 +2,13 @@ package com.porflyo.services;
 
 import java.util.List;
 
-import com.porflyo.ports.input.SavedSectionUseCase;
-import com.porflyo.ports.output.SavedSectionRepository;
 import com.porflyo.model.ids.SectionId;
 import com.porflyo.model.ids.UserId;
 import com.porflyo.model.portfolio.PortfolioSection;
 import com.porflyo.model.portfolio.SavedSection;
+import com.porflyo.ports.input.SavedSectionUseCase;
+import com.porflyo.ports.output.QuotaRepository;
+import com.porflyo.ports.output.SavedSectionRepository;
 
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
@@ -16,10 +17,12 @@ import jakarta.inject.Singleton;
 public class SavedSectionService implements SavedSectionUseCase {
 
     private final SavedSectionRepository sRepository;
+    private final QuotaRepository quotaRepository;
 
     @Inject
-    public SavedSectionService(SavedSectionRepository savedSectionRepository) {
+    public SavedSectionService(SavedSectionRepository savedSectionRepository, QuotaRepository quotaRepository) {
         this.sRepository = savedSectionRepository;
+        this.quotaRepository = quotaRepository;
     }
 
     @Override
@@ -32,11 +35,13 @@ public class SavedSectionService implements SavedSectionUseCase {
             1
         );
 
+        quotaRepository.updateSavedSectionCount(userId, 1);
         return sRepository.save(savedSection);
     }
 
     @Override
-    public void delete(UserId userId, SectionId sectionId) { 
+    public void delete(UserId userId, SectionId sectionId) {
+        quotaRepository.updateSavedSectionCount(userId, -1);
         sRepository.delete(userId, sectionId);
     }
 

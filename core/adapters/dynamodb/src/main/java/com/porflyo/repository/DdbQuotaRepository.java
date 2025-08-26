@@ -50,7 +50,7 @@ public class DdbQuotaRepository implements QuotaRepository {
         item.setSavedSectionCount(0);
 
         table.putItem(item);
-        log.debug("Created quota item for user: {}", userId);
+        log.debug("Created quota item for user: {}", userId.value());
     }
 
 
@@ -84,21 +84,21 @@ public class DdbQuotaRepository implements QuotaRepository {
         DdbQuotaItem item = getQuotaItem(userId);
 
         if (item == null) {
-            log.warn("No quota item found for user: {}", userId);
-            throw new IllegalStateException("Quota item not found for user: " + userId);
+            log.warn("No quota item found for user: {}", userId.value());
+            throw new IllegalStateException("Quota item not found for user: " + userId.value());
         }
 
         int count = item.getSavedSectionCount() + updateBy;
 
         if (count > quotaConfig.maxSavedSections() || count < 0) {
-            log.warn("Quota exceeded for user: {}. Attempted to set savedSectionCount to {}", userId, count);
+            log.warn("Quota exceeded for user: {}. Attempted to set savedSectionCount to {}", userId.value(), count);
             throw new IllegalStateException("Quota exceeded for saved sections");
         }
 
         item.setSavedSectionCount(count);
 
         table.updateItem(item);
-        log.debug("Updated saved section count for user: {} to {}", userId, count);
+        log.debug("Updated saved section count for user: {} to {}", userId.value(), count);
 
         return count;
     }
@@ -107,21 +107,21 @@ public class DdbQuotaRepository implements QuotaRepository {
        DdbQuotaItem item = getQuotaItem(userId);
 
         if (item == null) {
-            log.warn("No quota item found for user: {}", userId);
-            throw new IllegalStateException("Quota item not found for user: " + userId);
+            log.warn("No quota item found for user: {}", userId.value());
+            throw new IllegalStateException("Quota item not found for user: " + userId.value());
         }
 
         int count = item.getPortfolioCount() + updateBy;
 
         if (count > quotaConfig.maxPortfolios() || count < 0) {
-            log.warn("Quota exceeded for user: {}. Attempted to set portfolioCount to {}", userId, count);
+            log.warn("Quota exceeded for user: {}. Attempted to set portfolioCount to {}", userId.value(), count);
             throw new IllegalStateException("Quota exceeded for portfolio");
         }
 
         item.setPortfolioCount(count);
 
         table.updateItem(item);
-        log.debug("Updated portfolio count for user: {} to {}", userId, count);
+        log.debug("Updated portfolio count for user: {} to {}", userId.value(), count);
 
         return count;
     }
