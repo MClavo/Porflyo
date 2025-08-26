@@ -8,7 +8,7 @@ const def: TemplateDefinition = {
   sections: [
     {
       id: "left",
-      type: "user",
+      type: "text",
       title: "Left",
       columns: 1,
       rows: 2,
@@ -17,7 +17,7 @@ const def: TemplateDefinition = {
     },
     {
       id: "right",
-      type: "projects",
+      type: "text",
       title: "Right",
       columns: 2,
       rows: 1,
@@ -26,7 +26,7 @@ const def: TemplateDefinition = {
     },
     {
       id: "bottom",
-      type: "experience",
+      type: "text",
       title: "Bottom",
       columns: 3,
       rows: 2,
