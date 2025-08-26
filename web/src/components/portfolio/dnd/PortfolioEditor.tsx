@@ -34,7 +34,6 @@ export function PortfolioEditor({ templateId = 'template-example' }: { templateI
     items,
     itemsData,
     sensors,
-    collisionDetectionStrategy,
     onDragCancel,
     handleDragStart,
     handleDragOver,
@@ -60,7 +59,6 @@ export function PortfolioEditor({ templateId = 'template-example' }: { templateI
   return (
     <DndContext
       sensors={sensors}
-      collisionDetection={collisionDetectionStrategy}
       measuring={{ droppable: { strategy: MeasuringStrategy.Always } }}
       onDragStart={handleDragStart}
       onDragOver={handleDragOver}

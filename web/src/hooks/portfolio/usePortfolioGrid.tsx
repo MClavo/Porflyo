@@ -1,13 +1,8 @@
 import {
-  closestCenter,
-  type CollisionDetection,
   type DragEndEvent,
   type DragOverEvent,
   type DragStartEvent,
-  getFirstCollision,
   MouseSensor,
-  pointerWithin,
-  rectIntersection,
   TouchSensor,
   type UniqueIdentifier,
   useSensor,
@@ -44,8 +39,6 @@ export function usePortfolioGrid(sectionsConfig = PORTFOLIO_SECTIONS as typeof P
   const [itemsData, setItemsData] = useState<PortfolioItemsData>(() => ({}));
 
   const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
-  const [activeOriginalZone, setActiveOriginalZone] = useState<string | null>(null);
-  const lastOverId = useRef<UniqueIdentifier | null>(null);
   const recentlyMovedToNewZone = useRef(false);
   const [clonedItems, setClonedItems] = useState<PortfolioItems | null>(null);
 
@@ -105,46 +98,11 @@ export function usePortfolioGrid(sectionsConfig = PORTFOLIO_SECTIONS as typeof P
     [items]
   );
 
-  const collisionDetectionStrategy: CollisionDetection = useCallback(
-    /* (args) => {
-      const pointerIntersections = pointerWithin(args);
-      const intersections = pointerIntersections.length > 0 ? pointerIntersections : rectIntersection(args);
-      let overId = getFirstCollision(intersections, 'id');
-
-      if (overId != null) {
-        const activeZone = args.active ? findZone(args.active.id) : null;
-
-        if (overId in items) {
-          const zoneItems = items[overId];
-          const sectionConfig = sectionsConfig.find((section) => section.id === overId);
-
-          if (activeZone && activeZone !== overId && sectionConfig && zoneItems.length >= getMaxItems(sectionConfig)) {
-            return [];
-          }
-
-          if (zoneItems.length > 0) {
-            overId = closestCenter({
-              ...args,
-              droppableContainers: args.droppableContainers.filter((container) => container.id !== overId && zoneItems.includes(container.id)),
-            })[0]?.id;
-          }
-        }
-
-        lastOverId.current = overId;
-        return [{ id: overId }];
-      }
-
-      return lastOverId.current ? [{ id: lastOverId.current }] : [];
-    },
-    [items, findZone, sectionsConfig] */
-  );
-
   const sensors = useSensors(useSensor(MouseSensor, { activationConstraint: { distance: 10 } }), useSensor(TouchSensor, { activationConstraint: { distance: 10 } }));
 
   const onDragCancel = () => {
     if (clonedItems) setItems(clonedItems);
     setActiveId(null);
-    setActiveOriginalZone(null);
     setClonedItems(null);
   };
 
@@ -156,7 +114,6 @@ export function usePortfolioGrid(sectionsConfig = PORTFOLIO_SECTIONS as typeof P
 
   const handleDragStart = ({ active }: DragStartEvent) => {
     setActiveId(active.id);
-    setActiveOriginalZone(findZone(active.id) || null);
     setClonedItems(items);
   };
 
@@ -171,10 +128,23 @@ export function usePortfolioGrid(sectionsConfig = PORTFOLIO_SECTIONS as typeof P
     if (!overZone || !activeZone) return;
 
     if (activeZone !== overZone) {
-      const sectionConfig = sectionsConfig.find((section) => section.id === overZone);
-      const overItems = items[overZone];
+      const destSection = sectionsConfig.find((section) => section.id === overZone);
+      const srcSection = sectionsConfig.find((section) => section.id === activeZone);
 
-      if (sectionConfig && overItems.length >= getMaxItems(sectionConfig)) return;
+      // If either section not found, prevent move
+      if (!destSection || !srcSection) return;
+
+      // Get the item being dragged
+      const draggedItem = itemsData[active.id];
+      if (!draggedItem) return;
+
+      // Only allow move if the destination section has the same `type` as the source section
+      // AND the destination's allowedItemTypes includes the dragged item's type.
+      if (destSection.type !== srcSection.type) return;
+      if (!destSection.allowedItemTypes.includes(draggedItem.type)) return;
+
+      const overItems = items[overZone];
+      if (destSection && overItems.length >= getMaxItems(destSection)) return;
 
       setItems((items) => {
         const activeItems = items[activeZone];
@@ -208,7 +178,6 @@ export function usePortfolioGrid(sectionsConfig = PORTFOLIO_SECTIONS as typeof P
 
     if (!activeZone) {
       setActiveId(null);
-      setActiveOriginalZone(null);
       return;
     }
 
@@ -216,13 +185,34 @@ export function usePortfolioGrid(sectionsConfig = PORTFOLIO_SECTIONS as typeof P
 
     if (overId == null) {
       setActiveId(null);
-      setActiveOriginalZone(null);
       return;
     }
 
     const overZone = findZone(overId);
 
     if (overZone) {
+      // Enforce same-section-type + allowedItemTypes on final drop as well.
+      const destSection = sectionsConfig.find((section) => section.id === overZone);
+      const srcSection = sectionsConfig.find((section) => section.id === activeZone);
+      if (!destSection || !srcSection) {
+        setActiveId(null);
+        return;
+      }
+
+      const draggedItem = itemsData[active.id];
+      if (!draggedItem) {
+        setActiveId(null);
+        return;
+      }
+
+      if (destSection.type !== srcSection.type || !destSection.allowedItemTypes.includes(draggedItem.type)) {
+  // Not allowed to move to this section; revert to original
+  setItems((prev) => (clonedItems ? clonedItems : prev));
+  setActiveId(null);
+  setClonedItems(null);
+  return;
+      }
+
       const activeIndex = items[activeZone].indexOf(active.id as string);
       const overIndex = items[overZone].indexOf(overId as string);
 
@@ -231,8 +221,7 @@ export function usePortfolioGrid(sectionsConfig = PORTFOLIO_SECTIONS as typeof P
       }
     }
 
-    setActiveId(null);
-    setActiveOriginalZone(null);
+  setActiveId(null);
   };
 
   const renderSortableItemDragOverlay = (
@@ -287,7 +276,6 @@ export function usePortfolioGrid(sectionsConfig = PORTFOLIO_SECTIONS as typeof P
     setItemsData,
     addItemToSection,
     sensors,
-    collisionDetectionStrategy,
     onDragCancel,
     handleDragStart,
     handleDragOver,
