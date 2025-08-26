@@ -1,10 +1,10 @@
 import React, { forwardRef } from 'react';
 import './Container.css';
-import { Handle } from '../item/Handle';
-import { Remove } from '../item/Remove';
+// ...existing imports (no handle/remove used here)
 
 export interface Props {
   children: React.ReactNode;
+  className?: string;
   columns?: number;
   label?: string;
   style?: React.CSSProperties;
@@ -24,19 +24,19 @@ export const Container = forwardRef<HTMLDivElement, Props>(
     {
       children,
       columns = 1,
-      handleProps,
+/*       handleProps,
       horizontal,
-      hover,
+      hover, */
       onClick,
-      onRemove,
-      label,
+/*       onRemove,
+      label, */
       placeholder,
       style,
-      scrollable,
+/*       scrollable,
       shadow,
-      unstyled,
+      unstyled, */
       ...props
-    }: Props,
+  }: Props,
     ref
   ) => {
     const Component = onClick ? 'button' : 'div';
@@ -51,7 +51,7 @@ export const Container = forwardRef<HTMLDivElement, Props>(
             '--columns': columns,
           } as React.CSSProperties
         }
-        className={'container'}
+    className={`container ${props.className ?? ''}`}
         //onClick={onClick}
         //tabIndex={onClick ? 0 : undefined}
       >

@@ -39,6 +39,12 @@ export function usePortfolioGrid(sectionsConfig = PORTFOLIO_SECTIONS as typeof P
   const [itemsData, setItemsData] = useState<PortfolioItemsData>(() => ({}));
 
   const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
+  const [sectionDropStates, setSectionDropStates] = useState<Record<string, 'allowed' | 'forbidden' | 'none'>>(() =>
+    sectionsConfig.reduce((acc, s) => {
+      acc[s.id] = 'none';
+      return acc;
+    }, {} as Record<string, 'allowed' | 'forbidden' | 'none'>)
+  );
   const recentlyMovedToNewZone = useRef(false);
   const [clonedItems, setClonedItems] = useState<PortfolioItems | null>(null);
 
@@ -103,6 +109,12 @@ export function usePortfolioGrid(sectionsConfig = PORTFOLIO_SECTIONS as typeof P
   const onDragCancel = () => {
     if (clonedItems) setItems(clonedItems);
     setActiveId(null);
+    // reset drop indicators
+    setSectionDropStates((prev) => {
+      const out = { ...prev };
+      Object.keys(out).forEach((k) => (out[k] = 'none'));
+      return out;
+    });
     setClonedItems(null);
   };
 
@@ -115,6 +127,26 @@ export function usePortfolioGrid(sectionsConfig = PORTFOLIO_SECTIONS as typeof P
   const handleDragStart = ({ active }: DragStartEvent) => {
     setActiveId(active.id);
     setClonedItems(items);
+    // Compute which sections would accept this item and set indicators
+    const draggedItem = itemsData[active.id];
+    setSectionDropStates((prev) => {
+      const out = { ...prev };
+      Object.keys(out).forEach((sectionId) => {
+        const srcSection = sectionsConfig.find((s) => findZone(active.id) === s.id);
+        const destSection = sectionsConfig.find((s) => s.id === sectionId);
+        if (!srcSection || !destSection || !draggedItem) {
+          out[sectionId] = 'none';
+          return;
+        }
+        // allowed only if same section type and destination allows item type
+        if (srcSection.type === destSection.type && destSection.allowedItemTypes.includes(draggedItem.type)) {
+          out[sectionId] = 'allowed';
+        } else {
+          out[sectionId] = 'forbidden';
+        }
+      });
+      return out;
+    });
   };
 
   const handleDragOver = ({ active, over }: DragOverEvent) => {
@@ -221,7 +253,13 @@ export function usePortfolioGrid(sectionsConfig = PORTFOLIO_SECTIONS as typeof P
       }
     }
 
-  setActiveId(null);
+    setActiveId(null);
+    // reset drop indicators immediately after drop
+    setSectionDropStates((prev) => {
+      const out = { ...prev };
+      Object.keys(out).forEach((k) => (out[k] = 'none'));
+      return out;
+    });
   };
 
   const renderSortableItemDragOverlay = (
@@ -284,5 +322,6 @@ export function usePortfolioGrid(sectionsConfig = PORTFOLIO_SECTIONS as typeof P
     renderSortableItemDragOverlay,
     handleItemUpdate,
     removeItem,
+  sectionDropStates,
   } as const;
 }

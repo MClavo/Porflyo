@@ -70,6 +70,17 @@
   border-color: rgba(0, 0, 0, 0.15);
 }
 
+/* Drag-state indicators */
+.drop-allowed {
+  border: 2px solid #16a34a; /* green */
+  transition: border-color 120ms ease, box-shadow 120ms ease;
+}
+
+.drop-forbidden {
+  border: 2px solid #ef4444; /* red */
+  transition: border-color 120ms ease, box-shadow 120ms ease;
+}
+
 .container.hover {
   background-color: rgb(235, 235, 235, 1);
 }

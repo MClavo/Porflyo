@@ -1,13 +1,14 @@
 import { useDroppable } from '@dnd-kit/core';
 import { SortableContext } from '@dnd-kit/sortable';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { PortfolioItem } from '../item/PortfolioItem';
 import AddItemPopup from '../layout/AddItemPopup';
 import type { DroppableZoneProps } from '../layout/LayoutTypes';
 import { Container } from './Container';
 import { getMaxItems } from '../../../types/sectionDto';
 
-export function PortfolioZone({ section, items, itemsData, onItemUpdate, onAddItem, onRemove }: Omit<DroppableZoneProps, 'children'> & { onAddItem?: (sectionId: string, itemType?: import('../../../types/itemDto').ItemType) => void; onRemove?: (id: string | number) => void }) {
+export function PortfolioZone({ section, items, itemsData, onItemUpdate, onAddItem, onRemove, dropState }: Omit<DroppableZoneProps, 'children'> & { onAddItem?: (sectionId: string, itemType?: import('../../../types/itemDto').ItemType) => void; onRemove?: (id: string | number) => void; dropState?: 'allowed' | 'forbidden' | 'none' }) {
+  const containerRef = useRef<HTMLDivElement | null>(null);
   const { setNodeRef, /* isOver */ } = useDroppable({
     id: section.id,
     data: {
@@ -23,9 +24,28 @@ export function PortfolioZone({ section, items, itemsData, onItemUpdate, onAddIt
 
   const [popupOpen, setPopupOpen] = useState(false);
 
+  useEffect(() => {
+    const parent = containerRef.current?.parentElement;
+    if (!parent) return;
+
+    // remove any previous classes
+    parent.classList.remove('drop-allowed', 'drop-forbidden');
+
+    if (dropState && dropState !== 'none') {
+      parent.classList.add(`drop-${dropState}`);
+    }
+
+    return () => {
+      parent.classList.remove('drop-allowed', 'drop-forbidden');
+    };
+  }, [dropState]);
+
   return (
     <Container
-      ref={setNodeRef}
+      ref={(el) => {
+        setNodeRef(el as HTMLElement | null);
+        containerRef.current = el as HTMLDivElement | null;
+      }}
       /* style={{
         minHeight: '300px',
         backgroundColor: isInvalidDrop 

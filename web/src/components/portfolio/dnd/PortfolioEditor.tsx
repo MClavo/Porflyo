@@ -41,6 +41,7 @@ export function PortfolioEditor({ templateId = 'template-example' }: { templateI
     activeId,
     renderSortableItemDragOverlay,
   handleItemUpdate,
+  sectionDropStates,
   addItemToSection,
   removeItem,
   } = usePortfolioGrid(sections);
@@ -84,6 +85,7 @@ export function PortfolioEditor({ templateId = 'template-example' }: { templateI
             onItemUpdate={(id, updated) => handleItemUpdate(id as import('@dnd-kit/core').UniqueIdentifier, updated as PortfolioItem)}
             onAddItem={(secId, type) => addItemToSection(secId, type)}
             onRemove={(id) => removeItem(id as import('@dnd-kit/core').UniqueIdentifier)}
+            dropState={sectionDropStates ? sectionDropStates[section.id] : 'none'}
           />
         )}
       />
