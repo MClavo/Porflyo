@@ -51,27 +51,10 @@ export const Container = forwardRef<HTMLDivElement, Props>(
             '--columns': columns,
           } as React.CSSProperties
         }
-        className={`
-          container 
-          ${unstyled ? 'unstyled' : ''} 
-          ${horizontal ? 'horizontal' : ''} 
-          ${hover ? 'hover' : ''} 
-          ${placeholder ? 'placeholder' : ''} 
-          ${scrollable ? 'scrollable' : ''} 
-          ${shadow ? 'shadow' : ''}
-        `.trim()}
-        onClick={onClick}
-        tabIndex={onClick ? 0 : undefined}
+        className={'container'}
+        //onClick={onClick}
+        //tabIndex={onClick ? 0 : undefined}
       >
-        {label ? (
-          <div className="header">
-            {label}
-            <div className="actions">
-              {onRemove ? <Remove onClick={onRemove} /> : undefined}
-              <Handle {...handleProps} />
-            </div>
-          </div>
-        ) : null}
         {placeholder ? children : <ul>{children}</ul>}
       </Component>
     );

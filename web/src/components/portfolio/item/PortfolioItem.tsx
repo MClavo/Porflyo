@@ -22,7 +22,7 @@ export function PortfolioItem({ id, item, index, section, onItemUpdate, onRemove
   const mounted = useMountStatus();
   const mountedWhileDragging = isDragging && !mounted;
 
-  const itemWidth = section.layoutType === 'grid' ? 150 : 300;
+/*   const itemWidth = section.layoutType === 'grid' ? 150 : 300; */
 
   // Common input style function
   const getInputStyle = (extraStyle = {}): React.CSSProperties => ({
@@ -135,7 +135,7 @@ export function PortfolioItem({ id, item, index, section, onItemUpdate, onRemove
       handle={false}
       index={index}
       wrapperStyle={{
-        width: itemWidth,
+        width: '100%',
         height: 100,
       }}
       style={{}}

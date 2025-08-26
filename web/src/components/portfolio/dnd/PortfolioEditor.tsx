@@ -15,17 +15,21 @@
 import { DndContext, DragOverlay, MeasuringStrategy } from '@dnd-kit/core';
 import { createPortal } from 'react-dom';
 
-import { PortfolioLayout } from '../layout/PortfolioLayout';
-import { Item } from '../item/Item';
-import { DEFAULT_SECTIONS as PORTFOLIO_SECTIONS } from '../../../types/sectionDto';
-import { usePortfolioGrid, dropAnimation as exportedDropAnimation } from '../../../hooks/portfolio/usePortfolioGrid';
+import { dropAnimation as exportedDropAnimation, usePortfolioGrid } from '../../../hooks/portfolio/usePortfolioGrid';
 import { getTemplate } from '../../../templates/registry';
-import mergeSavedSectionsWithTemplate from '../../../templates/utils/mergeSavedSectionsWithTemplate';
-import EditableSectionWrapper from '../editableWrappers/EditableSectionWrapper';
-import TemplateItem from '../../../templates/templateExample/TemplateItem';
 import type { PortfolioItem } from '../../../types/itemDto';
+import { Item } from '../item/Item';
+import { PortfolioLayout } from '../layout/PortfolioLayout';
+import { PortfolioZone } from '../section/PortfolioZone';
 
 export function PortfolioEditor({ templateId = 'template-example' }: { templateId?: string } = {}) {
+  // Load template and merge sections (no savedSections for now)
+  const template = getTemplate(templateId);
+  const tpl = template ? template : getTemplate('dark');
+
+  const sections = tpl.sections;
+
+
   const {
     items,
     itemsData,
@@ -40,7 +44,7 @@ export function PortfolioEditor({ templateId = 'template-example' }: { templateI
   handleItemUpdate,
   addItemToSection,
   removeItem,
-  } = usePortfolioGrid();
+  } = usePortfolioGrid(sections);
 
   // Convert UniqueIdentifier -> string for the presentational component.
   const presentationalItems = Object.keys(items).reduce((acc, sectionId) => {
@@ -53,10 +57,6 @@ export function PortfolioEditor({ templateId = 'template-example' }: { templateI
     return acc;
   }, {} as Record<string, PortfolioItem>);
 
-  // Load template and merge sections (no savedSections for now)
-  const tpl = getTemplate(templateId);
-  const mergedSections = tpl ? mergeSavedSectionsWithTemplate(tpl) : PORTFOLIO_SECTIONS;
-
   return (
     <DndContext
       sensors={sensors}
@@ -67,36 +67,28 @@ export function PortfolioEditor({ templateId = 'template-example' }: { templateI
       onDragEnd={handleDragEnd}
       onDragCancel={onDragCancel}
     >
-      {/* Render the template layout but inject wrappers in editor mode */}
-      {tpl ? (
-        <div className={tpl.ThemeClass}>
-          {mergedSections.map((section) => (
-            <div key={section.id} id={section.id} className={`tpl-section section-${section.id} layout-${section.layoutType}`}>
-              <EditableSectionWrapper
-                section={section}
-                items={(items[section.id] || [])}
-                itemsData={itemsData}
-                onRemove={(id) => removeItem(id as import('@dnd-kit/core').UniqueIdentifier)}
-                onItemUpdate={(id, updated) => handleItemUpdate(id, updated as PortfolioItem)}
-                onAddItem={(secId, type) => addItemToSection(secId, type)}
-                editorMode
-                renderItem={(id) => (
-                  <TemplateItem id={String(id)} item={itemsData[id]} section={section} />
-                )}
-              />
-            </div>
-          ))}
-        </div>
-      ) : (
-        <PortfolioLayout
-          sections={PORTFOLIO_SECTIONS}
-          itemMap={presentationalItems}
-          itemDataMap={presentationalItemsData}
-          onItemUpdate={(id, updated) => handleItemUpdate(id, updated as PortfolioItem)}
-          onAddItem={(sectionId, itemType) => addItemToSection(sectionId, itemType)}
-          onRemove={(id) => removeItem(id as import('@dnd-kit/core').UniqueIdentifier)}
-        />
-      )}
+      {/* Render the template site (if available) as the `siteComponent` and
+          always use PortfolioLayout to control how sections are injected so
+          the editor can portal editable zones into template placeholders. */}
+      <PortfolioLayout
+        sections={sections}
+        itemMap={presentationalItems}
+        itemDataMap={presentationalItemsData}
+        siteComponent={tpl ? <tpl.Layout sections={sections} itemMap={{}} itemDataMap={{}} themeClass={tpl.ThemeClass} /> : undefined}
+        onItemUpdate={(id, updated) => handleItemUpdate(id, updated as PortfolioItem)}
+        onAddItem={(sectionId, itemType) => addItemToSection(sectionId, itemType)}
+        onRemove={(id) => removeItem(id as import('@dnd-kit/core').UniqueIdentifier)}
+        renderSection={(section) => (
+          <PortfolioZone
+            section={section}
+            items={((items[section.id] || []) as Array<import('@dnd-kit/core').UniqueIdentifier>).map((id) => String(id))}
+            itemsData={itemsData}
+            onItemUpdate={(id, updated) => handleItemUpdate(id as import('@dnd-kit/core').UniqueIdentifier, updated as PortfolioItem)}
+            onAddItem={(secId, type) => addItemToSection(secId, type)}
+            onRemove={(id) => removeItem(id as import('@dnd-kit/core').UniqueIdentifier)}
+          />
+        )}
+      />
 
       {createPortal(
         <DragOverlay adjustScale={false} dropAnimation={exportedDropAnimation}>

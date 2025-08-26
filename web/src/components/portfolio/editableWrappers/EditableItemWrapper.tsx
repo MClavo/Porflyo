@@ -17,9 +17,14 @@ export const EditableItemWrapper: React.FC<Props> = ({ id, children, editorMode 
   }
 
   return (
-    <div ref={setNodeRef as React.Ref<HTMLDivElement>} style={{ transform: transform ? `translate(${transform.x}px, ${transform.y}px)` : undefined, transition }} data-dnd-item-id={String(id)}>
-      {/* inject listeners/attributes on a wrapper so the template's internal markup remains untouched */}
-      <div {...attributes} {...listeners}>
+    <div
+      ref={setNodeRef as React.Ref<HTMLDivElement>}
+      className="editable-item-wrapper"
+      style={{ transform: transform ? `translate(${transform.x}px, ${transform.y}px)` : undefined, transition }}
+      data-dnd-item-id={String(id)}
+    >
+      {/* use display:contents so template grid/row layouts are preserved */}
+      <div {...attributes} {...listeners} className="editable-item-contents">
         {children}
       </div>
       {onRemove ? (

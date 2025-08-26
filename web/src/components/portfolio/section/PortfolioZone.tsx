@@ -1,13 +1,14 @@
 import { useDroppable } from '@dnd-kit/core';
-import { SortableContext, rectSortingStrategy, verticalListSortingStrategy, horizontalListSortingStrategy } from '@dnd-kit/sortable';
-import type { DroppableZoneProps } from '../layout/LayoutTypes';
-import { PortfolioItem } from '../item/PortfolioItem';
-import { Container } from './Container';
-import AddItemPopup from '../layout/AddItemPopup';
+import { SortableContext } from '@dnd-kit/sortable';
 import { useState } from 'react';
+import { PortfolioItem } from '../item/PortfolioItem';
+import AddItemPopup from '../layout/AddItemPopup';
+import type { DroppableZoneProps } from '../layout/LayoutTypes';
+import { Container } from './Container';
+import { getMaxItems } from '../../../types/sectionDto';
 
 export function PortfolioZone({ section, items, itemsData, onItemUpdate, onAddItem, onRemove }: Omit<DroppableZoneProps, 'children'> & { onAddItem?: (sectionId: string, itemType?: import('../../../types/itemDto').ItemType) => void; onRemove?: (id: string | number) => void }) {
-  const { setNodeRef, isOver } = useDroppable({
+  const { setNodeRef, /* isOver */ } = useDroppable({
     id: section.id,
     data: {
       type: 'section',
@@ -15,19 +16,20 @@ export function PortfolioZone({ section, items, itemsData, onItemUpdate, onAddIt
     },
   });
 
-  const isFull = items.length >= section.maxItems;
-  const isValidDrop = isOver && !isFull;
-  const isInvalidDrop = isOver && isFull;
+  // Determine if the section is full
+  const isFull = items.length >= getMaxItems(section);
+  //const isValidDrop = isOver && !isFull;
+  //const isInvalidDrop = isOver && isFull;
 
   const [popupOpen, setPopupOpen] = useState(false);
 
   return (
     <Container
       ref={setNodeRef}
-      style={{
+      /* style={{
         minHeight: '300px',
         backgroundColor: isInvalidDrop 
-          ? '#fef2f2' 
+          ? '#00ff44' 
           : isValidDrop 
             ? '#f0f9ff' 
             : '#fafafa',
@@ -38,21 +40,23 @@ export function PortfolioZone({ section, items, itemsData, onItemUpdate, onAddIt
             : '#e5e7eb',
         borderWidth: '2px',
         borderStyle: (isValidDrop || isInvalidDrop) ? 'solid' : 'dashed',
-      }}
-      hover={isOver}
-      label={`${section.title} (${items.length}/${section.maxItems})${isFull ? ' - LLENO' : ''}`}
-      columns={section.layoutType === 'grid' ? 2 : 1}
-      horizontal={section.layoutType === 'row'}
+      }} */
+      //hover={isOver}
+      //label={`${section.title} (${items.length}/${section.maxItems})${isFull ? ' - LLENO' : ''}`}
+      /* columns={section.layoutType === 'grid' ? 2 : 1}
+      horizontal={section.layoutType === 'row'} */
+      columns={section.columns}
+      
     >
       <SortableContext 
         items={items} 
-        strategy={
+        /* strategy={
           section.layoutType === 'grid'
             ? rectSortingStrategy
             : section.layoutType === 'row'
               ? horizontalListSortingStrategy
               : verticalListSortingStrategy
-        }
+        } */
       >
         {items.map((itemId, index) => (
           <PortfolioItem

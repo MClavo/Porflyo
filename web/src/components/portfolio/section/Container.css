@@ -6,23 +6,21 @@
   box-sizing: border-box;
   appearance: none;
   outline: none;
-  min-width: 350px;
-  margin: 10px;
-  border-radius: 5px;
-  min-height: 200px;
+  min-width: 100%;
+  min-height: 100px;
   transition: background-color 350ms ease;
-  background-color: rgba(246, 246, 246, 1);
-  border: 1px solid rgba(0, 0, 0, 0.05);
+  /* background-color: rgba(246, 246, 246, 1);
+  border: 1px solid rgba(0, 0, 0, 0.05); */
   font-size: 1em;
 }
 
 .container ul {
   display: grid;
-  grid-gap: 10px;
+  grid-gap: 20px;
   grid-template-columns: repeat(var(--columns, 1), 1fr);
   list-style: none;
-  padding: 20px;
-  margin: 0;
+  padding: 0px;
+  margin: 0px;
 }
 
 /* Reserve space at the bottom for the footer add button and keep button out of flow */
@@ -99,17 +97,7 @@
   box-shadow: 0 0 0 2px rgba(255, 255, 255, 0), 0 0px 0px 2px #4c9ffe;
 }
 
-.header {
-  display: flex;
-  padding: 5px 20px;
-  padding-right: 8px;
-  align-items: center;
-  justify-content: space-between;
-  background-color: #fff;
-  border-top-left-radius: 5px;
-  border-top-right-radius: 5px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
-}
+
 
 .header:hover .actions > * {
   opacity: 1 !important;
