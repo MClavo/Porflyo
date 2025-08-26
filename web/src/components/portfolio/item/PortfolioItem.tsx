@@ -3,10 +3,12 @@ import { useEffect, useState } from 'react';
 // Use section.color from the section config for item coloring
 import type { EditorSortableItemProps as SortableItemProps } from '../dnd/EditorTypes';
 import { Item } from './Item';
+import ItemRenderer from '../render';
+import type { PortfolioItem as PortfolioItemType } from '../../../types/itemDto';
 
-export function PortfolioItem({ id, item, index, section, onItemUpdate, onRemove }: SortableItemProps) {
+export function PortfolioItem(props: SortableItemProps & { preview?: boolean; draggable?: boolean }) {
+  const { id, item, index, onItemUpdate, onRemove, preview = false, draggable = true } = props;
   const [isEditing, setIsEditing] = useState(false);
-  const [isHovering, setIsHovering] = useState(false);
   const {
     setNodeRef,
     listeners,
@@ -16,120 +18,29 @@ export function PortfolioItem({ id, item, index, section, onItemUpdate, onRemove
     transition,
   } = useSortable({
     id,
-    disabled: isEditing, // Disable dragging when editing
+    disabled: !draggable || isEditing, // Disable dragging when editing or when not draggable
     animateLayoutChanges: (args) => defaultAnimateLayoutChanges({ ...args, wasDragging: true }),
   });
   const mounted = useMountStatus();
   const mountedWhileDragging = isDragging && !mounted;
-
-/*   const itemWidth = section.layoutType === 'grid' ? 150 : 300; */
-
-  // Common input style function
-  const getInputStyle = (extraStyle = {}): React.CSSProperties => ({
-    border: `1px solid ${isEditing ? '#3b82f6' : isHovering ? '#94a3b8' : '#e2e8f0'}`,
-    borderRadius: '4px',
-    background: isEditing ? '#fff' : isHovering ? '#f1f5f9' : '#f8fafc',
-    outline: 'none',
-    width: '100%',
-    fontFamily: 'inherit',
-    pointerEvents: 'auto' as const,
-    transition: 'all 0.2s ease',
-    boxShadow: isEditing ? '0 0 0 2px rgba(59, 130, 246, 0.2)' : 'none',
-    cursor: 'text',
-    ...extraStyle,
-  });
-
-  // Function to render editable content based on item type
-  const renderItemContent = () => {
-    switch (item.type) {
-      case 'text':
-        return (
-          <input
-            type="text"
-            value={item.text}
-            onChange={(e) => {
-              onItemUpdate?.(id, { ...item, text: e.target.value });
-            }}
-            onFocus={() => setIsEditing(true)}
-            onBlur={() => setIsEditing(false)}
-            onMouseEnter={() => setIsHovering(true)}
-            onMouseLeave={() => setIsHovering(false)}
-            placeholder="Introduce texto..."
-            style={getInputStyle({
-              padding: '8px 12px',
-              fontSize: 'inherit',
-            })}
-          />
-        );
-      case 'character':
-        return (
-          <input
-            type="text"
-            value={item.character}
-            onChange={(e) => {
-              onItemUpdate?.(id, { ...item, character: e.target.value });
-            }}
-            onFocus={() => setIsEditing(true)}
-            onBlur={() => setIsEditing(false)}
-            onMouseEnter={() => setIsHovering(true)}
-            onMouseLeave={() => setIsHovering(false)}
-            placeholder="🎯"
-            maxLength={10}
-            style={getInputStyle({
-              padding: '8px 12px',
-              textAlign: 'center',
-              fontSize: '1.5em',
-            })}
-          />
-        );
-      case 'doubleText':
-        return (
-          <div 
-            style={{ display: 'flex', flexDirection: 'column', gap: '8px', width: '100%' }}
-            onMouseEnter={() => setIsHovering(true)}
-            onMouseLeave={() => setIsHovering(false)}
-          >
-            <input
-              type="text"
-              value={item.text1}
-              onChange={(e) => {
-                onItemUpdate?.(id, { ...item, text1: e.target.value });
-              }}
-              onFocus={() => setIsEditing(true)}
-              onBlur={() => setIsEditing(false)}
-              placeholder="Título principal..."
-              style={getInputStyle({
-                padding: '6px 10px',
-                fontWeight: 'bold',
-                fontSize: '0.9em',
-              })}
-            />
-            <input
-              type="text"
-              value={item.text2}
-                onChange={(e) => {
-                onItemUpdate?.(id, { ...item, text2: e.target.value });
-              }}
-              onFocus={() => setIsEditing(true)}
-              onBlur={() => setIsEditing(false)}
-              placeholder="Subtítulo..."
-              style={getInputStyle({
-                padding: '6px 10px',
-                fontSize: '0.8em',
-                color: '#666',
-              })}
-            />
-          </div>
-        );
-      default:
-        return id;
-    }
-  };
+  // We delegate rendering of the actual item UI to ItemRenderer so templates can vary.
 
   return (
     <Item
       ref={setNodeRef}
-      value={renderItemContent()}
+      value={
+        <ItemRenderer
+          id={String(id)}
+          item={item as PortfolioItemType | undefined}
+          // editable should depend only on preview (view mode), not on isEditing.
+          // isEditing is used to disable dragging/listeners, but keeping editable=false
+          // while isEditing=true caused the input to disappear on focus.
+          editable={!preview}
+          onItemUpdate={onItemUpdate}
+          onStartEdit={() => setIsEditing(true)}
+          onEndEdit={() => setIsEditing(false)}
+        />
+      }
       dragging={isDragging}
       sorting={isSorting}
       handle={false}
@@ -142,7 +53,7 @@ export function PortfolioItem({ id, item, index, section, onItemUpdate, onRemove
       transition={transition}
       transform={transform}
       fadeIn={mountedWhileDragging}
-  listeners={isEditing ? undefined : listeners} // Only pass listeners when not editing
+  listeners={isEditing || !draggable ? undefined : listeners} // Only pass listeners when not editing and draggable
   onRemove={onRemove ? () => onRemove(id) : undefined}
     />
   );

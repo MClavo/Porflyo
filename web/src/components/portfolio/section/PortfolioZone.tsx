@@ -88,6 +88,7 @@ export function PortfolioZone({ section, items, itemsData, onItemUpdate, onAddIt
             >
               +
             </button>
+            
             {popupOpen && section.allowedItemTypes.length > 1 && (
               <AddItemPopup
                 sectionId={section.id}

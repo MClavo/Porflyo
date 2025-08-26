@@ -106,7 +106,7 @@ export function usePortfolioGrid(sectionsConfig = PORTFOLIO_SECTIONS as typeof P
   );
 
   const collisionDetectionStrategy: CollisionDetection = useCallback(
-    (args) => {
+    /* (args) => {
       const pointerIntersections = pointerWithin(args);
       const intersections = pointerIntersections.length > 0 ? pointerIntersections : rectIntersection(args);
       let overId = getFirstCollision(intersections, 'id');
@@ -136,7 +136,7 @@ export function usePortfolioGrid(sectionsConfig = PORTFOLIO_SECTIONS as typeof P
 
       return lastOverId.current ? [{ id: lastOverId.current }] : [];
     },
-    [items, findZone, sectionsConfig]
+    [items, findZone, sectionsConfig] */
   );
 
   const sensors = useSensors(useSensor(MouseSensor, { activationConstraint: { distance: 10 } }), useSensor(TouchSensor, { activationConstraint: { distance: 10 } }));
@@ -274,7 +274,7 @@ export function usePortfolioGrid(sectionsConfig = PORTFOLIO_SECTIONS as typeof P
         value={renderItemContent()}
         handle={false}
         style={{}}
-        wrapperStyle={{ width: 100, height: 100 }}
+        wrapperStyle={{ width: '100%', height: '100%' }}
         dragOverlay
       />
     );
