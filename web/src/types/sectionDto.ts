@@ -108,6 +108,15 @@ export const SECTION_DEFINITIONS: Record<SectionType, SectionDefinition> = {
 // Default sections configuration
 export const DEFAULT_SECTIONS: PortfolioSection[] = [
   {
+    id: 'savedItems',
+    type: 'savedItems',
+    title: 'Items Guardados',
+    columns: 2,
+    rows: 5,
+    allowedItemTypes: ['savedItem'],
+    items: []
+  },
+  {
     id: 'user',
     type: 'user',
     title: 'Perfil',

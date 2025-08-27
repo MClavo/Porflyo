@@ -10,12 +10,14 @@ import {
 } from '@dnd-kit/core';
 import { arrayMove } from '@dnd-kit/sortable';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import type { PortfolioItem } from '../../types/itemDto';
 import { getMaxItems, DEFAULT_SECTIONS as PORTFOLIO_SECTIONS, /* SectionType */ } from '../../types/sectionDto';
 import type { EditorPortfolioItems as PortfolioItems, EditorPortfolioItemsData as PortfolioItemsData } from '../../components/portfolio/dnd/EditorTypes';
 import type { DropAnimation } from '@dnd-kit/core';
 import { defaultDropAnimationSideEffects as _defaultDropAnimationSideEffects } from '@dnd-kit/core';
 import { SavedSectionsService } from '../../services/savedSections.service';
+import { useSavedItems } from '../useSavedItems';
 
 export const dropAnimation: DropAnimation = {
   sideEffects: _defaultDropAnimationSideEffects({
@@ -28,6 +30,12 @@ export const dropAnimation: DropAnimation = {
 };
 
 export function usePortfolioGrid(sectionsConfig = PORTFOLIO_SECTIONS as typeof PORTFOLIO_SECTIONS) {
+  // React Query client for cache invalidation
+  const queryClient = useQueryClient();
+  
+  // Load saved items from API (cached globally)
+  const { savedItems, isLoading: isLoadingSavedItems } = useSavedItems();
+
   // Initialize with empty sections based on the section definitions
   const [items, setItems] = useState<PortfolioItems>(() =>
     sectionsConfig.reduce((acc, section) => {
@@ -59,6 +67,56 @@ export function usePortfolioGrid(sectionsConfig = PORTFOLIO_SECTIONS as typeof P
     id: UniqueIdentifier;
     item: PortfolioItem;
   } | null>(null);
+
+  // Load saved items into savedItems section when they become available
+  useEffect(() => {
+    console.log('SavedItems effect triggered:', { 
+      savedItemsLength: savedItems.length, 
+      currentSavedItemsLength: items.savedItems?.length || 0 
+    });
+    
+    if (savedItems.length > 0) {
+      // Find savedItems section (could be 'savedItems' or 'saved-items')
+      const savedItemsSection = sectionsConfig.find(section => 
+        section.id === 'savedItems' || section.id === 'saved-items'
+      );
+      if (!savedItemsSection) {
+        console.log('SavedItems section not found in sectionsConfig');
+        return;
+      }
+
+      // Only update if we have different data to avoid infinite loops
+      const sectionId = savedItemsSection.id; // Use the actual section ID found
+      const currentSavedCount = items[sectionId]?.length || 0;
+      if (currentSavedCount === savedItems.length) {
+        console.log('SavedItems already loaded, skipping update');
+        return;
+      }
+
+      console.log('Loading savedItems into state');
+
+      // Create UniqueIdentifiers and items data for saved items
+      const savedItemIds: UniqueIdentifier[] = [];
+      const savedItemsData: PortfolioItemsData = {};
+
+      savedItems.forEach((savedItem, index) => {
+        const uniqueId = `saved-${savedItem.dbId || savedItem.id || index}` as UniqueIdentifier;
+        savedItemIds.push(uniqueId);
+        savedItemsData[uniqueId] = savedItem;
+      });
+
+      // Update items and itemsData with loaded saved items
+      setItems(prev => ({
+        ...prev,
+        [sectionId]: savedItemIds, // Use the actual section ID
+      }));
+
+      setItemsData(prev => ({
+        ...prev,
+        ...savedItemsData,
+      }));
+    }
+  }, [savedItems, sectionsConfig, items]);
 
   const handleItemUpdate = useCallback((id: UniqueIdentifier, updatedItem: PortfolioItem) => {
     setItemsData((prev) => {
@@ -119,12 +177,15 @@ export function usePortfolioGrid(sectionsConfig = PORTFOLIO_SECTIONS as typeof P
           dbId: savedInDb.id, // Now we have the database ID for future deletions
         }
       }));
+
+      // Invalidate saved sections cache to refresh the data
+      queryClient.invalidateQueries({ queryKey: ['savedSections'] });
     } catch (error) {
       console.error('Error saving item to database:', error);
       // Item is already saved locally, so user doesn't see any error
       // You might want to add a toast notification here for the user
     }
-  }, [pendingSaveItem, items]);
+  }, [pendingSaveItem, items, queryClient]);
 
   const handleCancelSave = useCallback(() => {
     setPendingSaveItem(null);
@@ -160,6 +221,9 @@ export function usePortfolioGrid(sectionsConfig = PORTFOLIO_SECTIONS as typeof P
       try {
         if (item.dbId) {
           await SavedSectionsService.deleteSavedSection(item.dbId);
+          
+          // Invalidate saved sections cache to refresh the data
+          queryClient.invalidateQueries({ queryKey: ['savedSections'] });
         } else {
           console.warn('SavedItem without dbId found, cannot delete from database:', item.savedName);
         }
@@ -168,7 +232,7 @@ export function usePortfolioGrid(sectionsConfig = PORTFOLIO_SECTIONS as typeof P
         // Item is already deleted from UI, user doesn't see any error
       }
     }
-  }, [pendingDeleteItem]);
+  }, [pendingDeleteItem, queryClient]);
 
   const handleCancelDelete = useCallback(() => {
     setPendingDeleteItem(null);
@@ -535,5 +599,6 @@ export function usePortfolioGrid(sectionsConfig = PORTFOLIO_SECTIONS as typeof P
     pendingDeleteItem,
     handleConfirmDelete,
     handleCancelDelete,
+    isLoadingSavedItems,
   } as const;
 }
