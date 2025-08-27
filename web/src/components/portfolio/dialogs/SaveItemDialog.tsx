@@ -40,20 +40,20 @@ export function SaveItemDialog({ isOpen, onSave, onCancel, itemPreview }: SaveIt
         
         {itemPreview && (
           <div className="item-preview">
-            <label>Item a guardar:</label>
+            <label>Item to save:</label>
             <div className="preview-content">{itemPreview}</div>
           </div>
         )}
         
         <div className="input-section">
-          <label htmlFor="item-name">Nombre del item:</label>
+          <label htmlFor="item-name">Name:</label>
           <input
             id="item-name"
             type="text"
             value={itemName}
             onChange={(e) => setItemName(e.target.value)}
             onKeyDown={handleKeyPress}
-            placeholder="Introduce un nombre..."
+            placeholder="Enter a name..."
             autoFocus
             maxLength={50}
           />
@@ -65,7 +65,7 @@ export function SaveItemDialog({ isOpen, onSave, onCancel, itemPreview }: SaveIt
             onClick={handleCancel}
             className="cancel-button"
           >
-            Cancelar
+            Cancel
           </button>
           <button 
             type="button" 
@@ -73,7 +73,7 @@ export function SaveItemDialog({ isOpen, onSave, onCancel, itemPreview }: SaveIt
             className="save-button"
             disabled={!itemName.trim()}
           >
-            Guardar
+            Save
           </button>
         </div>
       </div>
