@@ -20,4 +20,5 @@ github:
 logger:
   levels:
     com.porflyo: DEBUG
+    io.micronaut.http: DEBUG
     root: INFO

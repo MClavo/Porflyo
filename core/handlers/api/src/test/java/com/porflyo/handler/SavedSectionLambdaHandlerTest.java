@@ -96,7 +96,8 @@ class SavedSectionLambdaHandlerTest {
         given(sectionId.value()).willReturn("section123");
         PublicSavedSectionDto responseDto = new PublicSavedSectionDto("section123", "My About Section", section, 1);
         
-        given(event.getRawPath()).willReturn("/api/sections/create");
+        given(event.getRawPath()).willReturn("/api/sections");
+        given(http.getMethod()).willReturn("POST");
         given(event.getBody()).willReturn(requestBody);
         given(jsonMapper.readValue(requestBody, SavedSectionCreateDto.class)).willReturn(createDto);
         given(savedSectionService.create(userId, "My About Section", section)).willReturn(savedSection);
@@ -118,7 +119,8 @@ class SavedSectionLambdaHandlerTest {
         // given
         String invalidJson = "invalid json";
         
-        given(event.getRawPath()).willReturn("/api/sections/create");
+        given(event.getRawPath()).willReturn("/api/sections");
+        given(http.getMethod()).willReturn("POST");
         given(event.getBody()).willReturn(invalidJson);
         given(jsonMapper.readValue(invalidJson, SavedSectionCreateDto.class)).willThrow(new IOException("Invalid JSON"));
 
@@ -143,7 +145,8 @@ class SavedSectionLambdaHandlerTest {
         PublicSavedSectionDto dto1 = mock(PublicSavedSectionDto.class);
         PublicSavedSectionDto dto2 = mock(PublicSavedSectionDto.class);
         
-        given(event.getRawPath()).willReturn("/api/sections/list");
+        given(event.getRawPath()).willReturn("/api/sections");
+        given(http.getMethod()).willReturn("GET");
         given(savedSectionService.listByOwner(userId)).willReturn(savedSections);
         given(publicSavedSectionDtoMapper.toDto(section1)).willReturn(dto1);
         given(publicSavedSectionDtoMapper.toDto(section2)).willReturn(dto2);
@@ -212,7 +215,8 @@ class SavedSectionLambdaHandlerTest {
     @DisplayName("should return 500 when service throws exception")
     void should_return_500_when_service_throws_exception() {
         // given
-        given(event.getRawPath()).willReturn("/api/sections/list");
+        given(event.getRawPath()).willReturn("/api/sections");
+        given(http.getMethod()).willReturn("GET");
         willThrow(new RuntimeException("Database error")).given(savedSectionService).listByOwner(userId);
 
         // when

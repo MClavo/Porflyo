@@ -62,14 +62,14 @@ public class SavedSectionLambdaHandler {
      */
     public APIGatewayV2HTTPResponse handleSavedSectionRequest(APIGatewayV2HTTPEvent input) {
         try {
-            // /api/sections/{request}
-            String pathRequest = LambdaHttpUtils.extractPathSegment(input, 2);
+            // /api/sections/{sectionId}
+            String sectionId = LambdaHttpUtils.extractPathSegment(input, 2);
             
             UserId userId = getUserIdFromCookie(input);
             String body = input.getBody();
             String httpMethod = LambdaHttpUtils.getMethod(input);
 
-            return processSavedSectionRequest(userId, body, pathRequest, httpMethod);
+            return processSavedSectionRequest(userId, body, sectionId, httpMethod);
 
         } catch (Exception e) {
             log.error("Error processing saved section request: {}", e.getMessage(), e);
@@ -79,28 +79,20 @@ public class SavedSectionLambdaHandler {
 
     // ────────────────────────── Gateway ──────────────────────────
 
-    private APIGatewayV2HTTPResponse processSavedSectionRequest(UserId userId, String body, String pathRequest, String httpMethod) {
-        log.debug("Handling saved section request for path: {}, method: {}", pathRequest, httpMethod);
-        
-        switch (pathRequest) {
-            case "create":
-                return createSavedSection(userId, body);
-
-            case "list":
-                return listSavedSections(userId);
-                
-            default:
-                // Handle section-specific operations: /api/sections/{sectionId}/delete
-                return handleSectionSpecificRequest(userId, pathRequest, httpMethod);
-        }
-    }
-
-    private APIGatewayV2HTTPResponse handleSectionSpecificRequest(UserId userId, String sectionId, String httpMethod) {
+    private APIGatewayV2HTTPResponse processSavedSectionRequest(UserId userId, String body, String sectionId, String httpMethod) {
+        log.debug("Handling saved section request for section: {}, method: {}", sectionId, httpMethod);
         try {
-            SectionId id = new SectionId(sectionId);
+            
 
             switch (httpMethod) {
+                case "post":
+                    return createSavedSection(userId, body);
+
+                case "get":
+                    return listSavedSections(userId);
+
                 case "delete":
+                    SectionId id = new SectionId(sectionId);
                     return deleteSavedSection(userId, id);
                     
                 default:
