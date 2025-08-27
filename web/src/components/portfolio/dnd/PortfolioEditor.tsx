@@ -20,6 +20,7 @@ import { getTemplate } from '../../../templates/registry';
 import type { PortfolioItem } from '../../../types/itemDto';
 import type { PortfolioSection } from '../../../types/sectionDto';
 import { SaveItemDialog } from '../dialogs/SaveItemDialog';
+import { DeleteConfirmDialog } from '../dialogs/DeleteConfirmDialog';
 import { Item } from '../item/Item';
 import { PortfolioLayout } from '../layout/PortfolioLayout';
 import { PortfolioZone } from '../section/PortfolioZone';
@@ -65,6 +66,10 @@ export function PortfolioEditor({ templateId = 'template-example' }: { templateI
     pendingSaveItem,
     handleSaveItem,
     handleCancelSave,
+    showDeleteDialog,
+    pendingDeleteItem,
+    handleConfirmDelete,
+    handleCancelDelete,
   } = usePortfolioGrid(sections);
 
   // Convert UniqueIdentifier -> string for the presentational component.
@@ -123,6 +128,14 @@ export function PortfolioEditor({ templateId = 'template-example' }: { templateI
         onSave={handleSaveItem}
         onCancel={handleCancelSave}
         itemPreview={pendingSaveItem ? getItemPreview(pendingSaveItem.item) : undefined}
+      />
+
+      <DeleteConfirmDialog
+        isOpen={showDeleteDialog}
+        onConfirm={handleConfirmDelete}
+        onCancel={handleCancelDelete}
+        itemName={pendingDeleteItem?.item.type === 'savedItem' ? pendingDeleteItem.item.savedName : undefined}
+        itemPreview={pendingDeleteItem ? getItemPreview(pendingDeleteItem.item) : undefined}
       />
     </DndContext>
   );

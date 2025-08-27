@@ -139,6 +139,7 @@ export const mapPublicSavedSectionToSavedItem = (
     type: 'savedItem',
     sectionType: 'savedItems',
     savedName: dto.name,
+    dbId: dto.id, // Store the database ID for deletion
     originalItem: originalItem as import('../types/itemDto').TextItem | import('../types/itemDto').CharacterItem | import('../types/itemDto').DoubleTextItem,
   };
 };

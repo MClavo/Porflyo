@@ -27,6 +27,7 @@ export interface DoubleTextItem extends BaseItem {
 export interface SavedItem extends BaseItem {
   type: 'savedItem';
   savedName: string;
+  dbId?: string; // ID from the database - optional for backward compatibility or error cases
   originalItem: TextItem | CharacterItem | DoubleTextItem;
 }
 

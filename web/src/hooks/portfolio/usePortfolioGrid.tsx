@@ -15,6 +15,7 @@ import { getMaxItems, DEFAULT_SECTIONS as PORTFOLIO_SECTIONS, /* SectionType */ 
 import type { EditorPortfolioItems as PortfolioItems, EditorPortfolioItemsData as PortfolioItemsData } from '../../components/portfolio/dnd/EditorTypes';
 import type { DropAnimation } from '@dnd-kit/core';
 import { defaultDropAnimationSideEffects as _defaultDropAnimationSideEffects } from '@dnd-kit/core';
+import { SavedSectionsService } from '../../services/savedSections.service';
 
 export const dropAnimation: DropAnimation = {
   sideEffects: _defaultDropAnimationSideEffects({
@@ -48,10 +49,15 @@ export function usePortfolioGrid(sectionsConfig = PORTFOLIO_SECTIONS as typeof P
   const recentlyMovedToNewZone = useRef(false);
   const [clonedItems, setClonedItems] = useState<PortfolioItems | null>(null);
   const [showSaveDialog, setShowSaveDialog] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [pendingSaveItem, setPendingSaveItem] = useState<{
     item: PortfolioItem;
     targetZone: string;
     targetId: string;
+  } | null>(null);
+  const [pendingDeleteItem, setPendingDeleteItem] = useState<{
+    id: UniqueIdentifier;
+    item: PortfolioItem;
   } | null>(null);
 
   const handleItemUpdate = useCallback((id: UniqueIdentifier, updatedItem: PortfolioItem) => {
@@ -69,24 +75,27 @@ export function usePortfolioGrid(sectionsConfig = PORTFOLIO_SECTIONS as typeof P
     });
   }, []);
 
-  const handleSaveItem = useCallback((name: string) => {
+  const handleSaveItem = useCallback(async (name: string) => {
     if (!pendingSaveItem) return;
 
+    // OPTIMISTIC UPDATE: Update UI immediately, sync with database in background
     const { item, targetZone, targetId } = pendingSaveItem;
     
-    // Create a savedItem with the user-provided name
+    // Create savedItem immediately for instant UI response
     const newId = `${Date.now()}-${Math.random().toString(36).slice(2, 9)}` as UniqueIdentifier;
     const savedItem: import('../../types/itemDto').SavedItem = {
       id: Date.now(),
       type: 'savedItem',
       sectionType: 'savedItems',
       savedName: name,
-      originalItem: item as import('../../types/itemDto').TextItem | import('../../types/itemDto').CharacterItem | import('../../types/itemDto').DoubleTextItem, // Store the original item data
+      // dbId will be set after successful database save
+      originalItem: item as import('../../types/itemDto').TextItem | import('../../types/itemDto').CharacterItem | import('../../types/itemDto').DoubleTextItem,
     };
 
+    // Update UI immediately - optimistic update
     setItemsData((data) => ({ ...data, [newId]: savedItem }));
 
-    // Insert the saved item into savedItems
+    // Insert the saved item into savedItems immediately
     const insertIndex = items[targetZone]?.indexOf(targetId as string) ?? -1;
     setItems((prev) => {
       const destItems = prev[targetZone] || [];
@@ -94,14 +103,76 @@ export function usePortfolioGrid(sectionsConfig = PORTFOLIO_SECTIONS as typeof P
       return { ...prev, [targetZone]: [...destItems.slice(0, idx), newId, ...destItems.slice(idx)] };
     });
 
-    // Clear pending state and close dialog
+    // Clear pending state and close dialog immediately
     setPendingSaveItem(null);
     setShowSaveDialog(false);
+
+    // Save to database in background
+    try {
+      const savedInDb = await SavedSectionsService.saveItem(item, name);
+      
+      // Update the item with the database ID once we get it
+      setItemsData((data) => ({
+        ...data,
+        [newId]: {
+          ...data[newId],
+          dbId: savedInDb.id, // Now we have the database ID for future deletions
+        }
+      }));
+    } catch (error) {
+      console.error('Error saving item to database:', error);
+      // Item is already saved locally, so user doesn't see any error
+      // You might want to add a toast notification here for the user
+    }
   }, [pendingSaveItem, items]);
 
   const handleCancelSave = useCallback(() => {
     setPendingSaveItem(null);
     setShowSaveDialog(false);
+  }, []);
+
+  const handleConfirmDelete = useCallback(async () => {
+    if (!pendingDeleteItem) return;
+
+    const { id, item } = pendingDeleteItem;
+
+    // OPTIMISTIC DELETE: Remove from UI immediately, sync with database in background
+    setItems((prev) => {
+      const updated = Object.keys(prev).reduce((acc, key) => {
+        acc[key] = prev[key].filter((listItem) => listItem !== id);
+        return acc;
+      }, {} as PortfolioItems);
+      return updated;
+    });
+
+    setItemsData((prev) => {
+      const copy = { ...prev } as PortfolioItemsData;
+      delete copy[id];
+      return copy;
+    });
+
+    // Close dialog and clear pending state
+    setShowDeleteDialog(false);
+    setPendingDeleteItem(null);
+
+    // Delete from database in background
+    if (item.type === 'savedItem') {
+      try {
+        if (item.dbId) {
+          await SavedSectionsService.deleteSavedSection(item.dbId);
+        } else {
+          console.warn('SavedItem without dbId found, cannot delete from database:', item.savedName);
+        }
+      } catch (error) {
+        console.error('Error deleting saved item from database:', error);
+        // Item is already deleted from UI, user doesn't see any error
+      }
+    }
+  }, [pendingDeleteItem]);
+
+  const handleCancelDelete = useCallback(() => {
+    setPendingDeleteItem(null);
+    setShowDeleteDialog(false);
   }, []);
 
   const addItemToSection = useCallback(
@@ -131,7 +202,18 @@ export function usePortfolioGrid(sectionsConfig = PORTFOLIO_SECTIONS as typeof P
     [sectionsConfig]
   );
 
-  const removeItem = useCallback((id: UniqueIdentifier) => {
+  const removeItem = useCallback(async (id: UniqueIdentifier) => {
+    // Get item info before removing it
+    const itemToRemove = itemsData[id];
+    
+    // If it's a savedItem, show confirmation dialog
+    if (itemToRemove?.type === 'savedItem') {
+      setPendingDeleteItem({ id, item: itemToRemove });
+      setShowDeleteDialog(true);
+      return;
+    }
+
+    // For non-savedItems, delete immediately (no confirmation needed)
     setItems((prev) => {
       const updated = Object.keys(prev).reduce((acc, key) => {
         acc[key] = prev[key].filter((item) => item !== id);
@@ -146,7 +228,7 @@ export function usePortfolioGrid(sectionsConfig = PORTFOLIO_SECTIONS as typeof P
       delete copy[id];
       return copy;
     });
-  }, []);
+  }, [itemsData]);
 
   const findZone = useCallback(
     (id: UniqueIdentifier) => {
@@ -449,5 +531,9 @@ export function usePortfolioGrid(sectionsConfig = PORTFOLIO_SECTIONS as typeof P
     pendingSaveItem,
     handleSaveItem,
     handleCancelSave,
+    showDeleteDialog,
+    pendingDeleteItem,
+    handleConfirmDelete,
+    handleCancelDelete,
   } as const;
 }
