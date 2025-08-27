@@ -36,11 +36,11 @@ export function SaveItemDialog({ isOpen, onSave, onCancel, itemPreview }: SaveIt
   return (
     <div className="save-item-dialog-overlay">
       <div className="save-item-dialog">
-        <h3>Guardar Item</h3>
+        <h3>Save Element</h3>
         
         {itemPreview && (
           <div className="item-preview">
-            <label>Item to save:</label>
+            <label>Content to save:</label>
             <div className="preview-content">{itemPreview}</div>
           </div>
         )}
