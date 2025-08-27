@@ -1,6 +1,6 @@
 // Types for different kinds of items that can be added to portfolio sections
 
-export type ItemType = 'text' | 'character' | 'doubleText';
+export type ItemType = 'text' | 'character' | 'doubleText' | 'savedItem';
 
 export interface BaseItem {
   id: number;
@@ -24,4 +24,10 @@ export interface DoubleTextItem extends BaseItem {
   text2: string;
 }
 
-export type PortfolioItem = TextItem | CharacterItem | DoubleTextItem;
+export interface SavedItem extends BaseItem {
+  type: 'savedItem';
+  savedName: string;
+  originalItem: TextItem | CharacterItem | DoubleTextItem;
+}
+
+export type PortfolioItem = TextItem | CharacterItem | DoubleTextItem | SavedItem;

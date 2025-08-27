@@ -19,6 +19,7 @@ import { dropAnimation as exportedDropAnimation, usePortfolioGrid } from '../../
 import { getTemplate } from '../../../templates/registry';
 import type { PortfolioItem } from '../../../types/itemDto';
 import type { PortfolioSection } from '../../../types/sectionDto';
+import { SaveItemDialog } from '../dialogs/SaveItemDialog';
 import { Item } from '../item/Item';
 import { PortfolioLayout } from '../layout/PortfolioLayout';
 import { PortfolioZone } from '../section/PortfolioZone';
@@ -60,6 +61,10 @@ export function PortfolioEditor({ templateId = 'template-example' }: { templateI
     sectionDropStates,
     addItemToSection,
     removeItem,
+    showSaveDialog,
+    pendingSaveItem,
+    handleSaveItem,
+    handleCancelSave,
   } = usePortfolioGrid(sections);
 
   // Convert UniqueIdentifier -> string for the presentational component.
@@ -112,8 +117,30 @@ export function PortfolioEditor({ templateId = 'template-example' }: { templateI
         </DragOverlay>,
         document.body
       )}
+
+      <SaveItemDialog
+        isOpen={showSaveDialog}
+        onSave={handleSaveItem}
+        onCancel={handleCancelSave}
+        itemPreview={pendingSaveItem ? getItemPreview(pendingSaveItem.item) : undefined}
+      />
     </DndContext>
   );
+}
+
+function getItemPreview(item: PortfolioItem): string {
+  switch (item.type) {
+    case 'text':
+      return item.text || 'Texto';
+    case 'character':
+      return item.character || 'Carácter';
+    case 'doubleText':
+      return `${item.text1 || 'Título'} / ${item.text2 || 'Subtítulo'}`;
+    case 'savedItem':
+      return item.savedName || 'Item guardado';
+    default:
+      return 'Item';
+  }
 }
 
 export default PortfolioEditor;

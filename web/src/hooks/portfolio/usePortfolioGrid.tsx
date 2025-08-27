@@ -47,6 +47,12 @@ export function usePortfolioGrid(sectionsConfig = PORTFOLIO_SECTIONS as typeof P
   );
   const recentlyMovedToNewZone = useRef(false);
   const [clonedItems, setClonedItems] = useState<PortfolioItems | null>(null);
+  const [showSaveDialog, setShowSaveDialog] = useState(false);
+  const [pendingSaveItem, setPendingSaveItem] = useState<{
+    item: PortfolioItem;
+    targetZone: string;
+    targetId: string;
+  } | null>(null);
 
   const handleItemUpdate = useCallback((id: UniqueIdentifier, updatedItem: PortfolioItem) => {
     setItemsData((prev) => {
@@ -61,6 +67,41 @@ export function usePortfolioGrid(sectionsConfig = PORTFOLIO_SECTIONS as typeof P
 
       return { ...prev, [id]: merged };
     });
+  }, []);
+
+  const handleSaveItem = useCallback((name: string) => {
+    if (!pendingSaveItem) return;
+
+    const { item, targetZone, targetId } = pendingSaveItem;
+    
+    // Create a savedItem with the user-provided name
+    const newId = `${Date.now()}-${Math.random().toString(36).slice(2, 9)}` as UniqueIdentifier;
+    const savedItem: import('../../types/itemDto').SavedItem = {
+      id: Date.now(),
+      type: 'savedItem',
+      sectionType: 'savedItems',
+      savedName: name,
+      originalItem: item as import('../../types/itemDto').TextItem | import('../../types/itemDto').CharacterItem | import('../../types/itemDto').DoubleTextItem, // Store the original item data
+    };
+
+    setItemsData((data) => ({ ...data, [newId]: savedItem }));
+
+    // Insert the saved item into savedItems
+    const insertIndex = items[targetZone]?.indexOf(targetId as string) ?? -1;
+    setItems((prev) => {
+      const destItems = prev[targetZone] || [];
+      const idx = insertIndex >= 0 ? insertIndex : destItems.length;
+      return { ...prev, [targetZone]: [...destItems.slice(0, idx), newId, ...destItems.slice(idx)] };
+    });
+
+    // Clear pending state and close dialog
+    setPendingSaveItem(null);
+    setShowSaveDialog(false);
+  }, [pendingSaveItem, items]);
+
+  const handleCancelSave = useCallback(() => {
+    setPendingSaveItem(null);
+    setShowSaveDialog(false);
   }, []);
 
   const addItemToSection = useCallback(
@@ -140,20 +181,26 @@ export function usePortfolioGrid(sectionsConfig = PORTFOLIO_SECTIONS as typeof P
     setClonedItems(items);
     // Compute which sections would accept this item and set indicators
     const draggedItem = itemsData[active.id];
+    
+    // If dragging from savedItems, use the original item for validation
+    const itemForValidation = draggedItem?.type === 'savedItem' 
+      ? (draggedItem as import('../../types/itemDto').SavedItem).originalItem
+      : draggedItem;
+    
     setSectionDropStates((prev) => {
       const out = { ...prev };
       Object.keys(out).forEach((sectionId) => {
         const srcSection = sectionsConfig.find((s) => findZone(active.id) === s.id);
         const destSection = sectionsConfig.find((s) => s.id === sectionId);
-        if (!srcSection || !destSection || !draggedItem) {
+        if (!srcSection || !destSection || !itemForValidation) {
           out[sectionId] = 'none';
           return;
         }
         // allowed only if same section type and destination allows item type
         if (destSection.type === 'savedItems' 
           || srcSection.id === destSection.id
-          || (draggedItem.sectionType === destSection.type 
-            && destSection.allowedItemTypes.includes(draggedItem.type)
+          || (itemForValidation.sectionType === destSection.type 
+            && destSection.allowedItemTypes.includes(itemForValidation.type)
             && getMaxItems(destSection) > items[sectionId].length)) {
           out[sectionId] = 'allowed';
         } else {
@@ -186,11 +233,16 @@ export function usePortfolioGrid(sectionsConfig = PORTFOLIO_SECTIONS as typeof P
       const draggedItem = itemsData[active.id];
       if (!draggedItem) return;
 
+      // If dragging a saved item, use the original item for validation
+      const itemForValidation = draggedItem.type === 'savedItem' 
+        ? (draggedItem as import('../../types/itemDto').SavedItem).originalItem
+        : draggedItem;
+
       // Only allow move if the destination section has the same `type` as the source section
       // AND the destination's allowedItemTypes includes the dragged item's type.
       // Exception: allow moves into/within `savedItems` regardless of the dragged item's `sectionType`.
-      if (destSection.type !== 'savedItems' && destSection.type !== draggedItem.sectionType) return;
-      if (!destSection.allowedItemTypes.includes(draggedItem.type)) return;
+      if (destSection.type !== 'savedItems' && destSection.type !== itemForValidation.sectionType) return;
+      if (!destSection.allowedItemTypes.includes(itemForValidation.type)) return;
 
       // If destination is savedItems and source is not savedItems, don't move during dragOver
       // The cloning will be handled in dragEnd
@@ -241,13 +293,18 @@ export function usePortfolioGrid(sectionsConfig = PORTFOLIO_SECTIONS as typeof P
       const overZone = findZone(overId);
 
       if (overZone) {
+        // If dragging a saved item, use the original item for validation
+        const itemForValidation = draggedItem.type === 'savedItem' 
+          ? (draggedItem as import('../../types/itemDto').SavedItem).originalItem
+          : draggedItem;
+
         // Enforce same-section-type + allowedItemTypes on final drop as well.
         const destSection = sectionsConfig.find((section) => section.id === overZone);
         const srcSection = sectionsConfig.find((section) => section.id === activeZone);
         
         if (!destSection || !srcSection 
-          || destSection.type !== 'savedItems' && (destSection.type !== draggedItem.sectionType
-          || !destSection.allowedItemTypes.includes(draggedItem.type))) {
+          || destSection.type !== 'savedItems' && (destSection.type !== itemForValidation.sectionType
+          || !destSection.allowedItemTypes.includes(itemForValidation.type))) {
           // Not allowed to move to this section; revert to original
           revert = true;
         }
@@ -262,25 +319,27 @@ export function usePortfolioGrid(sectionsConfig = PORTFOLIO_SECTIONS as typeof P
             // Don't clone if limit is reached, revert to original state
             revert = true;
           } else {
-            // Create a clone id and copy the dragged item's data into itemsData
-            const newId = `${Date.now()}-${Math.random().toString(36).slice(2, 9)}` as UniqueIdentifier;
-            setItemsData((data) => ({ ...data, [newId]: { ...(draggedItem as PortfolioItem) } }));
-
-            // Insert the cloned id into the destination section at the drop position
-            const insertIndex = items[overZone].indexOf(overId as string);
-            setItems((prev) => {
-              const destItems = prev[overZone] || [];
-              const idx = insertIndex >= 0 ? insertIndex : destItems.length;
-              return { ...prev, [overZone]: [...destItems.slice(0, idx), newId, ...destItems.slice(idx)] };
+            // Instead of directly cloning, show dialog to get name
+            setPendingSaveItem({
+              item: draggedItem,
+              targetZone: overZone,
+              targetId: overId as string,
             });
+            setShowSaveDialog(true);
+            // Don't revert here, the dialog will handle the save or cancel
           }
         }
 
         // clone item from savedItems to other sections
         if (srcSection && srcSection.type === 'savedItems' && destSection && destSection.type !== 'savedItems') {
-          // Create a clone id and copy the dragged item's data into itemsData
+          // If dragging a saved item, restore the original item data
+          const itemToClone = draggedItem.type === 'savedItem' 
+            ? (draggedItem as import('../../types/itemDto').SavedItem).originalItem
+            : draggedItem;
+            
+          // Create a clone id and copy the original item's data into itemsData
           const newId = `${Date.now()}-${Math.random().toString(36).slice(2, 9)}` as UniqueIdentifier;
-          setItemsData((data) => ({ ...data, [newId]: { ...(draggedItem as PortfolioItem) } }));
+          setItemsData((data) => ({ ...data, [newId]: { ...itemToClone, sectionType: destSection.type } }));
 
           // Insert the cloned id into the destination section at the drop position
           const insertIndex = items[overZone].indexOf(overId as string);
@@ -334,19 +393,24 @@ export function usePortfolioGrid(sectionsConfig = PORTFOLIO_SECTIONS as typeof P
     //const sectionInfo = sectionsConfig.find((s) => s.id === activeOriginalZone);
     const item = itemsData[id];
 
-    const renderItemContent = () => {
-      if (!item) return id;
+    // If dragging a saved item, show the original item in the overlay
+    const itemToRender = item?.type === 'savedItem' 
+      ? (item as import('../../types/itemDto').SavedItem).originalItem
+      : item;
 
-      switch (item.type) {
+    const renderItemContent = () => {
+      if (!itemToRender) return id;
+
+      switch (itemToRender.type) {
         case 'text':
-          return item.text || 'Introduce texto...';
+          return itemToRender.text || 'Introduce texto...';
         case 'character':
-          return item.character || '?';
+          return itemToRender.character || '?';
         case 'doubleText':
           return (
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-              <div style={{ fontWeight: 'bold' }}>{item.text1 || 'Título principal...'}</div>
-              <div style={{ fontSize: '0.8em', color: '#666' }}>{item.text2 || 'Subtítulo...'}</div>
+              <div style={{ fontWeight: 'bold' }}>{itemToRender.text1 || 'Título principal...'}</div>
+              <div style={{ fontSize: '0.8em', color: '#666' }}>{itemToRender.text2 || 'Subtítulo...'}</div>
             </div>
           );
         default:
@@ -380,6 +444,10 @@ export function usePortfolioGrid(sectionsConfig = PORTFOLIO_SECTIONS as typeof P
     renderSortableItemDragOverlay,
     handleItemUpdate,
     removeItem,
-  sectionDropStates,
+    sectionDropStates,
+    showSaveDialog,
+    pendingSaveItem,
+    handleSaveItem,
+    handleCancelSave,
   } as const;
 }

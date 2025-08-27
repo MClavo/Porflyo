@@ -101,7 +101,7 @@ export const SECTION_DEFINITIONS: Record<SectionType, SectionDefinition> = {
     title: 'Saved Items',
     description: 'Items saved for later use or reference',
     defaultMaxItems: 10,
-    defaultAllowedItemTypes: ['text', 'doubleText', 'character'],
+    defaultAllowedItemTypes: ['savedItem'],
   }
 };
 
