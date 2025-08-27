@@ -22,7 +22,8 @@ export function TextItem({ id, item, editable = false, onItemUpdate, onStartEdit
         className={`${styles.input} ${className}`}
         style={style}
         value={text ?? ''}
-        placeholder="Introduce texto..."
+        placeholder="Description"
+        maxLength={400}
         onFocus={() => onStartEdit?.()}
         onBlur={() => onEndEdit?.()}
   onChange={(e) => onItemUpdate?.(id, { type: 'text', text: e.target.value })}

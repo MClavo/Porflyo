@@ -22,11 +22,11 @@ export function CharacterItem({ id, item, editable = false, onItemUpdate, onStar
         className={`${styles.input} ${styles.character} ${className}`}
         style={style}
         value={char}
-        placeholder="🎯"
+        placeholder=""
         maxLength={10}
-          onFocus={() => onStartEdit?.()}
-          onBlur={() => onEndEdit?.()}
-          onChange={(e) => onItemUpdate?.(id, { type: 'character', character: e.target.value })}
+        onFocus={() => onStartEdit?.()}
+        onBlur={() => onEndEdit?.()}
+        onChange={(e) => onItemUpdate?.(id, { type: 'character', character: e.target.value })}
       />
     );
   }

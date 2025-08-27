@@ -3,7 +3,6 @@ import type { PortfolioItem as PortfolioItemType } from '../../../types/itemDto'
 import TextItem from './TextItem';
 import CharacterItem from './CharacterItem';
 import DoubleTextItem from './DoubleTextItem';
-import EmptyItem from './EmptyItem';
 
 type Props = {
   id: string;
@@ -27,7 +26,7 @@ export function ItemRenderer({ id, item, editable = false, onItemUpdate, onStart
     case 'doubleText':
   return <DoubleTextItem id={id} item={item} editable={editable} onItemUpdate={onItemUpdate} onStartEdit={onStartEdit} onEndEdit={onEndEdit} className={className} style={style} />;
     default:
-      return <EmptyItem placeholder={String(type)} className={className} />;
+      return <TextItem id={id} item={item} editable={editable} onItemUpdate={onItemUpdate} onStartEdit={onStartEdit} onEndEdit={onEndEdit} className={className} style={style} />;;
   }
 }
 

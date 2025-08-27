@@ -13,7 +13,6 @@ import type { TemplateDefinition } from '../templates/types';
 import type { PortfolioCreateDto, PortfolioPatchDto, PortfolioSection } from '../types/dto';
 // import PortfolioEditor from '../components/PortfolioEditor';
 import { PortfolioEditor } from '../components/portfolio/dnd/PortfolioEditor';
-import { SavedItemsSideBar } from '../components/portfolio/dnd/SavedItemsSideBar';
 
 // Small presentational header used in the editor preview
 /* function PortfolioUserHeader({ title }: { title: string }) {
@@ -212,7 +211,9 @@ export default function PortfolioEditorPage() {
               </div>
             </div>
 
-            <SavedItemsSideBar />
+            <div className="saved-sections-card" id="saved-items">
+              <h2 className="card-title">Saved</h2>
+            </div>
           </aside>
                 
 

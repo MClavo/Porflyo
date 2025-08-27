@@ -23,7 +23,8 @@ export function DoubleTextItem({ id, item, editable = false, onItemUpdate, onSta
         <input
           className={`${styles.input} ${styles.doubleTitle}`}
           value={title ?? ''}
-          placeholder="Título principal..."
+          placeholder="Title"
+          maxLength={30}
           onFocus={() => onStartEdit?.()}
           onBlur={() => onEndEdit?.()}
           onChange={(e) => onItemUpdate?.(id, { type: 'doubleText', text1: e.target.value, text2: subtitle ?? '' })}
@@ -31,7 +32,8 @@ export function DoubleTextItem({ id, item, editable = false, onItemUpdate, onSta
         <input
           className={`${styles.input} ${styles.doubleSubtitle}`}
           value={subtitle ?? ''}
-          placeholder="Subtítulo..."
+          placeholder="Description"
+          maxLength={200}
           onFocus={() => onStartEdit?.()}
           onBlur={() => onEndEdit?.()}
           onChange={(e) => onItemUpdate?.(id, { type: 'doubleText', text1: title ?? '', text2: e.target.value })}

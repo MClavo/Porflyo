@@ -49,7 +49,18 @@ export function usePortfolioGrid(sectionsConfig = PORTFOLIO_SECTIONS as typeof P
   const [clonedItems, setClonedItems] = useState<PortfolioItems | null>(null);
 
   const handleItemUpdate = useCallback((id: UniqueIdentifier, updatedItem: PortfolioItem) => {
-    setItemsData((prev) => ({ ...prev, [id]: updatedItem }));
+    setItemsData((prev) => {
+      const existing = prev[id] as PortfolioItem | undefined;
+      // Merge existing item with updated fields to avoid losing metadata like `sectionType`
+      const merged: PortfolioItem = {
+        ...(existing ?? {}),
+        ...(updatedItem as Partial<PortfolioItem>),
+        // Ensure sectionType is preserved if missing from updatedItem
+        sectionType: (updatedItem as Partial<PortfolioItem>).sectionType ?? existing?.sectionType ?? (updatedItem as PortfolioItem).sectionType,
+      } as PortfolioItem;
+
+      return { ...prev, [id]: merged };
+    });
   }, []);
 
   const addItemToSection = useCallback(
