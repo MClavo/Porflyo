@@ -254,17 +254,26 @@ export function usePortfolioGrid(sectionsConfig = PORTFOLIO_SECTIONS as typeof P
 
         // clone item into savedItems
         if (destSection && destSection.type === 'savedItems' && srcSection && srcSection.type !== 'savedItems') {
-          // Create a clone id and copy the dragged item's data into itemsData
-          const newId = `${Date.now()}-${Math.random().toString(36).slice(2, 9)}` as UniqueIdentifier;
-          setItemsData((data) => ({ ...data, [newId]: { ...(draggedItem as PortfolioItem) } }));
+          // Check if savedItems has reached its maximum capacity
+          const currentSavedItemsCount = items[overZone]?.length || 0;
+          const maxSavedItems = getMaxItems(destSection);
+          
+          if (currentSavedItemsCount >= maxSavedItems) {
+            // Don't clone if limit is reached, revert to original state
+            revert = true;
+          } else {
+            // Create a clone id and copy the dragged item's data into itemsData
+            const newId = `${Date.now()}-${Math.random().toString(36).slice(2, 9)}` as UniqueIdentifier;
+            setItemsData((data) => ({ ...data, [newId]: { ...(draggedItem as PortfolioItem) } }));
 
-          // Insert the cloned id into the destination section at the drop position
-          const insertIndex = items[overZone].indexOf(overId as string);
-          setItems((prev) => {
-            const destItems = prev[overZone] || [];
-            const idx = insertIndex >= 0 ? insertIndex : destItems.length;
-            return { ...prev, [overZone]: [...destItems.slice(0, idx), newId, ...destItems.slice(idx)] };
-          });
+            // Insert the cloned id into the destination section at the drop position
+            const insertIndex = items[overZone].indexOf(overId as string);
+            setItems((prev) => {
+              const destItems = prev[overZone] || [];
+              const idx = insertIndex >= 0 ? insertIndex : destItems.length;
+              return { ...prev, [overZone]: [...destItems.slice(0, idx), newId, ...destItems.slice(idx)] };
+            });
+          }
         }
 
         // clone item from savedItems to other sections
