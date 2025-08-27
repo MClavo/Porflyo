@@ -150,7 +150,11 @@ export function usePortfolioGrid(sectionsConfig = PORTFOLIO_SECTIONS as typeof P
           return;
         }
         // allowed only if same section type and destination allows item type
-        if (destSection.type === 'savedItems' || (draggedItem.sectionType === destSection.type && destSection.allowedItemTypes.includes(draggedItem.type))) {
+        if (destSection.type === 'savedItems' 
+          || srcSection.id === destSection.id
+          || (draggedItem.sectionType === destSection.type 
+            && destSection.allowedItemTypes.includes(draggedItem.type)
+            && getMaxItems(destSection) > items[sectionId].length)) {
           out[sectionId] = 'allowed';
         } else {
           out[sectionId] = 'forbidden';
@@ -162,11 +166,12 @@ export function usePortfolioGrid(sectionsConfig = PORTFOLIO_SECTIONS as typeof P
 
   const handleDragOver = ({ active, over }: DragOverEvent) => {
     const overId = over?.id;
-
+    
     if (overId == null || active.id in items) return;
-
+    
     const overZone = findZone(overId);
     const activeZone = findZone(active.id);
+
 
     if (!overZone || !activeZone) return;
 
@@ -183,12 +188,21 @@ export function usePortfolioGrid(sectionsConfig = PORTFOLIO_SECTIONS as typeof P
 
       // Only allow move if the destination section has the same `type` as the source section
       // AND the destination's allowedItemTypes includes the dragged item's type.
-      if (destSection.type !== "savedItems" && destSection.type !== draggedItem.sectionType) return;
+      // Exception: allow moves into/within `savedItems` regardless of the dragged item's `sectionType`.
+      if (destSection.type !== 'savedItems' && destSection.type !== draggedItem.sectionType) return;
       if (!destSection.allowedItemTypes.includes(draggedItem.type)) return;
+
+      // If destination is savedItems and source is not savedItems, don't move during dragOver
+      // The cloning will be handled in dragEnd
+      if (destSection.type === 'savedItems' && srcSection.type !== 'savedItems') return;
+      
+      // If source is savedItems and destination is not savedItems, don't move during dragOver
+      // The cloning will be handled in dragEnd
+      if (srcSection.type === 'savedItems' && destSection.type !== 'savedItems') return;
 
       const overItems = items[overZone];
       if (destSection && overItems.length >= getMaxItems(destSection)) return;
-
+      
       setItems((items) => {
         const activeItems = items[activeZone];
         const overItems = items[overZone];
@@ -217,64 +231,84 @@ export function usePortfolioGrid(sectionsConfig = PORTFOLIO_SECTIONS as typeof P
   };
 
   const handleDragEnd = ({ active, over }: DragEndEvent) => {
+
+    let revert = false;
     const activeZone = findZone(active.id);
-
-    const resetDrops = (opts?: { revert?: boolean }) => {
-      setSectionDropStates((prev) => {
-        const out = { ...prev };
-        Object.keys(out).forEach((k) => (out[k] = 'none'));
-        return out;
-      });
-      if (opts?.revert && clonedItems) setItems(clonedItems);
-      setActiveId(null);
-      setClonedItems(null);
-    };
-
-    if (!activeZone) {
-      resetDrops();
-      return;
-    }
-
+    const draggedItem = itemsData[active.id];
     const overId = over?.id;
 
-    if (overId == null) {
-      resetDrops();
-      return;
-    }
+    if (activeZone && overId && draggedItem) {
+      const overZone = findZone(overId);
 
-    const overZone = findZone(overId);
+      if (overZone) {
+        // Enforce same-section-type + allowedItemTypes on final drop as well.
+        const destSection = sectionsConfig.find((section) => section.id === overZone);
+        const srcSection = sectionsConfig.find((section) => section.id === activeZone);
+        
+        if (!destSection || !srcSection 
+          || destSection.type !== 'savedItems' && (destSection.type !== draggedItem.sectionType
+          || !destSection.allowedItemTypes.includes(draggedItem.type))) {
+          // Not allowed to move to this section; revert to original
+          revert = true;
+        }
 
-    if (overZone) {
-      // Enforce same-section-type + allowedItemTypes on final drop as well.
-      const destSection = sectionsConfig.find((section) => section.id === overZone);
-      const srcSection = sectionsConfig.find((section) => section.id === activeZone);
-      if (!destSection || !srcSection) {
-        resetDrops();
-        return;
-      }
+        // clone item into savedItems
+        if (destSection && destSection.type === 'savedItems' && srcSection && srcSection.type !== 'savedItems') {
+          // Create a clone id and copy the dragged item's data into itemsData
+          const newId = `${Date.now()}-${Math.random().toString(36).slice(2, 9)}` as UniqueIdentifier;
+          setItemsData((data) => ({ ...data, [newId]: { ...(draggedItem as PortfolioItem) } }));
 
-      const draggedItem = itemsData[active.id];
-      if (!draggedItem) {
-        resetDrops();
-        return;
-      }
+          // Insert the cloned id into the destination section at the drop position
+          const insertIndex = items[overZone].indexOf(overId as string);
+          setItems((prev) => {
+            const destItems = prev[overZone] || [];
+            const idx = insertIndex >= 0 ? insertIndex : destItems.length;
+            return { ...prev, [overZone]: [...destItems.slice(0, idx), newId, ...destItems.slice(idx)] };
+          });
+        }
 
-      if (destSection.type !== 'savedItems' && (destSection.type !== draggedItem.sectionType || !destSection.allowedItemTypes.includes(draggedItem.type))) {
-        // Not allowed to move to this section; revert to original
-        resetDrops({ revert: true });
-        return;
-      }
+        // clone item from savedItems to other sections
+        if (srcSection && srcSection.type === 'savedItems' && destSection && destSection.type !== 'savedItems') {
+          // Create a clone id and copy the dragged item's data into itemsData
+          const newId = `${Date.now()}-${Math.random().toString(36).slice(2, 9)}` as UniqueIdentifier;
+          setItemsData((data) => ({ ...data, [newId]: { ...(draggedItem as PortfolioItem) } }));
 
-      const activeIndex = items[activeZone].indexOf(active.id as string);
-      const overIndex = items[overZone].indexOf(overId as string);
+          // Insert the cloned id into the destination section at the drop position
+          const insertIndex = items[overZone].indexOf(overId as string);
+          setItems((prev) => {
+            const destItems = prev[overZone] || [];
+            const idx = insertIndex >= 0 ? insertIndex : destItems.length;
+            return { ...prev, [overZone]: [...destItems.slice(0, idx), newId, ...destItems.slice(idx)] };
+          });
+        }
 
-      if (activeIndex !== overIndex) {
-        setItems((items) => ({ ...items, [overZone]: arrayMove(items[overZone], activeIndex, overIndex) }));
+        const activeIndex = items[activeZone].indexOf(active.id as string);
+        const overIndex = items[overZone].indexOf(overId as string);
+
+        // If we cloned into savedItems we must NOT move the original item out of its section.
+        // If we cloned from savedItems we must NOT move the original item out of savedItems.
+        // Allow reordering when both source and destination are `savedItems` (no cloning).
+        if (!(destSection && destSection.type === 'savedItems' && srcSection && srcSection.type !== 'savedItems') &&
+            !(srcSection && srcSection.type === 'savedItems' && destSection && destSection.type !== 'savedItems')) {
+          if (activeIndex !== overIndex) {
+            setItems((items) => ({ ...items, [overZone]: arrayMove(items[overZone], activeIndex, overIndex) }));
+          }
+        }
       }
     }
 
     // Always reset drops and clear active id at the end
-    resetDrops();
+    setSectionDropStates((prev) => {
+      const out = { ...prev };
+      Object.keys(out).forEach((k) => (out[k] = 'none'));
+      return out;
+    });
+
+    if (revert && clonedItems) 
+      setItems(clonedItems);
+
+    setActiveId(null);
+    setClonedItems(null);
   };
 
   const renderSortableItemDragOverlay = (
