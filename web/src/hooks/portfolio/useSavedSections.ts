@@ -25,11 +25,16 @@ export function useSavedSections() {
   return useQuery({
     queryKey: SAVED_SECTIONS_QUERY_KEYS.lists(),
     queryFn: async () => {
+      console.log('🔄 FETCHING savedSections from API - this should only happen once or every 5 minutes');
       const response = await getSavedSections();
       return response.data;
     },
-    staleTime: 5 * 60 * 1000, // 5 minutes
-    refetchOnWindowFocus: false,
+    staleTime: 5 * 60 * 1000, // 5 minutes - data stays fresh for 5 minutes
+    gcTime: 10 * 60 * 1000, // 10 minutes - cache time (formerly cacheTime)
+    refetchOnWindowFocus: false, // Don't refetch when window gains focus
+    refetchOnReconnect: true, // Only refetch on network reconnection
+    refetchInterval: 5 * 60 * 1000, // Auto-refetch every 5 minutes
+    refetchIntervalInBackground: false, // Don't refetch when tab is in background
   });
 }
 
@@ -45,7 +50,7 @@ export function useCreateSavedSection() {
       return response.data;
     },
     onSuccess: (newSection: PublicSavedSectionDto) => {
-      // Update the cache with the new section
+      // Only update the cache optimistically, don't refetch
       queryClient.setQueryData<PublicSavedSectionDto[]>(
         SAVED_SECTIONS_QUERY_KEYS.lists(),
         (oldData) => {
@@ -53,14 +58,15 @@ export function useCreateSavedSection() {
           return [...oldData, newSection];
         }
       );
-
-      // Optionally invalidate to ensure fresh data
-      queryClient.invalidateQueries({
-        queryKey: SAVED_SECTIONS_QUERY_KEYS.lists(),
-      });
+      
+      console.log('✅ Saved item added to cache optimistically - NO API REFETCH');
     },
     onError: (error) => {
       console.error('Error creating saved section:', error);
+      // On error, invalidate to get fresh data
+      queryClient.invalidateQueries({
+        queryKey: SAVED_SECTIONS_QUERY_KEYS.lists(),
+      });
     },
   });
 }
@@ -77,7 +83,7 @@ export function useDeleteSavedSection() {
       return response.data;
     },
     onSuccess: (_, deletedItemId: string) => {
-      // Remove the deleted section from cache
+      // Only remove from cache optimistically, don't refetch
       queryClient.setQueryData<PublicSavedSectionDto[]>(
         SAVED_SECTIONS_QUERY_KEYS.lists(),
         (oldData) => {
@@ -85,14 +91,15 @@ export function useDeleteSavedSection() {
           return oldData.filter(section => section.id !== deletedItemId);
         }
       );
-
-      // Optionally invalidate to ensure fresh data
-      queryClient.invalidateQueries({
-        queryKey: SAVED_SECTIONS_QUERY_KEYS.lists(),
-      });
+      
+      console.log('✅ Saved item removed from cache optimistically - NO API REFETCH');
     },
     onError: (error) => {
       console.error('Error deleting saved section:', error);
+      // On error, invalidate to get fresh data
+      queryClient.invalidateQueries({
+        queryKey: SAVED_SECTIONS_QUERY_KEYS.lists(),
+      });
     },
   });
 }

@@ -6,7 +6,16 @@ import type { PublicSavedSectionDto } from '../types/savedSections.types';
 
 /**
  * Global hook for managing saved items across the application.
- * Loads saved items once and keeps them cached during the session.
+ * 
+ * Optimization Strategy:
+ * - Loads saved items once and keeps them cached during the session
+ * - Uses optimistic updates for add/delete operations (no server refetch)
+ * - Only refetches from server on:
+ *   - Initial load/page refresh
+ *   - Manual refresh (login/logout)
+ *   - Auto-refresh every 5 minutes
+ *   - Network reconnection
+ * - Saves costly API calls by avoiding refetch on every mutation
  */
 export function useSavedItems() {
   const {
@@ -28,6 +37,14 @@ export function useSavedItems() {
 
   // Refetch when user logs in or when explicitly requested
   const refreshSavedItems = useCallback(() => {
+    console.log('Manually refreshing saved items');
+    refetch();
+  }, [refetch]);
+
+  // Function to manually invalidate and refresh (for login/logout)
+  const forceRefreshSavedItems = useCallback(() => {
+    console.log('Force refreshing saved items (login/logout)');
+    // This will force a fresh fetch from the server
     refetch();
   }, [refetch]);
 
@@ -47,6 +64,7 @@ export function useSavedItems() {
     isError,
     error,
     refreshSavedItems,
+    forceRefreshSavedItems,
     getSavedItemsForSection,
     itemExistsByName,
   };

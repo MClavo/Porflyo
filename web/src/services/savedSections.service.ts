@@ -21,6 +21,7 @@ export class SavedSectionsService {
    * Save a PortfolioItem to the database with a custom name
    */
   static async saveItem(item: PortfolioItem, name: string): Promise<PublicSavedSectionDto> {
+    console.log('🔄 SavedSectionsService.saveItem called - calling API directly (not using React Query mutations)');
     const createDto = mapPortfolioItemToCreateDto(item, name);
     const response = await createSavedSection(createDto);
     return response.data;
@@ -55,6 +56,7 @@ export class SavedSectionsService {
    * Delete a saved section by ID
    */
   static async deleteSavedSection(itemId: string): Promise<void> {
+    console.log('🔄 SavedSectionsService.deleteSavedSection called - calling API directly (not using React Query mutations)');
     await deleteSavedSection(itemId);
   }
 
