@@ -217,15 +217,14 @@ export default function PortfolioEditorPage() {
           </aside>
                 
 
+          <PortfolioEditor templateId={template} />
           {/* PORTFOLIO EDITOR */}
-          <main className="portfolio-main">
-            <div className="portfolio-preview">
-              <h1 className="profile-header">Portfolio</h1>
-                  {/* <PortfolioEditor /> */}
-                  <PortfolioEditor templateId={template} />
+          {/* <main className="portfolio-main"> */}
+            {/* <div className="portfolio-preview">
+                  
 
-            </div>
-          </main>
+            </div> */}
+          {/* </main> */}
         </div>
   );
 }

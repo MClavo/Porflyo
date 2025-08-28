@@ -69,6 +69,9 @@
   align-items: center;
   justify-content: center;
   position: relative;
+  /* Prevent image containers from interfering with item drag */
+  -webkit-user-drag: none;
+  -moz-user-drag: none;
 }
 
 .image-upload {
@@ -96,6 +99,12 @@
   object-position: center;
   border-radius: 0.375rem;
   background-color: #f8f9fa;
+  /* Disable drag and drop for images */
+  -webkit-user-drag: none;
+  -khtml-user-drag: none;
+  -moz-user-drag: none;
+  -o-user-drag: none;
+  pointer-events: none;
 }
 
 .upload-placeholder {
