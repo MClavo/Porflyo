@@ -69,9 +69,11 @@ export function usePortfolioGrid(sectionsConfig = PORTFOLIO_SECTIONS as typeof P
     item: PortfolioItem;
   } | null>(null);
 
-  // Load saved items into savedItems section when they become available
+  // Load saved items into savedItems section when they become available (only on initial load)
+  const [savedItemsLoaded, setSavedItemsLoaded] = useState(false);
+  
   useEffect(() => {
-    if (savedItems.length > 0) {
+    if (savedItems.length > 0 && !savedItemsLoaded) {
       // Find savedItems section (could be 'savedItems' or 'saved-items')
       const savedItemsSection = sectionsConfig.find(section => 
         section.id === 'savedItems' || section.id === 'saved-items'
@@ -80,12 +82,7 @@ export function usePortfolioGrid(sectionsConfig = PORTFOLIO_SECTIONS as typeof P
         return;
       }
 
-      // Only update if we have different data to avoid infinite loops
-      const sectionId = savedItemsSection.id; // Use the actual section ID found
-      const currentSavedCount = items[sectionId]?.length || 0;
-      if (currentSavedCount === savedItems.length) {
-        return;
-      }
+      const sectionId = savedItemsSection.id;
 
       // Create UniqueIdentifiers and items data for saved items
       const savedItemIds: UniqueIdentifier[] = [];
@@ -100,15 +97,19 @@ export function usePortfolioGrid(sectionsConfig = PORTFOLIO_SECTIONS as typeof P
       // Update items and itemsData with loaded saved items
       setItems(prev => ({
         ...prev,
-        [sectionId]: savedItemIds, // Use the actual section ID
+        [sectionId]: savedItemIds,
       }));
 
       setItemsData(prev => ({
         ...prev,
         ...savedItemsData,
       }));
+
+      // Mark as loaded so we don't reload again
+      setSavedItemsLoaded(true);
+      console.log('✅ Initial savedItems loaded from API cache');
     }
-  }, [savedItems, sectionsConfig, items]);
+  }, [savedItems, sectionsConfig, savedItemsLoaded]);
 
   const handleItemUpdate = useCallback((id: UniqueIdentifier, updatedItem: PortfolioItem) => {
     setItemsData((prev) => {
@@ -171,9 +172,9 @@ export function usePortfolioGrid(sectionsConfig = PORTFOLIO_SECTIONS as typeof P
         }
       }));
 
-      console.log('Item saved to database successfully - cache updated optimistically');
+      console.log('✅ Item saved to database and UI updated');
     } catch (error) {
-      console.error('Error saving item to database:', error);
+      console.error('❌ Error saving item to database:', error);
       // Item is already saved locally, so user doesn't see any error
       // You might want to add a toast notification here for the user
     }
@@ -213,14 +214,14 @@ export function usePortfolioGrid(sectionsConfig = PORTFOLIO_SECTIONS as typeof P
       try {
         if (item.dbId) {
           await deleteSavedSectionMutation.mutateAsync(item.dbId);
-          
-          console.log('Item deleted from database successfully - cache updated optimistically');
+          console.log('✅ Item deleted from database and UI updated');
         } else {
           console.warn('SavedItem without dbId found, cannot delete from database:', item.savedName);
         }
       } catch (error) {
-        console.error('Error deleting saved item from database:', error);
-        // Item is already deleted from UI, user doesn't see any error
+        console.error('❌ Error deleting saved item from database:', error);
+        // Note: We keep the item deleted from UI since user expects it to be gone
+        // The mutation's onError will handle cache invalidation if needed
       }
     }
   }, [pendingDeleteItem, deleteSavedSectionMutation]);
