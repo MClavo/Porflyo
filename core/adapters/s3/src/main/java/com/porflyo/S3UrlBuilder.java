@@ -49,16 +49,15 @@ public class S3UrlBuilder {
      * @param url The complete S3 URL
      * @return The S3 key, or null if the URL is not a valid S3 URL
      */
-    public String extractKeyFromUrl(URI url) {
-        String urlString = url.toString();
-        if (url == null || urlString.trim().isEmpty())
+    public String extractKeyFromUrl(String url) {
+        if (url == null || url.trim().isEmpty())
             return null;
 
         try {
             // Expected format: https://bucket-name.s3.amazonaws.com/key
             String bucketPrefix = String.format(S3_URL_FORMAT, s3Config.bucketName(), "");
-            if (urlString.startsWith(bucketPrefix))
-                return urlString.substring(bucketPrefix.length());
+            if (url.startsWith(bucketPrefix))
+                return url.substring(bucketPrefix.length());
 
             return null;
         } catch (Exception e) {

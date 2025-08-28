@@ -24,6 +24,14 @@ public interface MediaUseCase {
     String resolveUrl(String key);
 
     /**
+     * Extracts the S3 key from a complete S3 URL.
+     *
+     * @param url the complete S3 URL to extract the key from
+     * @return the S3 key, or null if the URL is not a valid S3 URL
+     */
+    String extractKeyFromUrl(String url);
+
+    /**
      * Creates a presigned POST request for uploading files to a specified key.
      * The bucket and region are configured in the application properties.
      *

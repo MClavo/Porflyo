@@ -34,6 +34,11 @@ public class MediaService implements MediaUseCase {
         return mediaRepository.resolveUrl(key);
     }
 
+    @Override
+    public String extractKeyFromUrl(String url) {
+        return mediaRepository.extractKeyFromUrl(url);
+    }
+
     // ────────────────────────── Upload / Delete ──────────────────────────
 
     @Override

@@ -22,6 +22,14 @@ public interface MediaRepository {
      */
     String resolveUrl(String key);
 
+    /**
+     * Extracts the S3 key from a complete S3 URL.
+     *
+     * @param url the complete S3 URL to extract the key from
+     * @return the S3 key, or null if the URL is not a valid S3 URL
+     */
+    String extractKeyFromUrl(String url);
+
 
     /**
      * Only available for the backend, used to upload files when the user is first

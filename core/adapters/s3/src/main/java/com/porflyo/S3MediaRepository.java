@@ -60,6 +60,19 @@ public class S3MediaRepository implements MediaRepository {
     }
 
     @Override
+    public String extractKeyFromUrl(String url) {
+        if (url == null || url.trim().isEmpty()) {
+            return null;
+        }
+        try {
+            return s3UrlBuilder.extractKeyFromUrl(url);
+        } catch (Exception e) {
+            log.error("Failed to extract key from URL: {}", url, e);
+            return null;
+        }
+    }
+
+    @Override
     public void putFromUrl(String key, URI url) {
         try {
             PutObjectRequest putReq = PutObjectRequest.builder()
