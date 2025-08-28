@@ -12,7 +12,7 @@ const def: TemplateDefinition = {
       title: "Left",
       columns: 1,
       rows: 2,
-      allowedItemTypes: ["text"],
+      allowedItemTypes: ["text", "textPhoto"],
       items: [],
     },
     {
@@ -30,7 +30,7 @@ const def: TemplateDefinition = {
       title: "Bottom",
       columns: 3,
       rows: 2,
-      allowedItemTypes: ["text", "doubleText"],
+      allowedItemTypes: ["text", "doubleText", "textPhoto"],
       items: [],
     },
   ],

@@ -15,7 +15,7 @@
 import { DndContext, DragOverlay, MeasuringStrategy } from '@dnd-kit/core';
 import { createPortal } from 'react-dom';
 
-import { dropAnimation as exportedDropAnimation, usePortfolioGrid } from '../../../hooks/portfolio/usePortfolioGrid';
+import { dropAnimation as exportedDropAnimation, usePortfolioGrid } from '../../../hooks/portfolio/index';
 import { getTemplate } from '../../../templates/registry';
 import type { PortfolioItem } from '../../../types/itemDto';
 import type { PortfolioSection } from '../../../types/sectionDto';
