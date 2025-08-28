@@ -107,11 +107,12 @@ public abstract class SavedSectionRepositoryContract {
     @DisplayName("Should delete a saved section")
     protected void shouldDelete_whenExistingSection() {
         // Given
-        repository.save(PortfolioTestData.DEFAULT_SAVED_SECTION);
-        assertFalse(repository.findByUserId(userId).isEmpty(), "Precondition: one section exists");
+        SavedSection saved = repository.save(PortfolioTestData.DEFAULT_SAVED_SECTION);
+        List<SavedSection> preDelete = repository.findByUserId(userId);
+        assertFalse(preDelete.isEmpty(), "Precondition: one section exists");
 
         // When
-        repository.delete(userId, sectionId);
+        repository.delete(userId, saved.id());
 
         // Then
         List<SavedSection> sections = repository.findByUserId(userId);

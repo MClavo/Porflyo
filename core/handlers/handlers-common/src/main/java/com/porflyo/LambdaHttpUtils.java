@@ -174,7 +174,7 @@ public final class LambdaHttpUtils {
      *
      * @param input     the API Gateway event
      * @param position  the position of the path part to extract (0 is the first segment)
-     * @return the extracted path part to lower case, or empty string if the position is invalid
+     * @return the extracted path part, or empty string if the position is invalid
      */
     public static String extractPathSegment(APIGatewayV2HTTPEvent input, int position) {
         String[] pathParts = input.getRawPath().split("/");
@@ -183,7 +183,7 @@ public final class LambdaHttpUtils {
         if (adjustedPos < 0 || adjustedPos >= pathParts.length)
             return ""; // Invalid position
 
-        return pathParts[adjustedPos].toLowerCase();
+        return pathParts[adjustedPos];
     }
 
 

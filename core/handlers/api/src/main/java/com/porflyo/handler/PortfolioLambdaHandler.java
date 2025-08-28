@@ -73,7 +73,7 @@ public class PortfolioLambdaHandler {
     public APIGatewayV2HTTPResponse handlePortfolioRequest(APIGatewayV2HTTPEvent input) {
         try {
             // /api/portfolio/{request}
-            String pathRequest = LambdaHttpUtils.extractPathSegment(input, 2);
+            String pathRequest = LambdaHttpUtils.extractPathSegment(input, 2).toLowerCase();
             
             UserId userId = getUserIdFromCookie(input);
             String body = input.getBody();

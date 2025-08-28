@@ -1,5 +1,7 @@
 package com.porflyo.handler;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,25 +66,27 @@ public class MediaLambdaHandler {
     // ────────────────────────── Media Management ────────────────────────── 
 
     /**
-     * Generates a presigned PUT URL for uploading media files.
+     * Generates presigned PUT URL for uploading media files.
      *
-     * @param body The request body containing bucket, key, contentType, size, and md5.
-     * @return An APIGatewayV2HTTPResponse with the presigned URL and fields.
+     * @param body The request body containing a list of bucket, key, contentType, size, and md5.
+     * @return An APIGatewayV2HTTPResponse with the presigned URLs and fields.
      */
     APIGatewayV2HTTPResponse generatePresignedPut(String body) {
         try {
             // Parse the request body to extract bucket, key, contentType, size, and md5
-            PresignRequestDto requestDto = jsonMapper.readValue(body, PresignRequestDto.class);
-            
-            // Generate the presigned PUT URL
-            PresignedPostDto result = mediaService.createPresignedPut(
-                requestDto.key(),
-                requestDto.contentType(),
-                requestDto.size(),
-                requestDto.md5()
-            );
+            PresignRequestDto[] requestData = jsonMapper.readValue(body, PresignRequestDto[].class);
+            List<PresignRequestDto> requests = List.of(requestData);
 
-            log.debug("Generated presigned PUT URL for key: {}", requestDto.key());
+            List<PresignedPostDto> result = requests.stream().map(request -> {
+                return mediaService.createPresignedPut(
+                    request.key(),
+                    request.contentType(),
+                    request.size(),
+                    request.md5()
+                );
+            }).toList();
+
+            log.debug("Generated presigned PUT URL for keys: {}", requests.stream().map(r -> r.key()).toList());
             return LambdaHttpUtils.createResponse(200, jsonMapper.writeValueAsString(result));
         } catch (Exception e) {
             log.error("Failed to generate presigned PUT URL", e);

@@ -10,14 +10,14 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.porflyo.ports.output.SavedSectionRepository;
+import com.porflyo.Item.DdbSavedSectionItem;
+import com.porflyo.configuration.DdbConfig;
+import com.porflyo.mapper.DdbSavedSectionMapper;
 import com.porflyo.model.ids.SectionId;
 import com.porflyo.model.ids.UserId;
 import com.porflyo.model.portfolio.SavedSection;
-import com.porflyo.Item.DdbSavedSectionItem;
-import com.porflyo.mapper.DdbSavedSectionMapper;
+import com.porflyo.ports.output.SavedSectionRepository;
 import  com.porflyo.schema.SavedSectionTableSchema;
-import com.porflyo.configuration.DdbConfig;
 
 import io.micronaut.context.annotation.Requires;
 import jakarta.inject.Inject;
@@ -27,6 +27,7 @@ import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable;
 import software.amazon.awssdk.enhanced.dynamodb.Key;
 import software.amazon.awssdk.enhanced.dynamodb.model.QueryConditional;
+import software.amazon.awssdk.enhanced.dynamodb.model.QueryEnhancedRequest;
 
 @Singleton
 @Requires(beans = DdbConfig.class)
@@ -62,11 +63,12 @@ public class DbdSavedSectionRepository implements SavedSectionRepository {
         
         String pk = pk(USER_PK_PREFIX, userId.value());
 
-    // Query for all saved sections of the user: restrict sort keys to saved-section prefix
-    QueryConditional query = QueryConditional
-    .sortBeginsWith(k -> k.partitionValue(pk).sortValue(USER_SAVED_SECTION_SK_PREFIX));
-
-        List<SavedSection> sections = table.query(r -> r.queryConditional(query))
+        QueryEnhancedRequest request = QueryEnhancedRequest.builder()
+            .queryConditional(QueryConditional
+            .sortBeginsWith(k -> k.partitionValue(pk).sortValue(USER_SAVED_SECTION_SK_PREFIX)))
+            .build();
+        
+        List<SavedSection> sections = table.query(request)
             .items()
             .stream()
             .map(mapper::toDomain)
@@ -80,15 +82,19 @@ public class DbdSavedSectionRepository implements SavedSectionRepository {
     // ────────────────────────── Delete ──────────────────────────
 
     @Override
-    public void delete(UserId userId, SectionId sectionId) {
-        String pk = pk(USER_PK_PREFIX, userId.value());
-        String sk = sk(USER_SAVED_SECTION_SK_PREFIX, sectionId.value());
+    public SavedSection delete(UserId userId, SectionId sectionId) {
+        String PK = pk(USER_PK_PREFIX, userId.value());
+        String SK = sk(USER_SAVED_SECTION_SK_PREFIX, sectionId.value());
 
-        table.deleteItem(r -> r.key(Key.builder()
-            .partitionValue(pk)
-            .sortValue(sk)
-            .build()));
+        Key key = Key.builder()
+            .partitionValue(PK)   // mismo PK que usas
+            .sortValue(SK)        // mismo SK que usas (si la tabla tiene SK)
+            .build();
 
-        log.debug("Deleted section: {} for user: {}", sectionId.value(), userId.value());
+        DdbSavedSectionItem deleted = table.deleteItem(r -> r.key(key));
+        SavedSection section = mapper.toDomain(deleted);
+
+        log.debug("Deleted section {}: {} for user: {}", deleted.getName(), sectionId.value(), userId.value());
+        return section;
     }
 }

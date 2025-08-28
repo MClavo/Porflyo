@@ -23,7 +23,6 @@ import com.porflyo.ports.input.MediaUseCase;
 
 import io.micronaut.json.JsonMapper;
 
-
 @ExtendWith(MockitoExtension.class)
 @DisplayName("Media Lambda Handler Tests")
 class MediaLambdaHandlerTest {
@@ -45,40 +44,51 @@ class MediaLambdaHandlerTest {
     void should_generatePresignedUrl_when_postRequestWithValidBody() throws Exception {
         // given
         String requestBody = """
-                {
-                    "key": "test-image.jpg",
+                [
+                  {
+                    "key": "test-image-1.jpg",
                     "contentType": "image/jpeg",
                     "size": 1024,
-                    "md5": "abc123hash"
-                }
+                    "md5": "abc123hash1"
+                  },
+                  {
+                    "key": "test-image-2.jpg",
+                    "contentType": "image/png",
+                    "size": 2048,
+                    "md5": "def456hash2"
+                  }
+                ]
                 """;
-        
-        PresignRequestDto requestDto = new PresignRequestDto(
-                "test-image.jpg",
-                "image/jpeg", 
-                1024L,
-                "abc123hash"
-        );
-        
-        PresignedPostDto presignedPost = new PresignedPostDto(
-                "https://bucket.s3.amazonaws.com/",
-                Map.of("key", List.of("test-image.jpg"))
-        );
-        
+
+        PresignRequestDto requestDto1 = new PresignRequestDto("test-image-1.jpg", "image/jpeg", 1024L, "abc123hash1");
+        PresignRequestDto requestDto2 = new PresignRequestDto("test-image-2.jpg", "image/png", 2048L, "def456hash2");
+
+        PresignedPostDto presignedPost1 = new PresignedPostDto("https://bucket.s3.amazonaws.com/1",
+                Map.of("key", List.of("test-image-1.jpg")));
+        PresignedPostDto presignedPost2 = new PresignedPostDto("https://bucket.s3.amazonaws.com/2",
+                Map.of("key", List.of("test-image-2.jpg")));
+
+        List<PresignedPostDto> presignedPosts = List.of(presignedPost1, presignedPost2);
+
         APIGatewayV2HTTPEvent event = createEvent("POST", null, requestBody);
-        
-        given(jsonMapper.readValue(requestBody, PresignRequestDto.class)).willReturn(requestDto);
-        given(mediaUseCase.createPresignedPut("test-image.jpg", "image/jpeg", 1024L, "abc123hash"))
-                .willReturn(presignedPost);
-        given(jsonMapper.writeValueAsString(presignedPost)).willReturn("{\"url\":\"https://bucket.s3.amazonaws.com/\"}");
+
+        given(jsonMapper.readValue(requestBody, PresignRequestDto[].class))
+                .willReturn(new PresignRequestDto[] { requestDto1, requestDto2 });
+        given(mediaUseCase.createPresignedPut("test-image-1.jpg", "image/jpeg", 1024L, "abc123hash1"))
+                .willReturn(presignedPost1);
+        given(mediaUseCase.createPresignedPut("test-image-2.jpg", "image/png", 2048L, "def456hash2"))
+                .willReturn(presignedPost2);
+        given(jsonMapper.writeValueAsString(presignedPosts)).willReturn(
+                "[{\"url\":\"https://bucket.s3.amazonaws.com/1\"},{\"url\":\"https://bucket.s3.amazonaws.com/2\"}]");
 
         // when
         APIGatewayV2HTTPResponse response = handler.handleMediaRequest(event);
 
         // then
         assertThat(response.getStatusCode()).isEqualTo(200);
-        assertThat(response.getBody()).isEqualTo("{\"url\":\"https://bucket.s3.amazonaws.com/\"}");
-        then(mediaUseCase).should().createPresignedPut("test-image.jpg", "image/jpeg", 1024L, "abc123hash");
+        assertThat(response.getBody()).isEqualTo(jsonMapper.writeValueAsString(presignedPosts));
+        then(mediaUseCase).should().createPresignedPut("test-image-1.jpg", "image/jpeg", 1024L, "abc123hash1");
+        then(mediaUseCase).should().createPresignedPut("test-image-2.jpg", "image/png", 2048L, "def456hash2");
     }
 
     @Test
@@ -114,8 +124,8 @@ class MediaLambdaHandlerTest {
         // given
         String requestBody = "invalid-json";
         APIGatewayV2HTTPEvent event = createEvent("POST", null, requestBody);
-        
-        given(jsonMapper.readValue(requestBody, PresignRequestDto.class))
+
+        given(jsonMapper.readValue(requestBody, PresignRequestDto[].class))
                 .willThrow(new RuntimeException("JSON parsing error"));
 
         // when
@@ -130,24 +140,22 @@ class MediaLambdaHandlerTest {
     void should_returnInternalServerError_when_mediaUseCaseThrowsException() throws Exception {
         // given
         String requestBody = """
-                {
-                    "key": "test-image.jpg",
-                    "contentType": "image/jpeg",
-                    "size": 1024,
-                    "md5": "abc123hash"
-                }
+                [
+                    {
+                        "key": "test-image.jpg",
+                        "contentType": "image/jpeg",
+                        "size": 1024,
+                        "md5": "abc123hash"
+                    }
+                ]
                 """;
-        
-        PresignRequestDto requestDto = new PresignRequestDto(
-                "test-image.jpg",
-                "image/jpeg", 
-                1024L,
-                "abc123hash"
-        );
-        
+
+        PresignRequestDto requestDto = new PresignRequestDto("test-image.jpg", "image/jpeg", 1024L, "abc123hash");
+
         APIGatewayV2HTTPEvent event = createEvent("POST", null, requestBody);
-        
-        given(jsonMapper.readValue(requestBody, PresignRequestDto.class)).willReturn(requestDto);
+
+        given(jsonMapper.readValue(requestBody, PresignRequestDto[].class))
+                .willReturn(new PresignRequestDto[] { requestDto });
         given(mediaUseCase.createPresignedPut("test-image.jpg", "image/jpeg", 1024L, "abc123hash"))
                 .willThrow(new RuntimeException("Media service error"));
 
@@ -164,7 +172,7 @@ class MediaLambdaHandlerTest {
         // given
         String key = "test-image.jpg";
         APIGatewayV2HTTPEvent event = createEvent("DELETE", key, null);
-        
+
         willThrow(new RuntimeException("Delete failed")).given(mediaUseCase).delete(key);
 
         // when
@@ -177,23 +185,23 @@ class MediaLambdaHandlerTest {
 
     private APIGatewayV2HTTPEvent createEvent(String method, String key, String body) {
         APIGatewayV2HTTPEvent event = new APIGatewayV2HTTPEvent();
-        
+
         APIGatewayV2HTTPEvent.RequestContext requestContext = new APIGatewayV2HTTPEvent.RequestContext();
         APIGatewayV2HTTPEvent.RequestContext.Http http = new APIGatewayV2HTTPEvent.RequestContext.Http();
         http.setMethod(method);
         requestContext.setHttp(http);
         event.setRequestContext(requestContext);
-        
+
         if (key != null) {
             event.setPathParameters(Map.of("key", key));
         } else {
             event.setPathParameters(Map.of()); // Empty map instead of null
         }
-        
+
         if (body != null) {
             event.setBody(body);
         }
-        
+
         return event;
     }
 }

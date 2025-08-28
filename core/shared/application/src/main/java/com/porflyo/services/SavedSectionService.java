@@ -7,6 +7,7 @@ import com.porflyo.model.ids.UserId;
 import com.porflyo.model.portfolio.PortfolioSection;
 import com.porflyo.model.portfolio.SavedSection;
 import com.porflyo.ports.input.SavedSectionUseCase;
+import com.porflyo.ports.output.MediaCountRepository;
 import com.porflyo.ports.output.QuotaRepository;
 import com.porflyo.ports.output.SavedSectionRepository;
 
@@ -16,18 +17,21 @@ import jakarta.inject.Singleton;
 @Singleton
 public class SavedSectionService implements SavedSectionUseCase {
 
+    private final MediaCountRepository mediaCountRepository;
     private final SavedSectionRepository sRepository;
     private final QuotaRepository quotaRepository;
 
     @Inject
-    public SavedSectionService(SavedSectionRepository savedSectionRepository, QuotaRepository quotaRepository) {
+    public SavedSectionService(MediaCountRepository mediaCountRepository, SavedSectionRepository savedSectionRepository, QuotaRepository quotaRepository) {
+        this.mediaCountRepository = mediaCountRepository;
         this.sRepository = savedSectionRepository;
         this.quotaRepository = quotaRepository;
     }
 
     @Override
     public SavedSection create(UserId userId, String name, PortfolioSection section) { 
-       SavedSection savedSection = new SavedSection(
+        mediaCountRepository.increment(userId, section.media());
+        SavedSection savedSection = new SavedSection(
             SectionId.newKsuid(),
             userId,
             name,
@@ -41,8 +45,9 @@ public class SavedSectionService implements SavedSectionUseCase {
 
     @Override
     public void delete(UserId userId, SectionId sectionId) {
+        SavedSection deletedSection = sRepository.delete(userId, sectionId);
+        mediaCountRepository.decrementAndReturnDeletables(userId, deletedSection.section().media());
         quotaRepository.updateSavedSectionCount(userId, -1);
-        sRepository.delete(userId, sectionId);
     }
 
     @Override

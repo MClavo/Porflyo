@@ -107,7 +107,7 @@ public class ApiLambdaEntrypoint extends MicronautRequestHandler<APIGatewayV2HTT
         // Extract the route from the path
         String route = LambdaHttpUtils.extractPathSegment(input, 1); // Extracts {segment} of /api/{segment}/whatever
 
-        switch (route) {
+        switch (route.toLowerCase()) {
             case "user":
                 return userLambdaHandler.handleUserRequest(input);
 
@@ -134,7 +134,7 @@ public class ApiLambdaEntrypoint extends MicronautRequestHandler<APIGatewayV2HTT
         // Extract the route from the path
         String route = LambdaHttpUtils.extractPathSegment(input, 1); // Extracts {segment} of /public/{segment}/whatever
 
-        switch (route) {
+        switch (route.toLowerCase()) {
             case "portfolio":
                 return publicPortfolioLambdaHandler.handlePublicPortfolioRequest(input);
 

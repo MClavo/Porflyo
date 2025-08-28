@@ -14,5 +14,5 @@ public interface SavedSectionRepository {
 
   List<SavedSection> findByUserId(UserId userId);
   
-  void delete(UserId userId, SectionId sectionId);
+  SavedSection delete(UserId userId, SectionId sectionId);
 }
