@@ -6,6 +6,7 @@ import com.porflyo.model.ids.SectionId;
 import com.porflyo.model.ids.UserId;
 import com.porflyo.model.portfolio.PortfolioSection;
 import com.porflyo.model.portfolio.SavedSection;
+import com.porflyo.ports.input.MediaUseCase;
 import com.porflyo.ports.input.SavedSectionUseCase;
 import com.porflyo.ports.output.MediaCountRepository;
 import com.porflyo.ports.output.QuotaRepository;
@@ -18,24 +19,37 @@ import jakarta.inject.Singleton;
 public class SavedSectionService implements SavedSectionUseCase {
 
     private final MediaCountRepository mediaCountRepository;
+    private final MediaUseCase mediaUseCase;
     private final SavedSectionRepository sRepository;
     private final QuotaRepository quotaRepository;
 
     @Inject
-    public SavedSectionService(MediaCountRepository mediaCountRepository, SavedSectionRepository savedSectionRepository, QuotaRepository quotaRepository) {
+    public SavedSectionService(MediaCountRepository mediaCountRepository, MediaUseCase mediaUseCase, SavedSectionRepository savedSectionRepository, QuotaRepository quotaRepository) {
         this.mediaCountRepository = mediaCountRepository;
+        this.mediaUseCase = mediaUseCase;
         this.sRepository = savedSectionRepository;
         this.quotaRepository = quotaRepository;
     }
 
     @Override
     public SavedSection create(UserId userId, String name, PortfolioSection section) { 
-        mediaCountRepository.increment(userId, section.media());
+        List<String> sectionMediaKeys = section.media().stream()
+            .map(mediaUseCase::extractKeyFromUrl).toList(); // Simplified lambda
+
+        mediaCountRepository.increment(userId, sectionMediaKeys);
+
+        PortfolioSection sanitizedSection = new PortfolioSection(
+            section.sectionType(),
+            section.title(),
+            section.content(),
+            sectionMediaKeys
+        );
+
         SavedSection savedSection = new SavedSection(
             SectionId.newKsuid(),
             userId,
             name,
-            section,
+            sanitizedSection,
             1
         );
 

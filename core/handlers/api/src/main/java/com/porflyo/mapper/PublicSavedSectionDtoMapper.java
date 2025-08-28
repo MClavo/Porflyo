@@ -1,8 +1,13 @@
 package com.porflyo.mapper;
 
-import com.porflyo.dto.PublicSavedSectionDto;
-import com.porflyo.model.portfolio.SavedSection;
+import java.util.List;
 
+import com.porflyo.dto.PublicSavedSectionDto;
+import com.porflyo.model.portfolio.PortfolioSection;
+import com.porflyo.model.portfolio.SavedSection;
+import com.porflyo.ports.input.MediaUseCase;
+
+import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 
 /**
@@ -11,11 +16,32 @@ import jakarta.inject.Singleton;
 @Singleton
 public class PublicSavedSectionDtoMapper {
 
+    private final MediaUseCase mediaUseCase;
+
+    @Inject
+    public PublicSavedSectionDtoMapper(MediaUseCase mediaUseCase) {
+        this.mediaUseCase = mediaUseCase;
+    }
+
     public PublicSavedSectionDto toDto(SavedSection savedSection) {
+        List<String> mediaUrls = null;
+        if (savedSection.section().media() != null) {
+            mediaUrls = savedSection.section().media().stream()
+                .map(m -> mediaUseCase.resolveUrl(m))
+                .toList();
+        }
+
+        PortfolioSection sanitizedSection = new PortfolioSection(
+            savedSection.section().sectionType(),
+            savedSection.section().title(),
+            savedSection.section().content(),
+            mediaUrls
+        );
+
         return new PublicSavedSectionDto(
             savedSection.id().value(),
             savedSection.name(),
-            savedSection.section(),
+            sanitizedSection,
             savedSection.version()
         );
     }

@@ -46,6 +46,7 @@ public class PortfolioLambdaHandler {
     private final JsonMapper jsonMapper;
     private final PublicPortfolioDtoMapper publicPortfolioDtoMapper;
     private final PortfolioCreateDtoMapper portfolioCreateDtoMapper;
+    private final PortfolioPatchDtoMapper portfolioPatchDtoMapper;
     private final PortfolioUseCase portfolioService;
     private final AuthUseCase authService;
 
@@ -54,12 +55,14 @@ public class PortfolioLambdaHandler {
             JsonMapper jsonMapper,
             PublicPortfolioDtoMapper publicPortfolioDtoMapper,
             PortfolioCreateDtoMapper portfolioCreateDtoMapper,
+            PortfolioPatchDtoMapper portfolioPatchDtoMapper,
             PortfolioUseCase portfolioService,
             AuthUseCase authService) {
                 
         this.jsonMapper = jsonMapper;
         this.publicPortfolioDtoMapper = publicPortfolioDtoMapper;
         this.portfolioCreateDtoMapper = portfolioCreateDtoMapper;
+        this.portfolioPatchDtoMapper = portfolioPatchDtoMapper;
         this.portfolioService = portfolioService;
         this.authService = authService;
     }
@@ -229,7 +232,7 @@ public class PortfolioLambdaHandler {
     private APIGatewayV2HTTPResponse patchPortfolio(UserId userId, PortfolioId portfolioId, String body) {
         try {
             Map<String, Object> attributes = extractAttributesFromBody(body);
-            PortfolioPatchDto patch = PortfolioPatchDtoMapper.toPatch(attributes);
+            PortfolioPatchDto patch = portfolioPatchDtoMapper.toPatch(attributes);
 
             Portfolio portfolio = portfolioService.patchPortfolio(userId, portfolioId, patch);
             PublicPortfolioDto dto = publicPortfolioDtoMapper.toDto(portfolio);

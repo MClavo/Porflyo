@@ -1,18 +1,40 @@
 package com.porflyo.mapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.List;
 import java.util.Map;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import com.porflyo.dto.PortfolioPatchDto;
 import com.porflyo.model.portfolio.PortfolioSection;
+import com.porflyo.ports.input.MediaUseCase;
 
 @DisplayName("PortfolioPatchDtoMapper (unit)")
 class PortfolioPatchDtoMapperTest {
+
+    private MediaUseCase mediaUseCase;
+    private PortfolioPatchDtoMapper mapper;
+
+    @BeforeEach
+    void setUp() {
+        mediaUseCase = mock(MediaUseCase.class);
+        mapper = new PortfolioPatchDtoMapper(mediaUseCase);
+        
+        // Mock para que devuelva una key cuando se le pase una URL
+        when(mediaUseCase.extractKeyFromUrl(anyString())).thenAnswer(invocation -> {
+            String url = invocation.getArgument(0);
+            if (url == null) return null;
+            // Simular extracción de key: si la URL contiene "key123", devolver "key123"
+            return url.contains("key123") ? "key123" : "extracted-key";
+        });
+    }
 
     @Test
     @DisplayName("should map attributes to patch dto when all fields present")
@@ -28,7 +50,7 @@ class PortfolioPatchDtoMapperTest {
         );
 
         // when
-        PortfolioPatchDto patch = PortfolioPatchDtoMapper.toPatch(attributes);
+        PortfolioPatchDto patch = mapper.toPatch(attributes);
 
         // then
         assertThat(patch.template()).isPresent();
@@ -53,7 +75,7 @@ class PortfolioPatchDtoMapperTest {
         );
 
         // when
-        PortfolioPatchDto patch = PortfolioPatchDtoMapper.toPatch(attributes);
+        PortfolioPatchDto patch = mapper.toPatch(attributes);
 
         // then
         assertThat(patch.template()).isEmpty();
@@ -72,7 +94,7 @@ class PortfolioPatchDtoMapperTest {
         Map<String, Object> attributes = Map.of();
 
         // when
-        PortfolioPatchDto patch = PortfolioPatchDtoMapper.toPatch(attributes);
+        PortfolioPatchDto patch = mapper.toPatch(attributes);
 
         // then
         assertThat(patch.template()).isEmpty();
@@ -91,7 +113,7 @@ class PortfolioPatchDtoMapperTest {
         );
 
         // when
-        PortfolioPatchDto patch = PortfolioPatchDtoMapper.toPatch(attributes);
+        PortfolioPatchDto patch = mapper.toPatch(attributes);
 
         // then
         assertThat(patch.modelVersion()).isPresent();
@@ -109,11 +131,32 @@ class PortfolioPatchDtoMapperTest {
         );
 
         // when
-        PortfolioPatchDto patch = PortfolioPatchDtoMapper.toPatch(attributes);
+        PortfolioPatchDto patch = mapper.toPatch(attributes);
 
         // then
         assertThat(patch.title()).isEmpty();
         assertThat(patch.modelVersion()).isEmpty();
         assertThat(patch.sections()).isEmpty();
+    }
+
+    @Test
+    @DisplayName("should convert URLs to keys in sections media when patching")
+    void should_convert_urls_to_keys_in_sections_media_when_patching() {
+        // given
+        String mediaUrl = "https://bucket.s3.amazonaws.com/key123";
+        PortfolioSection section = new PortfolioSection("gallery", "My Gallery", "Photos", List.of(mediaUrl));
+        Map<String, Object> attributes = Map.of(
+            "sections", List.of(section)
+        );
+
+        // when
+        PortfolioPatchDto patch = mapper.toPatch(attributes);
+
+        // then
+        assertThat(patch.sections()).isPresent();
+        List<PortfolioSection> sections = patch.sections().get();
+        assertThat(sections).hasSize(1);
+        PortfolioSection mappedSection = sections.get(0);
+        assertThat(mappedSection.media()).containsExactly("key123");
     }
 }

@@ -19,7 +19,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -31,6 +30,7 @@ import com.porflyo.dto.PortfolioPatchDto;
 import com.porflyo.dto.PortfolioPublishDto;
 import com.porflyo.dto.PublicPortfolioDto;
 import com.porflyo.mapper.PortfolioCreateDtoMapper;
+import com.porflyo.mapper.PortfolioPatchDtoMapper;
 import com.porflyo.mapper.PublicPortfolioDtoMapper;
 import com.porflyo.model.ids.PortfolioId;
 import com.porflyo.model.ids.UserId;
@@ -49,6 +49,7 @@ class PortfolioLambdaHandlerTest {
     @Mock JsonMapper jsonMapper;
     @Mock PublicPortfolioDtoMapper publicPortfolioDtoMapper;
     @Mock PortfolioCreateDtoMapper portfolioCreateDtoMapper;
+    @Mock PortfolioPatchDtoMapper portfolioPatchDtoMapper;
     @Mock PortfolioUseCase portfolioService;
     @Mock AuthUseCase authService;
 
@@ -217,6 +218,7 @@ class PortfolioLambdaHandlerTest {
         // given
         String requestBody = "{\"title\":\"Updated Title\"}";
         Map<String, Object> attributes = Map.of("title", "Updated Title");
+        PortfolioPatchDto patchDto = mock(PortfolioPatchDto.class);
         Portfolio updatedPortfolio = mock(Portfolio.class);
         PublicPortfolioDto responseDto = mock(PublicPortfolioDto.class);
         
@@ -226,7 +228,8 @@ class PortfolioLambdaHandlerTest {
         given(http.getMethod()).willReturn("PATCH");
         Argument<Map<String, Object>> mapArgument = Argument.mapOf(String.class, Object.class);
         given(jsonMapper.readValue(eq(requestBody), eq(mapArgument))).willReturn(attributes);
-        given(portfolioService.patchPortfolio(eq(userId), eq(portfolioId), any(PortfolioPatchDto.class))).willReturn(updatedPortfolio);
+        given(portfolioPatchDtoMapper.toPatch(attributes)).willReturn(patchDto);
+        given(portfolioService.patchPortfolio(eq(userId), eq(portfolioId), eq(patchDto))).willReturn(updatedPortfolio);
         given(publicPortfolioDtoMapper.toDto(updatedPortfolio)).willReturn(responseDto);
         given(jsonMapper.writeValueAsString(responseDto)).willReturn("{\"id\":\"portfolio123\"}");
 
@@ -237,8 +240,8 @@ class PortfolioLambdaHandlerTest {
         assertThat(response.getStatusCode()).isEqualTo(200);
         assertThat(response.getBody()).isEqualTo("{\"id\":\"portfolio123\"}");
         
-        ArgumentCaptor<PortfolioPatchDto> patchCaptor = ArgumentCaptor.forClass(PortfolioPatchDto.class);
-        then(portfolioService).should().patchPortfolio(eq(userId), eq(portfolioId), patchCaptor.capture());
+        then(portfolioPatchDtoMapper).should().toPatch(attributes);
+        then(portfolioService).should().patchPortfolio(eq(userId), eq(portfolioId), eq(patchDto));
     }
 
     // ────────────────────────── Publish Portfolio ──────────────────────────

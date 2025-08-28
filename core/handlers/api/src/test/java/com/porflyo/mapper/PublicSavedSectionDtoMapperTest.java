@@ -1,6 +1,9 @@
 package com.porflyo.mapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.List;
 
@@ -12,14 +15,24 @@ import com.porflyo.model.ids.SectionId;
 import com.porflyo.model.ids.UserId;
 import com.porflyo.model.portfolio.PortfolioSection;
 import com.porflyo.model.portfolio.SavedSection;
+import com.porflyo.ports.input.MediaUseCase;
 
 class PublicSavedSectionDtoMapperTest {
 
+    private MediaUseCase mediaUseCase;
     private PublicSavedSectionDtoMapper mapper;
 
     @BeforeEach
     void setUp() {
-        mapper = new PublicSavedSectionDtoMapper();
+        mediaUseCase = mock(MediaUseCase.class);
+        mapper = new PublicSavedSectionDtoMapper(mediaUseCase);
+        
+        // Mock para que devuelva una URL cuando se le pase una key
+        when(mediaUseCase.resolveUrl(anyString())).thenAnswer(invocation -> {
+            String key = invocation.getArgument(0);
+            if (key == null) return null;
+            return "https://bucket.s3.amazonaws.com/" + key;
+        });
     }
 
     @Test
@@ -48,10 +61,11 @@ class PublicSavedSectionDtoMapperTest {
         assertThat(result).isNotNull();
         assertThat(result.id()).isEqualTo("section-123");
         assertThat(result.name()).isEqualTo("Hero Section");
-        assertThat(result.section()).isEqualTo(portfolioSection);
         assertThat(result.section().sectionType()).isEqualTo("hero");
         assertThat(result.section().title()).isEqualTo("Welcome to my portfolio");
         assertThat(result.section().content()).isEqualTo("I'm a software developer");
+        // Verificar que las keys se convirtieron a URLs
+        assertThat(result.section().media()).containsExactly("https://bucket.s3.amazonaws.com/hero-image.jpg");
         assertThat(result.version()).isEqualTo(1);
     }
 
@@ -116,7 +130,12 @@ class PublicSavedSectionDtoMapperTest {
         assertThat(result.section().sectionType()).isEqualTo("projects");
         assertThat(result.section().title()).isEqualTo("My Projects");
         assertThat(result.section().content()).isEqualTo("Collection of my best work");
-        assertThat(result.section().media()).containsExactly("project1.jpg", "project2.jpg", "demo.mp4");
+        // Verificar que las keys se convirtieron a URLs
+        assertThat(result.section().media()).containsExactly(
+            "https://bucket.s3.amazonaws.com/project1.jpg", 
+            "https://bucket.s3.amazonaws.com/project2.jpg", 
+            "https://bucket.s3.amazonaws.com/demo.mp4"
+        );
         assertThat(result.version()).isEqualTo(3);
     }
 
