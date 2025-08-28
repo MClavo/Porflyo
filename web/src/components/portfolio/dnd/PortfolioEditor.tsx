@@ -99,6 +99,7 @@ export function PortfolioEditor({ templateId = 'template-example' }: { templateI
         sections={sections}
         itemMap={presentationalItems}
         itemDataMap={presentationalItemsData}
+        templateId={templateId}
         siteComponent={tpl ? <tpl.Layout sections={sections} itemMap={{}} itemDataMap={{}} themeClass={tpl.ThemeClass} /> : undefined}
         onItemUpdate={(id, updated) => handleItemUpdate(id, updated as PortfolioItem)}
         onAddItem={(sectionId, itemType) => addItemToSection(sectionId, itemType)}
@@ -108,6 +109,7 @@ export function PortfolioEditor({ templateId = 'template-example' }: { templateI
             section={section}
             items={((items[section.id] || []) as Array<import('@dnd-kit/core').UniqueIdentifier>).map((id) => String(id))}
             itemsData={itemsData}
+            templateId={templateId}
             onItemUpdate={(id, updated) => handleItemUpdate(id as import('@dnd-kit/core').UniqueIdentifier, updated as PortfolioItem)}
             onAddItem={(secId, type) => addItemToSection(secId, type)}
             onRemove={(id) => removeItem(id as import('@dnd-kit/core').UniqueIdentifier)}

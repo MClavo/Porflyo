@@ -28,6 +28,7 @@ type Props = {
   sections?: typeof PORTFOLIO_SECTIONS;
   itemMap: PortfolioItems;
   itemDataMap: PortfolioItemsData;
+  templateId?: string;
   onItemUpdate?: (id: string | number, updatedItem: Partial<PortfolioItem>) => void;
   className?: string;
   containerStyle?: React.CSSProperties;
@@ -45,6 +46,7 @@ export function PortfolioLayout({
   sections = PORTFOLIO_SECTIONS,
   itemMap: items,
   itemDataMap: itemsData,
+  templateId,
   onItemUpdate,
   className,
   containerStyle,
@@ -109,6 +111,7 @@ export function PortfolioLayout({
       section={section}
       items={items[section.id] || []}
       itemsData={itemsData}
+      templateId={templateId}
       onItemUpdate={onItemUpdate}
       onAddItem={onAddItem}
       onRemove={onRemove}

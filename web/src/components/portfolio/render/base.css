@@ -1,0 +1,46 @@
+/* Base styles for all portfolio items - only essential structure */
+.portfolio-item-base {
+  width: 100%;
+  box-sizing: border-box;
+  position: relative;
+  /* Default minimum size - templates can override */
+  min-height: 60px;
+  /* Flexible display - templates can override */
+  display: flex;
+  flex-direction: column;
+  /* Default spacing - templates can override */
+  padding: 12px;
+  /* Basic interaction */
+  cursor: default;
+  /* Border radius for consistency - templates can override */
+  border-radius: 6px;
+  /* Default background and border - templates should override */
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  /* Smooth transitions */
+  transition: all 0.2s ease;
+}
+
+/* Interactive states - templates can override these */
+.portfolio-item-base:hover {
+  border-color: #cbd5e1;
+}
+
+.portfolio-item-base:focus-within {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+
+/* Template-specific overrides example */
+/* Templates can add styles like:
+.tpl-dark .portfolio-item-base {
+  background: #2a303d;
+  border-color: #475569;
+  color: #e2e8f0;
+}
+
+.tpl-dark .section-left .item-textPhoto {
+  min-height: 200px;
+  flex-direction: row;
+}
+*/

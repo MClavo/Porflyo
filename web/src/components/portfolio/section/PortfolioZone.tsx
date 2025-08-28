@@ -7,7 +7,7 @@ import type { DroppableZoneProps } from '../layout/LayoutTypes';
 import { Container } from './Container';
 import { getMaxItems } from '../../../types/sectionDto';
 
-export function PortfolioZone({ section, items, itemsData, onItemUpdate, onAddItem, onRemove, dropState }: Omit<DroppableZoneProps, 'children'> & { onAddItem?: (sectionId: string, itemType?: import('../../../types/itemDto').ItemType) => void; onRemove?: (id: string | number) => void; dropState?: 'allowed' | 'forbidden' | 'none' }) {
+export function PortfolioZone({ section, items, itemsData, templateId, onItemUpdate, onAddItem, onRemove, dropState }: Omit<DroppableZoneProps, 'children'> & { onAddItem?: (sectionId: string, itemType?: import('../../../types/itemDto').ItemType) => void; onRemove?: (id: string | number) => void; dropState?: 'allowed' | 'forbidden' | 'none' }) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const { setNodeRef, /* isOver */ } = useDroppable({
     id: section.id,
@@ -66,6 +66,7 @@ export function PortfolioZone({ section, items, itemsData, onItemUpdate, onAddIt
             item={itemsData[itemId]}
             index={index}
             section={section}
+            templateId={templateId}
             onItemUpdate={onItemUpdate}
             onRemove={onRemove}
           />

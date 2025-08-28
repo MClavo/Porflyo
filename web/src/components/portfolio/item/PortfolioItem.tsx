@@ -1,13 +1,25 @@
-import { useSortable, defaultAnimateLayoutChanges } from '@dnd-kit/sortable';
-import { useEffect, useState } from 'react';
+import { useSortable, defaultAnimateLayoutChanges } from "@dnd-kit/sortable";
+import { useEffect, useState } from "react";
 // Use section.color from the section config for item coloring
-import type { EditorSortableItemProps as SortableItemProps } from '../dnd/EditorTypes';
-import { Item } from './Item';
-import ItemRenderer from '../render';
-import type { PortfolioItem as PortfolioItemType } from '../../../types/itemDto';
+import type { EditorSortableItemProps as SortableItemProps } from "../dnd/EditorTypes";
+import { Item } from "./Item";
+import ItemRenderer from "../render";
+import type { PortfolioItem as PortfolioItemType } from "../../../types/itemDto";
 
-export function PortfolioItem(props: SortableItemProps & { preview?: boolean; draggable?: boolean }) {
-  const { id, item, index, onItemUpdate, onRemove, preview = false, draggable = true } = props;
+export function PortfolioItem(
+  props: SortableItemProps & { preview?: boolean; draggable?: boolean }
+) {
+  const {
+    id,
+    item,
+    index,
+    section,
+    templateId,
+    onItemUpdate,
+    onRemove,
+    preview = false,
+    draggable = true,
+  } = props;
   const [isEditing, setIsEditing] = useState(false);
   const {
     setNodeRef,
@@ -19,7 +31,8 @@ export function PortfolioItem(props: SortableItemProps & { preview?: boolean; dr
   } = useSortable({
     id,
     disabled: !draggable || isEditing, // Disable dragging when editing or when not draggable
-    animateLayoutChanges: (args) => defaultAnimateLayoutChanges({ ...args, wasDragging: true }),
+    animateLayoutChanges: (args) =>
+      defaultAnimateLayoutChanges({ ...args, wasDragging: true }),
   });
   const mounted = useMountStatus();
   const mountedWhileDragging = isDragging && !mounted;
@@ -39,6 +52,8 @@ export function PortfolioItem(props: SortableItemProps & { preview?: boolean; dr
           onItemUpdate={onItemUpdate}
           onStartEdit={() => setIsEditing(true)}
           onEndEdit={() => setIsEditing(false)}
+          sectionId={section?.id}
+          templateId={templateId}
         />
       }
       dragging={isDragging}
@@ -46,15 +61,14 @@ export function PortfolioItem(props: SortableItemProps & { preview?: boolean; dr
       handle={false}
       index={index}
       wrapperStyle={{
-        width: '100%',
-        height: 100,
+        width: "100%",
       }}
       style={{}}
       transition={transition}
       transform={transform}
       fadeIn={mountedWhileDragging}
-  listeners={isEditing || !draggable ? undefined : listeners} // Only pass listeners when not editing and draggable
-  onRemove={onRemove ? () => onRemove(id) : undefined}
+      listeners={isEditing || !draggable ? undefined : listeners} // Only pass listeners when not editing and draggable
+      onRemove={onRemove ? () => onRemove(id) : undefined}
     />
   );
 }

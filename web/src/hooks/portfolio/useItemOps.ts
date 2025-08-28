@@ -41,6 +41,9 @@ export function useItemOps(
           case 'doubleText':
             defaultItem = { id: now, type: 'doubleText', sectionType: sectionConfig.type, text1: '', text2: '' };
             break;
+          case 'textPhoto':
+            defaultItem = { id: now, type: 'textPhoto', sectionType: sectionConfig.type, text1: '', text2: '', imageUrl: '' };
+            break;
           default:
             defaultItem = { id: now, type: 'text', sectionType: sectionConfig.type, text: '' };
         }

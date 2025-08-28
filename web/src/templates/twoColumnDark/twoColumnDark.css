@@ -54,3 +54,69 @@
   font-weight: 600;
   margin: 16px;
 }
+
+/* Portfolio Item Overrides for Dark Template */
+.tpl-dark .portfolio-item-base {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.08);
+  color: var(--text, #e6eef6);
+}
+
+.tpl-dark .portfolio-item-base:hover {
+  background: rgba(255,255,255,0.05);
+  border-color: rgba(255,255,255,0.15);
+}
+
+/* Specific styles for textPhoto items in dark template */
+.tpl-dark .item-textPhoto {
+  min-height: 140px;
+  padding: 16px;
+}
+
+/* Left section: taller textPhoto items with larger images */
+.tpl-dark .section-left .item-textPhoto {
+  min-height: 240px;
+}
+
+.tpl-dark .section-left .item-textPhoto .textPhotoImageSection {
+  width: 160px;
+  height: 120px;
+}
+
+/* Bottom section: spacious textPhoto items */
+.tpl-dark .section-bottom .item-textPhoto {
+  min-height: 180px;
+}
+
+.tpl-dark .section-bottom .item-textPhoto .textPhotoImageSection {
+  width: 140px;
+  height: 105px;
+}
+
+/* Text items adjustments */
+.tpl-dark .item-text {
+  min-height: 80px;
+  padding: 14px;
+}
+
+.tpl-dark .item-doubleText {
+  min-height: 100px;
+  padding: 14px;
+}
+
+/* Style text inputs in dark theme */
+.tpl-dark .item-textPhoto input {
+  background: rgba(255,255,255,0.05);
+  border-color: rgba(255,255,255,0.15);
+  color: var(--text, #e6eef6);
+}
+
+.tpl-dark .item-textPhoto input::placeholder {
+  color: rgba(255,255,255,0.4);
+}
+
+.tpl-dark .item-textPhoto input:focus {
+  background: rgba(255,255,255,0.08);
+  border-color: var(--accent, #2dd4bf);
+  color: var(--text, #e6eef6);
+}

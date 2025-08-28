@@ -11,6 +11,7 @@ export interface EditorSortableItemProps {
   item: PortfolioItem;
   index: number;
   section: PortfolioSection;
+  templateId?: string;
   onItemUpdate?: (id: UniqueIdentifier, updatedItem: Partial<PortfolioItem>) => void;
   onRemove?: (id: UniqueIdentifier) => void;
 }
@@ -20,6 +21,7 @@ export interface EditorDroppableZoneProps {
   section: PortfolioSection;
   items: UniqueIdentifier[];
   itemsData: EditorPortfolioItemsData;
+  templateId?: string;
   onItemUpdate?: (id: UniqueIdentifier, updatedItem: Partial<PortfolioItem>) => void;
   onRemove?: (id: UniqueIdentifier) => void;
   onAddItem?: (sectionId: string, itemType?: import('../../../types/itemDto').ItemType) => void;

@@ -56,7 +56,6 @@
   flex: 1;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
 }
 
 .portfolio-editor-item-wrapper {

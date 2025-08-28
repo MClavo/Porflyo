@@ -39,3 +39,17 @@ export interface SavedItem extends BaseItem {
 }
 
 export type PortfolioItem = TextItem | CharacterItem | DoubleTextItem | SavedItem | TextPhotoItem;
+
+export type EditItemProps = {
+  id: string;
+  item?: PortfolioItem | undefined;
+  editable?: boolean;
+  onItemUpdate?: (id: string, updated: Partial<PortfolioItem>) => void;
+  onStartEdit?: () => void;
+  onEndEdit?: () => void;
+  className?: string;
+  style?: React.CSSProperties;
+  // Context information for styling
+  sectionId?: string;
+  templateId?: string;
+};

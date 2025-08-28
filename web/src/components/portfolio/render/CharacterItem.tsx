@@ -1,25 +1,12 @@
-import React from 'react';
-import type { PortfolioItem } from '../../../types/itemDto';
-import styles from './render.module.css';
+import type { EditItemProps } from '../../../types/itemDto';
 
-type Props = {
-  id: string;
-  item?: PortfolioItem | undefined;
-  editable?: boolean;
-  onItemUpdate?: (id: string, updated: Partial<PortfolioItem>) => void;
-  onStartEdit?: () => void;
-  onEndEdit?: () => void;
-  className?: string;
-  style?: React.CSSProperties;
-};
-
-export function CharacterItem({ id, item, editable = false, onItemUpdate, onStartEdit, onEndEdit, className = '', style }: Props) {
+export function CharacterItem({ id, item, editable = false, onItemUpdate, onStartEdit, onEndEdit, className = '', style }: EditItemProps) {
   const char = (item && 'character' in item ? item.character : '') ?? '';
 
     if (editable) {
     return (
       <input
-        className={`${styles.input} ${styles.character} ${className}`}
+        className={className}
         style={style}
         value={char}
         placeholder=""
@@ -32,8 +19,8 @@ export function CharacterItem({ id, item, editable = false, onItemUpdate, onStar
   }
 
   return (
-    <div className={`${styles.characterView} ${className}`} style={style}>
-      {char || <span className={styles.placeholder}>?</span>}
+    <div className={className} style={style}>
+      {char || <span className="placeholder">?</span>}
     </div>
   );
 }

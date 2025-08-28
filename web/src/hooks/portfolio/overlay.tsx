@@ -53,8 +53,25 @@ export function renderSortableItemDragOverlay(
       <ItemComponent
         value={(
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-            <div style={{ fontWeight: 'bold' }}>{itemToRender.text1 || ''}</div>
-            <div style={{ fontSize: '0.8em', color: '#666' }}>{itemToRender.text2 || ''}</div>
+            <div style={{ fontWeight: 'bold' }}>{itemToRender.text1 || 'Título principal...'}</div>
+            <div style={{ fontSize: '0.8em', color: '#666' }}>{itemToRender.text2 || 'Subtítulo...'}</div>
+          </div>
+        )}
+        handle={false}
+        wrapperStyle={{ width: '100%', height: '100%' }}
+        dragOverlay
+      />
+    );
+  }
+
+  if (itemToRender.type === 'textPhoto') {
+    return (
+      <ItemComponent
+        value={(
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
+            <div style={{ fontWeight: 'bold' }}>{itemToRender.text1 || 'Título principal...'}</div>
+            <div style={{ fontSize: '0.8em', color: '#666' }}>{itemToRender.text2 || 'Subtítulo...'}</div>
+            <div style={{ fontSize: '0.7em', color: '#999' }}>📷 Con imagen</div>
           </div>
         )}
         handle={false}

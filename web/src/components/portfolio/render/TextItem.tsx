@@ -1,39 +1,26 @@
-import React from 'react';
-import type { PortfolioItem } from '../../../types/itemDto';
-import styles from './render.module.css';
+import type { EditItemProps } from '../../../types/itemDto';
 
-type Props = {
-  id: string;
-  item?: PortfolioItem | undefined;
-  editable?: boolean;
-  onItemUpdate?: (id: string, updated: Partial<PortfolioItem>) => void;
-  onStartEdit?: () => void;
-  onEndEdit?: () => void;
-  className?: string;
-  style?: React.CSSProperties;
-};
-
-export function TextItem({ id, item, editable = false, onItemUpdate, onStartEdit, onEndEdit, className = '', style }: Props) {
+export function TextItem({ id, item, editable = false, onItemUpdate, onStartEdit, onEndEdit, className = '', style }: EditItemProps) {
   const text = item && 'text' in item ? item.text : '';
 
   if (editable) {
     return (
       <input
-        className={`${styles.input} ${className}`}
+        className={className}
         style={style}
         value={text ?? ''}
         placeholder="Description"
         maxLength={400}
         onFocus={() => onStartEdit?.()}
         onBlur={() => onEndEdit?.()}
-  onChange={(e) => onItemUpdate?.(id, { type: 'text', text: e.target.value })}
+        onChange={(e) => onItemUpdate?.(id, { type: 'text', text: e.target.value })}
       />
     );
   }
 
   return (
-    <div className={`${styles.text} ${className}`} style={style}>
-      {text ?? <span className={styles.placeholder}>Introduce texto...</span>}
+    <div className={className} style={style}>
+      {text ?? <span className="placeholder">Introduce texto...</span>}
     </div>
   );
 }

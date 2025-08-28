@@ -19,6 +19,7 @@ export interface PresentationalItemProps {
   item: PortfolioItem;
   index: number;
   section: PortfolioSection;
+  templateId?: string;
   onItemUpdate?: (id: string | number, updatedItem: Partial<PortfolioItem>) => void;
   onRemove?: (id: string | number) => void;
 }
@@ -28,6 +29,7 @@ export interface DroppableZoneProps {
   section: PortfolioSection;
   items: string[];
   itemsData: PortfolioItemsData;
+  templateId?: string;
   onItemUpdate?: (id: string | number, updatedItem: Partial<PortfolioItem>) => void;
   onAddItem?: (sectionId: string, itemType?: import('../../../types/itemDto').ItemType) => void;
   onRemove?: (id: string | number) => void;

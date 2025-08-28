@@ -4,9 +4,7 @@ interface SavedItemProps {
 
 export function SavedItem({ savedName }: SavedItemProps) {
   return (
-    <div className="saved-item" 
-
-    >
+    <div className="saved-item">
     {savedName}
     </div>
   );

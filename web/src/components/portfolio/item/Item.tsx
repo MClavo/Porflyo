@@ -38,7 +38,7 @@ export interface Props {
 }
 
 export const Item = React.memo(
-  React.forwardRef<HTMLLIElement, Props>(
+  React.forwardRef<HTMLDivElement, Props>(
     (
       {
         dragOverlay,
@@ -89,16 +89,20 @@ export const Item = React.memo(
           value,
         })
       ) : (
-  <li
+        <div
           className={`
-            item-wrapper 
+            portfolio-item
+            ${dragging ? 'is-dragging' : ''} 
+            ${handle ? 'has-handle' : ''} 
+            ${dragOverlay ? 'is-overlay' : ''} 
+            ${disabled ? 'is-disabled' : ''} 
             ${fadeIn ? 'fade-in' : ''} 
-            ${sorting ? 'sorting' : ''} 
-            ${dragOverlay ? 'drag-overlay' : ''}
+            ${sorting ? 'is-sorting' : ''}
           `.trim()}
           style={
             {
               ...wrapperStyle,
+              ...style,
               transition: [transition, wrapperStyle?.transition]
                 .filter(Boolean)
                 .join(', '),
@@ -118,31 +122,27 @@ export const Item = React.memo(
             } as React.CSSProperties
           }
           ref={ref}
+          data-cypress="draggable-item"
+          {...(!handle ? listeners : undefined)}
+          {...props}
+          tabIndex={!handle ? 0 : undefined}
         >
-          <div
-            className={`
-              item 
-              ${dragging ? 'dragging' : ''} 
-              ${handle ? 'with-handle' : ''} 
-              ${dragOverlay ? 'drag-overlay' : ''} 
-              ${disabled ? 'disabled' : ''} 
-              
-            `.trim()}
-            style={style}
-            data-cypress="draggable-item"
-            {...(!handle ? listeners : undefined)}
-            {...props}
-            tabIndex={!handle ? 0 : undefined}
-          >
+          {onRemove && (
+            <div className="item-delete" onClick={onRemove}>
+              <Remove />
+            </div>
+          )}
+          
+          {/* <div className="item-content"> */}
             {value}
-            <span className="actions">
-              {onRemove ? (
-                <Remove className="remove" onClick={onRemove} />
-              ) : null}
-              {handle ? <Handle {...handleProps} {...listeners} /> : null}
-            </span>
-          </div>
-        </li>
+          {/* </div> */}
+          
+          {handle && (
+            <div className="item-handle">
+              <Handle {...handleProps} {...listeners} />
+            </div>
+          )}
+        </div>
       );
     }
   )
