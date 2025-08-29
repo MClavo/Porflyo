@@ -9,15 +9,6 @@ export const PortfolioEditorPage: React.FC = () => {
 
   // Handle portfolio save
   const handleSave = async (dto: PortfolioCreateDto | PortfolioPatchDto) => {
-    console.log("Portfolio save requested:", dto);
-    
-    // For MVP, just log the DTO structure
-    console.group("📁 Portfolio Save Details");
-    console.log("Type:", "template" in dto ? "CREATE" : "PATCH");
-    console.log("Template:", dto.template);
-    console.log("Sections count:", dto.sections?.length || 0);
-    console.log("Sections:", dto.sections || []);
-    console.groupEnd();
     
     // Simulate async save
     await new Promise(resolve => setTimeout(resolve, 1000));

@@ -29,8 +29,6 @@ export function useBaseState(
   // Initialize once when initial data becomes available
   useEffect(() => {
     if (initialItems && initialItemsData && !hasInitializedRef.current) {
-      console.log('useBaseState - One-time initialization with:', { initialItems, initialItemsData });
-      
       // Ensure all sections are present in the items object
       const allSectionsItems = sectionsConfig.reduce((acc, s) => ({ ...acc, [s.id]: [] }), {} as EditorPortfolioItems);
       const mergedItems = { ...allSectionsItems, ...initialItems };
@@ -38,8 +36,6 @@ export function useBaseState(
       setItems(mergedItems);
       setItemsData(initialItemsData);
       hasInitializedRef.current = true;
-      
-      console.log('useBaseState - Final merged items:', mergedItems);
     }
   }, [initialItems, initialItemsData, sectionsConfig]);
   const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);

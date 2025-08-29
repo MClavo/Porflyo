@@ -7,7 +7,7 @@ import { toSlug } from '../lib/slug/toSlug';
 //import { TemplateSelector } from '../componentsOld/TemplateSelector';
 import type { TemplateId } from '../features/portfolios/templates';
 import { DEFAULT_TEMPLATE } from '../features/portfolios/templates';
-import { listTemplates } from '../templates/registry';
+import { listTemplates, getTemplate } from '../templates/registry';
 import type { TemplateDefinition } from '../templates/types';
 import type { PortfolioCreateDto, PortfolioPatchDto } from '../types/dto';
 import type { PortfolioSection } from '../types/sectionDto';
@@ -63,67 +63,91 @@ export default function PortfolioEditorPage() {
     };
   }, [getMvpTemplateZones]); */
 
-  // Transform backend data to editor format
-  const transformBackendToEditor = useCallback((backendPortfolio: typeof portfolio) => {
+  // Transform backend data to editor format, using template as base
+  const transformBackendToEditor = useCallback((backendPortfolio: typeof portfolio, templateId: TemplateId) => {
     if (!backendPortfolio?.sections) return { sections: [], items: {}, itemsData: {} };
+
+    // Get the template to use as base structure
+    const template = getTemplate(templateId);
+    const tpl = template ? template : getTemplate('dark');
+    
+    // Start with template sections as base (includes saved-items if not present)
+    const templateSections = tpl.sections.some((s: { id: string }) => s.id === 'saved-items')
+      ? tpl.sections
+      : ([
+          ...tpl.sections,
+          ({
+            id: 'saved-items',
+            type: 'savedItems' as const,
+            title: 'Saved',
+            columns: 1,
+            rows: 10,
+            allowedItemTypes: ['text', 'doubleText', 'character'] as import('../types/itemDto').ItemType[],
+            items: [],
+          } as PortfolioSection),
+        ] as PortfolioSection[]);
+
+    // Create a map of backend data by section ID
+    const backendDataMap = new Map();
+    backendPortfolio.sections.forEach((backendSection) => {
+      const sectionId = String(backendSection.sectionType);
+      backendDataMap.set(sectionId, backendSection);
+    });
 
     const editorSections: PortfolioSection[] = [];
     const editorItems: Record<string, string[]> = {};
     const editorItemsData: Record<string, PortfolioItem> = {};
 
-    backendPortfolio.sections.forEach((backendSection, index) => {
-      // The sectionType contains the section ID
-      const sectionId = String(backendSection.sectionType || `section-${index + 1}`);
+    // Process template sections and apply backend data
+    templateSections.forEach((templateSection: PortfolioSection) => {
+      const backendSection = backendDataMap.get(templateSection.id);
       
-      // Parse the content JSON to get items
-      let sectionItems: unknown[] = [];
-      try {
-        const content = backendSection.content;
-        if (content && typeof content === 'string') {
-          sectionItems = JSON.parse(content);
-        }
-      } catch (error) {
-        console.error(`Failed to parse section content for section ${sectionId}:`, error);
-        sectionItems = [];
-      }
-
-      // Create the editor section
+      // Create editor section using template as base
       const editorSection: PortfolioSection = {
-        id: sectionId,
-        type: 'projects', // Default type, could be inferred from template or stored separately
-        title: String(backendSection.title || `Section ${index + 1}`),
-        columns: 3,
-        rows: 3,
-        allowedItemTypes: ['text', 'doubleText', 'textPhoto', 'character'],
+        ...templateSection, // Keep all template properties (type, allowedItemTypes, columns, rows, etc.)
+        title: backendSection?.title ? String(backendSection.title) : templateSection.title,
         items: [] // Will be populated below
       };
 
-      // Generate IDs for items and create editor items data
+      // Process items from backend if they exist
       const itemIds: string[] = [];
-      if (Array.isArray(sectionItems)) {
-        sectionItems.forEach((item, itemIndex) => {
-          // Use simpler, more predictable IDs for DnD compatibility
-          const itemId = `${sectionId}-${itemIndex}`;
-          itemIds.push(itemId);
+      if (backendSection) {
+        let sectionItems: unknown[] = [];
+        try {
+          const content = backendSection.content;
+          if (content && typeof content === 'string') {
+            sectionItems = JSON.parse(content);
+          }
+        } catch (error) {
+          console.error(`Failed to parse section content for section ${templateSection.id}:`, error);
+          sectionItems = [];
+        }
 
-          // Create editor item with generated ID
-          const editorItem: PortfolioItem = {
-            id: Date.now() + itemIndex, // Unique numeric ID based on timestamp
-            sectionType: 'projects', // Default section type
-            type: 'text', // Default type, should be inferred from item data
-            text: '',
-            ...(typeof item === 'object' && item !== null ? item : {})
-          } as PortfolioItem;
+        // Generate IDs for items and create editor items data
+        if (Array.isArray(sectionItems)) {
+          sectionItems.forEach((item, itemIndex) => {
+            // Use simpler, more predictable IDs for DnD compatibility
+            const itemId = `${templateSection.id}-${itemIndex}`;
+            itemIds.push(itemId);
 
-          editorItemsData[itemId] = editorItem;
-          console.log(`Generated item: ${itemId}`, editorItem);
-        });
+            // Create editor item with generated ID
+            const editorItem: PortfolioItem = {
+              id: Date.now() + itemIndex, // Unique numeric ID based on timestamp
+              sectionType: templateSection.type, // Use template section type
+              type: 'text', // Default type, should be inferred from item data
+              text: '',
+              ...(typeof item === 'object' && item !== null ? item : {})
+            } as PortfolioItem;
+
+            editorItemsData[itemId] = editorItem;
+          });
+        }
       }
 
       // Update the section with the item IDs
       editorSection.items = itemIds;
       editorSections.push(editorSection);
-      editorItems[sectionId] = itemIds;
+      editorItems[templateSection.id] = itemIds;
     });
 
     return { sections: editorSections, items: editorItems, itemsData: editorItemsData };
@@ -144,13 +168,13 @@ export default function PortfolioEditorPage() {
       setTitle(portfolio.title || '');
       setSlug(portfolio.reservedSlug || '');
       
-      const editorData = transformBackendToEditor(portfolio);
-      console.log('PortfolioEditorPage - Setting initial editor data:', editorData);
+      const editorData = transformBackendToEditor(portfolio, tplId);
+      console.log('PortfolioEditorPage - Setting initial editor data for existing portfolio:', editorData);
       setInitialEditorData(editorData);
     } else if (isNewPortfolio) {
-      // For new portfolios, start with empty data
-      console.log('PortfolioEditorPage - Setting empty data for new portfolio');
-      setInitialEditorData({ sections: [], items: {}, itemsData: {} });
+      // For new portfolios, don't set initial data so the template sections are used
+      console.log('PortfolioEditorPage - New portfolio, using template sections');
+      setInitialEditorData(null);
     }
   }, [portfolio, isNewPortfolio, transformBackendToEditor]);
 
@@ -202,12 +226,10 @@ export default function PortfolioEditorPage() {
   const transformSectionsForBackend = useCallback((): BackendPortfolioSection[] => {
     // Get current data from the portfolio editor
     if (!getCurrentDataRef.current) {
-      console.log('No getCurrentData function available');
       return [];
     }
 
     const { sections, items, itemsData } = getCurrentDataRef.current();
-    console.log('Current editor data:', { sections, items, itemsData });
     
     return sections
       .filter(section => section.type !== 'savedItems') // Exclude saved items section
@@ -242,14 +264,12 @@ export default function PortfolioEditorPage() {
           media: mediaUrls
         };
         
-        console.log(`Transformed section ${section.id}:`, backendSection);
         return backendSection;
       });
   }, []);
 
   const handleSave = async () => {
     const backendSections = transformSectionsForBackend();
-    console.log('Saving portfolio with sections:', backendSections);
 
     if (isNewPortfolio) {
       const createBody: PortfolioCreateDto = { 
@@ -258,7 +278,6 @@ export default function PortfolioEditorPage() {
         template, 
         sections: backendSections
       };
-      console.log('Creating portfolio with body:', createBody);
       try {
         const created = await createMutation.mutateAsync(createBody);
         if (created && created.id) navigate(`/portfolios/${created.id}/edit`);
@@ -275,7 +294,6 @@ export default function PortfolioEditorPage() {
       template, 
       sections: backendSections
     };
-    console.log('Updating portfolio with patch:', patch);
     try { 
       await patchMutation.mutateAsync({ id, patch }); 
     } catch (err) { 

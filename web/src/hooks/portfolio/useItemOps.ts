@@ -9,12 +9,8 @@ import { getMaxItems, type PortfolioSection } from '../../types/sectionDto';
 
 export function useFindZone(items: EditorPortfolioItems) {
   return useCallback(
-    (id: UniqueIdentifier) => {
-      console.log('useFindZone - searching for:', id, 'in items:', Object.keys(items));
-      const result = id in items ? (id as string) : Object.keys(items).find((k) => items[k].includes(id));
-      console.log('useFindZone - result:', result);
-      return result;
-    },
+    (id: UniqueIdentifier) =>
+      id in items ? (id as string) : Object.keys(items).find((k) => items[k].includes(id)),
     [items],
   );
 }

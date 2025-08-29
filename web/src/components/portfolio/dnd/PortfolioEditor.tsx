@@ -66,9 +66,10 @@ export function PortfolioEditor({
 
 
   // Merge initial sections with template sections if provided
+  // When we have initial sections from backend, they already include saved-items from the transform function
   const finalSections = initialSections && initialSections.length > 0 
-    ? [...initialSections, ...(templateSections.filter(ts => ts.id === 'saved-items'))] // Add only the saved-items section from template
-    : templateSections;
+    ? initialSections // Use backend-derived sections (already include saved-items)
+    : templateSections; // Use template sections (may need saved-items added)
 
   // console.log('PortfolioEditor - Initial data:', { initialSections, initialItems, initialItemsData });
   // console.log('PortfolioEditor - Template sections:', templateSections);
@@ -105,7 +106,7 @@ export function PortfolioEditor({
     onSectionUpdate,
     initialItems,
     initialItemsData,
-    initialSections,
+    initialSections: initialSections && initialSections.length > 0 ? initialSections : undefined,
   });
 
   // Expose current data getter to parent component

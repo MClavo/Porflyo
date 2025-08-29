@@ -11,6 +11,7 @@ export interface PendingSave {
   item: PortfolioItem;
   targetZone: string;
   targetId: string;
+  originalItemId?: UniqueIdentifier; // ID del item original para sincronización
 }
 
 export interface PendingDelete {

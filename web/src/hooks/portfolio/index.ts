@@ -45,7 +45,6 @@ export function usePortfolioGrid(
   // Update sections when initial sections change - but only once
   useEffect(() => {
     if (initialSections && initialSections.length > 0 && !sectionsInitializedRef.current) {
-      console.log('usePortfolioGrid - One-time sections initialization:', initialSections);
       setSections(initialSections);
       sectionsInitializedRef.current = true;
     }

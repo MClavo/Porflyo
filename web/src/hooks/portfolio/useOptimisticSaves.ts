@@ -129,7 +129,7 @@ export function useOptimisticSaves(
 
   const handleSaveItem = useCallback(async (name: string) => {
     if (!pendingSaveItem) return;
-    const { item, targetZone, targetId } = pendingSaveItem;
+    const { item, targetZone, targetId, originalItemId } = pendingSaveItem;
 
     // Check if the item has local images that need to be uploaded
     const needsImageUpload = hasLocalImages(item);
@@ -142,6 +142,7 @@ export function useOptimisticSaves(
     // Create optimistic saved item
     const newId = `${Date.now()}-${Math.random().toString(36).slice(2, 9)}` as UniqueIdentifier;
     let processedItem = item.type === 'savedItem' ? (item as SavedItem).originalItem : (item as PortfolioItem);
+    let originalImageUrl: string | undefined;
     
     // If the item has local images, show uploading state
     if (needsImageUpload) {
@@ -149,6 +150,12 @@ export function useOptimisticSaves(
       try {
         setUploadProgress('Uploading to S3...');
         processedItem = await processItemImages(processedItem);
+        
+        // Extract the new image URL for syncing with original item
+        if (processedItem.type === 'textPhoto') {
+          originalImageUrl = (processedItem as TextPhotoItem).imageUrl;
+        }
+        
         console.log('✅ Images uploaded successfully');
         setUploadProgress('Images uploaded successfully!');
       } catch (error) {
@@ -170,6 +177,26 @@ export function useOptimisticSaves(
     };
 
     setItemsData((d) => ({ ...d, [newId]: savedItem }));
+
+    // Update the original item with the new image URL if available and we have the originalItemId
+    if (originalImageUrl && originalItemId && item.type === 'textPhoto') {
+      console.log('🔄 Syncing image URL to original item:', { originalItemId, originalImageUrl });
+      
+      setItemsData((prevData) => {
+        const updatedData = { ...prevData };
+        
+        // Update the specific original item using its unique ID
+        if (updatedData[originalItemId] && updatedData[originalItemId].type === 'textPhoto') {
+          console.log(`📝 Updating original item ${originalItemId} with new image URL`);
+          updatedData[originalItemId] = {
+            ...updatedData[originalItemId],
+            imageUrl: originalImageUrl
+          } as TextPhotoItem;
+        }
+        
+        return updatedData;
+      });
+    }
 
     const insertIndex = (items[targetZone] ?? []).indexOf(targetId);
     setItems((prev) => {
