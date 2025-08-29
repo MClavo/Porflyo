@@ -1,7 +1,9 @@
 import { Link, Navigate, useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 import { useAuthUser } from '../features/auth/hooks/useAuthUser';
-import { useListPortfolios } from '../features/portfolios/hooks/usePortfolios';
+import { useListPortfolios, useDeletePortfolio } from '../features/portfolios/hooks/usePortfolios';
 import type { PublicPortfolioDto } from '../types/dto';
+import { DeletePortfolioDialog } from '../components/portfolio/dialogs/DeletePortfolioDialog';
 
 /**
  * Home page component - shows different content based on auth status
@@ -11,6 +13,11 @@ import type { PublicPortfolioDto } from '../types/dto';
 export function HomePage() {
   const { user, isAuthenticated, /* isLoading */ } = useAuthUser();
   const navigate = useNavigate();
+  
+  // State for delete confirmation dialog
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [portfolioToDelete, setPortfolioToDelete] = useState<PublicPortfolioDto | null>(null);
+  
   // Use TanStack Query hook for portfolios. Configure to fetch only when authenticated
   // and avoid refetches on mount/window focus. We set a long staleTime so it behaves as
   // a cached value fetched once at login unless invalidated.
@@ -20,6 +27,35 @@ export function HomePage() {
     refetchOnWindowFocus: false,
   });
   const portfolios: PublicPortfolioDto[] = Array.isArray(rawPortfolios) ? rawPortfolios as PublicPortfolioDto[] : [];
+
+  // Delete portfolio mutation
+  const deleteMutation = useDeletePortfolio();
+
+  // Handle delete button click
+  const handleDeleteClick = (portfolio: PublicPortfolioDto) => {
+    setPortfolioToDelete(portfolio);
+    setDeleteDialogOpen(true);
+  };
+
+  // Handle delete confirmation
+  const handleDeleteConfirm = async () => {
+    if (portfolioToDelete) {
+      try {
+        await deleteMutation.mutateAsync(portfolioToDelete.id);
+        setDeleteDialogOpen(false);
+        setPortfolioToDelete(null);
+      } catch (error) {
+        console.error('Failed to delete portfolio:', error);
+        // Could add toast notification here
+      }
+    }
+  };
+
+  // Handle delete cancellation
+  const handleDeleteCancel = () => {
+    setDeleteDialogOpen(false);
+    setPortfolioToDelete(null);
+  };
 
   if (!isAuthenticated) {
     // If user is not authenticated, redirect to root (unauthenticated landing)
@@ -92,7 +128,15 @@ export function HomePage() {
                     <span className="text-sm">Published</span>
                   </label>
 
-                  <button className="btn btn-secondary" onClick={() => { /* noop for now */ }}>
+                  <button 
+                    className="btn btn-remove" 
+                    onClick={() => handleDeleteClick(p)}
+                    disabled={deleteMutation.isPending}
+                  >
+                    Delete
+                  </button>
+
+                  <button className="btn btn-secondary" onClick={() => navigate(`/portfolios/${p.id}/edit`)}>
                     Edit
                   </button>
                 </div>
@@ -114,8 +158,16 @@ export function HomePage() {
   // Authenticated Home Page - Quick Dashboard
   return (
     <>
-  {renderUserSection()}
-  {renderPortfoliosSection()}
+      {renderUserSection()}
+      {renderPortfoliosSection()}
+      
+      {/* Delete confirmation dialog */}
+      <DeletePortfolioDialog
+        isOpen={deleteDialogOpen}
+        onConfirm={handleDeleteConfirm}
+        onCancel={handleDeleteCancel}
+        portfolioTitle={portfolioToDelete?.title}
+      />
     </>
   );
 }

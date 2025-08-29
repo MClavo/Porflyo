@@ -1,9 +1,8 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useState, useRef } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 /* import { useAuthUser } from '../../auth/hooks/useAuthUser'; */
 import { useCreatePortfolio, useGetPortfolio, usePatchPortfolio } from '../features/portfolios/hooks/usePortfolios';
 import { useDebouncedSlugAvailability } from '../features/portfolios/hooks/usePublicPortfolio';
-import { useListSavedSections } from '../features/portfolios/hooks/useSavedSections';
 import { toSlug } from '../lib/slug/toSlug';
 //import { TemplateSelector } from '../componentsOld/TemplateSelector';
 import type { TemplateId } from '../features/portfolios/templates';
@@ -12,38 +11,10 @@ import { listTemplates } from '../templates/registry';
 import type { TemplateDefinition } from '../templates/types';
 import type { PortfolioCreateDto, PortfolioPatchDto } from '../types/dto';
 import type { PortfolioSection } from '../types/sectionDto';
+import type { PortfolioSection as BackendPortfolioSection } from '../types/dto';
+import type { PortfolioItem } from '../types/itemDto';
 // import PortfolioEditor from '../components/PortfolioEditor';
 import { PortfolioEditor } from '../components/portfolio/dnd/PortfolioEditor';
-
-// Small presentational header used in the editor preview
-/* function PortfolioUserHeader({ title }: { title: string }) {
-  const { user } = useAuthUser();
-  if (!user) return null;
-
-  return (
-    <div className="portfolio-user-header">
-      <div className="portfolio-user-info">
-        <img src={user.profileImage ?? undefined} alt="Avatar" className="portfolio-avatar" />
-        <div>
-          <h1 className="text-2xl font-bold text-white">{user.name}</h1>
-          <p className="text-blue-100">{user.email}</p>
-          {title && <p className="text-blue-200 mt-2 text-lg">{title}</p>}
-        </div>
-      </div>
-      {user.socials && Object.keys(user.socials).length > 0 && (
-        <div className="portfolio-meta mt-2">
-          <div className="flex flex-wrap gap-3">
-            {Object.entries(user.socials).map(([platform, url]) => (
-              <a key={platform} href={String(url)} target="_blank" rel="noopener noreferrer" className="text-blue-100 hover:text-white text-sm underline">
-                {platform.charAt(0).toUpperCase() + platform.slice(1)}
-              </a>
-            ))}
-          </div>
-        </div>
-      )}
-    </div>
-  );
-} */
 
 export default function PortfolioEditorPage() {
   const { id } = useParams<{ id: string }>();
@@ -63,11 +34,19 @@ export default function PortfolioEditorPage() {
   const [isSettingsCollapsed, setIsSettingsCollapsed] = useState(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
+  // Reference to get current data from the portfolio editor
+  const getCurrentDataRef = useRef<(() => { sections: PortfolioSection[], items: Record<string, string[]>, itemsData: Record<string, PortfolioItem> }) | null>(null);
+
+  // Callback to receive the getCurrentData function from PortfolioEditor
+  const handleGetCurrentData = useCallback((getCurrentData: () => { sections: PortfolioSection[], items: Record<string, string[]>, itemsData: Record<string, PortfolioItem> }) => {
+    getCurrentDataRef.current = getCurrentData;
+  }, []);
+
   // Draft state: zoned representation
   //const [draft, setDraft] = useState<PortfolioDraft | null>(null);
 
   // MVP Zones for the template (temporary implementation)
-  const getMvpTemplateZones = useCallback(() => {
+  /* const getMvpTemplateZones = useCallback(() => {
     return [
       { id: 'profile', label: 'Perfil', zoneType: 'about' as const, allowed: ['about' as const], maxItems: 3, variants: [], defaultVariant: '' },
       { id: 'projects', label: 'Proyectos', zoneType: 'cards-grid' as const, allowed: ['project' as const], maxItems: 3, variants: [], defaultVariant: '' },
@@ -82,23 +61,97 @@ export default function PortfolioEditorPage() {
       name: templateId,
       zones: getMvpTemplateZones()
     };
-  }, [getMvpTemplateZones]);
+  }, [getMvpTemplateZones]); */
 
-  // Initialize draft when portfolio loads or when creating a new one
+  // Transform backend data to editor format
+  const transformBackendToEditor = useCallback((backendPortfolio: typeof portfolio) => {
+    if (!backendPortfolio?.sections) return { sections: [], items: {}, itemsData: {} };
+
+    const editorSections: PortfolioSection[] = [];
+    const editorItems: Record<string, string[]> = {};
+    const editorItemsData: Record<string, PortfolioItem> = {};
+
+    backendPortfolio.sections.forEach((backendSection, index) => {
+      // The sectionType contains the section ID
+      const sectionId = String(backendSection.sectionType || `section-${index + 1}`);
+      
+      // Parse the content JSON to get items
+      let sectionItems: unknown[] = [];
+      try {
+        const content = backendSection.content;
+        if (content && typeof content === 'string') {
+          sectionItems = JSON.parse(content);
+        }
+      } catch (error) {
+        console.error(`Failed to parse section content for section ${sectionId}:`, error);
+        sectionItems = [];
+      }
+
+      // Create the editor section
+      const editorSection: PortfolioSection = {
+        id: sectionId,
+        type: 'projects', // Default type, could be inferred from template or stored separately
+        title: String(backendSection.title || `Section ${index + 1}`),
+        columns: 3,
+        rows: 3,
+        allowedItemTypes: ['text', 'doubleText', 'textPhoto', 'character'],
+        items: [] // Will be populated below
+      };
+
+      // Generate IDs for items and create editor items data
+      const itemIds: string[] = [];
+      if (Array.isArray(sectionItems)) {
+        sectionItems.forEach((item, itemIndex) => {
+          const timestamp = Date.now();
+          const itemId = `${sectionId}-item-${timestamp}-${itemIndex}`;
+          itemIds.push(itemId);
+
+          // Create editor item with generated ID
+          const editorItem: PortfolioItem = {
+            id: timestamp + itemIndex, // Unique numeric ID based on timestamp
+            sectionType: 'projects', // Default section type
+            type: 'text', // Default type, should be inferred from item data
+            text: '',
+            ...(typeof item === 'object' && item !== null ? item : {})
+          } as PortfolioItem;
+
+          editorItemsData[itemId] = editorItem;
+        });
+      }
+
+      // Update the section with the item IDs
+      editorSection.items = itemIds;
+      editorSections.push(editorSection);
+      editorItems[sectionId] = itemIds;
+    });
+
+    return { sections: editorSections, items: editorItems, itemsData: editorItemsData };
+  }, []);
+
+  // Initialize editor state for loading data from backend
+  const [initialEditorData, setInitialEditorData] = useState<{
+    sections: PortfolioSection[];
+    items: Record<string, string[]>;
+    itemsData: Record<string, PortfolioItem>;
+  } | null>(null);
+
+  // Initialize editor data when portfolio loads
   useEffect(() => {
     if (!isNewPortfolio && portfolio) {
       const tplId = (portfolio.template as TemplateId) || DEFAULT_TEMPLATE;
       setTemplate(tplId);
       setTitle(portfolio.title || '');
       setSlug(portfolio.reservedSlug || '');
-      //const mockTpl = getMockTemplate(tplId);
-      //setDraft(normalizeSectionsToZones(portfolio.sections || [], mockTpl));
+      
+      const editorData = transformBackendToEditor(portfolio);
+      console.log('PortfolioEditorPage - Setting initial editor data:', editorData);
+      setInitialEditorData(editorData);
+    } else if (isNewPortfolio) {
+      // For new portfolios, start with empty data
+      console.log('PortfolioEditorPage - Setting empty data for new portfolio');
+      setInitialEditorData({ sections: [], items: {}, itemsData: {} });
     }
-    if (isNewPortfolio) {
-      //const mockTpl = getMockTemplate(DEFAULT_TEMPLATE);
-      //setDraft(normalizeSectionsToZones([], mockTpl));
-    }
-  }, [portfolio, isNewPortfolio, getMockTemplate]);
+  }, [portfolio, isNewPortfolio, transformBackendToEditor]);
 
   //const saved = useMemo(() => savedSections, [savedSections]);
 
@@ -144,15 +197,67 @@ export default function PortfolioEditorPage() {
     return null;
   };
 
+  // Transform editor data to backend format
+  const transformSectionsForBackend = useCallback((): BackendPortfolioSection[] => {
+    // Get current data from the portfolio editor
+    if (!getCurrentDataRef.current) {
+      console.log('No getCurrentData function available');
+      return [];
+    }
+
+    const { sections, items, itemsData } = getCurrentDataRef.current();
+    console.log('Current editor data:', { sections, items, itemsData });
+    
+    return sections
+      .filter(section => section.type !== 'savedItems') // Exclude saved items section
+      .map(section => {
+        const sectionItems = items[section.id] || [];
+        const sectionItemsData = sectionItems.map(itemId => itemsData[itemId]).filter(Boolean);
+        
+        // Extract all image URLs from items
+        const mediaUrls: string[] = [];
+        
+        // Clean items data - remove IDs and other editor-specific properties
+        const cleanedItemsData = sectionItemsData.map(item => {
+          // Remove the ID property and other editor-specific fields
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          const { id, sectionType, ...cleanItem } = item;
+          
+          // Extract image URLs for media array
+          if (item.type === 'textPhoto' && item.imageUrl) {
+            mediaUrls.push(item.imageUrl);
+          }
+          
+          return cleanItem;
+        });
+
+        // Convert cleaned items to JSON content
+        const content = JSON.stringify(cleanedItemsData);
+
+        const backendSection = {
+          sectionType: section.id,
+          title: section.title,
+          content,
+          media: mediaUrls
+        };
+        
+        console.log(`Transformed section ${section.id}:`, backendSection);
+        return backendSection;
+      });
+  }, []);
+
   const handleSave = async () => {
+    const backendSections = transformSectionsForBackend();
+    console.log('Saving portfolio with sections:', backendSections);
+
     if (isNewPortfolio) {
-      //const sectionsToSave: PortfolioSection[] = draft ? serializeSectionsForSave(draft) : [];
       const createBody: PortfolioCreateDto = { 
-        title, 
+        title: title || '', 
         description: '', 
         template, 
-        sections: []
+        sections: backendSections
       };
+      console.log('Creating portfolio with body:', createBody);
       try {
         const created = await createMutation.mutateAsync(createBody);
         if (created && created.id) navigate(`/portfolios/${created.id}/edit`);
@@ -164,12 +269,12 @@ export default function PortfolioEditorPage() {
     }
 
     if (!id || !portfolio) return;
-    //const sectionsToSave: PortfolioSection[] = draft ? serializeSectionsForSave(draft) : [];
     const patch: PortfolioPatchDto = { 
       title: title || undefined, 
       template, 
-      sections: [] 
+      sections: backendSections
     };
+    console.log('Updating portfolio with patch:', patch);
     try { 
       await patchMutation.mutateAsync({ id, patch }); 
     } catch (err) { 
@@ -240,11 +345,22 @@ export default function PortfolioEditorPage() {
           </aside>
                 
 
-          <PortfolioEditor 
-            templateId={template} 
-            portfolioId={id} 
-            onSectionUpdate={handleSectionUpdate}
-          />
+          {/* Show loading while initial data is being prepared */}
+          {!isNewPortfolio && !initialEditorData ? (
+            <div className="min-h-screen flex items-center justify-center">
+              <div className="text-lg text-gray-600">Loading portfolio data...</div>
+            </div>
+          ) : (
+            <PortfolioEditor 
+              templateId={template} 
+              portfolioId={id} 
+              onSectionUpdate={handleSectionUpdate}
+              onGetCurrentData={handleGetCurrentData}
+              initialSections={initialEditorData?.sections}
+              initialItems={initialEditorData?.items}
+              initialItemsData={initialEditorData?.itemsData}
+            />
+          )}
           {/* PORTFOLIO EDITOR */}
           {/* <main className="portfolio-main"> */}
             {/* <div className="portfolio-preview">

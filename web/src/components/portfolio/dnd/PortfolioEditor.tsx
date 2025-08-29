@@ -14,6 +14,7 @@
  */
 import { DndContext, DragOverlay, MeasuringStrategy } from '@dnd-kit/core';
 import { createPortal } from 'react-dom';
+import { useEffect } from 'react';
 
 import { dropAnimation as exportedDropAnimation, usePortfolioGrid } from '../../../hooks/portfolio/index';
 import { getTemplate } from '../../../templates/registry';
@@ -28,11 +29,19 @@ import { PortfolioZone } from '../section/PortfolioZone';
 export function PortfolioEditor({ 
   templateId = 'template-example',
   portfolioId,
-  onSectionUpdate 
+  onSectionUpdate,
+  onGetCurrentData,
+  initialSections,
+  initialItems,
+  initialItemsData
 }: { 
   templateId?: string;
   portfolioId?: string;
   onSectionUpdate?: (sections: PortfolioSection[]) => void;
+  onGetCurrentData?: (getCurrentData: () => { sections: PortfolioSection[], items: Record<string, string[]>, itemsData: Record<string, PortfolioItem> }) => void;
+  initialSections?: PortfolioSection[];
+  initialItems?: Record<string, string[]>;
+  initialItemsData?: Record<string, PortfolioItem>;
 } = {}) {
   // Load template and merge sections (no savedSections for now)
   const template = getTemplate(templateId);
@@ -55,6 +64,15 @@ export function PortfolioEditor({
         } as PortfolioSection),
       ] as PortfolioSection[]);
 
+
+  // Merge initial sections with template sections if provided
+  const finalSections = initialSections && initialSections.length > 0 
+    ? [...initialSections, ...(templateSections.filter(ts => ts.id === 'saved-items'))] // Add only the saved-items section from template
+    : templateSections;
+
+  console.log('PortfolioEditor - Initial data:', { initialSections, initialItems, initialItemsData });
+  console.log('PortfolioEditor - Template sections:', templateSections);
+  console.log('PortfolioEditor - Final sections:', finalSections);
 
   const {
     sections,
@@ -82,10 +100,39 @@ export function PortfolioEditor({
     handleConfirmDelete,
     handleCancelDelete,
     onSectionTitleUpdate,
-  } = usePortfolioGrid(templateSections, {
+  } = usePortfolioGrid(finalSections, {
     portfolioId,
     onSectionUpdate,
+    initialItems,
+    initialItemsData,
+    initialSections,
   });
+
+  // Expose current data getter to parent component
+  useEffect(() => {
+    if (onGetCurrentData) {
+      const getCurrentData = () => {
+        // Convert UniqueIdentifier to string for consistency
+        const stringItems = Object.keys(items).reduce((acc, sectionId) => {
+          acc[sectionId] = (items[sectionId] || []).map((id) => String(id));
+          return acc;
+        }, {} as Record<string, string[]>);
+
+        const stringItemsData = Object.keys(itemsData).reduce((acc, id) => {
+          acc[String(id)] = itemsData[id];
+          return acc;
+        }, {} as Record<string, PortfolioItem>);
+
+        return {
+          sections,
+          items: stringItems,
+          itemsData: stringItemsData
+        };
+      };
+      
+      onGetCurrentData(getCurrentData);
+    }
+  }, [sections, items, itemsData, onGetCurrentData]);
 
   // Convert UniqueIdentifier -> string for the presentational component.
   const presentationalItems = Object.keys(items).reduce((acc, sectionId) => {

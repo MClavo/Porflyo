@@ -117,7 +117,7 @@ public class ApiLambdaEntrypoint extends MicronautRequestHandler<APIGatewayV2HTT
             case "media":
                 return mediaLambdaHandler.handleMediaRequest(input);
             
-            case "portfolio":
+            case "portfolios":
                 return portfolioLambdaHandler.handlePortfolioRequest(input);
             
             case "sections":

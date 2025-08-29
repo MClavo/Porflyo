@@ -51,7 +51,7 @@ Resources:
         GetPublicPortfolio:
           Type: HttpApi
           Properties:
-            Path: /public/portfolio/{proxy+}
+            Path: /public/portfolios/{proxy+}
             Method: GET
 
   # OAuth Handler Lambda

@@ -41,11 +41,25 @@ export function useListPortfolios(options?: any) {
 
 /**
  * Get portfolio by ID query
+ * First checks if the portfolio is available in the list cache to avoid unnecessary requests
  */
 export function useGetPortfolio(id: string) {
+  const queryClient = useQueryClient();
+
   return useQuery({
     queryKey: portfolioKeys.detail(id),
-    queryFn: () => getPortfolio(id),
+    queryFn: () => {
+      // First try to get the portfolio from the list cache
+      const listData = queryClient.getQueryData<PublicPortfolioDto[]>(portfolioKeys.list());
+      if (listData) {
+        const cachedPortfolio = listData.find(p => p.id === id);
+        if (cachedPortfolio) {
+          return Promise.resolve(cachedPortfolio);
+        }
+      }
+      // If not found in cache, fetch from API
+      return getPortfolio(id);
+    },
     enabled: !!id,
   });
 }
@@ -58,9 +72,21 @@ export function useCreatePortfolio() {
 
   return useMutation({
     mutationFn: (data: PortfolioCreateDto) => createPortfolio(data),
-    onSuccess: () => {
-      // Invalidate portfolios list to refetch
-      queryClient.invalidateQueries({ queryKey: portfolioKeys.list() });
+    onSuccess: (newPortfolio) => {
+      // Add the new portfolio to the list cache
+      queryClient.setQueryData<PublicPortfolioDto[]>(
+        portfolioKeys.list(),
+        (oldData) => {
+          if (!oldData) return [newPortfolio];
+          return [newPortfolio, ...oldData];
+        }
+      );
+      
+      // Set the new portfolio in the detail cache
+      queryClient.setQueryData(
+        portfolioKeys.detail(newPortfolio.id),
+        newPortfolio
+      );
     },
   });
 }
@@ -80,8 +106,17 @@ export function usePatchPortfolio() {
         portfolioKeys.detail(updatedPortfolio.id),
         updatedPortfolio
       );
-      // Invalidate list to show updated data
-      queryClient.invalidateQueries({ queryKey: portfolioKeys.list() });
+      
+      // Update the portfolio in the list cache as well
+      queryClient.setQueryData<PublicPortfolioDto[]>(
+        portfolioKeys.list(),
+        (oldData) => {
+          if (!oldData) return oldData;
+          return oldData.map(portfolio => 
+            portfolio.id === updatedPortfolio.id ? updatedPortfolio : portfolio
+          );
+        }
+      );
     },
   });
 }
@@ -118,8 +153,15 @@ export function useDeletePortfolio() {
     onSuccess: (_data, deletedId) => {
       // Remove the specific portfolio from cache
       queryClient.removeQueries({ queryKey: portfolioKeys.detail(deletedId) });
-      // Invalidate list to refetch without deleted item
-      queryClient.invalidateQueries({ queryKey: portfolioKeys.list() });
+      
+      // Remove the portfolio from the list cache as well
+      queryClient.setQueryData<PublicPortfolioDto[]>(
+        portfolioKeys.list(),
+        (oldData) => {
+          if (!oldData) return oldData;
+          return oldData.filter(portfolio => portfolio.id !== deletedId);
+        }
+      );
     },
   });
 }

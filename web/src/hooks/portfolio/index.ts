@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useState, useEffect } from 'react';
 import type { UniqueIdentifier } from '@dnd-kit/core';
 import { useOptimisticSaves } from './useOptimisticSaves';
 import type { ItemCompProps } from './overlay';
@@ -23,15 +23,30 @@ export function usePortfolioGrid(
   options?: {
     portfolioId?: string;
     onSectionUpdate?: (sections: typeof PORTFOLIO_SECTIONS) => void;
+    initialItems?: Record<string, string[]>;
+    initialItemsData?: Record<string, import('../../types/itemDto').PortfolioItem>;
+    initialSections?: typeof PORTFOLIO_SECTIONS;
   }
 ) {
+  // Extract callbacks to avoid dependency issues
+  const { onSectionUpdate, initialItems, initialItemsData, initialSections } = options || {};
   // server/cache
   const { savedItems, isLoading: isLoadingSavedItems } = useSavedItems();
   const createSavedSectionMutation = useCreateSavedSection();
   const deleteSavedSectionMutation = useDeleteSavedSection();
 
-  // section state management
-  const [sections, setSections] = useState(sectionsConfig);
+  // section state management - use initial sections if provided
+  const [sections, setSections] = useState(() => 
+    initialSections && initialSections.length > 0 ? initialSections : sectionsConfig
+  );
+
+  // Update sections when initial sections change
+  useEffect(() => {
+    if (initialSections && initialSections.length > 0) {
+      console.log('usePortfolioGrid - Updating sections with initial data:', initialSections);
+      setSections(initialSections);
+    }
+  }, [initialSections]);
 
   // base state
   const {
@@ -41,7 +56,7 @@ export function usePortfolioGrid(
     clonedItems, setClonedItems,
     recentlyMovedToNewZone,
     sectionDropStates, setSectionDropStates,
-  } = useBaseState(sections);
+  } = useBaseState(sections, initialItems, initialItemsData);
 
   // sensors
   const sensors = useDndSensors();
@@ -110,10 +125,29 @@ export function usePortfolioGrid(
     setSections(updatedSections);
     
     // Notify parent component about the section update
-    if (options?.onSectionUpdate) {
-      options.onSectionUpdate(updatedSections);
+    if (onSectionUpdate) {
+      onSectionUpdate(updatedSections);
     }
-  }, [sections, options]);
+  }, [sections, onSectionUpdate]);
+
+  // Call onDataUpdate when sections, items, or itemsData change
+  // TODO: Add debouncing to prevent excessive updates
+  /* useEffect(() => {
+    if (onDataUpdate) {
+      // Convert UniqueIdentifier to string for the callback
+      const stringItems = Object.keys(items).reduce((acc, sectionId) => {
+        acc[sectionId] = (items[sectionId] || []).map(id => String(id));
+        return acc;
+      }, {} as Record<string, string[]>);
+
+      const stringItemsData = Object.keys(itemsData).reduce((acc, id) => {
+        acc[String(id)] = itemsData[id];
+        return acc;
+      }, {} as Record<string, import('../../types/itemDto').PortfolioItem>);
+
+      onDataUpdate(sections, stringItems, stringItemsData);
+    }
+  }, [sections, items, itemsData, onDataUpdate]); */
 
   // overlay renderer
   const dragOverlayRenderer = useCallback(

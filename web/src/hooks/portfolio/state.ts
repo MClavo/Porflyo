@@ -1,14 +1,35 @@
 import type { UniqueIdentifier } from '@dnd-kit/core';
-import { useMemo, useRef, useState } from 'react';
+import { useMemo, useRef, useState, useEffect } from 'react';
 import type { EditorPortfolioItems, EditorPortfolioItemsData } from '../../components/portfolio/dnd/EditorTypes';
 import type { SectionDropStates } from './types';
 
-export function useBaseState(sectionsConfig: { id: string }[]) {
+export function useBaseState(
+  sectionsConfig: { id: string }[],
+  initialItems?: EditorPortfolioItems,
+  initialItemsData?: EditorPortfolioItemsData
+) {
   const [items, setItems] = useState<EditorPortfolioItems>(() =>
-    sectionsConfig.reduce((acc, s) => ({ ...acc, [s.id]: [] }), {} as EditorPortfolioItems)
+    initialItems || sectionsConfig.reduce((acc, s) => ({ ...acc, [s.id]: [] }), {} as EditorPortfolioItems)
   );
 
-  const [itemsData, setItemsData] = useState<EditorPortfolioItemsData>({});
+  const [itemsData, setItemsData] = useState<EditorPortfolioItemsData>(() =>
+    initialItemsData || {}
+  );
+
+  // Update state when initial data changes
+  useEffect(() => {
+    if (initialItems) {
+      console.log('useBaseState - Updating items with initial data:', initialItems);
+      setItems(initialItems);
+    }
+  }, [initialItems]);
+
+  useEffect(() => {
+    if (initialItemsData) {
+      console.log('useBaseState - Updating itemsData with initial data:', initialItemsData);
+      setItemsData(initialItemsData);
+    }
+  }, [initialItemsData]);
   const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
   const [clonedItems, setClonedItems] = useState<EditorPortfolioItems | null>(null);
   const recentlyMovedToNewZone = useRef(false);

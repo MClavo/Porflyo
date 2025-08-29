@@ -62,7 +62,13 @@ public final class DdbPortfolioMapper {
         item.setSections(sections);
 
         item.setModelVersion(portfolio.modelVersion());
-        item.setDesiredSlug(portfolio.reservedSlug().value());
+
+        String slug = "";
+        if (portfolio.reservedSlug() != null){
+            slug = portfolio.reservedSlug().value();
+        }
+
+        item.setDesiredSlug(slug);
         item.setIsPublished(portfolio.isPublished());
 
         return item;
@@ -98,6 +104,11 @@ public final class DdbPortfolioMapper {
             }
         }
 
+        Slug slug = null;
+        if (item.getDesiredSlug() != null && !item.getDesiredSlug().isBlank()) {
+            slug = new Slug(item.getDesiredSlug());
+        }
+
         return new Portfolio(
             new PortfolioId(portfolioId),
             new UserId(userId),
@@ -107,7 +118,7 @@ public final class DdbPortfolioMapper {
             sections,
             media,
             item.getModelVersion(),
-            new Slug(item.getDesiredSlug()),
+            slug,
             item.getIsPublished()
         );
     }
