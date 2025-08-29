@@ -310,33 +310,57 @@ export default function PortfolioEditorPage() {
                 </span>
               </div>
               <div className={`collapsible-content ${isSettingsCollapsed ? 'collapsed' : ''}`}>
-                {/* Template selector */}
-                <div className="form-group">
-                  <label className="form-label">Template</label>
-                  <select value={template} onChange={(e) => setTemplate(e.target.value as TemplateId)} className="form-input">
-                    {listTemplates().map((t: TemplateDefinition) => (
-                      <option key={t.id} value={t.id}>{t.title || t.id}</option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="form-group">
-                  <label className="form-label">Title</label>
-                  <input type="text" value={title} onChange={(e) => handleTitleChange(e.target.value)} className="form-input" />
-                </div>
-
-                <div className="form-group">
-                  <label className="form-label">URL Slug</label>
-                  <div className="flex">
-                    <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">porflyo.com/p/</span>
-                    <input type="text" value={slug} onChange={(e) => handleSlugChange(e.target.value)} className="flex-1 form-input rounded-l-none" />
+                {/* Portfolio Configuration Section */}
+                <div className="settings-section">
+                  <h3 className="section-subtitle">Portfolio Configuration</h3>
+                  
+                  {/* Template selector */}
+                  <div className="form-group">
+                    <label className="form-label">Template</label>
+                    <select value={template} onChange={(e) => setTemplate(e.target.value as TemplateId)} className="form-input">
+                      {listTemplates().map((t: TemplateDefinition) => (
+                        <option key={t.id} value={t.id}>{t.title || t.id}</option>
+                      ))}
+                    </select>
                   </div>
-                  {getSlugStatus() && <div className="text-xs mt-1 text-gray-600">{getSlugStatus()}</div>}
+
+                  <div className="form-group">
+                    <label className="form-label">Title</label>
+                    <input type="text" value={title} onChange={(e) => handleTitleChange(e.target.value)} className="form-input" />
+                  </div>
+
+                  <div className="form-group mt-4">
+                    <button onClick={handleSave} className="btn w-full">Save Portfolio</button>
+                  </div>
                 </div>
 
-                <div className="form-group mt-4">
-                  <button onClick={handleSave} className="btn w-full">Save Portfolio</button>
-                </div>
+                {/* Publication Settings Section - Only show for existing portfolios */}
+                {!isNewPortfolio && (
+                  <div className="settings-section">
+                    <h3 className="section-subtitle">Publication Settings</h3>
+                    
+                    <div className="form-group">
+                      <label className="form-label">Public URL</label>
+                      <div className="flex">
+                        <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">porflyo.com/p/</span>
+                        <input type="text" value={slug} onChange={(e) => handleSlugChange(e.target.value)} className="flex-1 form-input rounded-l-none" />
+                      </div>
+                      {getSlugStatus() && <div className="text-xs mt-1 text-gray-600">{getSlugStatus()}</div>}
+                    </div>
+
+                    <div className="form-group">
+                      <label className="form-label flex items-center">
+                        <input type="checkbox" className="mr-2" defaultChecked={false} disabled />
+                        <span>Make portfolio visible to public</span>
+                      </label>
+                      <div className="text-xs text-gray-500 mt-1">When enabled, your portfolio will be accessible via the public URL</div>
+                    </div>
+
+                    <div className="form-group mt-4">
+                      <button className="btn w-full" disabled>Update Publication Settings</button>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 
