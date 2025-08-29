@@ -34,11 +34,13 @@ public class PortfolioPatchDtoMapper {
         );
     }
 
-    @SuppressWarnings("unchecked")
     private Optional<List<PortfolioSection>> extractOptionalSectionsWithKeysConversion(Map<String, Object> attributes, String key) {
         Object value = attributes.get(key);
         if (value instanceof List) {
-            List<PortfolioSection> sections = (List<PortfolioSection>) value;
+            List<?> rawSections = (List<?>) value;
+            List<PortfolioSection> sections = rawSections.stream()
+                .map(this::convertMapToPortfolioSection)
+                .toList();
             List<PortfolioSection> sectionsWithKeys = convertSectionsUrlsToKeys(sections);
             return Optional.of(sectionsWithKeys);
         }
@@ -51,6 +53,27 @@ public class PortfolioPatchDtoMapper {
         return sections.stream()
                 .map(this::convertSectionUrlsToKeys)
                 .toList();
+    }
+
+    private PortfolioSection convertMapToPortfolioSection(Object sectionObj) {
+        if (sectionObj instanceof PortfolioSection) {
+            // Handle case where we already have a PortfolioSection object (e.g., in tests)
+            return (PortfolioSection) sectionObj;
+        } else if (sectionObj instanceof Map) {
+            // Handle case where we have a Map (e.g., from JSON deserialization)
+            @SuppressWarnings("unchecked")
+            Map<String, Object> sectionMap = (Map<String, Object>) sectionObj;
+            
+            String sectionType = (String) sectionMap.get("sectionType");
+            String title = (String) sectionMap.get("title");
+            String content = (String) sectionMap.get("content");
+            
+            @SuppressWarnings("unchecked")
+            List<String> media = (List<String>) sectionMap.get("media");
+            
+            return new PortfolioSection(sectionType, title, content, media);
+        }
+        throw new IllegalArgumentException("Expected PortfolioSection or Map but got: " + sectionObj.getClass());
     }
 
     private PortfolioSection convertSectionUrlsToKeys(PortfolioSection section) {
