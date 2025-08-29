@@ -75,12 +75,19 @@ public class PortfolioLambdaHandler {
      */
     public APIGatewayV2HTTPResponse handlePortfolioRequest(APIGatewayV2HTTPEvent input) {
         try {
-            // /api/portfolio/{request}
-            String pathRequest = LambdaHttpUtils.extractPathSegment(input, 2).toLowerCase();
-            
+            // /api/portfolio/{portfolioId}
+
+            String httpMethod = LambdaHttpUtils.getMethod(input);
+            String pathRequest = LambdaHttpUtils.extractPathSegment(input, 2);
             UserId userId = getUserIdFromCookie(input);
             String body = input.getBody();
-            String httpMethod = LambdaHttpUtils.getMethod(input);
+            
+            // /api/portfolio/publish/{portfolioId}
+            if (pathRequest.equals("publish") && httpMethod.equals("patch")) {
+                String idString = LambdaHttpUtils.extractPathSegment(input, 3);
+                PortfolioId portfolioId = new PortfolioId(idString);
+                return publishPortfolio(userId, portfolioId, body);
+            }
 
             return processPortfolioRequest(userId, body, pathRequest, httpMethod);
 
@@ -92,51 +99,36 @@ public class PortfolioLambdaHandler {
 
     // ────────────────────────── Gateway ──────────────────────────
 
-    private APIGatewayV2HTTPResponse processPortfolioRequest(UserId userId, String body, String pathRequest, String httpMethod) {
-        log.debug("Handling portfolio request for path: {}, method: {}", pathRequest, httpMethod);
+    private APIGatewayV2HTTPResponse processPortfolioRequest(UserId userId, String body, String portfolioId, String httpMethod) {
+        log.debug("Handling portfolio: {}, method: {}", portfolioId, httpMethod);
 
-        switch (pathRequest) {
-            case "create":
-                return createPortfolio(userId, body);
-
-            case "list":
-                return listPortfolios(userId);
-                
-            default:
-                // Handle portfolio-specific operations: /api/portfolio/{portfolioId}/{action}
-                return handlePortfolioSpecificRequest(userId, body, pathRequest, httpMethod);
-        }
-    }
-
-    private APIGatewayV2HTTPResponse handlePortfolioSpecificRequest(UserId userId, String body, String portfolioId, String httpMethod) {
         try {
-            PortfolioId id = new PortfolioId(portfolioId);
-            
             switch (httpMethod) {
+                case "post":
+                    return createPortfolio(userId, body);
+    
                 case "get":
-                    return getPortfolio(userId, id);
+                    return listPortfolios(userId); 
+                    // return getPortfolio(userId, id);
 
                 case "patch":
-                    return patchPortfolio(userId, id, body);
+                    return patchPortfolio(userId, new PortfolioId(portfolioId), body);
 
                 case "delete":
-                    return deletePortfolio(userId, id);
+                    return deletePortfolio(userId, new PortfolioId(portfolioId));
 
-                case "post":
-                    // Handle publish/unpublish
-                    return publishPortfolio(userId, id, body);
-                    
                 default:
                     log.warn("Unsupported HTTP method: {}", httpMethod);
                     return LambdaHttpUtils.createErrorResponse(405, "Method Not Allowed");
             }
-            
+        
         } catch (IllegalArgumentException e) {
             log.warn("Invalid portfolio ID: {}", portfolioId);
             return LambdaHttpUtils.createErrorResponse(400, "Invalid portfolio ID");
         }
     }
 
+   
     // ────────────────────────── Portfolio Management ────────────────────────── 
 
     /**
@@ -232,9 +224,10 @@ public class PortfolioLambdaHandler {
     private APIGatewayV2HTTPResponse patchPortfolio(UserId userId, PortfolioId portfolioId, String body) {
         try {
             Map<String, Object> attributes = extractAttributesFromBody(body);
-            PortfolioPatchDto patch = portfolioPatchDtoMapper.toPatch(attributes);
+            
+            PortfolioPatchDto dataPatch = portfolioPatchDtoMapper.toPatch(attributes);
 
-            Portfolio portfolio = portfolioService.patchPortfolio(userId, portfolioId, patch);
+            Portfolio portfolio = portfolioService.patchPortfolio(userId, portfolioId, dataPatch);
             PublicPortfolioDto dto = publicPortfolioDtoMapper.toDto(portfolio);
 
             log.debug("Patched portfolio: {} for user: {}, Attributes: {}", portfolioId.value(), userId.value(), attributes);
