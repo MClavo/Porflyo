@@ -36,6 +36,18 @@ export const mapPortfolioItemToSection = (item: PortfolioItem): PortfolioSection
       });
       break;
     
+    case 'textPhoto':
+      content = JSON.stringify({
+        text1: actualItem.text1,
+        text2: actualItem.text2,
+        imageUrl: actualItem.imageUrl,
+      });
+      // Add image URL to media array if it exists
+      if (actualItem.imageUrl) {
+        media.push(actualItem.imageUrl);
+      }
+      break;
+    
     default:
       content = JSON.stringify({});
       break;
@@ -114,6 +126,16 @@ export const mapSectionToPortfolioItem = (
         text2: parsedContent.text2 || '',
       };
     
+    case 'textPhoto':
+      return {
+        id,
+        type: 'textPhoto',
+        sectionType: section.sectionType as SectionType,
+        text1: parsedContent.text1 || '',
+        text2: parsedContent.text2 || '',
+        imageUrl: parsedContent.imageUrl || (section.media && section.media[0]) || '',
+      };
+    
     default:
       // Fallback to text type
       return {
@@ -140,7 +162,7 @@ export const mapPublicSavedSectionToSavedItem = (
     sectionType: 'savedItems',
     savedName: dto.name,
     dbId: dto.id, // Store the database ID for deletion
-    originalItem: originalItem as import('../types/itemDto').TextItem | import('../types/itemDto').CharacterItem | import('../types/itemDto').DoubleTextItem,
+    originalItem: originalItem as import('../types/itemDto').TextItem | import('../types/itemDto').CharacterItem | import('../types/itemDto').DoubleTextItem | import('../types/itemDto').TextPhotoItem,
   };
 };
 
@@ -155,6 +177,8 @@ export const getItemTypeDisplayName = (item: PortfolioItem): string => {
       return 'Carácter';
     case 'doubleText':
       return 'Texto doble';
+    case 'textPhoto':
+      return 'Texto con foto';
     case 'savedItem':
       return 'Item guardado';
     default:
@@ -173,6 +197,8 @@ export const getItemContentPreview = (item: PortfolioItem): string => {
       return item.character || '?';
     case 'doubleText':
       return `${item.text1 || 'Sin título'} / ${item.text2 || 'Sin subtítulo'}`;
+    case 'textPhoto':
+      return `${item.text1 || 'Sin título'} / ${item.text2 || 'Sin descripción'} ${item.imageUrl ? '📷' : ''}`;
     case 'savedItem':
       return item.savedName || 'Item sin nombre';
     default:

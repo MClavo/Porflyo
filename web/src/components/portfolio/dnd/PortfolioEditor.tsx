@@ -66,6 +66,8 @@ export function PortfolioEditor({ templateId = 'template-example' }: { templateI
     pendingSaveItem,
     handleSaveItem,
     handleCancelSave,
+    isUploading,
+    uploadProgress,
     showDeleteDialog,
     pendingDeleteItem,
     handleConfirmDelete,
@@ -130,6 +132,8 @@ export function PortfolioEditor({ templateId = 'template-example' }: { templateI
         onSave={handleSaveItem}
         onCancel={handleCancelSave}
         itemPreview={pendingSaveItem ? getItemPreview(pendingSaveItem.item) : undefined}
+        isUploading={isUploading}
+        uploadProgress={uploadProgress}
       />
 
       <DeleteConfirmDialog

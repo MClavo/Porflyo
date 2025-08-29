@@ -1,5 +1,6 @@
 import React, { useRef, useState, useCallback } from "react";
 import type { EditItemProps } from "../../../types/itemDto";
+import { compressImage, validateImageFile } from "../../../lib/images/compression";
 import "./TextPhotoItem.css";
 
 export function TextPhotoItem({
@@ -18,27 +19,39 @@ export function TextPhotoItem({
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isDragging, setIsDragging] = useState(false);
-
-  const validateImageFile = (file: File): boolean => {
-    const validTypes = ["image/jpeg", "image/jpg", "image/png"];
-    return validTypes.includes(file.type.toLowerCase());
-  };
+  const [isProcessing, setIsProcessing] = useState(false);
 
   const handleFileSelect = useCallback(
-    (file: File) => {
-      if (!validateImageFile(file)) {
-        alert("Please select a valid image file (JPG, JPEG, PNG)");
+    async (file: File) => {
+      // Validate the file first
+      const validation = validateImageFile(file);
+      if (!validation.isValid) {
+        alert(validation.error || "Please select a valid image file");
         return;
       }
 
-      // Create local URL for preview
-      const imageUrl = URL.createObjectURL(file);
-      onItemUpdate?.(id, {
-        type: "textPhoto",
-        text1: title,
-        text2: subtitle,
-        imageUrl,
-      });
+      setIsProcessing(true);
+      try {
+        // Compress the image
+        const compressedFile = await compressImage(file);
+        
+        // Create local URL for preview
+        const imageUrl = URL.createObjectURL(compressedFile);
+        
+        onItemUpdate?.(id, {
+          type: "textPhoto",
+          text1: title,
+          text2: subtitle,
+          imageUrl,
+          // Store the compressed file for later S3 upload
+          imageFile: compressedFile,
+        });
+      } catch (error) {
+        console.error('Image compression failed:', error);
+        alert('Failed to process image. Please try again.');
+      } finally {
+        setIsProcessing(false);
+      }
     },
     [id, title, subtitle, onItemUpdate]
   );
@@ -134,6 +147,12 @@ export function TextPhotoItem({
                   alt="Uploaded content"
                   className="uploaded-image"
                 />
+              ) : isProcessing ? (
+                <div className="upload-placeholder">
+                  <div className="upload-icon">⏳</div>
+                  <div className="upload-text">Processing...</div>
+                  <div className="upload-subtext">Please wait</div>
+                </div>
               ) : (
                 <div className="upload-placeholder">
                   <div className="upload-icon">📷</div>

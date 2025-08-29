@@ -111,7 +111,7 @@ export const uploadProfilePicture = async (
       key: profileImageKey,
       contentType: 'image/webp',
       size: imageBlob.size,
-      md5: '', // Empty MD5 for testing
+      md5: await calculateMD5(imageBlob), // Calculate MD5 for testing
     };
 
     // Get presigned URL

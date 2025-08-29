@@ -6,9 +6,18 @@ interface SaveItemDialogProps {
   onSave: (name: string) => void;
   onCancel: () => void;
   itemPreview?: string;
+  isUploading?: boolean;
+  uploadProgress?: string;
 }
 
-export function SaveItemDialog({ isOpen, onSave, onCancel, itemPreview }: SaveItemDialogProps) {
+export function SaveItemDialog({ 
+  isOpen, 
+  onSave, 
+  onCancel, 
+  itemPreview,
+  isUploading = false,
+  uploadProgress
+}: SaveItemDialogProps) {
   const [itemName, setItemName] = useState('');
 
   if (!isOpen) return null;
@@ -45,6 +54,15 @@ export function SaveItemDialog({ isOpen, onSave, onCancel, itemPreview }: SaveIt
           </div>
         )}
         
+        {isUploading && (
+          <div className="upload-progress">
+            <div className="upload-status">
+              <div className="upload-spinner">⏳</div>
+              <span>{uploadProgress || 'Uploading images...'}</span>
+            </div>
+          </div>
+        )}
+        
         <div className="input-section">
           <label htmlFor="item-name">Name:</label>
           <input
@@ -71,9 +89,9 @@ export function SaveItemDialog({ isOpen, onSave, onCancel, itemPreview }: SaveIt
             type="button" 
             onClick={handleSave}
             className="save-button"
-            disabled={!itemName.trim()}
+            disabled={!itemName.trim() || isUploading}
           >
-            Save
+            {isUploading ? 'Saving...' : 'Save'}
           </button>
         </div>
       </div>

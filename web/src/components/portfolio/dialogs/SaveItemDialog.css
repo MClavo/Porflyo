@@ -49,6 +49,31 @@
   font-size: 14px;
 }
 
+.upload-progress {
+  margin-bottom: 16px;
+  padding: 12px;
+  background-color: #f0f9ff;
+  border: 1px solid #0ea5e9;
+  border-radius: 4px;
+}
+
+.upload-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #0369a1;
+  font-size: 14px;
+}
+
+.upload-spinner {
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
 .input-section {
   margin-bottom: 20px;
 }

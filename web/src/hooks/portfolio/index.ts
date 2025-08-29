@@ -69,6 +69,7 @@ export function usePortfolioGrid(sectionsConfig = PORTFOLIO_SECTIONS as typeof P
   // optimistic saves / deletes & dialogs
   const {
     showSaveDialog, pendingSaveItem, promptSave, handleSaveItem, handleCancelSave,
+    isUploading, uploadProgress,
     showDeleteDialog, pendingDeleteItem, askDelete, handleConfirmDelete, handleCancelDelete,
   } = useOptimisticSaves(
     { items, setItems, itemsData, setItemsData },
@@ -111,6 +112,7 @@ export function usePortfolioGrid(sectionsConfig = PORTFOLIO_SECTIONS as typeof P
   removeItem: (id: UniqueIdentifier) => removeItem(id, askDelete),
     sectionDropStates,
     showSaveDialog, pendingSaveItem, handleSaveItem, handleCancelSave,
+    isUploading, uploadProgress,
     showDeleteDialog, pendingDeleteItem, handleConfirmDelete, handleCancelDelete,
     isLoadingSavedItems: isLoadingSavedItems && !savedItemsLoaded,
   } as const;

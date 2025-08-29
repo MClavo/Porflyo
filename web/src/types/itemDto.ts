@@ -29,6 +29,7 @@ export interface TextPhotoItem extends BaseItem {
   text1: string;
   text2: string;
   imageUrl: string;
+  imageFile?: File; // Temporary storage for compressed file before S3 upload
 }
 
 export interface SavedItem extends BaseItem {

@@ -16,11 +16,11 @@ export interface CompressionOptions {
  * Default compression options for WebP format
  */
 const DEFAULT_OPTIONS: CompressionOptions = {
-  maxSizeMB: 1, // 1MB limit
-  maxWidthOrHeight: 1920, // Max dimension
-  useWebWorker: true, // Use web worker for better performance
-  fileType: 'image/webp', // Convert to WebP
-  quality: 0.8, // 80% quality
+  maxSizeMB: 1,             // 1MB limit
+  maxWidthOrHeight: 1920,   // Max dimension
+  useWebWorker: true,       // Use web worker for better performance
+  fileType: 'image/webp',   // Convert to WebP
+  quality: 0.8, 
 };
 
 /**
@@ -66,9 +66,9 @@ export async function compressAvatarImage(file: File): Promise<File> {
  */
 export async function compressThumbnailImage(file: File): Promise<File> {
   return compressImage(file, {
-    maxSizeMB: 0.3, // 300KB limit for thumbnails
-    maxWidthOrHeight: 400, // 400px max for thumbnails
-    quality: 0.75, // Lower quality acceptable for thumbnails
+    maxSizeMB: 0.3,         // 300KB limit for thumbnails
+    maxWidthOrHeight: 400,  // 400px max for thumbnails
+    quality: 0.75,          // Lower quality acceptable for thumbnails
   });
 }
 
@@ -77,9 +77,9 @@ export async function compressThumbnailImage(file: File): Promise<File> {
  */
 export async function compressBannerImage(file: File): Promise<File> {
   return compressImage(file, {
-    maxSizeMB: 1, // 1MB limit for banners
-    maxWidthOrHeight: 1920, // Full HD width
-    quality: 0.8, // Good quality for banners
+    maxSizeMB: 1,            // 1MB limit for banners
+    maxWidthOrHeight: 1920,  // Full HD width
+    quality: 0.8,            // Good quality for banners
   });
 }
 
