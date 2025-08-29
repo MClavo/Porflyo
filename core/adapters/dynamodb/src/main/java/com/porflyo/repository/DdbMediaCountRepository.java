@@ -61,6 +61,7 @@ public class DdbMediaCountRepository implements MediaCountRepository{
     // ────────────────────────── Save ──────────────────────────
 
     public void save(UserId userId, Map<String, Integer> mediaCount) {
+        log.debug("Compressing media count data for user {}: {}", userId.value(), mediaCount);
         DdbMediaCountItem item = mapper.toItem(userId, mediaCount);
         table.putItem(item);
         log.debug("Saved media count for user: {}", userId.value());

@@ -102,6 +102,9 @@ class SavedSectionLambdaHandlerTest {
         given(jsonMapper.readValue(requestBody, SavedSectionCreateDto.class)).willReturn(createDto);
         given(savedSectionService.create(userId, "My About Section", section)).willReturn(savedSection);
         given(publicSavedSectionDtoMapper.toDto(savedSection)).willReturn(responseDto);
+        // Stub for debug log serialization
+        given(jsonMapper.writeValueAsString(createDto)).willReturn("{\"debug\":\"serialized\"}");
+        // Stub for response serialization  
         given(jsonMapper.writeValueAsString(responseDto)).willReturn("{\"id\":\"section123\"}");
 
         // when

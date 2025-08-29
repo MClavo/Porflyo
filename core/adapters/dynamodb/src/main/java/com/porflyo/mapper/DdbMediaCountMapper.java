@@ -28,10 +28,18 @@ public class DdbMediaCountMapper {
         String PK = pk(USER_PK_PREFIX, userId.value());
         String SK = USER_MEDIA_SK_PREFIX;
 
-        byte[] compressedMediaList = null;
+        // Defensive: filter out null or empty keys before compression
+        Map<String, Integer> filteredMediaCount = mediaCount.entrySet().stream()
+            .filter(entry -> entry.getKey() != null && !entry.getKey().trim().isEmpty())
+            .filter(entry -> entry.getValue() != null && entry.getValue() > 0)
+            .collect(java.util.stream.Collectors.toMap(
+                Map.Entry::getKey,
+                Map.Entry::getValue
+            ));
 
+        byte[] compressedMediaList = null;
         try {
-            compressedMediaList = dataCompressor.compress(mediaCount);
+            compressedMediaList = dataCompressor.compress(filteredMediaCount);
         } catch (Exception e) {
             throw new RuntimeException("Failed to compress media count data", e);
         }

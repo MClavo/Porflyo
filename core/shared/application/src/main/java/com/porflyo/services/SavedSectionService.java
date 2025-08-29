@@ -17,6 +17,7 @@ import jakarta.inject.Singleton;
 
 @Singleton
 public class SavedSectionService implements SavedSectionUseCase {
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(SavedSectionService.class);
 
     private final MediaCountRepository mediaCountRepository;
     private final MediaUseCase mediaUseCase;
@@ -34,7 +35,11 @@ public class SavedSectionService implements SavedSectionUseCase {
     @Override
     public SavedSection create(UserId userId, String name, PortfolioSection section) { 
         List<String> sectionMediaKeys = section.media().stream()
-            .map(mediaUseCase::extractKeyFromUrl).toList(); // Simplified lambda
+            .map(mediaUseCase::extractKeyFromUrl)
+            .filter(key -> key != null && !key.trim().isEmpty()) // Filter out null and empty keys
+            .toList();
+
+        log.debug("Extracted media keys for user {}: {}", userId.value(), sectionMediaKeys);
 
         mediaCountRepository.increment(userId, sectionMediaKeys);
 

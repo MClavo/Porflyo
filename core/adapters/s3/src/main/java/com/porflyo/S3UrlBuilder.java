@@ -1,6 +1,5 @@
 package com.porflyo;
 
-import java.net.URI;
 import java.util.logging.Logger;
 
 import jakarta.inject.Inject;
@@ -54,10 +53,22 @@ public class S3UrlBuilder {
             return null;
 
         try {
-            // Expected format: https://bucket-name.s3.amazonaws.com/key
-            String bucketPrefix = String.format(S3_URL_FORMAT, s3Config.bucketName(), "");
-            if (url.startsWith(bucketPrefix))
-                return url.substring(bucketPrefix.length());
+            String endpoint = s3Config.endpoint().trim();
+            
+            // Handle local development with custom endpoint
+            if (!endpoint.isEmpty()) {
+                // Expected format: http://host.docker.internal:8000/media-test/key
+                String localPrefix = String.format("%s/%s/", endpoint, s3Config.bucketName());
+                if (url.startsWith(localPrefix)) {
+                    return url.substring(localPrefix.length());
+                }
+            } else {
+                // Expected format for production: https://bucket-name.s3.amazonaws.com/key
+                String bucketPrefix = String.format(S3_URL_FORMAT, s3Config.bucketName(), "");
+                if (url.startsWith(bucketPrefix)) {
+                    return url.substring(bucketPrefix.length());
+                }
+            }
 
             return null;
         } catch (Exception e) {

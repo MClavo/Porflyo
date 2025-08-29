@@ -118,7 +118,7 @@ public class SavedSectionLambdaHandler {
     private APIGatewayV2HTTPResponse createSavedSection(UserId userId, String body) {
         try {
             SavedSectionCreateDto createDto = jsonMapper.readValue(body, SavedSectionCreateDto.class);
-            
+            log.debug("SavedSectionCreateDto deserialized: {}", jsonMapper.writeValueAsString(createDto));
             SavedSection savedSection = savedSectionService.create(userId, createDto.name(), createDto.section());
             
             PublicSavedSectionDto dto = publicSavedSectionDtoMapper.toDto(savedSection);
