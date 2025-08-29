@@ -28,7 +28,7 @@ export {
 } from '../hooks/portfolio/useSavedSections';
 
 // Portfolio hooks
-export * from '../features/portfolios/hooks/usePortfolios';
+export * from '../hooks/usePortfolios';
 export * from '../features/portfolios/hooks/useSavedSections';
 export * from '../features/portfolios/hooks/usePublicPortfolio';
 export * from '../features/portfolios/hooks/useMedia';
@@ -36,7 +36,7 @@ export * from '../features/portfolios/hooks/useMedia';
 // API clients (for direct use if needed)
 export * from '../features/user/api/user.api';
 export * from '../features/repos/api/repos.api';
-export * from '../features/portfolios/api/portfolios.api';
+export * from './clients/portfolios.api';
 export * from '../features/portfolios/api/savedSections.api';
 export * from '../features/portfolios/api/public.api';
 export * from '../features/portfolios/api/media.api';

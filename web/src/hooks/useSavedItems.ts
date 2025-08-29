@@ -37,13 +37,11 @@ export function useSavedItems() {
 
   // Refetch when user logs in or when explicitly requested
   const refreshSavedItems = useCallback(() => {
-    console.log('Manually refreshing saved items');
     refetch();
   }, [refetch]);
 
   // Function to manually invalidate and refresh (for login/logout)
   const forceRefreshSavedItems = useCallback(() => {
-    console.log('Force refreshing saved items (login/logout)');
     // This will force a fresh fetch from the server
     refetch();
   }, [refetch]);

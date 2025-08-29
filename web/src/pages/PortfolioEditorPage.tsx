@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState, useRef } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 /* import { useAuthUser } from '../../auth/hooks/useAuthUser'; */
-import { useCreatePortfolio, useGetPortfolio, usePatchPortfolio } from '../features/portfolios/hooks/usePortfolios';
+import { useCreatePortfolio, useGetPortfolio, usePatchPortfolio } from '../api';
 import { useDebouncedSlugAvailability } from '../features/portfolios/hooks/usePublicPortfolio';
 import { toSlug } from '../lib/slug/toSlug';
 //import { TemplateSelector } from '../componentsOld/TemplateSelector';
@@ -169,11 +169,9 @@ export default function PortfolioEditorPage() {
       setSlug(portfolio.reservedSlug || '');
       
       const editorData = transformBackendToEditor(portfolio, tplId);
-      console.log('PortfolioEditorPage - Setting initial editor data for existing portfolio:', editorData);
       setInitialEditorData(editorData);
     } else if (isNewPortfolio) {
       // For new portfolios, don't set initial data so the template sections are used
-      console.log('PortfolioEditorPage - New portfolio, using template sections');
       setInitialEditorData(null);
     }
   }, [portfolio, isNewPortfolio, transformBackendToEditor]);
@@ -188,27 +186,11 @@ export default function PortfolioEditorPage() {
   const createMutation = useCreatePortfolio();
   const patchMutation = usePatchPortfolio();
 
-  // Handle section title updates
-  const handleSectionUpdate = useCallback(async (updatedSections: PortfolioSection[]) => {
-    if (!id || isNewPortfolio) return;
-    
-    try {
-      // Convert to DTO format - the backend expects a flexible structure
-      const sectionsForApi = updatedSections.map(section => ({
-        sectionType: section.type,
-        title: section.title,
-        content: '',  // placeholder
-        media: []     // placeholder
-      }));
-      
-      const patch: PortfolioPatchDto = { 
-        sections: sectionsForApi as import('../types/dto').PortfolioSection[]
-      };
-      await patchMutation.mutateAsync({ id, patch });
-    } catch (err) {
-      console.error('Failed to update section:', err);
-    }
-  }, [id, isNewPortfolio, patchMutation]);
+  // Handle section title updates (only for local state, no auto-save)
+  const handleSectionUpdate = useCallback((updatedSections: PortfolioSection[]) => {
+    // Only update local state, don't auto-save to backend
+    console.log('Section updated locally:', updatedSections);
+  }, []);
 
   const handleTitleChange = (newTitle: string) => { setTitle(newTitle); if (!slug || slug === toSlug(title)) setSlug(toSlug(newTitle)); };
   const handleSlugChange = (newSlug: string) => setSlug(toSlug(newSlug));
