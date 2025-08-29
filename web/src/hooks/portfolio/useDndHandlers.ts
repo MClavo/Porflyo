@@ -89,22 +89,31 @@ export function useDndHandlers(params: {
   }, [findZone, items, itemsData, sectionsConfig, setItems, recentlyMovedToNewZone]);
 
   const handleDragEnd = useCallback(({ active, over }: DragEndEvent) => {
+    console.log('handleDragEnd called with:', { active: active.id, over: over?.id });
+    
     let revert = false;
     const activeZone = findZone(active.id);
     const dragged = itemsData[active.id];
     const overId = over?.id;
 
+    console.log('DragEnd - activeZone:', activeZone, 'dragged:', dragged, 'overId:', overId);
+
     if (activeZone && overId && dragged) {
       const overZone = findZone(overId);
+      console.log('DragEnd - overZone:', overZone);
+      
       if (overZone) {
         const destSection = sectionsConfig.find((s) => s.id === overZone);
         const srcSection = sectionsConfig.find((s) => s.id === activeZone);
         const itemForValidation = dragged.type === 'savedItem' ? dragged.originalItem : dragged;
 
+        console.log('DragEnd - validation:', { destSection: destSection?.id, srcSection: srcSection?.id, itemType: itemForValidation.type });
+
         if (!destSection || !srcSection ||
             (destSection.type !== 'savedItems' &&
              (destSection.type !== itemForValidation.sectionType ||
               !destSection.allowedItemTypes.includes(itemForValidation.type)))) {
+          console.log('DragEnd - REVERTING due to validation failure');
           revert = true;
         }
 

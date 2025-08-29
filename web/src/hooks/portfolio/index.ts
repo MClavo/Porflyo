@@ -1,4 +1,4 @@
-import { useCallback, useState, useEffect } from 'react';
+import { useCallback, useState, useEffect, useRef } from 'react';
 import type { UniqueIdentifier } from '@dnd-kit/core';
 import { useOptimisticSaves } from './useOptimisticSaves';
 import type { ItemCompProps } from './overlay';
@@ -30,6 +30,8 @@ export function usePortfolioGrid(
 ) {
   // Extract callbacks to avoid dependency issues
   const { onSectionUpdate, initialItems, initialItemsData, initialSections } = options || {};
+  const sectionsInitializedRef = useRef(false);
+  
   // server/cache
   const { savedItems, isLoading: isLoadingSavedItems } = useSavedItems();
   const createSavedSectionMutation = useCreateSavedSection();
@@ -40,11 +42,12 @@ export function usePortfolioGrid(
     initialSections && initialSections.length > 0 ? initialSections : sectionsConfig
   );
 
-  // Update sections when initial sections change
+  // Update sections when initial sections change - but only once
   useEffect(() => {
-    if (initialSections && initialSections.length > 0) {
-      console.log('usePortfolioGrid - Updating sections with initial data:', initialSections);
+    if (initialSections && initialSections.length > 0 && !sectionsInitializedRef.current) {
+      console.log('usePortfolioGrid - One-time sections initialization:', initialSections);
       setSections(initialSections);
+      sectionsInitializedRef.current = true;
     }
   }, [initialSections]);
 

@@ -70,9 +70,9 @@ export function PortfolioEditor({
     ? [...initialSections, ...(templateSections.filter(ts => ts.id === 'saved-items'))] // Add only the saved-items section from template
     : templateSections;
 
-  console.log('PortfolioEditor - Initial data:', { initialSections, initialItems, initialItemsData });
-  console.log('PortfolioEditor - Template sections:', templateSections);
-  console.log('PortfolioEditor - Final sections:', finalSections);
+  // console.log('PortfolioEditor - Initial data:', { initialSections, initialItems, initialItemsData });
+  // console.log('PortfolioEditor - Template sections:', templateSections);
+  // console.log('PortfolioEditor - Final sections:', finalSections);
 
   const {
     sections,

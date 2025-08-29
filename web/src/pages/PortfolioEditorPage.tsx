@@ -102,13 +102,13 @@ export default function PortfolioEditorPage() {
       const itemIds: string[] = [];
       if (Array.isArray(sectionItems)) {
         sectionItems.forEach((item, itemIndex) => {
-          const timestamp = Date.now();
-          const itemId = `${sectionId}-item-${timestamp}-${itemIndex}`;
+          // Use simpler, more predictable IDs for DnD compatibility
+          const itemId = `${sectionId}-${itemIndex}`;
           itemIds.push(itemId);
 
           // Create editor item with generated ID
           const editorItem: PortfolioItem = {
-            id: timestamp + itemIndex, // Unique numeric ID based on timestamp
+            id: Date.now() + itemIndex, // Unique numeric ID based on timestamp
             sectionType: 'projects', // Default section type
             type: 'text', // Default type, should be inferred from item data
             text: '',
@@ -116,6 +116,7 @@ export default function PortfolioEditorPage() {
           } as PortfolioItem;
 
           editorItemsData[itemId] = editorItem;
+          console.log(`Generated item: ${itemId}`, editorItem);
         });
       }
 

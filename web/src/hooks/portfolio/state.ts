@@ -8,28 +8,40 @@ export function useBaseState(
   initialItems?: EditorPortfolioItems,
   initialItemsData?: EditorPortfolioItemsData
 ) {
-  const [items, setItems] = useState<EditorPortfolioItems>(() =>
-    initialItems || sectionsConfig.reduce((acc, s) => ({ ...acc, [s.id]: [] }), {} as EditorPortfolioItems)
-  );
+  const hasInitializedRef = useRef(false);
+  
+  const [items, setItems] = useState<EditorPortfolioItems>(() => {
+    // Always ensure all sections are present in items object
+    const allSectionsItems = sectionsConfig.reduce((acc, s) => ({ ...acc, [s.id]: [] }), {} as EditorPortfolioItems);
+    
+    // If we have initial items, merge them with the base structure
+    if (initialItems) {
+      return { ...allSectionsItems, ...initialItems };
+    }
+    
+    return allSectionsItems;
+  });
 
   const [itemsData, setItemsData] = useState<EditorPortfolioItemsData>(() =>
     initialItemsData || {}
   );
 
-  // Update state when initial data changes
+  // Initialize once when initial data becomes available
   useEffect(() => {
-    if (initialItems) {
-      console.log('useBaseState - Updating items with initial data:', initialItems);
-      setItems(initialItems);
-    }
-  }, [initialItems]);
-
-  useEffect(() => {
-    if (initialItemsData) {
-      console.log('useBaseState - Updating itemsData with initial data:', initialItemsData);
+    if (initialItems && initialItemsData && !hasInitializedRef.current) {
+      console.log('useBaseState - One-time initialization with:', { initialItems, initialItemsData });
+      
+      // Ensure all sections are present in the items object
+      const allSectionsItems = sectionsConfig.reduce((acc, s) => ({ ...acc, [s.id]: [] }), {} as EditorPortfolioItems);
+      const mergedItems = { ...allSectionsItems, ...initialItems };
+      
+      setItems(mergedItems);
       setItemsData(initialItemsData);
+      hasInitializedRef.current = true;
+      
+      console.log('useBaseState - Final merged items:', mergedItems);
     }
-  }, [initialItemsData]);
+  }, [initialItems, initialItemsData, sectionsConfig]);
   const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
   const [clonedItems, setClonedItems] = useState<EditorPortfolioItems | null>(null);
   const recentlyMovedToNewZone = useRef(false);
