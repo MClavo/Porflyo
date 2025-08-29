@@ -25,13 +25,21 @@ import { Item } from '../item/Item';
 import { PortfolioLayout } from '../layout/PortfolioLayout';
 import { PortfolioZone } from '../section/PortfolioZone';
 
-export function PortfolioEditor({ templateId = 'template-example' }: { templateId?: string } = {}) {
+export function PortfolioEditor({ 
+  templateId = 'template-example',
+  portfolioId,
+  onSectionUpdate 
+}: { 
+  templateId?: string;
+  portfolioId?: string;
+  onSectionUpdate?: (sections: PortfolioSection[]) => void;
+} = {}) {
   // Load template and merge sections (no savedSections for now)
   const template = getTemplate(templateId);
   const tpl = template ? template : getTemplate('dark');
 
   // Append a saved-items section to the template sections if not present.
-  const sections = tpl.sections.some((s) => s.id === 'saved-items')
+  const templateSections = tpl.sections.some((s) => s.id === 'saved-items')
     ? tpl.sections
     : ([
         ...tpl.sections,
@@ -49,6 +57,7 @@ export function PortfolioEditor({ templateId = 'template-example' }: { templateI
 
 
   const {
+    sections,
     items,
     itemsData,
     sensors,
@@ -72,7 +81,11 @@ export function PortfolioEditor({ templateId = 'template-example' }: { templateI
     pendingDeleteItem,
     handleConfirmDelete,
     handleCancelDelete,
-  } = usePortfolioGrid(sections);
+    onSectionTitleUpdate,
+  } = usePortfolioGrid(templateSections, {
+    portfolioId,
+    onSectionUpdate,
+  });
 
   // Convert UniqueIdentifier -> string for the presentational component.
   const presentationalItems = Object.keys(items).reduce((acc, sectionId) => {
@@ -102,10 +115,11 @@ export function PortfolioEditor({ templateId = 'template-example' }: { templateI
         itemMap={presentationalItems}
         itemDataMap={presentationalItemsData}
         templateId={templateId}
-        siteComponent={tpl ? <tpl.Layout sections={sections} itemMap={{}} itemDataMap={{}} themeClass={tpl.ThemeClass} /> : undefined}
+        siteComponent={tpl ? <tpl.Layout sections={sections} itemMap={{}} itemDataMap={{}} themeClass={tpl.ThemeClass} onSectionTitleUpdate={onSectionTitleUpdate} /> : undefined}
         onItemUpdate={(id, updated) => handleItemUpdate(id, updated as PortfolioItem)}
         onAddItem={(sectionId, itemType) => addItemToSection(sectionId, itemType)}
         onRemove={(id) => removeItem(id as import('@dnd-kit/core').UniqueIdentifier)}
+        onSectionTitleUpdate={onSectionTitleUpdate}
         renderSection={(section) => (
           <PortfolioZone
             section={section}

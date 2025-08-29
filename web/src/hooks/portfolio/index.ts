@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import type { UniqueIdentifier } from '@dnd-kit/core';
 import { useOptimisticSaves } from './useOptimisticSaves';
 import type { ItemCompProps } from './overlay';
@@ -18,11 +18,20 @@ import { DEFAULT_SECTIONS as PORTFOLIO_SECTIONS } from '../../types/sectionDto';
 
 export { dropAnimation };
 
-export function usePortfolioGrid(sectionsConfig = PORTFOLIO_SECTIONS as typeof PORTFOLIO_SECTIONS) {
+export function usePortfolioGrid(
+  sectionsConfig = PORTFOLIO_SECTIONS as typeof PORTFOLIO_SECTIONS,
+  options?: {
+    portfolioId?: string;
+    onSectionUpdate?: (sections: typeof PORTFOLIO_SECTIONS) => void;
+  }
+) {
   // server/cache
   const { savedItems, isLoading: isLoadingSavedItems } = useSavedItems();
   const createSavedSectionMutation = useCreateSavedSection();
   const deleteSavedSectionMutation = useDeleteSavedSection();
+
+  // section state management
+  const [sections, setSections] = useState(sectionsConfig);
 
   // base state
   const {
@@ -32,7 +41,7 @@ export function usePortfolioGrid(sectionsConfig = PORTFOLIO_SECTIONS as typeof P
     clonedItems, setClonedItems,
     recentlyMovedToNewZone,
     sectionDropStates, setSectionDropStates,
-  } = useBaseState(sectionsConfig);
+  } = useBaseState(sections);
 
   // sensors
   const sensors = useDndSensors();
@@ -91,6 +100,21 @@ export function usePortfolioGrid(sectionsConfig = PORTFOLIO_SECTIONS as typeof P
     promptSave,
   });
 
+  // section title update handler
+  const handleSectionTitleUpdate = useCallback((sectionId: string, newTitle: string) => {
+    const updatedSections = sections.map(section => 
+      section.id === sectionId 
+        ? { ...section, title: newTitle }
+        : section
+    );
+    setSections(updatedSections);
+    
+    // Notify parent component about the section update
+    if (options?.onSectionUpdate) {
+      options.onSectionUpdate(updatedSections);
+    }
+  }, [sections, options]);
+
   // overlay renderer
   const dragOverlayRenderer = useCallback(
     (id: UniqueIdentifier, ItemComponent: React.ComponentType<ItemCompProps>) => renderSortableItemDragOverlay(id, itemsData as EditorPortfolioItemsData, ItemComponent),
@@ -98,6 +122,7 @@ export function usePortfolioGrid(sectionsConfig = PORTFOLIO_SECTIONS as typeof P
   );
 
   return {
+    sections,
     items, setItems,
     itemsData, setItemsData,
     addItemToSection,
@@ -109,11 +134,12 @@ export function usePortfolioGrid(sectionsConfig = PORTFOLIO_SECTIONS as typeof P
     activeId,
     renderSortableItemDragOverlay: dragOverlayRenderer,
     handleItemUpdate,
-  removeItem: (id: UniqueIdentifier) => removeItem(id, askDelete),
+    removeItem: (id: UniqueIdentifier) => removeItem(id, askDelete),
     sectionDropStates,
     showSaveDialog, pendingSaveItem, handleSaveItem, handleCancelSave,
     isUploading, uploadProgress,
     showDeleteDialog, pendingDeleteItem, handleConfirmDelete, handleCancelDelete,
     isLoadingSavedItems: isLoadingSavedItems && !savedItemsLoaded,
+    onSectionTitleUpdate: handleSectionTitleUpdate,
   } as const;
 }

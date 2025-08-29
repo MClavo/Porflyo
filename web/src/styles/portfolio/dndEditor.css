@@ -107,11 +107,11 @@
   cursor: grabbing;
 }
 
-.section-title {
+/* .section-title {
   margin: 0;
   font-size: 1.1rem;
   color: #333;
-}
+} */
 
 .section-controls {
   display: flex;

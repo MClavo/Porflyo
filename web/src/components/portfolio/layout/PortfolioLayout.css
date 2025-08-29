@@ -6,9 +6,6 @@
 .portfolio-grid__inner {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 20px;
-  padding: 20px;
-  max-width: 1200px; /* sensible default; templates can override by passing containerStyle or className */
   margin: 0 auto;
 }
 

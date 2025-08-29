@@ -10,7 +10,8 @@ import type { TemplateId } from '../features/portfolios/templates';
 import { DEFAULT_TEMPLATE } from '../features/portfolios/templates';
 import { listTemplates } from '../templates/registry';
 import type { TemplateDefinition } from '../templates/types';
-import type { PortfolioCreateDto, PortfolioPatchDto, PortfolioSection } from '../types/dto';
+import type { PortfolioCreateDto, PortfolioPatchDto } from '../types/dto';
+import type { PortfolioSection } from '../types/sectionDto';
 // import PortfolioEditor from '../components/PortfolioEditor';
 import { PortfolioEditor } from '../components/portfolio/dnd/PortfolioEditor';
 
@@ -108,6 +109,28 @@ export default function PortfolioEditorPage() {
 
   const createMutation = useCreatePortfolio();
   const patchMutation = usePatchPortfolio();
+
+  // Handle section title updates
+  const handleSectionUpdate = useCallback(async (updatedSections: PortfolioSection[]) => {
+    if (!id || isNewPortfolio) return;
+    
+    try {
+      // Convert to DTO format - the backend expects a flexible structure
+      const sectionsForApi = updatedSections.map(section => ({
+        sectionType: section.type,
+        title: section.title,
+        content: '',  // placeholder
+        media: []     // placeholder
+      }));
+      
+      const patch: PortfolioPatchDto = { 
+        sections: sectionsForApi as import('../types/dto').PortfolioSection[]
+      };
+      await patchMutation.mutateAsync({ id, patch });
+    } catch (err) {
+      console.error('Failed to update section:', err);
+    }
+  }, [id, isNewPortfolio, patchMutation]);
 
   const handleTitleChange = (newTitle: string) => { setTitle(newTitle); if (!slug || slug === toSlug(title)) setSlug(toSlug(newTitle)); };
   const handleSlugChange = (newSlug: string) => setSlug(toSlug(newSlug));
@@ -217,7 +240,11 @@ export default function PortfolioEditorPage() {
           </aside>
                 
 
-          <PortfolioEditor templateId={template} />
+          <PortfolioEditor 
+            templateId={template} 
+            portfolioId={id} 
+            onSectionUpdate={handleSectionUpdate}
+          />
           {/* PORTFOLIO EDITOR */}
           {/* <main className="portfolio-main"> */}
             {/* <div className="portfolio-preview">

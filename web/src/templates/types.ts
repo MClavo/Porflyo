@@ -6,6 +6,7 @@ export type TemplateLayoutComponentProps = {
   itemMap: Record<string, string[]>;
   itemDataMap: Record<string, unknown>;
   themeClass?: string;
+  onSectionTitleUpdate?: (sectionId: string, newTitle: string) => void;
   renderItems?: (section: PortfolioSection, items: string[], itemsData: Record<string, unknown>) => React.ReactNode;
 };
 
