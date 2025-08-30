@@ -41,9 +41,6 @@ export default function PortfolioEditorPage() {
   const [normalizedSlugForPublish, setNormalizedSlugForPublish] = useState('');
   const [showPublishDialog, setShowPublishDialog] = useState(false);
 
-  // Track last backend-normalized slug we've applied to avoid repeated auto-updates
-  const lastAppliedBackendSlug = useRef<string | null>(null);
-
   // Reference to get current data from the portfolio editor
   const getCurrentDataRef = useRef<(() => { sections: PortfolioSection[], items: Record<string, string[]>, itemsData: Record<string, PortfolioItem> }) | null>(null);
 
@@ -190,28 +187,21 @@ export default function PortfolioEditorPage() {
 
   //const saved = useMemo(() => savedSections, [savedSections]);
 
-  // slug availability (debounced with 3 second delay)
-  // Disable checking when the current slug equals the last backend-normalized slug we applied
-  const shouldCheckSlug = lastAppliedBackendSlug.current !== slug;
-  const slugQuery = useDebouncedSlugAvailability(slug, shouldCheckSlug, 1000);
+  // slug availability (debounced with 2 second delay)
+  const slugQuery = useDebouncedSlugAvailability(slug, true, 2000);
   const isCheckingSlug = slugQuery.isLoading;
   const availabilityData = slugQuery.data;
 
-  // Apply backend-normalized slug, but only once per backend-provided normalized value
+  // Apply backend-normalized slug when it differs from user input
   useEffect(() => {
     const backendSlug = availabilityData?.slug;
     if (!backendSlug || isCheckingSlug) return;
 
-    // Only apply if backend slug differs from the current input and we haven't applied
-    // this particular backend-normalized slug yet. This ensures a single replacement
-    // so the user can continue editing afterwards without further overwrites.
-    if (backendSlug !== slug && lastAppliedBackendSlug.current !== backendSlug) {
-      lastAppliedBackendSlug.current = backendSlug;
-      setSlug(backendSlug);
-      // Also save the backend-normalized slug for publication (separate from user input)
-      setNormalizedSlugForPublish(backendSlug);
-    }
-  }, [availabilityData?.slug, slug, isCheckingSlug]);
+    // Only update the slug field once when we receive a response from backend
+    // This prevents infinite loops and allows user to continue editing
+    setSlug(backendSlug);
+    setNormalizedSlugForPublish(backendSlug);
+  }, [availabilityData?.slug, isCheckingSlug]);
 
   const createMutation = useCreatePortfolio();
   const patchMutation = usePatchPortfolio();
@@ -280,9 +270,27 @@ export default function PortfolioEditorPage() {
     if (!slug) return null;
     if (isCheckingSlug) return 'Checking...';
     if (slug === portfolio?.reservedSlug) return 'Current slug';
-    if (availabilityData?.available === true) return '✓ Available';
-    if (availabilityData?.available === false) return '✗ Taken';
+    
+    // Only show availability status if we have data for the current slug
+    if (availabilityData && availabilityData.slug === slug) {
+      if (availabilityData.available === true) return '✓ Available';
+      if (availabilityData.available === false) return '✗ Taken';
+    }
+    
     return null;
+  };
+
+  const isSlugAvailable = () => {
+    // If it's the current slug, it's always "available" for this portfolio
+    if (slug === portfolio?.reservedSlug) return true;
+    
+    // If we have availability data for the current slug, use that
+    if (availabilityData && availabilityData.slug === slug) {
+      return availabilityData.available === true;
+    }
+    
+    // If we're checking or don't have data, consider it not available to be safe
+    return false;
   };
 
   // Transform editor data to backend format
@@ -437,9 +445,6 @@ export default function PortfolioEditorPage() {
                         <div className="text-xs text-gray-600">
                           {getSlugStatus()}
                         </div>
-                        <div className="text-xs text-gray-400">
-                          {slug.length}/50
-                        </div>
                       </div>
                     </div>
 
@@ -465,7 +470,7 @@ export default function PortfolioEditorPage() {
                       <button 
                         onClick={handleShowPublishDialog} 
                         className="btn w-full" 
-                        disabled={publishMutation.isPending}
+                        disabled={publishMutation.isPending || !isSlugAvailable()}
                       >
                         {publishMutation.isPending ? 'Updating...' : 'Update Publication Settings'}
                       </button>
