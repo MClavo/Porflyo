@@ -7,7 +7,7 @@ import type { DroppableZoneProps } from '../layout/LayoutTypes';
 import { Container } from './Container';
 import { getMaxItems } from '../../../types/sectionDto';
 
-export function PortfolioZone({ section, items, itemsData, templateId, onItemUpdate, onAddItem, onRemove, onSectionTitleUpdate, dropState }: Omit<DroppableZoneProps, 'children'> & { onAddItem?: (sectionId: string, itemType?: import('../../../types/itemDto').ItemType) => void; onRemove?: (id: string | number) => void; onSectionTitleUpdate?: (sectionId: string, newTitle: string) => void; dropState?: 'allowed' | 'forbidden' | 'none' }) {
+export function PortfolioZone({ section, items, itemsData, templateId, onItemUpdate, onAddItem, onRemove, dropState, readOnly }: Omit<DroppableZoneProps, 'children'> & { onAddItem?: (sectionId: string, itemType?: import('../../../types/itemDto').ItemType) => void; onRemove?: (id: string | number) => void; dropState?: 'allowed' | 'forbidden' | 'none'; readOnly?: boolean }) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const { setNodeRef, /* isOver */ } = useDroppable({
     id: section.id,
@@ -69,11 +69,13 @@ export function PortfolioZone({ section, items, itemsData, templateId, onItemUpd
             templateId={templateId}
             onItemUpdate={onItemUpdate}
             onRemove={onRemove}
+            preview={readOnly}
+            draggable={!readOnly}
           />
         ))}
       </SortableContext>
       {/* Footer add button: centered, does not interfere with the items list */}
-      {!isFull && onAddItem ? (
+  {!isFull && onAddItem && !readOnly ? (
         <div className="zone-add-button-wrapper" role="presentation">
           <div className="zone-add-button-inner">
             <button

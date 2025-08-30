@@ -41,6 +41,7 @@ export function PortfolioItem(
   return (
     <Item
       ref={setNodeRef}
+      readOnly={preview}
       value={
         <ItemRenderer
           id={String(id)}

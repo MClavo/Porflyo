@@ -41,6 +41,7 @@ type Props = {
   siteComponent?: React.ReactNode;
   onAddItem?: (sectionId: string, itemType?: import('../../../types/itemDto').ItemType) => void;
   onRemove?: (id: string | number) => void;
+  readOnly?: boolean;
 };
 
 export function PortfolioLayout({
@@ -49,13 +50,13 @@ export function PortfolioLayout({
   itemDataMap: itemsData,
   templateId,
   onItemUpdate,
-  onSectionTitleUpdate,
   className,
   containerStyle,
   renderSection,
   onAddItem,
   onRemove,
   siteComponent,
+  readOnly,
 }: Props) {
   
   // Reference to the DOM node that wraps the supplied site component.
@@ -117,7 +118,7 @@ export function PortfolioLayout({
       onItemUpdate={onItemUpdate}
       onAddItem={onAddItem}
       onRemove={onRemove}
-      onSectionTitleUpdate={onSectionTitleUpdate}
+      readOnly={readOnly}
     />
   );
 

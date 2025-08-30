@@ -21,6 +21,7 @@ export interface Props {
   transition?: string | null;
   wrapperStyle?: React.CSSProperties;
   value: React.ReactNode;
+  readOnly?: boolean;
   onRemove?(): void;
   renderItem?(args: {
     dragOverlay: boolean;
@@ -58,6 +59,7 @@ export const Item = React.memo(
         transform,
         value,
         wrapperStyle,
+        readOnly,
         ...props
       },
       ref
@@ -98,6 +100,7 @@ export const Item = React.memo(
             ${disabled ? 'is-disabled' : ''} 
             ${fadeIn ? 'fade-in' : ''} 
             ${sorting ? 'is-sorting' : ''}
+            ${readOnly ? 'is-read-only' : ''}
           `.trim()}
           style={
             {

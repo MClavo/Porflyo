@@ -2,6 +2,7 @@ import { useParams } from 'react-router-dom';
 import { useCallback, useEffect, useState } from 'react';
 import { useGetPublicPortfolio } from '../hooks/usePortfolios';
 import { getTemplate } from '../templates/registry';
+import PortfolioLayout from '../components/portfolio/layout/PortfolioLayout';
 import type { PortfolioSection } from '../types/sectionDto';
 import type { PortfolioItem } from '../types/itemDto';
 // Don't import template types from the legacy `features` folder.
@@ -78,14 +79,32 @@ export function PortfolioPublicPage() {
             const itemId = `${templateSection.id}-${itemIndex}`;
             itemIds.push(itemId);
 
-            // Create editor item with generated ID
-            const editorItem: PortfolioItem = {
-              id: Date.now() + itemIndex, // Unique numeric ID based on timestamp
-              sectionType: templateSection.type, // Use template section type
-              type: 'text', // Default type, should be inferred from item data
-              text: '',
-              ...(typeof item === 'object' && item !== null ? item : {})
-            } as PortfolioItem;
+            // Build editor item with generated ID. If backend item is a string,
+            // store it in `text` so TemplateItem (type 'text') can render it.
+            // If it's an object, spread its fields (may include `type`, `text`, etc.).
+            const baseItem: Partial<PortfolioItem> = {
+              id: Date.now() + itemIndex,
+              sectionType: templateSection.type,
+              type: 'text',
+            };
+
+            let editorItem: PortfolioItem;
+            if (typeof item === 'string') {
+              editorItem = {
+                ...(baseItem as PortfolioItem),
+                text: item,
+              } as PortfolioItem;
+            } else if (typeof item === 'object' && item !== null) {
+              editorItem = {
+                ...(baseItem as PortfolioItem),
+                ...(item as Record<string, unknown>),
+              } as PortfolioItem;
+            } else {
+              editorItem = {
+                ...(baseItem as PortfolioItem),
+                text: '',
+              } as PortfolioItem;
+            }
 
             editorItemsData[itemId] = editorItem;
           });
@@ -146,14 +165,16 @@ export function PortfolioPublicPage() {
 
   return (
     <div className="portfolio-public-view">
-      {/* Render the template layout directly without DnD or editing features */}
-        <tpl.Layout
-          sections={sections}
-          itemMap={items}
-          itemDataMap={itemsData}
-          themeClass={tpl.ThemeClass}
-          /* No onSectionTitleUpdate prop for public view -> titles render as static text */
-        />
+      {/* Use the presentational PortfolioLayout (no DnD) and provide the template as siteComponent.
+          This reuses the same rendering path as the editor but without edit handlers so items are immutable. */}
+      <PortfolioLayout
+        sections={sections}
+        itemMap={items}
+        itemDataMap={itemsData}
+        templateId={templateId}
+        siteComponent={tpl ? <tpl.Layout sections={sections} itemMap={{}} itemDataMap={{}} themeClass={tpl.ThemeClass} /> : undefined}
+        readOnly={true}
+      />
     </div>
   );
 }

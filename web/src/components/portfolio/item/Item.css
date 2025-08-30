@@ -88,6 +88,10 @@
     0 1px calc(3px / var(--scale-x, 1)) 0 rgba(34, 33, 81, 0.15);
 }
 
+.portfolio-item.is-read-only {
+  cursor: auto;
+}
+
 .portfolio-item.has-handle {
   cursor: auto;
 }
