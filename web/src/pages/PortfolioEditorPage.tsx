@@ -76,27 +76,6 @@ export default function PortfolioEditorPage() {
     getCurrentDataRef.current = getCurrentData;
   }, []);
 
-  // Draft state: zoned representation
-  //const [draft, setDraft] = useState<PortfolioDraft | null>(null);
-
-  // MVP Zones for the template (temporary implementation)
-  /* const getMvpTemplateZones = useCallback(() => {
-    return [
-      { id: 'profile', label: 'Perfil', zoneType: 'about' as const, allowed: ['about' as const], maxItems: 3, variants: [], defaultVariant: '' },
-      { id: 'projects', label: 'Proyectos', zoneType: 'cards-grid' as const, allowed: ['project' as const], maxItems: 3, variants: [], defaultVariant: '' },
-      { id: 'experience', label: 'Experiencia', zoneType: 'list' as const, allowed: ['skillGroup' as const], maxItems: 3, variants: [], defaultVariant: '' },
-    ];
-  }, []);
-
-  const getMockTemplate = useCallback((templateId: TemplateId) => {
-    return {
-      id: templateId,
-      version: 1,
-      name: templateId,
-      zones: getMvpTemplateZones()
-    };
-  }, [getMvpTemplateZones]); */
-
   // Transform backend data to editor format, using template as base
   const transformBackendToEditor = useCallback((backendPortfolio: typeof portfolio, templateId: TemplateId) => {
     if (!backendPortfolio?.sections) return { sections: [], items: {}, itemsData: {} };
@@ -239,7 +218,13 @@ export default function PortfolioEditorPage() {
     // Only update local state, don't auto-save to backend
   }, []);
 
-  const handleTitleChange = (newTitle: string) => { setTitle(newTitle); if (!slug || slug === toSlug(title)) setSlug(toSlug(newTitle)); };
+  const handleTitleChange = (newTitle: string) => { 
+    setTitle(newTitle); 
+    // Only auto-generate slug if it's completely empty (new portfolio)
+    if (!slug) {
+      setSlug(toSlug(newTitle)); 
+    }
+  };
   const handleSlugChange = (newSlug: string) => {
     // Limit to 50 characters and convert spaces to hyphens for better UX
     const limitedSlug = newSlug.slice(0, 50);
