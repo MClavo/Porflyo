@@ -1,13 +1,9 @@
 package com.porflyo.mapper;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
+import com.porflyo.dto.GithubUserResponseDto;
 import com.porflyo.model.ids.ProviderUserId;
 import com.porflyo.model.provider.ProviderRepo;
 import com.porflyo.model.provider.ProviderUser;
-import com.porflyo.dto.GithubRepoResponseDto;
-import com.porflyo.dto.GithubUserResponseDto;
 
 
 /**
@@ -33,31 +29,5 @@ public class GithubDtoMapper {
             dto.email(),
             dto.avatar_url()
         );
-    }
-
-    /**
-     * Maps a {@link GithubRepoResponseDto} object to a {@link ProviderRepo} domain model.
-     *
-     * @param dto the GitHub repository response DTO
-     * @return the corresponding GitHub repository domain model
-     */
-    public static ProviderRepo toDomain(GithubRepoResponseDto dto) {
-        return new ProviderRepo(
-            dto.name(),
-            dto.description(),
-            dto.html_url()
-        );
-    }
-
-    /**
-     * Maps an array of {@link GithubRepoResponseDto} objects to a list of {@link ProviderRepo} domain models.
-     *
-     * @param dtoArray the array of GitHub repository response DTOs
-     * @return the corresponding list of GitHub repository domain models
-     */
-    public static List<ProviderRepo> toDomainList(GithubRepoResponseDto[] dtoArray) {
-        return List.of(dtoArray).stream()
-                .map(GithubDtoMapper::toDomain)
-                .collect(Collectors.toList());
     }
 }

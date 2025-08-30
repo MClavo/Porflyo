@@ -16,7 +16,6 @@ import org.slf4j.LoggerFactory;
 import com.porflyo.configuration.GithubConfig;
 import com.porflyo.configuration.ProviderOAuthConfig;
 import com.porflyo.dto.GithubAccessTokenResponseDto;
-import com.porflyo.dto.GithubRepoResponseDto;
 import com.porflyo.dto.GithubUserResponseDto;
 import com.porflyo.exception.GithubApiException;
 import com.porflyo.exception.GithubAuthenticationException;
@@ -27,8 +26,8 @@ import com.porflyo.model.provider.ProviderRepo;
 import com.porflyo.model.provider.ProviderUser;
 import com.porflyo.ports.output.ProviderPort;
 
-import io.micronaut.retry.annotation.Retryable;
 import io.micronaut.json.JsonMapper;
+import io.micronaut.retry.annotation.Retryable;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 
@@ -151,10 +150,10 @@ public class GithubAdapter implements ProviderPort {
         log.debug("Fetching user repositories from GitHub API using native HTTP client");
         try {
             HttpRequest request = buildGetRequest(REPOS_URL, accessToken);
-            GithubRepoResponseDto[] dtoArray = send(request, GithubRepoResponseDto[].class);
+            ProviderRepo[] providerRepoArray = send(request, ProviderRepo[].class);
 
-            log.debug("Successfully fetched {} repositories", dtoArray.length);
-            return GithubDtoMapper.toDomainList(dtoArray);
+            log.debug("Successfully fetched {} repositories", providerRepoArray.length);
+            return List.of(providerRepoArray);
 
         } catch (GithubApiException | GithubAuthenticationException e) {
             // Re-throw specific exceptions without wrapping

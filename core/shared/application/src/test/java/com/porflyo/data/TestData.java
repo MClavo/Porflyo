@@ -83,13 +83,23 @@ public final class TestData {
     public static final ProviderRepo REPO_1 = new ProviderRepo(
         "project-alpha",
         "My first repo",
-        "https://github.com/testuser/project-alpha"
+        "https://github.com/testuser/project-alpha",
+        null,
+        null,
+        0,
+        0,
+        null
     );
 
     public static final ProviderRepo REPO_2 = new ProviderRepo(
         "project-beta",
         "Second repo",
-        "https://github.com/testuser/project-beta"
+        "https://github.com/testuser/project-beta",
+        null,
+        null,
+        0,
+        0,
+        null
     );
 
     public static final List<ProviderRepo> DEFAULT_REPOS = List.of(REPO_1, REPO_2);
