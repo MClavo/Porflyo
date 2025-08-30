@@ -4,6 +4,11 @@ import java.util.List;
 
 import com.porflyo.model.portfolio.PortfolioSection;
 
+import io.micronaut.core.annotation.Introspected;
+import io.micronaut.serde.annotation.Serdeable;
+
+@Serdeable
+@Introspected
 public record PublicPortfolioView(
     String portfolioId,             // Used for Metrics
     String template,

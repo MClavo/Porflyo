@@ -28,6 +28,13 @@ public class PublicPortfolioQueryService implements PublicPortfolioQueryUseCase 
         this.portfolioRepository = portfolioRepository;
     }
 
+
+    @Override
+    public boolean isUrlAvailable(Slug slugUrl) {
+        Optional<PortfolioUrl> fetchedUrl = urlRepository.findBySlug(slugUrl);
+        return fetchedUrl.isEmpty();
+    }
+
     @Override
     public Optional<PublicPortfolioView> getPublishedByUrl(Slug slugUrl) {
         Optional<PortfolioUrl> fetchedUrl = urlRepository.findBySlug(slugUrl);
@@ -58,15 +65,13 @@ public class PublicPortfolioQueryService implements PublicPortfolioQueryUseCase 
     }
 
     private PublicPortfolioView toPublicPortfolioView(Portfolio portfolio) {
-    return new PublicPortfolioView(
-            portfolio.id().value(),
-            portfolio.template(),
-            portfolio.title(),
-            portfolio.description(),
-            portfolio.sections()
-    );
-}
-
-
+        return new PublicPortfolioView(
+                portfolio.id().value(),
+                portfolio.template(),
+                portfolio.title(),
+                portfolio.description(),
+                portfolio.sections()
+        );
+    }
 }
 

@@ -205,7 +205,30 @@ public class DdbPortfolioUrlRepository implements PortfolioUrlRepository {
         UserId userId,
         PortfolioId portfolioId,
         boolean isPublic) {
-        
+        // Put new mapping with uniqueness condition (always needed)
+        Map<String, AttributeValue> putItem = Map.of(
+            "PK", AttributeValue.fromS(pk(SLUG_PK_PREFIX, newSlug.value())),
+            "SK", AttributeValue.fromS(SLUG_PORTFOLIO_SK_PREFIX),
+            "userId", AttributeValue.fromS(userId.value()),
+            "portfolioId", AttributeValue.fromS(portfolioId.value()),
+            "isPublic", AttributeValue.fromBool(isPublic)
+        );
+
+        Put putNew = Put.builder()
+            .tableName(tableName)
+            .item(putItem)
+            .conditionExpression("attribute_not_exists(PK)")
+            .build();
+
+        // If there is no old slug (first time assignment), we only need to put the new mapping
+        if (oldSlug == null) {
+            return TransactWriteItemsRequest.builder()
+                .transactItems(
+                    TransactWriteItem.builder().put(putNew).build()
+                )
+                .build();
+        }
+
         // Delete old mapping with condition (defensive: ensure user/portfolio match)
         Map<String, AttributeValue> deleteKey = Map.of(
             "PK", AttributeValue.fromS(pk(SLUG_PK_PREFIX, oldSlug.value())),
@@ -224,28 +247,13 @@ public class DdbPortfolioUrlRepository implements PortfolioUrlRepository {
             .expressionAttributeValues(deleteCondValues)
             .build();
 
-        // Put new mapping with uniqueness condition
-        Map<String, AttributeValue> putItem = Map.of(
-            "PK", AttributeValue.fromS(pk(SLUG_PK_PREFIX, newSlug.value())),
-            "SK", AttributeValue.fromS(SLUG_PORTFOLIO_SK_PREFIX),
-            "userId", AttributeValue.fromS(userId.value()),
-            "portfolioId", AttributeValue.fromS(portfolioId.value()),
-            "isPublic", AttributeValue.fromBool(isPublic)
-        );
-
-        Put putNew = Put.builder()
-            .tableName(tableName)
-            .item(putItem)
-            .conditionExpression("attribute_not_exists(PK)")
-            .build();
-
         // Transactional write for atomicity, ensure both operations succeed or fail together
         return TransactWriteItemsRequest.builder()
             .transactItems(
                 TransactWriteItem.builder().delete(deleteOld).build(),
                 TransactWriteItem.builder().put(putNew).build()
             )
-            .build();       
+            .build();
     }
 
     private RuntimeException mapSlugChangeException(TransactionCanceledException e, Slug oldSlug, Slug newSlug) {

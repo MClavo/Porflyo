@@ -85,7 +85,7 @@ public class ApiLambdaEntrypoint extends MicronautRequestHandler<APIGatewayV2HTT
                 return apiHandler(path, input);
             
             case "public":
-                return publicHandler(path, input);
+                return publicPortfolioLambdaHandler.handlePublicPortfolioRequest(input);
             
             /* case "logout":
                 return authLambdaHandler.handleLogout(input); */
@@ -127,20 +127,4 @@ public class ApiLambdaEntrypoint extends MicronautRequestHandler<APIGatewayV2HTT
                 return LambdaHttpUtils.createErrorResponse(404, "Not Found");
         }
     }
-
-    //  ────────────────────────── PUBLIC ──────────────────────────
-    
-    private APIGatewayV2HTTPResponse publicHandler(String path, APIGatewayV2HTTPEvent input) {
-        // Extract the route from the path
-        String route = LambdaHttpUtils.extractPathSegment(input, 1); // Extracts {segment} of /public/{segment}/whatever
-
-        switch (route.toLowerCase()) {
-            case "portfolio":
-                return publicPortfolioLambdaHandler.handlePublicPortfolioRequest(input);
-
-            default:
-                return LambdaHttpUtils.createErrorResponse(404, "Not Found");
-        }
-    }
-
 }
