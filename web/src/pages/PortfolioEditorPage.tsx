@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useState, useRef } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { useQueryClient } from '@tanstack/react-query';
 /* import { useAuthUser } from '../../auth/hooks/useAuthUser'; */
-import { useCreatePortfolio, useGetPortfolio, usePatchPortfolio } from '../api';
-import { useDebouncedSlugAvailability } from '../features/portfolios/hooks/usePublicPortfolio';
+import { useCreatePortfolio, useGetPortfolio, usePatchPortfolio, usePublishPortfolio, portfolioKeys } from '../api';
+import { useDebouncedSlugAvailability } from '../hooks/usePublicPortfolio';
 import { toSlug } from '../lib/slug/toSlug';
 //import { TemplateSelector } from '../componentsOld/TemplateSelector';
 import type { TemplateId } from '../features/portfolios/templates';
@@ -20,6 +21,7 @@ export default function PortfolioEditorPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const location = useLocation();
+  const queryClient = useQueryClient();
   
   // Check if we're on the "new" route by looking at the current path
   const isNewPortfolio = location.pathname.endsWith('/new');
@@ -33,6 +35,14 @@ export default function PortfolioEditorPage() {
   const [slug, setSlug] = useState('');
   const [isSettingsCollapsed, setIsSettingsCollapsed] = useState(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+
+  // Publication state
+  const [isPublished, setIsPublished] = useState(false);
+  const [normalizedSlugForPublish, setNormalizedSlugForPublish] = useState('');
+  const [showPublishDialog, setShowPublishDialog] = useState(false);
+
+  // Track last backend-normalized slug we've applied to avoid repeated auto-updates
+  const lastAppliedBackendSlug = useRef<string | null>(null);
 
   // Reference to get current data from the portfolio editor
   const getCurrentDataRef = useRef<(() => { sections: PortfolioSection[], items: Record<string, string[]>, itemsData: Record<string, PortfolioItem> }) | null>(null);
@@ -167,6 +177,8 @@ export default function PortfolioEditorPage() {
       setTemplate(tplId);
       setTitle(portfolio.title || '');
       setSlug(portfolio.reservedSlug || '');
+      setIsPublished(portfolio.isPublished || false);
+      setNormalizedSlugForPublish(portfolio.reservedSlug || '');
       
       const editorData = transformBackendToEditor(portfolio, tplId);
       setInitialEditorData(editorData);
@@ -178,29 +190,98 @@ export default function PortfolioEditorPage() {
 
   //const saved = useMemo(() => savedSections, [savedSections]);
 
-  // slug availability (debounced)
-  const slugQuery = useDebouncedSlugAvailability(slug);
+  // slug availability (debounced with 3 second delay)
+  // Disable checking when the current slug equals the last backend-normalized slug we applied
+  const shouldCheckSlug = lastAppliedBackendSlug.current !== slug;
+  const slugQuery = useDebouncedSlugAvailability(slug, shouldCheckSlug, 1000);
   const isCheckingSlug = slugQuery.isLoading;
-  const isSlugAvailable = slugQuery.data;
+  const availabilityData = slugQuery.data;
+
+  // Apply backend-normalized slug, but only once per backend-provided normalized value
+  useEffect(() => {
+    const backendSlug = availabilityData?.slug;
+    if (!backendSlug || isCheckingSlug) return;
+
+    // Only apply if backend slug differs from the current input and we haven't applied
+    // this particular backend-normalized slug yet. This ensures a single replacement
+    // so the user can continue editing afterwards without further overwrites.
+    if (backendSlug !== slug && lastAppliedBackendSlug.current !== backendSlug) {
+      lastAppliedBackendSlug.current = backendSlug;
+      setSlug(backendSlug);
+      // Also save the backend-normalized slug for publication (separate from user input)
+      setNormalizedSlugForPublish(backendSlug);
+    }
+  }, [availabilityData?.slug, slug, isCheckingSlug]);
 
   const createMutation = useCreatePortfolio();
   const patchMutation = usePatchPortfolio();
+  const publishMutation = usePublishPortfolio();
 
   // Handle section title updates (only for local state, no auto-save)
-  const handleSectionUpdate = useCallback((updatedSections: PortfolioSection[]) => {
+  const handleSectionUpdate = useCallback(() => {
     // Only update local state, don't auto-save to backend
-    console.log('Section updated locally:', updatedSections);
   }, []);
 
   const handleTitleChange = (newTitle: string) => { setTitle(newTitle); if (!slug || slug === toSlug(title)) setSlug(toSlug(newTitle)); };
-  const handleSlugChange = (newSlug: string) => setSlug(toSlug(newSlug));
+  const handleSlugChange = (newSlug: string) => {
+    // Limit to 50 characters and convert spaces to hyphens for better UX
+    const limitedSlug = newSlug.slice(0, 50);
+    // Convert spaces to hyphens in real-time for better user experience
+    const slugWithHyphens = limitedSlug.replace(/\s+/g, '-');
+    setSlug(slugWithHyphens);
+  };
+
+  const handleTogglePublished = () => {
+    setIsPublished(!isPublished);
+  };
+
+  const handleShowPublishDialog = () => {
+    setShowPublishDialog(true);
+  };
+
+  const handleCancelPublish = () => {
+    setShowPublishDialog(false);
+  };
+
+  const handleConfirmPublish = async () => {
+    if (!id || !portfolio) return;
+    
+    setShowPublishDialog(false);
+    
+    // Use the normalized slug from backend for publication
+    const publishDto = {
+      url: normalizedSlugForPublish || slug,
+      published: isPublished
+    };
+    
+    try {
+      const updatedPortfolio = await publishMutation.mutateAsync({ id, body: publishDto });
+      
+      // Update the portfolio in React Query cache to trigger re-render
+      queryClient.setQueryData(portfolioKeys.detail(id), updatedPortfolio);
+      
+      // Update local states from response
+      setIsPublished(updatedPortfolio.isPublished || false);
+      setNormalizedSlugForPublish(updatedPortfolio.reservedSlug || '');
+      setTitle(updatedPortfolio.title || '');
+      setSlug(updatedPortfolio.reservedSlug || '');
+      
+      // Re-transform the updated portfolio data for editor
+      const tplId = (updatedPortfolio.template as TemplateId) || DEFAULT_TEMPLATE;
+      const editorData = transformBackendToEditor(updatedPortfolio, tplId);
+      setInitialEditorData(editorData);
+      
+    } catch (err) {
+      console.error('Failed to update publication settings:', err);
+    }
+  };
 
   const getSlugStatus = () => {
     if (!slug) return null;
     if (isCheckingSlug) return 'Checking...';
     if (slug === portfolio?.reservedSlug) return 'Current slug';
-    if (isSlugAvailable === true) return '✓ Available';
-    if (isSlugAvailable === false) return '✗ Taken';
+    if (availabilityData?.available === true) return '✓ Available';
+    if (availabilityData?.available === false) return '✗ Taken';
     return null;
   };
 
@@ -343,21 +424,51 @@ export default function PortfolioEditorPage() {
                       <label className="form-label">Public URL</label>
                       <div className="flex">
                         <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">porflyo.com/p/</span>
-                        <input type="text" value={slug} onChange={(e) => handleSlugChange(e.target.value)} className="flex-1 form-input rounded-l-none" />
+                        <input 
+                          type="text" 
+                          value={slug} 
+                          onChange={(e) => handleSlugChange(e.target.value)} 
+                          className="flex-1 form-input rounded-l-none" 
+                          maxLength={50}
+                          placeholder="my-portfolio"
+                        />
                       </div>
-                      {getSlugStatus() && <div className="text-xs mt-1 text-gray-600">{getSlugStatus()}</div>}
+                      <div className="flex justify-between items-center mt-1">
+                        <div className="text-xs text-gray-600">
+                          {getSlugStatus()}
+                        </div>
+                        <div className="text-xs text-gray-400">
+                          {slug.length}/50
+                        </div>
+                      </div>
                     </div>
 
                     <div className="form-group">
-                      <label className="form-label flex items-center">
-                        <input type="checkbox" className="mr-2" defaultChecked={false} disabled />
+                      <label className="form-label flex items-center justify-between">
                         <span>Make portfolio visible to public</span>
+                        <button
+                          type="button"
+                          onClick={handleTogglePublished}
+                          className="ml-2 focus:outline-none"
+                        >
+                          {isPublished ? (
+                            <span className="text-green-600 text-lg font-bold">✓</span>
+                          ) : (
+                            <span className="text-red-600 text-lg font-bold">✗</span>
+                          )}
+                        </button>
                       </label>
                       <div className="text-xs text-gray-500 mt-1">When enabled, your portfolio will be accessible via the public URL</div>
                     </div>
 
                     <div className="form-group mt-4">
-                      <button className="btn w-full" disabled>Update Publication Settings</button>
+                      <button 
+                        onClick={handleShowPublishDialog} 
+                        className="btn w-full" 
+                        disabled={publishMutation.isPending}
+                      >
+                        {publishMutation.isPending ? 'Updating...' : 'Update Publication Settings'}
+                      </button>
                     </div>
                   </div>
                 )}
@@ -393,6 +504,36 @@ export default function PortfolioEditorPage() {
 
             </div> */}
           {/* </main> */}
+
+          {/* Publication Confirmation Dialog */}
+          {showPublishDialog && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+              <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full mx-4">
+                <h3 className="text-lg font-semibold mb-4">Confirm Publication Settings</h3>
+                <p className="text-gray-600 mb-6">
+                  ⚠️ Make sure to <strong>save your portfolio changes</strong> first, or they will be lost when updating publication settings.
+                </p>
+                <p className="text-sm text-gray-500 mb-6">
+                  This will update the portfolio data in memory with the latest version from the server.
+                </p>
+                <div className="flex space-x-3">
+                  <button
+                    onClick={handleCancelPublish}
+                    className="flex-1 px-4 py-2 text-gray-700 bg-gray-200 rounded hover:bg-gray-300 transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleConfirmPublish}
+                    className="flex-1 px-4 py-2 text-white bg-blue-600 rounded hover:bg-blue-700 transition-colors"
+                    disabled={publishMutation.isPending}
+                  >
+                    {publishMutation.isPending ? 'Updating...' : 'Continue'}
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
   );
 }

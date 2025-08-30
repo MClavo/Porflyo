@@ -4,6 +4,14 @@
  */
 
 /**
+ * Mirrors AvailabilityResponseDto.java
+ */
+export interface AvailabilityResponseDto {
+  available: boolean;
+  slug: string;
+}
+
+/**
  * Mirrors PublicUserDto.java
  */
 export interface PublicUserDto {

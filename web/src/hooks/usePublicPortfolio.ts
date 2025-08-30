@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
-import { getPublicPortfolioView, isSlugAvailable } from '../api/public.api';
+import { getPublicPortfolioView, isSlugAvailable } from '../api/clients/public.api';
+import type { AvailabilityResponseDto } from '../types/dto';
 
 /**
  * TanStack Query hooks for public portfolio API
@@ -36,7 +37,7 @@ export function useGetPublicPortfolioView(slug: string) {
  * Check slug availability (not debounced)
  */
 export function useIsSlugAvailable(slug: string, enabled: boolean = true) {
-  return useQuery({
+  return useQuery<AvailabilityResponseDto>({
     queryKey: publicPortfolioKeys.slugCheck(slug),
     queryFn: () => isSlugAvailable(slug),
     enabled: enabled && !!slug && slug.length > 0,

@@ -8,6 +8,7 @@ import { Layout } from './components/layout/Layout';
 //import { createPortfolio } from './features/portfolios/api/portfolios.api';
 //import { PortfolioEditorPage } from './routes/pages/PortfolioEditorPage';
 import PortfolioEditorPage from './pages/PortfolioEditorPage';
+import { PortfolioPublicPage } from './pages/PortfolioPublicPage';
 
 const queryClient = new QueryClient();
 
@@ -19,6 +20,7 @@ function App() {
           <Routes>
             {/* Public routes */}
             <Route path="/" element={<Root />} />
+            <Route path="/p/:slug" element={<PortfolioPublicPage />} />
 
             {/* Authenticated routes */}
             <Route path="/home" element={<HomePage />} />

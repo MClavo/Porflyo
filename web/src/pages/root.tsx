@@ -1,6 +1,14 @@
-import { LoginButton } from '../features/auth/components/LoginButton';
 import { Navigate } from 'react-router-dom';
+import { LoginButton } from '../features/auth/components/LoginButton';
 import { useAuthUser } from '../features/auth/hooks/useAuthUser';
+import './keycaps.css';
+import { GlassKeycapButton } from './keycap/GlassKeycapButton';
+import { DndContext, closestCenter, DragOverlay } from '@dnd-kit/core';
+import { SortableContext, arrayMove } from '@dnd-kit/sortable';
+import { useState } from 'react';
+import type { DragEndEvent, DragStartEvent } from '@dnd-kit/core';
+import { useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 
 /**
  * Root page (unauthenticated) — moved from HomePage
@@ -8,13 +16,77 @@ import { useAuthUser } from '../features/auth/hooks/useAuthUser';
 export default function Root() {
   const { isAuthenticated } = useAuthUser();
 
+  // State to manage the order of keycaps
+  const [keycaps, setKeycaps] = useState([
+    { id: 'P', glyph: 'P' },
+    { id: 'O', glyph: 'O' },
+    { id: 'R', glyph: 'R' },
+    { id: 'F', glyph: 'F' },
+    { id: 'L', glyph: 'L' },
+    { id: 'Y', glyph: 'Y' },
+    { id: 'O2', glyph: 'O' },
+  ]);
+
+  // activeId for DragOverlay
+  const [activeId, setActiveId] = useState<string | null>(null);
+
+  const handleDragStart = (event: DragStartEvent) => {
+    setActiveId(String(event.active.id));
+  };
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (active && over && active.id !== over.id) {
+      setKeycaps((items) => {
+        const oldIndex = items.findIndex((item) => item.id === active.id);
+        const newIndex = items.findIndex((item) => item.id === over.id);
+        return arrayMove(items, oldIndex, newIndex);
+      });
+    }
+
+    // clear overlay at the end of drag so the moved element reappears in its new place
+    setActiveId(null);
+  };
+
+  function SortableKeycap({ id, glyph, size }: { id: string; glyph: string; size: number }) {
+    const {
+      attributes,
+      listeners,
+      setNodeRef,
+      transform,
+      transition,
+      isDragging,
+    } = useSortable({ id });
+
+    const style = {
+      transform: CSS.Transform.toString(transform),
+      transition,
+      visibility: isDragging ? 'hidden' as const : undefined,
+    };
+
+    return (
+      <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
+        <GlassKeycapButton glyph={glyph} aria-label={`${glyph} key`} size={size} />
+      </div>
+    );
+  }
+
   // If already authenticated, send the user to the authenticated home dashboard
   if (isAuthenticated) {
     return <Navigate to="/home" replace />;
   }
 
   return (
-    <div className="app-container">
+    <div
+      className="app-container"
+      style={{
+        backgroundImage: "url('https://images.unsplash.com/photo-1584968143694-8fa8bbde5247?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+      }}
+    >
       {/* Hero Section */}
       <div className="main-content">
         <div className="text-center">
@@ -35,38 +107,22 @@ export default function Root() {
             </LoginButton>
           </div>
 
-          {/* Features */}
-          <div className="repo-grid mt-4">
-            <div className="card">
-              <div style={{ width: '3rem', height: '3rem', background: 'var(--surface)', borderRadius: 'var(--radius)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1rem auto' }}>
-                <svg style={{ width: '1.5rem', height: '1.5rem', color: 'var(--primary-color)' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                </svg>
-              </div>
-              <h3 className="card-title text-center">Multiple Templates</h3>
-              <p className="card-description text-center">Choose from professional templates including ATS-optimized formats for job applications.</p>
-            </div>
-
-            <div className="card">
-              <div style={{ width: '3rem', height: '3rem', background: 'var(--surface)', borderRadius: 'var(--radius)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1rem auto' }}>
-                <svg style={{ width: '1.5rem', height: '1.5rem', color: 'var(--primary-color)' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
-                </svg>
-              </div>
-              <h3 className="card-title text-center">GitHub Integration</h3>
-              <p className="card-description text-center">Automatically sync your repositories and showcase your development projects.</p>
-            </div>
-
-            <div className="card">
-              <div style={{ width: '3rem', height: '3rem', background: 'var(--surface)', borderRadius: 'var(--radius)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1rem auto' }}>
-                <svg style={{ width: '1.5rem', height: '1.5rem', color: 'var(--success)' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9v-9m0-9v9" />
-                </svg>
-              </div>
-              <h3 className="card-title text-center">Public URLs</h3>
-              <p className="card-description text-center">Share your portfolio with custom URLs that look professional and are easy to remember.</p>
-            </div>
-          </div>
+          {/* Keycaps with DnD */}
+          <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd} onDragStart={handleDragStart} onDragCancel={() => setActiveId(null)}>
+             <SortableContext items={keycaps.map((keycap) => keycap.id)}>
+               <div className="keycaps">
+                 {keycaps.map(({ id, glyph }) => (
+                   <SortableKeycap key={id} id={id} glyph={glyph} size={120} />
+                 ))}
+               </div>
+             </SortableContext>
+            <DragOverlay dropAnimation={{ duration: 160, easing: 'cubic-bezier(0.2, 0, 0, 1)' }}>
+              {activeId ? (() => {
+                const item = keycaps.find(k => k.id === activeId);
+                return item ? <GlassKeycapButton glyph={item.glyph} size={120} /> : null;
+              })() : null}
+            </DragOverlay>
+           </DndContext>
         </div>
       </div>
 

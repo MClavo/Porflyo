@@ -1,4 +1,4 @@
-import { apiGet, apiPost, apiPatch, apiDelete } from '../../lib/http/apiClient';
+import { apiGet, apiPost, apiPatch, apiDelete, publicGet } from '../../lib/http/apiClient';
 import type { 
   PortfolioCreateDto, 
   PublicPortfolioDto, 
@@ -51,4 +51,11 @@ export function deletePortfolio(id: string): Promise<void> {
  */
 export function publishPortfolio(id: string, body: PortfolioPublishDto): Promise<PublicPortfolioDto> {
   return apiPatch<PublicPortfolioDto>(`/portfolios/publish/${id}`, body);
+}
+
+/**
+ * Get public portfolio by slug
+ */
+export function getPublicPortfolio(slug: string): Promise<PublicPortfolioDto> {
+  return publicGet<PublicPortfolioDto>(`/public/portfolio/${slug}`);
 }

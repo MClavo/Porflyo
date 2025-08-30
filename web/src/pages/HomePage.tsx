@@ -128,6 +128,16 @@ export function HomePage() {
                     <span className="text-sm">Published</span>
                   </label>
 
+                  {/* View button - only show for published portfolios with slug */}
+                  {p.isPublished && p.reservedSlug && (
+                    <button 
+                      className="btn btn-outline" 
+                      onClick={() => navigate(`/p/${p.reservedSlug}`)}
+                    >
+                      View
+                    </button>
+                  )}
+
                   <button 
                     className="btn btn-remove" 
                     onClick={() => handleDeleteClick(p)}

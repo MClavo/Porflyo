@@ -78,6 +78,51 @@ async function apiFetch<T>(
 }
 
 /**
+ * Base fetch wrapper for public endpoints (no /api prefix)
+ */
+async function publicFetch<T>(
+  endpoint: string,
+  options: RequestInit = {}
+): Promise<T> {
+  const url = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
+  
+  const response = await fetch(url, {
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+    ...options,
+  });
+
+  if (!response.ok) {
+    let errorMessage = `Request failed with status ${response.status}`;
+    let errorDetails: unknown;
+
+    try {
+      const errorData = await response.json();
+      errorMessage = errorData.message || errorData.error || errorMessage;
+      errorDetails = errorData;
+    } catch {
+      // If response is not JSON, use status text
+      errorMessage = response.statusText || errorMessage;
+    }
+
+    throw new ApiClientError(errorMessage, response.status, errorDetails);
+  }
+
+  // Handle empty responses
+  if (response.status === 204 || response.headers.get('content-length') === '0') {
+    return {} as T;
+  }
+
+  try {
+    return await response.json();
+  } catch (error) {
+    throw new ApiClientError('Invalid JSON response', response.status, error);
+  }
+}
+
+/**
  * GET request to API endpoint
  */
 export function apiGet<T>(endpoint: string, options?: RequestInit): Promise<T> {
@@ -166,6 +211,13 @@ export function apiUpload<T>(
     headers,
     ...options,
   });
+}
+
+/**
+ * GET request to public endpoint (no /api prefix)
+ */
+export function publicGet<T>(endpoint: string, options?: RequestInit): Promise<T> {
+  return publicFetch<T>(endpoint, { method: 'GET', ...options });
 }
 
 export { ApiClientError };

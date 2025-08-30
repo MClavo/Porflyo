@@ -7,6 +7,7 @@ import {
   patchPortfolio,
   deletePortfolio,
   publishPortfolio,
+  getPublicPortfolio,
 } from '../api/clients/portfolios.api';
 import type {
   PortfolioCreateDto,
@@ -163,5 +164,17 @@ export function useDeletePortfolio() {
         }
       );
     },
+  });
+}
+
+/**
+ * Get public portfolio by slug
+ * This is for public viewing (no authentication required)
+ */
+export function useGetPublicPortfolio(slug: string) {
+  return useQuery({
+    queryKey: ['public-portfolio', slug],
+    queryFn: () => getPublicPortfolio(slug),
+    enabled: !!slug, // Only fetch if slug is provided
   });
 }
