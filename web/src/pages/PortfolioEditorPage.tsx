@@ -16,6 +16,7 @@ import type { PortfolioSection as BackendPortfolioSection } from '../types/dto';
 import type { PortfolioItem } from '../types/itemDto';
 // import PortfolioEditor from '../components/PortfolioEditor';
 import { PortfolioEditor } from '../components/portfolio/dnd/PortfolioEditor';
+import { Notification } from '../components/Notification';
 
 export default function PortfolioEditorPage() {
   const { id } = useParams<{ id: string }>();
@@ -39,7 +40,33 @@ export default function PortfolioEditorPage() {
   // Publication state
   const [isPublished, setIsPublished] = useState(false);
   const [normalizedSlugForPublish, setNormalizedSlugForPublish] = useState('');
-  const [showPublishDialog, setShowPublishDialog] = useState(false);
+
+  // Notification state
+  const [notification, setNotification] = useState<{
+    message: string;
+    type: 'success' | 'error' | 'info';
+    isVisible: boolean;
+  }>({
+    message: '',
+    type: 'success',
+    isVisible: false
+  });
+
+  // Helper functions for notifications
+  const showNotification = (message: string, type: 'success' | 'error' | 'info' = 'success') => {
+    setNotification({
+      message,
+      type,
+      isVisible: true
+    });
+  };
+
+  const hideNotification = () => {
+    setNotification(prev => ({
+      ...prev,
+      isVisible: false
+    }));
+  };
 
   // Reference to get current data from the portfolio editor
   const getCurrentDataRef = useRef<(() => { sections: PortfolioSection[], items: Record<string, string[]>, itemsData: Record<string, PortfolioItem> }) | null>(null);
@@ -225,18 +252,8 @@ export default function PortfolioEditorPage() {
     setIsPublished(!isPublished);
   };
 
-  const handleShowPublishDialog = () => {
-    setShowPublishDialog(true);
-  };
-
-  const handleCancelPublish = () => {
-    setShowPublishDialog(false);
-  };
-
-  const handleConfirmPublish = async () => {
+  const handlePublish = async () => {
     if (!id || !portfolio) return;
-    
-    setShowPublishDialog(false);
     
     // Use the normalized slug from backend for publication
     const publishDto = {
@@ -261,8 +278,11 @@ export default function PortfolioEditorPage() {
       const editorData = transformBackendToEditor(updatedPortfolio, tplId);
       setInitialEditorData(editorData);
       
+      showNotification('Publication settings updated successfully!', 'success');
+      
     } catch (err) {
       console.error('Failed to update publication settings:', err);
+      showNotification('Failed to update publication settings. Please try again.', 'error');
     }
   };
 
@@ -351,10 +371,12 @@ export default function PortfolioEditorPage() {
       };
       try {
         const created = await createMutation.mutateAsync(createBody);
+        showNotification('Portfolio created successfully!', 'success');
         if (created && created.id) navigate(`/portfolios/${created.id}/edit`);
         else navigate('/portfolios');
       } catch (err) { 
-        console.error('Failed to create portfolio:', err); 
+        console.error('Failed to create portfolio:', err);
+        showNotification('Failed to create portfolio. Please try again.', 'error');
       }
       return;
     }
@@ -366,9 +388,11 @@ export default function PortfolioEditorPage() {
       sections: backendSections
     };
     try { 
-      await patchMutation.mutateAsync({ id, patch }); 
+      await patchMutation.mutateAsync({ id, patch });
+      showNotification('Portfolio saved successfully!', 'success');
     } catch (err) { 
-      console.error('Failed to save portfolio:', err); 
+      console.error('Failed to save portfolio:', err);
+      showNotification('Failed to save portfolio. Please try again.', 'error');
     }
   };
 
@@ -468,7 +492,7 @@ export default function PortfolioEditorPage() {
 
                     <div className="form-group mt-4">
                       <button 
-                        onClick={handleShowPublishDialog} 
+                        onClick={handlePublish} 
                         className="btn w-full" 
                         disabled={publishMutation.isPending || !isSlugAvailable()}
                       >
@@ -503,42 +527,14 @@ export default function PortfolioEditorPage() {
             />
           )}
           {/* PORTFOLIO EDITOR */}
-          {/* <main className="portfolio-main"> */}
-            {/* <div className="portfolio-preview">
-                  
 
-            </div> */}
-          {/* </main> */}
-
-          {/* Publication Confirmation Dialog */}
-          {showPublishDialog && (
-            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-              <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full mx-4">
-                <h3 className="text-lg font-semibold mb-4">Confirm Publication Settings</h3>
-                <p className="text-gray-600 mb-6">
-                  ⚠️ Make sure to <strong>save your portfolio changes</strong> first, or they will be lost when updating publication settings.
-                </p>
-                <p className="text-sm text-gray-500 mb-6">
-                  This will update the portfolio data in memory with the latest version from the server.
-                </p>
-                <div className="flex space-x-3">
-                  <button
-                    onClick={handleCancelPublish}
-                    className="flex-1 px-4 py-2 text-gray-700 bg-gray-200 rounded hover:bg-gray-300 transition-colors"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    onClick={handleConfirmPublish}
-                    className="flex-1 px-4 py-2 text-white bg-blue-600 rounded hover:bg-blue-700 transition-colors"
-                    disabled={publishMutation.isPending}
-                  >
-                    {publishMutation.isPending ? 'Updating...' : 'Continue'}
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
+          {/* Notification */}
+          <Notification
+            message={notification.message}
+            type={notification.type}
+            isVisible={notification.isVisible}
+            onClose={hideNotification}
+          />
         </div>
   );
 }
