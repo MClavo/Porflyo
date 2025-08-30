@@ -1,6 +1,6 @@
 // Types for different kinds of items that can be added to portfolio sections
 
-export type ItemType = 'text' | 'character' | 'doubleText' | 'savedItem' | 'textPhoto';
+export type ItemType = 'text' | 'character' | 'doubleText' | 'savedItem' | 'textPhoto' | 'userProfile';
 
 export interface BaseItem {
   id: number;
@@ -39,7 +39,12 @@ export interface SavedItem extends BaseItem {
   originalItem: TextItem | CharacterItem | DoubleTextItem | TextPhotoItem;
 }
 
-export type PortfolioItem = TextItem | CharacterItem | DoubleTextItem | SavedItem | TextPhotoItem;
+export interface UserProfileItem extends BaseItem {
+  type: 'userProfile';
+  userInfo: import('./userDto').PortfolioUserInfo;
+}
+
+export type PortfolioItem = TextItem | CharacterItem | DoubleTextItem | SavedItem | TextPhotoItem | UserProfileItem;
 
 export type EditItemProps = {
   id: string;

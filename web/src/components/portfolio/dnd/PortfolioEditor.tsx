@@ -20,6 +20,7 @@ import { dropAnimation as exportedDropAnimation, usePortfolioGrid } from '../../
 import { getTemplate } from '../../../templates/registry';
 import type { PortfolioItem } from '../../../types/itemDto';
 import type { PortfolioSection } from '../../../types/sectionDto';
+import type { PortfolioUserInfo } from '../../../types/userDto';
 import { SaveItemDialog } from '../dialogs/SaveItemDialog';
 import { DeleteConfirmDialog } from '../dialogs/DeleteConfirmDialog';
 import { Item } from '../item/Item';
@@ -33,7 +34,9 @@ export function PortfolioEditor({
   onGetCurrentData,
   initialSections,
   initialItems,
-  initialItemsData
+  initialItemsData,
+  userInfo,
+  onUserInfoUpdate
 }: { 
   templateId?: string;
   portfolioId?: string;
@@ -42,6 +45,8 @@ export function PortfolioEditor({
   initialSections?: PortfolioSection[];
   initialItems?: Record<string, string[]>;
   initialItemsData?: Record<string, PortfolioItem>;
+  userInfo?: PortfolioUserInfo;
+  onUserInfoUpdate?: (userInfo: PortfolioUserInfo) => void;
 } = {}) {
   // Load template and merge sections (no savedSections for now)
   const template = getTemplate(templateId);
@@ -163,6 +168,8 @@ export function PortfolioEditor({
         itemMap={presentationalItems}
         itemDataMap={presentationalItemsData}
         templateId={templateId}
+        userInfo={userInfo}
+        onUserInfoUpdate={onUserInfoUpdate}
         siteComponent={tpl ? <tpl.Layout sections={sections} itemMap={{}} itemDataMap={{}} themeClass={tpl.ThemeClass} onSectionTitleUpdate={onSectionTitleUpdate} /> : undefined}
         onItemUpdate={(id, updated) => handleItemUpdate(id, updated as PortfolioItem)}
         onAddItem={(sectionId, itemType) => addItemToSection(sectionId, itemType)}

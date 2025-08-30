@@ -12,7 +12,7 @@ function TopNavContent() {
   };
 
   return (
-    <nav className="navbar">
+    <nav className="glass-card">
       <div className="navbar-content">
         <Link to={user ? '/home' : '/'} className="logo">
           Porflyo

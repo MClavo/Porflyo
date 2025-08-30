@@ -56,6 +56,10 @@ export function ItemRenderer({
       return <DoubleTextItem {...commonProps} />;
     case "textPhoto":
       return <TextPhotoItem {...commonProps} />;
+    case "userProfile":
+      // UserProfile items are special - they shouldn't be rendered as regular items
+      // They're used internally to store user info but not displayed directly
+      return null;
     case "savedItem":
       return (
         <SavedItem

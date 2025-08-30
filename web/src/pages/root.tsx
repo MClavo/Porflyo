@@ -78,17 +78,9 @@ export default function Root() {
   }
 
   return (
-    <div
-      className="app-container"
-      style={{
-        backgroundImage: "url('https://images.unsplash.com/photo-1584968143694-8fa8bbde5247?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')",
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        backgroundRepeat: "no-repeat",
-      }}
-    >
+    <div>
       {/* Hero Section */}
-      <div className="main-content">
+      <div className="main-content" >
         <div className="text-center">
           <h1 style={{ fontSize: '3rem', fontWeight: 'bold', marginBottom: '1.5rem' }}>
             Create and publish your
@@ -100,12 +92,8 @@ export default function Root() {
             for different purposes.
           </p>
 
-          {/* CTA Button */}
-          <div className="mb-6">
-            <LoginButton className="btn btn-lg">
-              Sign in with GitHub to get started
-            </LoginButton>
-          </div>
+          
+          
 
           {/* Keycaps with DnD */}
           <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd} onDragStart={handleDragStart} onDragCancel={() => setActiveId(null)}>
@@ -123,6 +111,13 @@ export default function Root() {
               })() : null}
             </DragOverlay>
            </DndContext>
+              
+           <div className="mb-6">
+            <LoginButton className="btn btn-lg">
+              Sign in with GitHub to get started
+            </LoginButton>
+          </div>
+
         </div>
       </div>
 

@@ -45,7 +45,7 @@ export const SECTION_DEFINITIONS: Record<SectionType, SectionDefinition> = {
     title: 'User Profile',
     description: 'Personal information and profile details',
     defaultMaxItems: 3,
-    defaultAllowedItemTypes: ['text', 'doubleText'],
+    defaultAllowedItemTypes: ['text', 'doubleText', 'userProfile'],
   },
   experience: {
     type: 'experience',
@@ -122,7 +122,7 @@ export const DEFAULT_SECTIONS: PortfolioSection[] = [
     title: 'Perfil',
     columns: 3,
     rows: 1,
-    allowedItemTypes: ['text'],
+    allowedItemTypes: ['text', 'userProfile'],
     
     items: []
   },

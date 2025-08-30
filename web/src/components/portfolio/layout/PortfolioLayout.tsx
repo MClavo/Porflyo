@@ -20,6 +20,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import type { PortfolioItems, PortfolioItemsData } from './LayoutTypes';
 import type { PortfolioItem } from '../../../types/itemDto';
+import type { PortfolioUserInfo } from '../../../types/userDto';
 import { PortfolioZone } from '../section/PortfolioZone';
 import { DEFAULT_SECTIONS as PORTFOLIO_SECTIONS } from '../../../types/sectionDto';
 import './PortfolioLayout.css';
@@ -29,8 +30,10 @@ type Props = {
   itemMap: PortfolioItems;
   itemDataMap: PortfolioItemsData;
   templateId?: string;
+  userInfo?: PortfolioUserInfo;
   onItemUpdate?: (id: string | number, updatedItem: Partial<PortfolioItem>) => void;
   onSectionTitleUpdate?: (sectionId: string, newTitle: string) => void;
+  onUserInfoUpdate?: (userInfo: PortfolioUserInfo) => void;
   className?: string;
   containerStyle?: React.CSSProperties;
   renderSection?: (
@@ -49,7 +52,10 @@ export function PortfolioLayout({
   itemMap: items,
   itemDataMap: itemsData,
   templateId,
+  userInfo,
   onItemUpdate,
+  onSectionTitleUpdate,
+  onUserInfoUpdate,
   className,
   containerStyle,
   renderSection,
@@ -156,6 +162,25 @@ export function PortfolioLayout({
   // ref so we can query for placeholders.
   const renderSiteWrapper = (siteComponent?: React.ReactNode) => {
     if (!siteComponent) return null;
+    
+    // If siteComponent is a React element, clone it with additional props
+    if (React.isValidElement(siteComponent)) {
+      // Clone element with additional props for template
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const clonedComponent = React.cloneElement(siteComponent as React.ReactElement<any>, {
+        userInfo,
+        onSectionTitleUpdate,
+        onUserInfoUpdate,
+        isEditable: !readOnly, // Pass editable flag based on readOnly prop
+      });
+      
+      return (
+        <div ref={siteRef} className="portfolio-layout__site-wrapper">
+          {clonedComponent}
+        </div>
+      );
+    }
+    
     return (
       <div ref={siteRef} className="portfolio-layout__site-wrapper">
         {siteComponent}

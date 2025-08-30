@@ -5,6 +5,8 @@ import { getTemplate } from '../templates/registry';
 import PortfolioLayout from '../components/portfolio/layout/PortfolioLayout';
 import type { PortfolioSection } from '../types/sectionDto';
 import type { PortfolioItem } from '../types/itemDto';
+import type { PortfolioUserInfo } from '../types/userDto';
+import { extractUserInfoFromPortfolio, extractUserInfoFromBackendPortfolio } from '../utils/userProfileUtils';
 // Don't import template types from the legacy `features` folder.
 // For the public view we only need a string id for the template.
 type TemplateId = string;
@@ -24,6 +26,9 @@ export function PortfolioPublicPage() {
     items: Record<string, string[]>;
     itemsData: Record<string, PortfolioItem>;
   } | null>(null);
+
+  // State to hold extracted user info
+  const [userInfo, setUserInfo] = useState<PortfolioUserInfo | null>(null);
 
   // Transform backend data to editor format (same logic as PortfolioEditorPage)
   const transformBackendToEditor = useCallback((backendPortfolio: typeof portfolio, templateId: string) => {
@@ -126,6 +131,20 @@ export function PortfolioPublicPage() {
       const templateId = (portfolio.template as TemplateId) || 'template-example';
       const transformed = transformBackendToEditor(portfolio, templateId);
       setEditorData(transformed);
+      
+      // Extract user info directly from backend portfolio data (more reliable)
+      const extractedUserInfo = extractUserInfoFromBackendPortfolio(portfolio.sections || []);
+      if (extractedUserInfo) {
+        setUserInfo(extractedUserInfo);
+      } else {
+        // Fallback: try extracting from transformed data
+        const fallbackUserInfo = extractUserInfoFromPortfolio(
+          transformed.sections, 
+          transformed.items, 
+          transformed.itemsData
+        );
+        setUserInfo(fallbackUserInfo);
+      }
     }
   }, [portfolio, transformBackendToEditor]);
 
@@ -172,6 +191,7 @@ export function PortfolioPublicPage() {
         itemMap={items}
         itemDataMap={itemsData}
         templateId={templateId}
+        userInfo={userInfo || undefined}
         siteComponent={tpl ? <tpl.Layout sections={sections} itemMap={{}} itemDataMap={{}} themeClass={tpl.ThemeClass} /> : undefined}
         readOnly={true}
       />

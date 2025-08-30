@@ -8,11 +8,13 @@ import type { TemplateDefinition } from './types';
 import templateExample from './templateExample';
 import twoColumnDark from './twoColumnDark';
 import twoColumnWhite from './twoColumnWhite';
+import userProfile from './userProfile';
 
 const registry: Record<string, TemplateDefinition> = {
   [templateExample.id]: templateExample,
   [twoColumnDark.id]: twoColumnDark,
   [twoColumnWhite.id]: twoColumnWhite,
+  [userProfile.id]: userProfile,
 };
 
 export function getTemplate(id: string) {

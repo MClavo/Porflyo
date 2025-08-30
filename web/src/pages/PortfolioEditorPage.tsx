@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useState, useRef } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
-/* import { useAuthUser } from '../../auth/hooks/useAuthUser'; */
+import CryptoJS from 'crypto-js';
+import { useAuthUser } from '../features/auth/hooks/useAuthUser';
 import { useCreatePortfolio, useGetPortfolio, usePatchPortfolio, usePublishPortfolio, portfolioKeys } from '../api';
 import { useDebouncedSlugAvailability } from '../hooks/usePublicPortfolio';
 import { toSlug } from '../lib/slug/toSlug';
@@ -14,6 +15,8 @@ import type { PortfolioCreateDto, PortfolioPatchDto } from '../types/dto';
 import type { PortfolioSection } from '../types/sectionDto';
 import type { PortfolioSection as BackendPortfolioSection } from '../types/dto';
 import type { PortfolioItem } from '../types/itemDto';
+import type { PortfolioUserInfo } from '../types/userDto';
+import { injectUserInfoIntoPortfolio, extractUserInfoFromPortfolio, extractUserInfoFromBackendPortfolio } from '../utils/userProfileUtils';
 // import PortfolioEditor from '../components/PortfolioEditor';
 import { PortfolioEditor } from '../components/portfolio/dnd/PortfolioEditor';
 import { Notification } from '../components/Notification';
@@ -28,6 +31,10 @@ export default function PortfolioEditorPage() {
   const isNewPortfolio = location.pathname.endsWith('/new');
 
   const { data: portfolio, isLoading, error } = useGetPortfolio(isNewPortfolio ? '' : id || '');
+  
+  // Get authenticated user information
+  const { user: authUser } = useAuthUser();
+  
   //const savedSectionsQuery = useListSavedSections();
   //const savedSections = useMemo(() => savedSectionsQuery.data || [], [savedSectionsQuery.data]);
 
@@ -36,6 +43,9 @@ export default function PortfolioEditorPage() {
   const [slug, setSlug] = useState('');
   const [isSettingsCollapsed, setIsSettingsCollapsed] = useState(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+
+  // User info state for templates
+  const [userInfo, setUserInfo] = useState<PortfolioUserInfo>({});
 
   // Publication state
   const [isPublished, setIsPublished] = useState(false);
@@ -53,13 +63,13 @@ export default function PortfolioEditorPage() {
   });
 
   // Helper functions for notifications
-  const showNotification = (message: string, type: 'success' | 'error' | 'info' = 'success') => {
+  const showNotification = useCallback((message: string, type: 'success' | 'error' | 'info' = 'success') => {
     setNotification({
       message,
       type,
       isVisible: true
     });
-  };
+  }, []);
 
   const hideNotification = () => {
     setNotification(prev => ({
@@ -73,8 +83,23 @@ export default function PortfolioEditorPage() {
 
   // Callback to receive the getCurrentData function from PortfolioEditor
   const handleGetCurrentData = useCallback((getCurrentData: () => { sections: PortfolioSection[], items: Record<string, string[]>, itemsData: Record<string, PortfolioItem> }) => {
-    getCurrentDataRef.current = getCurrentData;
-  }, []);
+    getCurrentDataRef.current = () => {
+      const baseData = getCurrentData();
+      
+      // Inject current user info into the portfolio data before returning
+      if (userInfo && (userInfo.userProfile || userInfo.portfolioDescription)) {
+        const injectedData = injectUserInfoIntoPortfolio(
+          baseData.sections,
+          baseData.items,
+          baseData.itemsData,
+          userInfo
+        );
+        return injectedData;
+      }
+      
+      return baseData;
+    };
+  }, [userInfo]);
 
   // Transform backend data to editor format, using template as base
   const transformBackendToEditor = useCallback((backendPortfolio: typeof portfolio, templateId: TemplateId) => {
@@ -166,6 +191,14 @@ export default function PortfolioEditorPage() {
     return { sections: editorSections, items: editorItems, itemsData: editorItemsData };
   }, []);
 
+  // Helper function to extract user info from transformed editor data
+  const extractUserInfoFromEditorData = useCallback((editorData: { sections: PortfolioSection[], items: Record<string, string[]>, itemsData: Record<string, PortfolioItem> }) => {
+    const extractedUserInfo = extractUserInfoFromPortfolio(editorData.sections, editorData.items, editorData.itemsData);
+    if (extractedUserInfo) {
+      setUserInfo(extractedUserInfo);
+    }
+  }, []);
+
   // Initialize editor state for loading data from backend
   const [initialEditorData, setInitialEditorData] = useState<{
     sections: PortfolioSection[];
@@ -185,11 +218,61 @@ export default function PortfolioEditorPage() {
       
       const editorData = transformBackendToEditor(portfolio, tplId);
       setInitialEditorData(editorData);
+      
+      // Extract user info from the loaded portfolio data
+      extractUserInfoFromEditorData(editorData);
     } else if (isNewPortfolio) {
       // For new portfolios, don't set initial data so the template sections are used
       setInitialEditorData(null);
     }
-  }, [portfolio, isNewPortfolio, transformBackendToEditor]);
+  }, [portfolio, isNewPortfolio, transformBackendToEditor, extractUserInfoFromEditorData]);
+
+  // Initialize user info from authenticated user and portfolio description
+  useEffect(() => {
+    if (authUser) {
+      // Start with base user info from auth
+      let portfolioUserInfo: PortfolioUserInfo = {
+        userProfile: {
+          id: authUser.email, // Use email as id for now
+          name: authUser.name,
+          email: authUser.email,
+          profileImageUrl: authUser.profileImage || authUser.providerAvatarUrl || undefined,
+          description: authUser.description,
+          socialLinks: authUser.socials ? {
+            linkedin: authUser.socials.linkedin,
+            github: authUser.socials.github,
+            twitter: authUser.socials.twitter,
+            website: authUser.socials.website,
+            instagram: authUser.socials.instagram,
+            facebook: authUser.socials.facebook,
+          } : undefined,
+        },
+        portfolioDescription: portfolio?.description || authUser.description || '',
+      };
+
+      // If we have an existing portfolio, try to extract user info from it first
+      if (portfolio?.sections) {
+        const extractedUserInfo = extractUserInfoFromBackendPortfolio(portfolio.sections);
+        if (extractedUserInfo) {
+          // Merge extracted info with auth user info (extracted takes precedence)
+          portfolioUserInfo = {
+            userProfile: {
+              ...portfolioUserInfo.userProfile,
+              ...extractedUserInfo.userProfile,
+            },
+            portfolioDescription: extractedUserInfo.portfolioDescription || portfolioUserInfo.portfolioDescription,
+          };
+        }
+      }
+
+      setUserInfo(portfolioUserInfo);
+    }
+  }, [authUser, portfolio?.description, portfolio?.sections]);
+
+  // Handle user info updates (especially portfolio description)
+  const handleUserInfoUpdate = useCallback((updatedUserInfo: PortfolioUserInfo) => {
+    setUserInfo(updatedUserInfo);
+  }, []);
 
   //const saved = useMemo(() => savedSections, [savedSections]);
 
@@ -216,6 +299,70 @@ export default function PortfolioEditorPage() {
   // Handle section title updates (only for local state, no auto-save)
   const handleSectionUpdate = useCallback(() => {
     // Only update local state, don't auto-save to backend
+  }, []);
+
+  // Handle template change and update sections
+  const handleTemplateChange = useCallback((newTemplate: TemplateId) => {
+    setTemplate(newTemplate);
+    
+    // Get the new template definition
+    const newTemplateDefinition = getTemplate(newTemplate);
+    if (!newTemplateDefinition) return;
+    
+    // Get current data from the portfolio editor
+    if (!getCurrentDataRef.current) return;
+    
+    const { sections: currentSections, items: currentItems, itemsData: currentItemsData } = getCurrentDataRef.current();
+    
+    // Create updated sections based on new template
+    const updatedSections: PortfolioSection[] = [];
+    const updatedItems: Record<string, string[]> = {};
+    const updatedItemsData: Record<string, PortfolioItem> = { ...currentItemsData };
+    
+    // Add saved-items section if not present in new template
+    const templateSections = newTemplateDefinition.sections.some((s: { id: string }) => s.id === 'saved-items')
+      ? newTemplateDefinition.sections
+      : ([
+          ...newTemplateDefinition.sections,
+          ({
+            id: 'saved-items',
+            type: 'savedItems' as const,
+            title: 'Saved',
+            columns: 1,
+            rows: 10,
+            allowedItemTypes: ['text', 'doubleText', 'character'] as import('../types/itemDto').ItemType[],
+            items: [],
+          } as PortfolioSection),
+        ] as PortfolioSection[]);
+    
+    // Process each section from the new template
+    templateSections.forEach((templateSection: PortfolioSection) => {
+      // Find the corresponding section in current sections
+      const currentSection = currentSections.find(section => section.id === templateSection.id);
+      
+      // Create updated section with template properties but preserve current data
+      const updatedSection: PortfolioSection = {
+        ...templateSection, // Use template properties (type, allowedItemTypes, columns, rows, etc.)
+        title: currentSection?.title || templateSection.title, // Preserve custom title if exists
+        items: currentSection?.items || [] // Preserve current items
+      };
+      
+      updatedSections.push(updatedSection);
+      
+      // Preserve current items for this section
+      if (currentSection && currentItems[currentSection.id]) {
+        updatedItems[templateSection.id] = currentItems[currentSection.id];
+      } else {
+        updatedItems[templateSection.id] = [];
+      }
+    });
+    
+    // Update the initial editor data to trigger re-render
+    setInitialEditorData({
+      sections: updatedSections,
+      items: updatedItems,
+      itemsData: updatedItemsData
+    });
   }, []);
 
   const handleTitleChange = (newTitle: string) => { 
@@ -298,8 +445,26 @@ export default function PortfolioEditorPage() {
     return false;
   };
 
-  // Transform editor data to backend format
-  const transformSectionsForBackend = useCallback((): BackendPortfolioSection[] => {
+  // Helper function to detect if an image URL is a blob URL (not yet saved)
+  const isBlobUrl = (url: string): boolean => {
+    return url.startsWith('blob:');
+  };
+
+  // Helper function to generate a unique key for image uploads
+  const generateImageKey = (prefix: string = 'portfolio'): string => {
+    const uuid = crypto.randomUUID();
+    const timestamp = Date.now();
+    return `${prefix}/${timestamp}-${uuid}.webp`;
+  };
+
+  // Helper function to convert blob URL to blob object
+  const blobUrlToBlob = async (blobUrl: string): Promise<Blob> => {
+    const response = await fetch(blobUrl);
+    return response.blob();
+  };
+
+  // Transform editor data to backend format with image upload handling
+  const transformSectionsForBackend = useCallback(async (): Promise<BackendPortfolioSection[]> => {
     // Get current data from the portfolio editor
     if (!getCurrentDataRef.current) {
       return [];
@@ -307,6 +472,114 @@ export default function PortfolioEditorPage() {
 
     const { sections, items, itemsData } = getCurrentDataRef.current();
     
+    // First pass: collect all blob URLs that need to be uploaded
+    const blobUrls: string[] = [];
+    const blobToKeyMap = new Map<string, string>();
+    
+    sections
+      .filter(section => section.type !== 'savedItems')
+      .forEach(section => {
+        const sectionItems = items[section.id] || [];
+        const sectionItemsData = sectionItems.map(itemId => itemsData[itemId]).filter(Boolean);
+        
+        sectionItemsData.forEach(item => {
+          if (item.type === 'textPhoto' && item.imageUrl && isBlobUrl(item.imageUrl)) {
+            if (!blobUrls.includes(item.imageUrl)) {
+              blobUrls.push(item.imageUrl);
+              blobToKeyMap.set(item.imageUrl, generateImageKey());
+            }
+          }
+        });
+      });
+
+    // If there are blob URLs, upload them first
+    const urlReplacementMap = new Map<string, string>();
+    
+    if (blobUrls.length > 0) {
+      try {
+        showNotification('Uploading images...', 'info');
+        
+        // Convert blob URLs to blobs and prepare upload requests
+        const uploadRequests = await Promise.all(
+          blobUrls.map(async (blobUrl) => {
+            const blob = await blobUrlToBlob(blobUrl);
+            const key = blobToKeyMap.get(blobUrl)!;
+            
+            // Calculate MD5 for the blob
+            const arrayBuffer = await blob.arrayBuffer();
+            const wordArray = CryptoJS.lib.WordArray.create(arrayBuffer);
+            const md5 = CryptoJS.MD5(wordArray);
+            const md5Base64 = CryptoJS.enc.Base64.stringify(md5);
+            
+            return {
+              key,
+              contentType: blob.type || 'image/webp',
+              size: blob.size,
+              md5: md5Base64,
+              blob
+            };
+          })
+        );
+
+        // Request all presigned URLs at once
+        const presignRequests = uploadRequests.map(req => ({
+          key: req.key,
+          contentType: req.contentType,
+          size: req.size,
+          md5: req.md5
+        }));
+
+        const response = await fetch('/api/media', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          credentials: 'include',
+          body: JSON.stringify(presignRequests),
+        });
+
+        if (!response.ok) {
+          throw new Error(`Failed to get presigned URLs: ${response.statusText}`);
+        }
+
+        const presignedResponses = await response.json();
+
+        // Upload all images in parallel
+        await Promise.all(
+          uploadRequests.map(async (uploadReq, index) => {
+            const presignedPut = presignedResponses[index];
+            
+            // Prepare headers for presigned PUT
+            const headers: Record<string, string> = {};
+            Object.entries(presignedPut.fields).forEach(([key, value]) => {
+              headers[key] = value as string;
+            });
+
+            const uploadResponse = await fetch(presignedPut.url, {
+              method: 'PUT',
+              headers: headers,
+              body: uploadReq.blob,
+            });
+
+            if (!uploadResponse.ok) {
+              throw new Error(`Failed to upload image: ${uploadResponse.statusText}`);
+            }
+
+            // Store the mapping from blob URL to the final public URL
+            const blobUrl = blobUrls.find(url => blobToKeyMap.get(url) === uploadReq.key)!;
+            const publicUrl = presignedPut.url.split('?')[0]; // Remove query parameters for public URL
+            urlReplacementMap.set(blobUrl, publicUrl);
+          })
+        );
+
+        showNotification('Images uploaded successfully!', 'success');
+      } catch (error) {
+        console.error('Failed to upload images:', error);
+        showNotification('Failed to upload some images. Saving portfolio anyway...', 'error');
+      }
+    }
+
+    // Second pass: transform sections with updated image URLs
     return sections
       .filter(section => section.type !== 'savedItems') // Exclude saved items section
       .map(section => {
@@ -322,12 +595,18 @@ export default function PortfolioEditorPage() {
           // eslint-disable-next-line @typescript-eslint/no-unused-vars
           const { id, sectionType, ...cleanItem } = item;
           
-          // Extract image URLs for media array
-          if (item.type === 'textPhoto' && item.imageUrl) {
-            mediaUrls.push(item.imageUrl);
-          }
-          
-          return cleanItem;
+            // Replace blob URLs with uploaded URLs and extract for media array
+            if (item.type === 'textPhoto' && item.imageUrl) {
+              let finalImageUrl = item.imageUrl;
+              
+              // Replace blob URL with uploaded URL if available
+              if (urlReplacementMap.has(item.imageUrl)) {
+                finalImageUrl = urlReplacementMap.get(item.imageUrl)!;
+                (cleanItem as { imageUrl: string }).imageUrl = finalImageUrl;
+              }
+              
+              mediaUrls.push(finalImageUrl);
+            }          return cleanItem;
         });
 
         // Convert cleaned items to JSON content
@@ -342,15 +621,15 @@ export default function PortfolioEditorPage() {
         
         return backendSection;
       });
-  }, []);
+  }, [showNotification]);
 
   const handleSave = async () => {
-    const backendSections = transformSectionsForBackend();
+    const backendSections = await transformSectionsForBackend();
 
     if (isNewPortfolio) {
       const createBody: PortfolioCreateDto = { 
         title: title || '', 
-        description: '', 
+        description: userInfo?.portfolioDescription || '', 
         template, 
         sections: backendSections
       };
@@ -369,6 +648,7 @@ export default function PortfolioEditorPage() {
     if (!id || !portfolio) return;
     const patch: PortfolioPatchDto = { 
       title: title || undefined, 
+      description: userInfo?.portfolioDescription || undefined,
       template, 
       sections: backendSections
     };
@@ -415,7 +695,7 @@ export default function PortfolioEditorPage() {
                   {/* Template selector */}
                   <div className="form-group">
                     <label className="form-label">Template</label>
-                    <select value={template} onChange={(e) => setTemplate(e.target.value as TemplateId)} className="form-input">
+                    <select value={template} onChange={(e) => handleTemplateChange(e.target.value as TemplateId)} className="form-input">
                       {listTemplates().map((t: TemplateDefinition) => (
                         <option key={t.id} value={t.id}>{t.title || t.id}</option>
                       ))}
@@ -502,6 +782,7 @@ export default function PortfolioEditorPage() {
             </div>
           ) : (
             <PortfolioEditor 
+              key={`${template}-${initialEditorData ? 'loaded' : 'new'}`}
               templateId={template} 
               portfolioId={id} 
               onSectionUpdate={handleSectionUpdate}
@@ -509,6 +790,8 @@ export default function PortfolioEditorPage() {
               initialSections={initialEditorData?.sections}
               initialItems={initialEditorData?.items}
               initialItemsData={initialEditorData?.itemsData}
+              userInfo={userInfo}
+              onUserInfoUpdate={handleUserInfoUpdate}
             />
           )}
           {/* PORTFOLIO EDITOR */}
