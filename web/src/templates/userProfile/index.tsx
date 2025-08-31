@@ -29,8 +29,8 @@ const def: TemplateDefinition = {
       type: "projects",
       title: "Projects",
       columns: 2,
-      rows: 2,
-      allowedItemTypes: ["text", "doubleText", "textPhoto"],
+      rows: 3,
+      allowedItemTypes: ["text", "doubleText", "textPhoto", "githubProject"],
       items: [],
     },
     {

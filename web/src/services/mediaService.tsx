@@ -1,5 +1,6 @@
-import CryptoJS from 'crypto-js';
-
+import MD5 from 'crypto-js/md5';
+import Base64 from 'crypto-js/enc-base64';
+import WordArray from 'crypto-js/lib-typedarrays';
 export interface PresignedPutResponse {
   url: string;
   fields: Record<string, string>;
@@ -21,10 +22,10 @@ export const calculateMD5 = async (blob: Blob): Promise<string> => {
     reader.onload = () => {
       try {
         const arrayBuffer = reader.result as ArrayBuffer;
-        const wordArray = CryptoJS.lib.WordArray.create(arrayBuffer);
-        const md5 = CryptoJS.MD5(wordArray);
+        const wordArray = WordArray.create(arrayBuffer);
+        const md5 = MD5(wordArray);
         // Convert to base64 as expected by S3
-        const md5Base64 = CryptoJS.enc.Base64.stringify(md5);
+        const md5Base64 = Base64.stringify(md5);
         resolve(md5Base64);
       } catch (error) {
         reject(error);

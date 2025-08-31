@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState, useRef } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
-import CryptoJS from 'crypto-js';
+import { calculateMD5, requestPresignedPost, uploadToS3 } from '../services/mediaService';
 import { useAuthUser } from '../features/auth/hooks/useAuthUser';
 import { useCreatePortfolio, useGetPortfolio, usePatchPortfolio, usePublishPortfolio, portfolioKeys } from '../api';
 import { useDebouncedSlugAvailability } from '../hooks/usePublicPortfolio';
@@ -238,14 +238,8 @@ export default function PortfolioEditorPage() {
           email: authUser.email,
           profileImageUrl: authUser.profileImage || authUser.providerAvatarUrl || undefined,
           description: authUser.description,
-          socialLinks: authUser.socials ? {
-            linkedin: authUser.socials.linkedin,
-            github: authUser.socials.github,
-            twitter: authUser.socials.twitter,
-            website: authUser.socials.website,
-            instagram: authUser.socials.instagram,
-            facebook: authUser.socials.facebook,
-          } : undefined,
+          // Preserve all socials from authUser (do not filter keys) so custom keys are kept
+          socialLinks: authUser.socials ? { ...authUser.socials } : undefined,
         },
         portfolioDescription: portfolio?.description || authUser.description || '',
       };
@@ -499,18 +493,15 @@ export default function PortfolioEditorPage() {
       try {
         showNotification('Uploading images...', 'info');
         
-        // Convert blob URLs to blobs and prepare upload requests
+        // Convert blob URLs to blobs and prepare upload requests (use mediaService helpers)
         const uploadRequests = await Promise.all(
           blobUrls.map(async (blobUrl) => {
             const blob = await blobUrlToBlob(blobUrl);
             const key = blobToKeyMap.get(blobUrl)!;
-            
-            // Calculate MD5 for the blob
-            const arrayBuffer = await blob.arrayBuffer();
-            const wordArray = CryptoJS.lib.WordArray.create(arrayBuffer);
-            const md5 = CryptoJS.MD5(wordArray);
-            const md5Base64 = CryptoJS.enc.Base64.stringify(md5);
-            
+
+            // Calculate MD5 using mediaService helper which returns base64
+            const md5Base64 = await calculateMD5(blob);
+
             return {
               key,
               contentType: blob.type || 'image/webp',
@@ -521,7 +512,7 @@ export default function PortfolioEditorPage() {
           })
         );
 
-        // Request all presigned URLs at once
+        // Request all presigned URLs at once via mediaService
         const presignRequests = uploadRequests.map(req => ({
           key: req.key,
           contentType: req.contentType,
@@ -529,41 +520,15 @@ export default function PortfolioEditorPage() {
           md5: req.md5
         }));
 
-        const response = await fetch('/api/media', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          credentials: 'include',
-          body: JSON.stringify(presignRequests),
-        });
+        const presignedResponses = await requestPresignedPost(presignRequests);
 
-        if (!response.ok) {
-          throw new Error(`Failed to get presigned URLs: ${response.statusText}`);
-        }
-
-        const presignedResponses = await response.json();
-
-        // Upload all images in parallel
+        // Upload all images in parallel using mediaService.uploadToS3
         await Promise.all(
           uploadRequests.map(async (uploadReq, index) => {
             const presignedPut = presignedResponses[index];
-            
-            // Prepare headers for presigned PUT
-            const headers: Record<string, string> = {};
-            Object.entries(presignedPut.fields).forEach(([key, value]) => {
-              headers[key] = value as string;
-            });
 
-            const uploadResponse = await fetch(presignedPut.url, {
-              method: 'PUT',
-              headers: headers,
-              body: uploadReq.blob,
-            });
-
-            if (!uploadResponse.ok) {
-              throw new Error(`Failed to upload image: ${uploadResponse.statusText}`);
-            }
+            // Upload using helper which applies required headers
+            await uploadToS3(presignedPut, uploadReq.blob);
 
             // Store the mapping from blob URL to the final public URL
             const blobUrl = blobUrls.find(url => blobToKeyMap.get(url) === uploadReq.key)!;

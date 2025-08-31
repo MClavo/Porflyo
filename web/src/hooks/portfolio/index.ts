@@ -65,7 +65,7 @@ export function usePortfolioGrid(
 
   // helpers & ops
   const findZone = useFindZone(items);
-  const { addItemToSection, removeItem, handleItemUpdate } = useItemOps(
+  const { addItemToSection, addGithubProjectToSection, removeItem, handleItemUpdate } = useItemOps(
     sectionsConfig,
     { items, setItems, itemsData, setItemsData }
   );
@@ -162,6 +162,7 @@ export function usePortfolioGrid(
     items, setItems,
     itemsData, setItemsData,
     addItemToSection,
+    addGithubProjectToSection,
     sensors,
     onDragCancel,
     handleDragStart,

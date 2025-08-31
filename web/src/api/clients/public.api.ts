@@ -1,5 +1,5 @@
-import { publicGet, PublicClientError } from '../../lib/http/publicClient';
-import type { PublicPortfolioView, AvailabilityResponseDto, PublicPortfolioDto } from '../../types/dto';
+import { PublicClientError, publicGet } from '../../lib/http/publicClient';
+import type { AvailabilityResponseDto, PublicPortfolioView } from '../../types/dto';
 
 /**
  * Public Portfolio API client
@@ -14,23 +14,6 @@ import type { PublicPortfolioView, AvailabilityResponseDto, PublicPortfolioDto }
 export async function getPublicPortfolioView(slug: string): Promise<PublicPortfolioView> {
   try {
     return await publicGet<PublicPortfolioView>(`/portfolio/${slug}`);
-  } catch (error) {
-    if (error instanceof PublicClientError && error.status === 404) {
-      throw "NOT_FOUND";
-    }
-    throw error;
-  }
-}
-
-/**
- * Get public portfolio by slug (full portfolio data for rendering)
- * @param slug Portfolio slug
- * @returns PublicPortfolioDto with all portfolio data
- * @throws "NOT_FOUND" if 404, throws with status if other error
- */
-export async function getPublicPortfolio(slug: string): Promise<PublicPortfolioDto> {
-  try {
-    return await publicGet<PublicPortfolioDto>(`/portfolio/${slug}`);
   } catch (error) {
     if (error instanceof PublicClientError && error.status === 404) {
       throw "NOT_FOUND";

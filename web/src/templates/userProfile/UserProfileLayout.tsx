@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import type { TemplateLayoutComponentProps } from '../types';
 import EditableSectionTitle from '../../components/portfolio/section/EditableSectionTitle';
 import './userProfile.css';
+import { normalizeSocials, ensureHttps } from '../../utils/profileUtils';
+import type { SocialsLike } from '../../utils/profileUtils';
 
 const UserProfileLayout: React.FC<TemplateLayoutComponentProps> = ({ 
   sections, 
@@ -40,41 +42,76 @@ const UserProfileLayout: React.FC<TemplateLayoutComponentProps> = ({
 
       {/* User Header Section */}
       <div className="user-header">
-        <div className="user-avatar">
-          {userInfo?.userProfile?.profileImageUrl ? (
-            <img 
-              src={userInfo.userProfile.profileImageUrl} 
-              alt={userInfo.userProfile.name || 'Profile'} 
-              className="avatar-image"
-            />
-          ) : (
-            <div className="avatar-placeholder">
-              {userInfo?.userProfile?.name?.charAt(0)?.toUpperCase() || 'U'}
-            </div>
-          )}
-        </div>
-        
         <div className="user-info">
-          <h1 className="user-name">
-            {userInfo?.userProfile?.name || 'Your Name'}
-          </h1>
-          
-          <div className="user-contact">
-            {userInfo?.userProfile?.email && (
-              <a href={`mailto:${userInfo.userProfile.email}`} className="contact-link">
-                {userInfo.userProfile.email}
-              </a>
-            )}
+          <div className="user-top">
+            <div className="user-avatar">
+              {userInfo?.userProfile?.profileImageUrl ? (
+                <img
+                  src={userInfo.userProfile.profileImageUrl}
+                  alt={userInfo.userProfile.name || 'Profile'}
+                  className="avatar-image"
+                />
+              ) : (
+                <div className="avatar-placeholder">
+                  {userInfo?.userProfile?.name?.charAt(0)?.toUpperCase() || 'U'}
+                </div>
+              )}
+            </div>
+
+            <div className="user-meta">
+              <h1 className="user-name">
+                {userInfo?.userProfile?.name || 'Your Name'}
+              </h1>
+
+              <div className="user-contact">
+                {userInfo?.userProfile?.email && (
+                  <a href={`mailto:${userInfo.userProfile.email}`} className="contact-link">
+                    {userInfo.userProfile.email}
+                  </a>
+                )}
+              </div>
+
+              {/* Social Links: support multiple possible sources and render all provided keys dynamically */}
+              {(() => {
+                const profileObj = userInfo?.userProfile as unknown as Record<string, unknown> | undefined;
+                const topLevelObj = userInfo as unknown as Record<string, unknown> | undefined;
+
+                const socialsLike =
+                  userInfo?.userProfile?.socialLinks ??
+                  // some payloads use `socials` instead of `socialLinks`
+                  (profileObj && (profileObj['socials'] as unknown as SocialsLike)) ??
+                  // other shapes may attach socials at the top-level userInfo
+                  (topLevelObj && (topLevelObj['socials'] as unknown as SocialsLike)) ??
+                  undefined;
+
+                const socials = normalizeSocials(socialsLike as SocialsLike);
+                const entries = Object.entries(socials);
+                if (entries.length === 0) return null;
+                return (
+                  <div className="social-links">
+                    {entries.map(([platform, url]) => (
+                      <a
+                        key={platform}
+                        href={ensureHttps(url)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={`social-link ${platform.toLowerCase()}`}
+                      >
+                        {platform.charAt(0).toUpperCase() + platform.slice(1)}
+                      </a>
+                    ))}
+                  </div>
+                );
+              })()}
+            </div>
           </div>
 
           <div className="user-description">
             {isEditable ? (
-              // Editable mode - direct textarea input
               <textarea
                 value={localDescription}
                 onChange={(e) => {
                   setLocalDescription(e.target.value);
-                  // Auto-save on change
                   if (onUserInfoUpdate) {
                     onUserInfoUpdate({
                       ...userInfo,
@@ -87,58 +124,11 @@ const UserProfileLayout: React.FC<TemplateLayoutComponentProps> = ({
                 rows={3}
               />
             ) : (
-              // Read-only mode - just display the description
               <div className="description-display-readonly">
                 {localDescription || ''}
               </div>
             )}
           </div>
-
-          {/* Social Links */}
-          {userInfo?.userProfile?.socialLinks && (
-            <div className="social-links">
-              {userInfo.userProfile.socialLinks.linkedin && (
-                <a 
-                  href={userInfo.userProfile.socialLinks.linkedin} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="social-link linkedin"
-                >
-                  LinkedIn
-                </a>
-              )}
-              {userInfo.userProfile.socialLinks.github && (
-                <a 
-                  href={userInfo.userProfile.socialLinks.github} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="social-link github"
-                >
-                  GitHub
-                </a>
-              )}
-              {userInfo.userProfile.socialLinks.website && (
-                <a 
-                  href={userInfo.userProfile.socialLinks.website} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="social-link website"
-                >
-                  Website
-                </a>
-              )}
-              {userInfo.userProfile.socialLinks.twitter && (
-                <a 
-                  href={userInfo.userProfile.socialLinks.twitter} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="social-link twitter"
-                >
-                  Twitter
-                </a>
-              )}
-            </div>
-          )}
         </div>
       </div>
 

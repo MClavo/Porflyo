@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import type { UniqueIdentifier } from '@dnd-kit/core';
 import type { PortfolioItem } from '../../types/itemDto';
 import type { EditorPortfolioItems} from '../../components/portfolio/dnd/EditorTypes';
-
+import { mapRepoToGithubProjectItem } from '../../types/repoDto';
 
 import type { ItemsRef } from './types';
 import { getMaxItems, type PortfolioSection } from '../../types/sectionDto';
@@ -43,6 +43,18 @@ export function useItemOps(
             break;
           case 'textPhoto':
             defaultItem = { id: now, type: 'textPhoto', sectionType: sectionConfig.type, text1: '', text2: '', imageUrl: '' };
+            break;
+          case 'githubProject':
+            // For githubProject, we'll create a placeholder that will be replaced when repo is selected
+            defaultItem = { 
+              id: now, 
+              type: 'githubProject', 
+              sectionType: sectionConfig.type, 
+              name: 'New GitHub Project',
+              htmlUrl: '',
+              showStars: false,
+              showForks: false
+            };
             break;
           default:
             defaultItem = { id: now, type: 'text', sectionType: sectionConfig.type, text: '' };
@@ -90,5 +102,27 @@ export function useItemOps(
     [setItemsData],
   );
 
-  return { addItemToSection, removeItem, handleItemUpdate };
+  const addGithubProjectToSection = useCallback(
+    (sectionId: string, repoData: import('../../types/repoDto').GithubRepo) => {
+      const sectionConfig = sectionsConfig.find((s) => s.id === sectionId);
+      if (!sectionConfig) return;
+
+      setItems((prev) => {
+        const sectionItems = prev[sectionId] || [];
+        if (sectionItems.length >= getMaxItems(sectionConfig)) return prev;
+
+        const newId = `${Date.now()}-${Math.random().toString(36).slice(2, 9)}` as UniqueIdentifier;
+        const now = Date.now();
+
+        // Import and use the mapper
+        const githubItem = mapRepoToGithubProjectItem(repoData, now, sectionConfig.type);
+
+        setItemsData((data) => ({ ...data, [newId]: githubItem }));
+        return { ...prev, [sectionId]: [...sectionItems, newId] };
+      });
+    },
+    [sectionsConfig, setItems, setItemsData],
+  );
+
+  return { addItemToSection, addGithubProjectToSection, removeItem, handleItemUpdate };
 }

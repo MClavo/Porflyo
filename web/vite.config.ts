@@ -1,9 +1,21 @@
 import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
+//import react from '@vitejs/plugin-react';
+import { visualizer } from 'rollup-plugin-visualizer';
+import preact from '@preact/preset-vite';
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    preact(),
+    visualizer({ filename: 'stats.html', template: 'treemap', gzipSize: true, brotliSize: true })
+  ],
+  resolve: {
+    alias: {
+      react: 'preact/compat',
+      'react-dom/test-utils': 'preact/test-utils',
+      'react-dom': 'preact/compat',
+    },
+  },
   server: {
     proxy: {
       // API routes with credentials

@@ -59,7 +59,7 @@ export const SECTION_DEFINITIONS: Record<SectionType, SectionDefinition> = {
     title: 'Projects',
     description: 'Portfolio projects and personal work',
     defaultMaxItems: 6,
-    defaultAllowedItemTypes: ['text', 'doubleText', 'textPhoto'],
+    defaultAllowedItemTypes: ['text', 'doubleText', 'textPhoto', 'githubProject'],
   },
   education: {
     type: 'education',
@@ -132,7 +132,7 @@ export const DEFAULT_SECTIONS: PortfolioSection[] = [
     title: 'Proyectos',
     columns: 2,
     rows: 3,
-    allowedItemTypes: ['doubleText', 'text', 'textPhoto'],
+    allowedItemTypes: ['doubleText', 'text', 'textPhoto', 'githubProject'],
     
     items: []
   },

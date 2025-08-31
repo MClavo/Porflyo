@@ -1,6 +1,7 @@
 import type { EditItemProps } from "../../../types/itemDto";
 import CharacterItem from "./CharacterItem";
 import DoubleTextItem from "./DoubleTextItem";
+import { GithubProjectItem } from "./GithubProjectItem";
 import { SavedItem } from "./SavedItem";
 import TextItem from "./TextItem";
 import { TextPhotoItem } from "./TextPhotoItem";
@@ -56,6 +57,8 @@ export function ItemRenderer({
       return <DoubleTextItem {...commonProps} />;
     case "textPhoto":
       return <TextPhotoItem {...commonProps} />;
+    case "githubProject":
+      return <GithubProjectItem {...commonProps} />;
     case "userProfile":
       // UserProfile items are special - they shouldn't be rendered as regular items
       // They're used internally to store user info but not displayed directly

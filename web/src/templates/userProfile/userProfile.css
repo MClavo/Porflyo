@@ -8,15 +8,15 @@
   line-height: 1.6;
 }
 
-.portfolio-item {
+.tpl-user-profile  .portfolio-item {
   background: transparent;
   margin-bottom: 2rem;
 }
 
 /* User Header Section */
-.user-header {
+.tpl-user-profile  .user-header {
   display: flex;
-  align-items: flex-start;
+  align-items: center; /* center vertically so header grows with avatar */
   gap: 2.5rem;
   margin-bottom: 3rem;
   background: rgba(255, 255, 255, 0.15);
@@ -25,14 +25,37 @@
   padding: 2.5rem;
   border: 1px solid rgba(255, 255, 255, 0.25);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  /* allow the header to grow when children (like the avatar image) are taller */
+  align-items: stretch;
 }
 
-.user-avatar {
-  flex-shrink: 0;
-  align-self: flex-start;
+.tpl-user-profile .user-avatar {
+  /* reserve fixed space for the avatar to avoid overlap */
+  flex: 0 0 140px; /* fixed basis so it won't grow/shrink unexpectedly */
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 1.25rem; /* spacing between avatar and meta */
 }
 
-.avatar-image {
+/* Top row: avatar left, meta right */
+.tpl-user-profile  .user-top {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.tpl-user-profile  .user-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex: 1 1 0%;
+  min-width: 0; /* allow text to wrap instead of overflowing */
+}
+
+.tpl-user-profile  .avatar-image {
   width: 140px;
   height: 140px;
   border-radius: 50%;
@@ -40,13 +63,27 @@
   border: 4px solid rgba(255, 255, 255, 0.4);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
   transition: transform 0.3s ease;
+  display: block; /* remove inline image artifacts (small stray circle) */
+  line-height: 0;
+  box-sizing: border-box;
 }
 
-.avatar-image:hover {
+/* prevent huge images from overflowing the header */
+.tpl-user-profile .avatar-image,
+.avatar-placeholder {
+  /* keep avatar within reserved 140px box, scale down responsively */
+  max-width: 140px;
+  max-height: 140px;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+.tpl-user-profile .avatar-image:hover {
   transform: scale(1.05);
 }
 
-.avatar-placeholder {
+.tpl-user-profile  .avatar-placeholder {
   width: 140px;
   height: 140px;
   border-radius: 50%;
@@ -58,17 +95,20 @@
   font-weight: bold;
   border: 4px solid rgba(255, 255, 255, 0.4);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  display: block; /* ensure placeholder doesn't produce inline artifacts */
+  line-height: 0;
 }
 
-.user-info {
-  flex: 1;
+.tpl-user-profile  .user-info {
+  flex: 1 1 0%;
   min-width: 0; /* Prevents flex overflow */
+  display: block;
 }
 
-.user-name {
+.tpl-user-profile  .user-name {
   font-size: 3rem;
   font-weight: 800;
-  margin: 0 0 1rem 0;
+  margin: 0 0 0rem 0;
   text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
   background: linear-gradient(45deg, #ffffff, #e0e7ff);
   -webkit-background-clip: text;
@@ -76,11 +116,11 @@
   background-clip: text;
 }
 
-.user-contact {
-  margin-bottom: 1.5rem;
+.tpl-user-profile .user-contact {
+  margin-bottom: 0rem;
 }
 
-.contact-link {
+.tpl-user-profile .contact-link {
   color: rgba(255, 255, 255, 0.9);
   text-decoration: none;
   font-size: 1.2rem;
@@ -91,17 +131,18 @@
   gap: 0.5rem;
 }
 
-.contact-link:hover {
+.tpl-user-profile .contact-link:hover {
   color: white;
   text-decoration: underline;
   transform: translateY(-1px);
 }
 
-.user-description {
-  margin-bottom: 2rem;
+.tpl-user-profile .user-description {
+  margin: 1.5rem 0 0rem 0;
+  width: 100%;
 }
 
-.description-textarea-direct {
+.tpl-user-profile .description-textarea-direct {
   width: 100%;
   min-height: 120px;
   background: rgba(255, 255, 255, 0.1);
@@ -116,18 +157,18 @@
   font-family: inherit;
 }
 
-.description-textarea-direct::placeholder {
+.tpl-user-profile .description-textarea-direct::placeholder {
   color: rgba(255, 255, 255, 0.6);
 }
 
-.description-textarea-direct:focus {
+.tpl-user-profile .description-textarea-direct:focus {
   outline: none;
   border-color: rgba(255, 255, 255, 0.6);
   background: rgba(255, 255, 255, 0.15);
   box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
 }
 
-.description-display-readonly {
+.tpl-user-profile .description-display-readonly {
   font-size: 1.1rem;
   line-height: 1.6;
   padding: 1rem;
@@ -137,14 +178,14 @@
   border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-.social-links {
+.tpl-user-profile .social-links {
   display: flex;
   gap: 1rem;
   flex-wrap: wrap;
   margin-top: 1rem;
 }
 
-.social-link {
+.tpl-user-profile .social-link {
   padding: 0.75rem 1.5rem;
   background: rgba(255, 255, 255, 0.2);
   color: white;
@@ -157,28 +198,28 @@
   backdrop-filter: blur(10px);
 }
 
-.social-link:hover {
+.tpl-user-profile .social-link:hover {
   background: rgba(255, 255, 255, 0.3);
   transform: translateY(-3px);
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
 }
 
-.social-link.linkedin:hover {
+.tpl-user-profile .social-link.linkedin:hover {
   background: linear-gradient(45deg, #0077b5, #00a0dc);
   border-color: #0077b5;
 }
 
-.social-link.github:hover {
+.tpl-user-profile .social-link.github:hover {
   background: linear-gradient(45deg, #333, #555);
   border-color: #333;
 }
 
-.social-link.website:hover {
+.tpl-user-profile .social-link.website:hover {
   background: linear-gradient(45deg, #FF6B6B, #FF8E8E);
   border-color: #FF6B6B;
 }
 
-.social-link.twitter:hover {
+.tpl-user-profile .social-link.twitter:hover {
   background: linear-gradient(45deg, #1da1f2, #4db8f5);
   border-color: #1da1f2;
 }
@@ -240,9 +281,74 @@
 }
 
 .projects-section {
-  min-height: 350px;
+  min-height: 400px;
   background: linear-gradient(135deg, rgba(168, 85, 247, 0.15), rgba(139, 92, 246, 0.1));
   border-color: rgba(168, 85, 247, 0.3);
+}
+
+/* Special styles for GitHub project items in this template */
+.tpl-user-profile .projects-section .item-githubProject {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.12));
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 16px;
+  padding: 1.5rem;
+  margin-bottom: 1.25rem;
+  backdrop-filter: blur(15px);
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+}
+
+.tpl-user-profile .projects-section .item-githubProject:hover {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0.18));
+  transform: translateY(-3px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.tpl-user-profile .projects-section .github-project-name {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #ffffff;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.tpl-user-profile .projects-section .github-project-description {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 1rem;
+}
+
+.tpl-user-profile .projects-section .github-project-topic {
+  background: rgba(168, 85, 247, 0.3);
+  border: 1px solid rgba(168, 85, 247, 0.5);
+  color: white;
+  font-weight: 600;
+}
+
+.tpl-user-profile .projects-section .github-project-link {
+  background: rgba(168, 85, 247, 0.4);
+  border: 1px solid rgba(168, 85, 247, 0.6);
+  color: white;
+  font-weight: 700;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.tpl-user-profile .projects-section .github-project-link:hover {
+  background: rgba(168, 85, 247, 0.6);
+  border-color: rgba(168, 85, 247, 0.8);
+  box-shadow: 0 4px 15px rgba(168, 85, 247, 0.3);
+}
+
+.tpl-user-profile .projects-section .github-project-link.primary {
+  background: linear-gradient(135deg, rgba(168, 85, 247, 0.6), rgba(139, 92, 246, 0.5));
+  border-color: rgba(168, 85, 247, 0.7);
+}
+
+.tpl-user-profile .projects-section .github-project-link.primary:hover {
+  background: linear-gradient(135deg, rgba(168, 85, 247, 0.8), rgba(139, 92, 246, 0.7));
+  border-color: rgba(168, 85, 247, 0.9);
 }
 
 .skills-section {

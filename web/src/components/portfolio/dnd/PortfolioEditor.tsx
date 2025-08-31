@@ -14,15 +14,17 @@
  */
 import { DndContext, DragOverlay, MeasuringStrategy } from '@dnd-kit/core';
 import { createPortal } from 'react-dom';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import { dropAnimation as exportedDropAnimation, usePortfolioGrid } from '../../../hooks/portfolio/index';
 import { getTemplate } from '../../../templates/registry';
 import type { PortfolioItem } from '../../../types/itemDto';
 import type { PortfolioSection } from '../../../types/sectionDto';
 import type { PortfolioUserInfo } from '../../../types/userDto';
+import type { GithubRepo } from '../../../types/repoDto';
 import { SaveItemDialog } from '../dialogs/SaveItemDialog';
 import { DeleteConfirmDialog } from '../dialogs/DeleteConfirmDialog';
+import { GithubRepoDialog } from '../dialogs/GithubRepoDialog';
 import { Item } from '../item/Item';
 import { PortfolioLayout } from '../layout/PortfolioLayout';
 import { PortfolioZone } from '../section/PortfolioZone';
@@ -94,6 +96,7 @@ export function PortfolioEditor({
     handleItemUpdate,
     sectionDropStates,
     addItemToSection,
+    addGithubProjectToSection,
     removeItem,
     showSaveDialog,
     pendingSaveItem,
@@ -113,6 +116,34 @@ export function PortfolioEditor({
     initialItemsData,
     initialSections: initialSections && initialSections.length > 0 ? initialSections : undefined,
   });
+
+  // GitHub repository dialog state
+  const [showGithubDialog, setShowGithubDialog] = useState(false);
+  const [pendingGithubSection, setPendingGithubSection] = useState<string | null>(null);
+
+  // Handle adding items with special logic for githubProject
+  const handleAddItem = (sectionId: string, itemType?: import('../../../types/itemDto').ItemType) => {
+    if (itemType === 'githubProject') {
+      setPendingGithubSection(sectionId);
+      setShowGithubDialog(true);
+    } else {
+      addItemToSection(sectionId, itemType);
+    }
+  };
+
+  // Handle GitHub repository selection
+  const handleSelectRepo = (repo: GithubRepo) => {
+    if (pendingGithubSection) {
+      addGithubProjectToSection(pendingGithubSection, repo);
+      setPendingGithubSection(null);
+    }
+    setShowGithubDialog(false);
+  };
+
+  const handleCloseGithubDialog = () => {
+    setShowGithubDialog(false);
+    setPendingGithubSection(null);
+  };
 
   // Expose current data getter to parent component
   useEffect(() => {
@@ -172,7 +203,7 @@ export function PortfolioEditor({
         onUserInfoUpdate={onUserInfoUpdate}
         siteComponent={tpl ? <tpl.Layout sections={sections} itemMap={{}} itemDataMap={{}} themeClass={tpl.ThemeClass} onSectionTitleUpdate={onSectionTitleUpdate} /> : undefined}
         onItemUpdate={(id, updated) => handleItemUpdate(id, updated as PortfolioItem)}
-        onAddItem={(sectionId, itemType) => addItemToSection(sectionId, itemType)}
+        onAddItem={handleAddItem}
         onRemove={(id) => removeItem(id as import('@dnd-kit/core').UniqueIdentifier)}
         onSectionTitleUpdate={onSectionTitleUpdate}
         renderSection={(section) => (
@@ -182,7 +213,7 @@ export function PortfolioEditor({
             itemsData={itemsData}
             templateId={templateId}
             onItemUpdate={(id, updated) => handleItemUpdate(id as import('@dnd-kit/core').UniqueIdentifier, updated as PortfolioItem)}
-            onAddItem={(secId, type) => addItemToSection(secId, type)}
+            onAddItem={handleAddItem}
             onRemove={(id) => removeItem(id as import('@dnd-kit/core').UniqueIdentifier)}
             dropState={sectionDropStates ? sectionDropStates[section.id] : 'none'}
           />
@@ -212,6 +243,12 @@ export function PortfolioEditor({
         itemName={pendingDeleteItem?.item.type === 'savedItem' ? pendingDeleteItem.item.savedName : undefined}
         itemPreview={pendingDeleteItem ? getItemPreview(pendingDeleteItem.item) : undefined}
       />
+
+      <GithubRepoDialog
+        isOpen={showGithubDialog}
+        onClose={handleCloseGithubDialog}
+        onSelectRepo={handleSelectRepo}
+      />
     </DndContext>
   );
 }
@@ -226,6 +263,8 @@ function getItemPreview(item: PortfolioItem): string {
       return `${item.text1 || 'Título'} / ${item.text2 || 'Subtítulo'}`;
     case 'savedItem':
       return item.savedName || 'Item guardado';
+    case 'githubProject':
+      return item.name || 'Proyecto de GitHub';
     default:
       return 'Item';
   }
