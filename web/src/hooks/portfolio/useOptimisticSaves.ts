@@ -30,7 +30,6 @@ function generateImageKey(prefix: string = 'portfolio'): string {
 
 /**
  * Upload an image file and return the public URL
- * TODO: The backend should provide the public URL in the response
  */
 async function uploadImageFile(file: File): Promise<string> {
   try {
@@ -48,12 +47,8 @@ async function uploadImageFile(file: File): Promise<string> {
     // Upload to S3
     await uploadToS3(presignedResponses[0], file);
     
-    // TODO: The backend should return the public URL after successful upload
-    // For now, we construct it from the S3 URL structure
-    // In production, there should be a separate endpoint to get the public URL
-    // or the presigned response should include the public URL
-    const presignedUrl = presignedResponses[0].url;
-    const publicUrl = presignedUrl.split('?')[0]; // Remove query parameters
+    // Construct public URL using the custom domain and the key
+    const publicUrl = `https://media.porflyo.com/${key}`;
     
     console.log(`📁 Image uploaded successfully: ${publicUrl}`);
     return publicUrl;
