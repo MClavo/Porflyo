@@ -8,13 +8,16 @@ import static com.porflyo.common.DdbKeys.pk;
 import java.net.URI;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.porflyo.Item.DdbUserItem;
+import com.porflyo.common.DataCompressor;
 import com.porflyo.dto.UserPatchDto;
 import com.porflyo.model.ids.ProviderUserId;
 import com.porflyo.model.ids.UserId;
 import com.porflyo.model.user.ProviderAccount;
 import com.porflyo.model.user.User;
-import com.porflyo.Item.DdbUserItem;
-import com.porflyo.common.DataCompressor;
 
 import io.micronaut.core.annotation.NonNull;
 import jakarta.inject.Inject;
@@ -30,6 +33,7 @@ import jakarta.inject.Singleton;
 public final class DdbUserMapper {
 
     private final DataCompressor dataCompressor;
+    private final Logger log = LoggerFactory.getLogger(DdbUserMapper.class);
 
     @Inject
     public DdbUserMapper(DataCompressor dataCompressor) {
@@ -71,6 +75,7 @@ public final class DdbUserMapper {
 
     /** Converts a {@link DdbUserItem} to a domain {@link User}. */
     public User toDomain(DdbUserItem d) {
+        log.debug("ProviderUserId: {}, ProviderUserName: {}, ProviderAvatarUrl: {}, ProviderAccessToken: {}", d.getProviderUserId(), d.getProviderUserName(), d.getProviderAvatarUrl(), d.getProviderAccessToken());
         ProviderAccount providerAccount = new ProviderAccount(ProviderAccount.Provider.GITHUB,
                 new ProviderUserId(
                     d.getProviderUserId()),
@@ -78,11 +83,16 @@ public final class DdbUserMapper {
                     URI.create(d.getProviderAvatarUrl()),
                     d.getProviderAccessToken());
 
-        try {
-            String description = dataCompressor.decompress(d.getDescription(), String.class);
-            Map<String, String> socials = dataCompressor.decompressMap(d.getSocials(), String.class, String.class);
+        log.debug("Mapped provider account: {}", providerAccount);
 
-            return new User(
+        try {
+            log.debug("Decompressing description and socials for user with PK: {}", d.getPK());
+            String description = dataCompressor.decompress(d.getDescription(), String.class);
+            log.debug("Decompressed description: {}", description);
+            Map<String, String> socials = dataCompressor.decompressMap(d.getSocials(), String.class, String.class);
+            log.debug("Decompressed socials: {}", socials);
+
+            User user = new User(
                     new UserId(idFrom(USER_PK_PREFIX, d.getPK())),
                     providerAccount,
                     d.getName(),
@@ -92,6 +102,9 @@ public final class DdbUserMapper {
                     socials
             );
 
+            log.debug("Mapped user: {}", user);
+
+            return user;
         } catch (Exception e) {
             throw new RuntimeException("Failed to decompress user description", e);
         }

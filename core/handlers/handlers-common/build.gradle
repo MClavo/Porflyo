@@ -3,14 +3,38 @@ plugins {
 } 
 
 dependencies {
-    implementation 'io.micronaut.aws:micronaut-aws-sdk-v2'
-    implementation("io.micronaut.aws:micronaut-aws-lambda-events-serde")
-    implementation("io.micronaut.aws:micronaut-function-aws") 
-    implementation("io.micronaut.aws:micronaut-function-aws-custom-runtime")
+    implementation('io.micronaut.aws:micronaut-aws-sdk-v2'){
+    exclude group: "software.amazon.awssdk", module: "apache-client"
+    exclude group: "software.amazon.awssdk", module: "netty-nio-client"
+}
+    implementation("io.micronaut.aws:micronaut-aws-lambda-events-serde"){
+    exclude group: "software.amazon.awssdk", module: "apache-client"
+    exclude group: "software.amazon.awssdk", module: "netty-nio-client"
+}
+    implementation("io.micronaut.aws:micronaut-function-aws"){
+    exclude group: "software.amazon.awssdk", module: "apache-client"
+    exclude group: "software.amazon.awssdk", module: "netty-nio-client"
+}
+    
+    implementation("io.micronaut.aws:micronaut-function-aws-custom-runtime") {
+    exclude group: "software.amazon.awssdk", module: "apache-client"
+    exclude group: "software.amazon.awssdk", module: "netty-nio-client"
+}
     implementation("io.micronaut:micronaut-http-client-jdk") {
-        exclude group: 'io.netty' 
-    }
-    implementation("com.amazonaws:aws-lambda-java-events")
-    implementation 'software.amazon.awssdk:dynamodb-enhanced:2.32.13'
-    implementation 'software.amazon.awssdk:dynamodb'
+    exclude group: "software.amazon.awssdk", module: "apache-client"
+    exclude group: "software.amazon.awssdk", module: "netty-nio-client"
+}
+    implementation("com.amazonaws:aws-lambda-java-events") {
+    exclude group: "software.amazon.awssdk", module: "apache-client"
+    exclude group: "software.amazon.awssdk", module: "netty-nio-client"
+}
+    implementation('software.amazon.awssdk:dynamodb-enhanced:2.32.33'){
+    exclude group: "software.amazon.awssdk", module: "apache-client"
+    exclude group: "software.amazon.awssdk", module: "netty-nio-client"
+}
+    implementation('software.amazon.awssdk:dynamodb:2.32.33'){
+    exclude group: "software.amazon.awssdk", module: "apache-client"
+    exclude group: "software.amazon.awssdk", module: "netty-nio-client"
+}
+implementation "software.amazon.awssdk:url-connection-client"
 }

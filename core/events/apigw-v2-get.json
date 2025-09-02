@@ -1,0 +1,20 @@
+{
+  "version": "2.0",
+  "routeKey": "GET /api/user",
+  "rawPath": "/api/user",
+  "rawQueryString": "",
+  "requestContext": {
+    "http": {
+      "method": "GET",
+      "path": "/api/user",
+      "protocol": "HTTP/1.1",
+      "sourceIp": "127.0.0.1",
+      "userAgent": "curl/7.x"
+    }
+  },
+  "headers": {
+    "content-type": "application/json"
+  },
+  "body": null,
+  "isBase64Encoded": false
+}

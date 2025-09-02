@@ -17,6 +17,8 @@ repositories {
 
 dependencies {
     implementation "io.micronaut.gradle:micronaut-gradle-plugin:4.5.4"
-    implementation "io.micronaut.gradle:micronaut-aot-plugin:4.5.4"
+    implementation("io.micronaut.gradle:micronaut-aot-plugin:4.5.4"){
+        exclude group: 'io.netty'
+    }
     implementation "com.gradleup.shadow:shadow-gradle-plugin:8.3.7"
 }

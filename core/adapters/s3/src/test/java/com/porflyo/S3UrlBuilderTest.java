@@ -14,8 +14,6 @@ class S3UrlBuilderTest {
     void setup() {
         // Local development config
         localConfig = new S3Config(
-            "test", 
-            "test", 
             5, 
             "us-east-1", 
             "media-test", 
@@ -24,8 +22,6 @@ class S3UrlBuilderTest {
         
         // Production config
         prodConfig = new S3Config(
-            "access", 
-            "secret", 
             5, 
             "us-east-1", 
             "my-bucket", 
@@ -47,7 +43,7 @@ class S3UrlBuilderTest {
     void extractKeyFromUrl_productionEnvironment() {
         s3UrlBuilder = new S3UrlBuilder(prodConfig);
         
-        String url = "https://my-bucket.s3.amazonaws.com/portfolio/image.png";
+        String url = "https://media.porflyo.com/portfolio/image.png";
         String key = s3UrlBuilder.extractKeyFromUrl(url);
         
         assertEquals("portfolio/image.png", key);
@@ -86,7 +82,7 @@ class S3UrlBuilderTest {
         s3UrlBuilder = new S3UrlBuilder(prodConfig);
         
         String url = s3UrlBuilder.buildPublicUrl("portfolio/image.png");
-        
-        assertEquals("https://my-bucket.s3.amazonaws.com/portfolio/image.png", url);
+
+        assertEquals("https://media.porflyo.com/portfolio/image.png", url);
     }
 }

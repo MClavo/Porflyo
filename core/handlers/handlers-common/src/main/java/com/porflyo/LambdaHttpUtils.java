@@ -133,9 +133,15 @@ public final class LambdaHttpUtils {
      * @return the value of the cookie, or null if not found
      */
     public static String extractCookieValue(APIGatewayV2HTTPEvent input, String cookieName) {
-        return input.getHeaders() == null
-                ? null
-                : extractFromHeader(input.getHeaders().get("Cookie"), cookieName);
+        if (input.getCookies() == null) {
+            return null;
+        }
+        for (String cookie : input.getCookies()) {
+            if (cookie.startsWith(cookieName + "=")) {
+                return cookie.substring(cookieName.length() + 1);
+            }
+        }
+        return null;
     }
 
 

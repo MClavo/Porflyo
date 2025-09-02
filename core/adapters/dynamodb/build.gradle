@@ -1,11 +1,22 @@
 plugins { id 'porflyo.application' }
 
 dependencies {
-  implementation 'io.micronaut.aws:micronaut-aws-sdk-v2'
-  implementation 'software.amazon.awssdk:dynamodb-enhanced:2.32.13'
-  implementation 'software.amazon.awssdk:dynamodb'
+  implementation('io.micronaut.aws:micronaut-aws-sdk-v2:2.32.33'){
+    exclude group: "software.amazon.awssdk", module: "apache-client"
+    exclude group: "software.amazon.awssdk", module: "netty-nio-client"
+}
+  implementation('software.amazon.awssdk:dynamodb-enhanced:2.32.33') {
+    exclude group: "software.amazon.awssdk", module: "apache-client"
+    exclude group: "software.amazon.awssdk", module: "netty-nio-client"
+}
+  implementation('software.amazon.awssdk:dynamodb:2.32.33'){
+    exclude group: "software.amazon.awssdk", module: "apache-client"
+    exclude group: "software.amazon.awssdk", module: "netty-nio-client"
+}
 
-  testImplementation 'org.testcontainers:junit-jupiter'
-  testImplementation 'org.testcontainers:localstack'
-  testImplementation 'io.micronaut.test:micronaut-test-junit5'
+  implementation "software.amazon.awssdk:url-connection-client" 
+
+  testImplementation('org.testcontainers:junit-jupiter')
+  testImplementation('org.testcontainers:localstack')
+  testImplementation('io.micronaut.test:micronaut-test-junit5')
 }

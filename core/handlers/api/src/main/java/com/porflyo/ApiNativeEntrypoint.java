@@ -26,6 +26,6 @@ public class ApiNativeEntrypoint extends AbstractMicronautLambdaRuntime<
     @Override
     @Nullable
     protected RequestHandler<APIGatewayV2HTTPEvent, APIGatewayV2HTTPResponse> createRequestHandler(String... args) {
-        return new ApiLambdaEntrypoint();
+        return new LocalLambdaEntrypoint();
     }
 }

@@ -71,7 +71,10 @@ logger:
 aws:
   region: us-east-1
 
-
+s3:
+  region: us-east-1
+  bucket: porflyo-media-test
+  expiration: 5 
 
 # DynamoDB configuration is now only in test profile configurations
 # See application-integration.yml for integration tests

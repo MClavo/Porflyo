@@ -1,6 +1,7 @@
 package com.porflyo;
 
-import java.util.logging.Logger;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
@@ -8,71 +9,76 @@ import jakarta.inject.Singleton;
 @Singleton
 public class S3UrlBuilder {
 
-    private static final Logger log = Logger.getLogger(S3UrlBuilder.class.getName());
     private final S3Config s3Config;
-
-    private static final String S3_URL_FORMAT = "https://%s.s3.amazonaws.com/%s";
 
     @Inject
     public S3UrlBuilder(S3Config s3Config) {
         this.s3Config = s3Config;
     }
 
-    /**
-     * Builds the complete public URL for an S3 object key
-     * 
-     * @param key The S3 object key
-     * @return The complete public URL
-     */
+    private final String productionBaseUrl = "https://media.porflyo.com/";
+
+    /** Build public URL for an S3 object key. */
     public String buildPublicUrl(String key) {
-        if (key == null || key.trim().isEmpty())
+        if (key == null || key.isBlank())
             return null;
 
-        String endpoint = s3Config.endpoint().trim();
-        String url;
+        final String bucket = s3Config.bucketName();
+        final String endpoint = trimToEmpty(s3Config.endpoint());
+        final String safeKey = encodePath(key);
 
-        // LOCAL AWS Format: https://<endpoint>/<bucket-name>/<key>
+        final String url;
         if (!endpoint.isEmpty()) {
-            url = String.format("%s/%s/%s", endpoint, s3Config.bucketName(), key);
+            // Local / LocalStack -> http(s)://endpoint/bucket/key
+            url = stripTrailingSlash(endpoint) + "/" + bucket + "/" + safeKey;
+
         } else {
-            url = String.format(S3_URL_FORMAT, s3Config.bucketName(), key);
+            // Prod -> https://media.porflyo.com/key
+            url = productionBaseUrl + safeKey;
         }
 
-        log.info("Building S3 public URL: " + url);
         return url;
     }
 
-    /**
-     * Extracts the S3 key from a complete S3 URL
-     * 
-     * @param url The complete S3 URL
-     * @return The S3 key, or null if the URL is not a valid S3 URL
-     */
+    /** Extract the S3 key from a URL produced by this builder. */
     public String extractKeyFromUrl(String url) {
-        if (url == null || url.trim().isEmpty())
+        if (url == null || url.isBlank())
             return null;
 
-        try {
-            String endpoint = s3Config.endpoint().trim();
-            
-            // Handle local development with custom endpoint
-            if (!endpoint.isEmpty()) {
-                // Expected format: http://host.docker.internal:8000/media-test/key
-                String localPrefix = String.format("%s/%s/", endpoint, s3Config.bucketName());
-                if (url.startsWith(localPrefix)) {
-                    return url.substring(localPrefix.length());
-                }
-            } else {
-                // Expected format for production: https://bucket-name.s3.amazonaws.com/key
-                String bucketPrefix = String.format(S3_URL_FORMAT, s3Config.bucketName(), "");
-                if (url.startsWith(bucketPrefix)) {
-                    return url.substring(bucketPrefix.length());
-                }
-            }
+        final String bucket = s3Config.bucketName();
+        final String endpoint = trimToEmpty(s3Config.endpoint());
 
-            return null;
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Invalid S3 URL format: " + url, e);
+        if (!endpoint.isEmpty()) {
+            // {endpoint}/{bucket}/{key}
+            final String base = stripTrailingSlash(endpoint) + "/" + bucket + "/";
+            return url.startsWith(base) ? url.substring(base.length()) : null;
+
+        } else {
+            // Prod -> https://media.porflyo.com/key
+            return url.startsWith(productionBaseUrl) ? url.substring(productionBaseUrl.length()) : null;
         }
+    }
+
+    // ────────────────────── helpers ──────────────────────
+
+    private static String trimToEmpty(String s) {
+        return s == null ? "" : s.trim();
+    }
+
+    private static String stripTrailingSlash(String s) {
+        return (s.endsWith("/")) ? s.substring(0, s.length() - 1) : s;
+    }
+
+    /** Encode each path segment; keep '/' separators. */
+    private static String encodePath(String key) {
+        String[] parts = key.split("/");
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < parts.length; i++) {
+            if (i > 0)
+                sb.append('/');
+            String enc = URLEncoder.encode(parts[i], StandardCharsets.UTF_8).replace("+", "%20");
+            sb.append(enc);
+        }
+        return sb.toString();
     }
 }

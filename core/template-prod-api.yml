@@ -16,7 +16,6 @@ Globals:
         MICRONAUT_ENVIRONMENTS: "lambda"
         MICRONAUT_CONTEXT_EAGER_INIT: "true"
         MICRONAUT_SERVER_NETTY_ENABLED: "false"
-        AWS_LAMBDA_FUNCTION_HANDLER: io.micronaut.function.aws.proxy.payload2.APIGatewayV2HTTPEventFunction
 
 Resources:
   # API Handler Lambda
@@ -29,7 +28,6 @@ Resources:
       MemorySize: 256
       Environment:
         Variables:
-          AWS_LAMBDA_FUNCTION_HANDLER: io.micronaut.function.aws.proxy.payload2.APIGatewayV2HTTPEventFunction
           OAUTH_CLIENT_ID: !Ref OAUTH_CLIENT_ID
           OAUTH_CLIENT_SECRET: !Ref OAUTH_CLIENT_SECRET
           OAUTH_REDIRECT_URI: !Ref OAUTH_REDIRECT_URI
@@ -65,66 +63,7 @@ Resources:
             Path: /public/isurlavailable/{proxy+}
             Method: GET
 
-  # OAuth Handler Lambda
-  PorflyoOauth:
-    Type: AWS::Serverless::Function
-    Properties:
-      CodeUri: ./handlers/oauth/build/libs/oauth-0.4-optimized-lambda.zip
-      Handler: com.porflyo.OauthNativeEntrypoint
-      Runtime: provided.al2023
-      MemorySize: 256
-      Environment:
-        Variables:
-          OAUTH_CLIENT_ID: !Ref OAUTH_CLIENT_ID
-          OAUTH_CLIENT_SECRET: !Ref OAUTH_CLIENT_SECRET
-          OAUTH_REDIRECT_URI: !Ref OAUTH_REDIRECT_URI
-          OAUTH_SCOPE: !Ref OAUTH_SCOPE
-          OAUTH_USER_AGENT: !Ref OAUTH_USER_AGENT
-          JWT_SECRET: !Ref JWT_SECRET
-          JWT_EXPIRATION: !Ref JWT_EXPIRATION
-          FRONTEND_URL: !Ref FRONTEND_URL
-      Events:
-        # Handle OAuth requests
-        OAuthLogin:
-          Type: HttpApi
-          Properties:
-            PayloadFormatVersion: '2.0'
-            Path: /oauth/{proxy+}
-            Method: ANY
-
-  # Authentication Handler Lambda  
-  PorflyoAuthentication:
-    Type: AWS::Serverless::Function
-    Properties:
-      CodeUri: ./handlers/authentication/build/libs/authentication-0.4-optimized-lambda.zip
-      Handler: com.porflyo.AuthenticationNativeEntrypoint
-      Runtime: provided.al2023
-      MemorySize: 256
-      Environment:
-        Variables:
-          OAUTH_CLIENT_ID: !Ref OAUTH_CLIENT_ID
-          OAUTH_CLIENT_SECRET: !Ref OAUTH_CLIENT_SECRET
-          OAUTH_REDIRECT_URI: !Ref OAUTH_REDIRECT_URI
-          OAUTH_SCOPE: !Ref OAUTH_SCOPE
-          OAUTH_USER_AGENT: !Ref OAUTH_USER_AGENT
-          JWT_SECRET: !Ref JWT_SECRET
-          JWT_EXPIRATION: !Ref JWT_EXPIRATION
-          FRONTEND_URL: !Ref FRONTEND_URL
-      Events:
-        # Handle authentication requests
-        AuthRequests:
-          Type: HttpApi
-          Properties:
-            PayloadFormatVersion: '2.0'
-            Path: /auth/{proxy+}
-            Method: ANY
-        LogoutRequests:
-          Type: HttpApi
-          Properties:
-            PayloadFormatVersion: '2.0'
-            Path: /logout
-            Method: ANY
-
+ 
 Outputs:
   PorflyoApiUrl:
     Description: "API Gateway endpoint URL for API Lambda"

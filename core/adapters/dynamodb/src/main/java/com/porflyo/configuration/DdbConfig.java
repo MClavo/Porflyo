@@ -1,12 +1,13 @@
 package com.porflyo.configuration;
 
+
+
 import io.micronaut.context.annotation.ConfigurationProperties;
-import io.micronaut.context.annotation.Requires;
+import io.micronaut.core.annotation.Nullable;
 
 @ConfigurationProperties("dynamodb")
-@Requires(property = "dynamodb.endpoint")
 public record DdbConfig(
     String region,      
     String tableName,
-    String endpoint
+    @Nullable String endpoint
 ) {}

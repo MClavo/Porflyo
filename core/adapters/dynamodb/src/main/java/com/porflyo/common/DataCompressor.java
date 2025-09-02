@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
-import com.github.javaparser.quality.NotNull;
 
 import io.micronaut.core.type.Argument;
 import io.micronaut.json.JsonMapper;
@@ -27,7 +26,7 @@ public final class DataCompressor {
     }
 
     // ────────────────────────── Compress ──────────────────────────
-    public byte[] compress(@NotNull Object item) throws IOException {
+    public byte[] compress(Object item) throws IOException {
         if (item == null) {
             throw new IllegalArgumentException("Object to compress cannot be null");
         }
@@ -44,7 +43,7 @@ public final class DataCompressor {
 
 
     // ────────────────────────── Decompress ──────────────────────────
-    public <T> T decompress(@NotNull byte[] compressedData, @NotNull Class<T> clazz) throws IOException {
+    public <T> T decompress(byte[] compressedData, Class<T> clazz) throws IOException {
         if (compressedData == null) {
             return null;
         }

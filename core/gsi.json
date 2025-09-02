@@ -1,0 +1,16 @@
+[
+  {
+    "IndexName": "provider-user-id-index",
+    "KeySchema": [
+      { "AttributeName": "PID", "KeyType": "HASH" }
+    ],
+    "Projection": {
+      "ProjectionType": "INCLUDE",
+      "NonKeyAttributes": ["userId","nm","em"]
+    },
+    "ProvisionedThroughput": {
+      "ReadCapacityUnits": 2,
+      "WriteCapacityUnits": 2
+    }
+  }
+]

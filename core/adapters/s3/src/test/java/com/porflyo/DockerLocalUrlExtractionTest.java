@@ -17,8 +17,6 @@ class DockerLocalUrlExtractionTest {
     void testLocalDockerUrlExtraction() {
         // Configuración como en application.yml para entorno local
         S3Config localConfig = new S3Config(
-            "test", 
-            "test", 
             5, 
             "us-east-1", 
             "media-test", 
@@ -54,8 +52,6 @@ class DockerLocalUrlExtractionTest {
     void testProductionS3UrlExtraction() {
         // Configuración para producción (endpoint vacío)
         S3Config prodConfig = new S3Config(
-            "access", 
-            "secret", 
             5, 
             "us-east-1", 
             "my-production-bucket", 
@@ -74,8 +70,6 @@ class DockerLocalUrlExtractionTest {
     @Test
     void testBuildAndExtractRoundTrip_Local() {
         S3Config localConfig = new S3Config(
-            "test", 
-            "test", 
             5, 
             "us-east-1", 
             "media-test", 
@@ -97,8 +91,6 @@ class DockerLocalUrlExtractionTest {
     @Test
     void testBuildAndExtractRoundTrip_Production() {
         S3Config prodConfig = new S3Config(
-            "access", 
-            "secret", 
             5, 
             "us-east-1", 
             "my-bucket", 

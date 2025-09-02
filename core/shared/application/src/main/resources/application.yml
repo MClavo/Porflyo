@@ -35,7 +35,6 @@ micronaut:
 
 
 dynamodb:
-  endpoint: http://host.docker.internal:8000
   table-name: user-test    
   region: us-east-1
 
@@ -44,8 +43,7 @@ s3:
   secret-key: test
   expiration: 5
   region: us-east-1
-  bucket-name: media-test
-  endpoint: http://host.docker.internal:8000
+  bucket-name: porflyo-media-test
 
 quota:
   max-saved-sections: 10

@@ -134,6 +134,7 @@ public class AuthService implements AuthUseCase {
                 user.provider().providerUserId())
             .orElse(null);
 
+            log.debug("Existing user: {}", existingUser != null ? existingUser.id().value() : "none");
         // Save new user or patch provider account if user already exists
         if (existingUser != null) {
             return updateProviderAccount(existingUser, user); // Update provider account if necessary
@@ -153,6 +154,9 @@ public class AuthService implements AuthUseCase {
     }
 
     private User updateProviderAccount(User existingUser, User newUser) {
+        log.debug("Existing provider: {}, New provider: {}",
+            existingUser.provider().providerUserId().value(),
+            newUser.provider().providerUserId().value());
         if(existingUser.provider().equals(newUser.provider())) 
             return existingUser;
 

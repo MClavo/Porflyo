@@ -18,9 +18,9 @@ import jakarta.inject.Singleton;
 public class SlugifySlugGenerator implements SlugGeneratorPort {
 
     private final Slugify slugify = Slugify.builder()
-            .locale(Locale.forLanguageTag("es"))
+            .locale(Locale.forLanguageTag("en"))
             .lowerCase(true)
-            .transliterator(true)
+            .transliterator(false)
             .build();
 
     @Override

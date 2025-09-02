@@ -11,8 +11,10 @@ import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.inject.Singleton;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
+import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
+import software.amazon.awssdk.http.urlconnection.UrlConnectionHttpClient;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.retries.StandardRetryStrategy;
 import software.amazon.awssdk.retries.api.BackoffStrategy;
@@ -33,36 +35,58 @@ public class DdbClientFactory {
         this.cfg = dynamoDbConfig;
     }
 
+
+    // Backoff strategies with jittered exponential for non-throttling and throttling.
+    private BackoffStrategy nonThrottling =
+        BackoffStrategy.exponentialDelay(Duration.ofMillis(200), Duration.ofSeconds(5));
+    private BackoffStrategy throttling =
+        BackoffStrategy.exponentialDelay(Duration.ofSeconds(1), Duration.ofSeconds(15));
+
+    // STANDARD retry with custom tuning 
+    private StandardRetryStrategy standard =
+        StandardRetryStrategy.builder()
+                .maxAttempts(8) // 1 initial try + 7 retries
+                .backoffStrategy(nonThrottling)
+                .throttlingBackoffStrategy(throttling)
+                .circuitBreakerEnabled(true)
+                .build();
+
+
+    // ────────────────────────── LOCAL ──────────────────────────
+
     @Singleton
     @Named("lowDynamoDbClient")
-    DynamoDbClient createDbClient() {
+    @Requires(env = "local")
+    DynamoDbClient localClient() {
         Region region = Region.of(cfg.region());
-        AwsBasicCredentials fakeCreds = AwsBasicCredentials.create("test", "test");
-
-        // Backoff strategies with jittered exponential for non-throttling and throttling.
-        BackoffStrategy nonThrottling =
-                BackoffStrategy.exponentialDelay(Duration.ofMillis(200), Duration.ofSeconds(5));
-        BackoffStrategy throttling =
-                BackoffStrategy.exponentialDelay(Duration.ofSeconds(1), Duration.ofSeconds(15));
-
-        // STANDARD retry with custom tuning 
-        StandardRetryStrategy standard =
-                StandardRetryStrategy.builder()
-                        .maxAttempts(8) // 1 initial try + 7 retries
-                        .backoffStrategy(nonThrottling)
-                        .throttlingBackoffStrategy(throttling)
-                        .circuitBreakerEnabled(true)
-                        .build();
 
         return DynamoDbClient.builder()
-                .region(region)
-                .endpointOverride(URI.create(cfg.endpoint()))
-                .credentialsProvider(StaticCredentialsProvider.create(fakeCreds))
-                .overrideConfiguration(o -> {
-                    o.retryStrategy(standard);
-                })
-                .build();
+            .region(region)
+            .endpointOverride(URI.create(cfg.endpoint()))
+            .credentialsProvider(StaticCredentialsProvider.create(
+                AwsBasicCredentials.create("test","test")))
+            .overrideConfiguration(o -> {o.retryStrategy(standard);})
+            .httpClient(UrlConnectionHttpClient.builder().build())
+            .build();
     }
+
+    
+    // ────────────────────────── PRODUCTION ──────────────────────────
+
+    @Singleton
+    @Named("lowDynamoDbClient")
+    @Requires(notEnv = "local")
+    DynamoDbClient prodClient() {
+        Region region = Region.of(cfg.region());
+
+        return DynamoDbClient.builder()
+            .region(region)
+            .credentialsProvider(DefaultCredentialsProvider.builder().build())
+            .overrideConfiguration(o -> {o.retryStrategy(standard);})
+            .httpClient(UrlConnectionHttpClient.builder().build())
+            .build();
+    }
+
 
     @Singleton
     DynamoDbEnhancedClient enhanced(@Named("lowDynamoDbClient") DynamoDbClient low) {

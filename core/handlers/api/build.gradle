@@ -1,5 +1,15 @@
 plugins { id 'porflyo.lambda-handler' }
 
+micronaut {
+    nativeLambda {
+        lambdaRuntimeClassName = "com.porflyo.ApiNativeEntrypoint"
+    }
+}
+
+dependencies{
+    implementation("io.micronaut:micronaut-http-client")
+}
+
 application {
     mainClass = 'com.porflyo.ApiNativeEntrypoint'
 }

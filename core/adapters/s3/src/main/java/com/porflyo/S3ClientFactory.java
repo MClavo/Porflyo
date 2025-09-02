@@ -8,7 +8,9 @@ import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.inject.Singleton;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
+import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
+import software.amazon.awssdk.http.urlconnection.UrlConnectionHttpClient;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.S3Configuration;
@@ -30,36 +32,63 @@ public class S3ClientFactory {
         this.s3Config = s3Config;
     }
     
+    private AwsBasicCredentials fakeCreds = AwsBasicCredentials.create("test", "test");
+
+
+    // ────────────────────────── LOCAL ──────────────────────────
+
     @Singleton
     @Named("lowS3Client")
-    public S3Client createS3Client() {
-
-        String endpoint = s3Config.endpoint();
+    @Requires(env = "local")
+    S3Client localS3Client() {
         Region region = Region.of(s3Config.region());
-
-        AwsBasicCredentials fakeCreds = AwsBasicCredentials.create("test", "test");
-
         return S3Client.builder()
             .region(region)
-            .endpointOverride(URI.create(endpoint))
+            .endpointOverride(URI.create(s3Config.endpoint()))
             .credentialsProvider(StaticCredentialsProvider.create(fakeCreds))
             .serviceConfiguration(S3Configuration.builder().pathStyleAccessEnabled(true).build())
+            .httpClient(UrlConnectionHttpClient.builder().build())
             .build();
     }
 
     @Singleton
-    public S3Presigner createPresigner(@Named("lowS3Client") S3Client low) {
-        String endpoint = s3Config.endpoint();
+    @Requires(env = "local")
+    S3Presigner localS3Presigner() {
         Region region = Region.of(s3Config.region());
-        
-        AwsBasicCredentials fakeCreds = AwsBasicCredentials.create("test", "test");
-        
-        // For presigner to work with LocalStack, we need to configure it explicitly
         return S3Presigner.builder()
             .region(region)
-            .endpointOverride(URI.create(endpoint))
+            .endpointOverride(URI.create(s3Config.endpoint()))
             .credentialsProvider(StaticCredentialsProvider.create(fakeCreds))
             .serviceConfiguration(S3Configuration.builder().pathStyleAccessEnabled(true).build())
             .build();
     }
+
+    
+    // ────────────────────────── PRODUCTION ──────────────────────────
+
+    @Singleton
+    @Named("lowS3Client")
+    @Requires(notEnv = "local")
+    S3Client prodS3Client() {
+        Region region = Region.of(s3Config.region());
+        return S3Client.builder()
+            .region(region)
+            .credentialsProvider(DefaultCredentialsProvider.builder().build())
+            .serviceConfiguration(S3Configuration.builder().pathStyleAccessEnabled(false).build())
+            .httpClient(UrlConnectionHttpClient.builder().build())
+            .build();
+    }
+    
+
+    @Singleton
+    @Requires(notEnv = "local")
+    S3Presigner prodS3Presigner() {
+        Region region = Region.of(s3Config.region());
+        return S3Presigner.builder()
+            .region(region)
+            .credentialsProvider(DefaultCredentialsProvider.builder().build())
+            .serviceConfiguration(S3Configuration.builder().pathStyleAccessEnabled(false).build())
+            .build();
+    }
+
 }

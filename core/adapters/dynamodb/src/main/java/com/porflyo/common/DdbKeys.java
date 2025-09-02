@@ -1,6 +1,6 @@
 package com.porflyo.common;
 
-import com.github.javaparser.quality.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 public final class DdbKeys {
     private DdbKeys() {}

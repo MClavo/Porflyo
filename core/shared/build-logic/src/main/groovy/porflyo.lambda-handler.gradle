@@ -37,7 +37,7 @@ micronaut {
         deduceEnvironment = false
         optimizeNetty = false
         replaceLogbackXml = false
-    }
+    }  
 }
 
 tasks.named("dockerfileNative") {

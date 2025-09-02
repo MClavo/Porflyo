@@ -111,10 +111,10 @@ public class GithubAdapter implements ProviderPort {
             validateOAuthParameters(code, clientId, clientSecret, redirectUri);
             
             HttpRequest request = buildTokenRequest(code, clientId, clientSecret, redirectUri);
-
+            
             // Send the request and get the response
             GithubAccessTokenResponseDto dto = send(request, GithubAccessTokenResponseDto.class);
-            log.debug("Successfully exchanged code for access token");
+            log.debug("Successfully exchanged code for access token: {}, url: {}", dto.access_token(), request.toString());
             return dto.access_token();
 
         } catch (GithubConfigurationException | GithubAuthenticationException e) {
@@ -176,6 +176,7 @@ public class GithubAdapter implements ProviderPort {
      * @return              The constructed HTTP request
      */
     private HttpRequest buildTokenRequest(String code, String clientId, String clientSecret, String redirectUri) {
+        log.debug("Building token request for code: {}, client_id: {}, client_secret: {}, redirect_uri: {}", code, clientId, clientSecret, redirectUri);
         // Prepare the request body as URL-encoded form data with proper encoding
         String formData = String.format(
             "client_id=%s&client_secret=%s&code=%s&redirect_uri=%s",
@@ -247,6 +248,8 @@ public class GithubAdapter implements ProviderPort {
             .header("Authorization", "Bearer " + token)
             .header("Accept", "application/vnd.github+json")
             .header("X-GitHub-Api-Version", "2022-11-28")
+            .header("User-Agent", oauthConfig.userAgent())
+            .timeout(Duration.ofSeconds(HTTP_TIMEOUT_SECONDS))
             .GET()
             .build();
     }
@@ -261,7 +264,12 @@ public class GithubAdapter implements ProviderPort {
      */
     private <T> T send(HttpRequest request, Class<T> clazz) throws Exception {
         try {
+            log.debug("Sending HTTP request: {}, Headers: {}", request.toString(), request.headers());
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            String ct = response.headers().firstValue("Content-Type").orElse("?");
+            String preview = response.body() == null ? "null" : response.body().substring(0, Math.min(200, response.body().length()));
+            log.debug("GitHub token exchange -> status={}, content-type={}, body[0..200]={}", 
+          response.statusCode(), ct, preview);
             validateResponse(response, request); 
             
             return parseResponse(response, clazz);
@@ -269,7 +277,7 @@ public class GithubAdapter implements ProviderPort {
         } catch (IOException e) {
             // Transitory fail -> retry
             throw new TransientGithubException("Transient network error calling GitHub", e);
-    }
+        }
     }
 
     /**
