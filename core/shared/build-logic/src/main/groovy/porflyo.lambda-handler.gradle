@@ -34,9 +34,9 @@ micronaut {
         precomputeOperations = true
         cacheEnvironment = true
         optimizeClassLoading = true
-        deduceEnvironment = false
-        optimizeNetty = false
-        replaceLogbackXml = false
+        deduceEnvironment = true
+        optimizeNetty = true
+        replaceLogbackXml = true
     }  
 }
 

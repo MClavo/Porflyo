@@ -530,9 +530,9 @@ export default function PortfolioEditorPage() {
             // Upload using helper which applies required headers
             await uploadToS3(presignedPut, uploadReq.blob);
 
-            // Store the mapping from blob URL to the final public URL
+            // Store the mapping from blob URL to the final public URL using custom domain
             const blobUrl = blobUrls.find(url => blobToKeyMap.get(url) === uploadReq.key)!;
-            const publicUrl = presignedPut.url.split('?')[0]; // Remove query parameters for public URL
+            const publicUrl = `https://media.porflyo.com/${uploadReq.key}`;
             urlReplacementMap.set(blobUrl, publicUrl);
           })
         );

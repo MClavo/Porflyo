@@ -1,5 +1,5 @@
 plugins {
-    id("org.graalvm.buildtools.native") version "0.10.6" apply false
+    id("org.graalvm.buildtools.native") version "0.10.6" /* apply false */
 }
 
 ext {
@@ -47,5 +47,7 @@ subprojects {
     exclude group: "io.netty"  // si ya no usas nada de Netty 
     //exclude group: "ch.qos.logback", module: "logback-classic" // si usas otro logger
   } */
+  
 }
+
 
