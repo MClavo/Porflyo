@@ -1,0 +1,10 @@
+/* Portfolio Editor - Estilos modulares */
+/* Importa todos los módulos CSS organizados por funcionalidad */
+
+@import './portfolioEditor-base.css';
+@import './portfolioEditor-section.css';
+@import './portfolioEditor-items.css';
+@import './portfolioEditor-content.css';
+@import './portfolioEditor-buttons.css';
+@import './portfolioEditor-dialog.css';
+@import './portfolioEditor-drag.css';

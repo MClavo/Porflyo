@@ -1,0 +1,7 @@
+{
+
+  "path": "/api/user",
+  "httpMethod": "GET",
+  "protocol": "HTTP/1.1"
+
+}

@@ -1,9 +1,0 @@
-micronaut:
-  test:
-    resources:
-      enabled: false
-
-logger:
-  levels:
-    com.porflyo: DEBUG
-    root: INFO

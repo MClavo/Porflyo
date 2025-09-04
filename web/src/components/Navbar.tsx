@@ -1,4 +1,4 @@
-import { Link, useLocation } from 'react-router-dom';
+import { Link, Navigate, useLocation } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
 
 const Navbar: React.FC = () => {
@@ -8,6 +8,7 @@ const Navbar: React.FC = () => {
   const handleLogout = () => {
     logout();
     window.location.href = '/logout';
+    <Navigate to="/" replace />;
   };
 
   return (

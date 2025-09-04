@@ -1,0 +1,75 @@
+.tpl-example-root {
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial;
+  color: var(--tpl-text, #0f172a);
+}
+.tpl-example-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 20px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+}
+.tpl-example-nav a {
+  margin-left: 12px;
+  color: inherit;
+  text-decoration: none;
+}
+.tpl-example-main {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.tpl-section-inner {
+  padding: 12px;
+  background: var(--tpl-section-bg, #fff);
+  border-radius: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.04);
+}
+.tpl-section-title {
+  margin: 0 0 10px 0;
+  font-size: 1rem;
+}
+.tpl-section-items {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 12px;
+}
+
+.tpl-item {
+  padding: 10px;
+  border-radius: 8px;
+  background: var(--tpl-item-bg, #f8fafc);
+  border: 1px solid rgba(0, 0, 0, 0.04);
+}
+.tpl-item--text .tpl-item__text {
+  margin: 0;
+}
+.tpl-item--character .tpl-item__char {
+  font-size: 1.6rem;
+  text-align: center;
+}
+.tpl-item--double .tpl-item__double-title {
+  font-weight: 700;
+}
+
+/* helper classes for layout types */
+.layout-grid .tpl-section-items {
+  grid-template-columns: repeat(2, 1fr);
+}
+.layout-column .tpl-section-items {
+  grid-template-columns: 1fr;
+}
+.layout-row .tpl-section-items {
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+}
+
+/* theme dark */
+.tpl-example--dark {
+  --tpl-section-bg: #0b1220;
+  --tpl-item-bg: #071025;
+  --tpl-text: #e6eef8;
+}

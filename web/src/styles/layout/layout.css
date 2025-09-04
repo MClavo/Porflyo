@@ -1,0 +1,62 @@
+/* Layout components */
+.app-container {
+  /* Same as modern.css: subtract root padding to avoid global scroll. */
+  min-height: calc(100vh - 4rem);
+  background: linear-gradient(135deg, var(--surface) 0%, var(--background) 100%);
+}
+
+.main-content {
+  /* max-width: 1200px; */
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+/* Override for portfolio editor - use full width */
+.main-content:has(.portfolio-editor) {
+  max-width: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* Grid and container utilities */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.grid {
+  display: grid;
+  gap: 1rem;
+}
+
+.flex {
+  display: flex;
+}
+
+.flex-col {
+  flex-direction: column;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.justify-between {
+  justify-content: space-between;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .main-content {
+    padding: 1rem;
+  }
+  
+  .container {
+    padding: 0 0.5rem;
+  }
+}

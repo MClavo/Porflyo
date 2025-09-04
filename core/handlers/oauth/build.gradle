@@ -1,0 +1,34 @@
+plugins {
+    id 'porflyo.lambda-handler'
+    /* id("org.graalvm.buildtools.native") version "0.10.6" */
+}
+
+micronaut {
+    nativeLambda {
+        lambdaRuntimeClassName = "com.porflyo.OauthNativeEntrypoint"
+    }
+}
+
+dependencies{
+    implementation("io.micronaut:micronaut-http-client")
+}
+
+application {
+    mainClass = 'com.porflyo.OauthNativeEntrypoint'
+}
+
+graalvmNative {
+  binaries {
+    main {
+      imageName = "fortune-optimized"
+      buildArgs.addAll([
+/*         "-H:+UnlockExperimentalVMOptions", */
+        "-Ob",                   // si tu versión lo soporta, si no, puedes omitirlo o usar otros flags
+/*         "-H:+BuildReport",       // genera reporte en edición Community o Enterprise
+        "--no-fallback",         // más pequeño, sin bytecode fallback
+        "--gc=serial",           // GC sencillo
+        "-H:+StripDebugInfo" // recorta información redundante */
+      ])
+    }
+  }
+}

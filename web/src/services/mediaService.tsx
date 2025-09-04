@@ -1,5 +1,6 @@
-import CryptoJS from 'crypto-js';
-
+import MD5 from 'crypto-js/md5';
+import Base64 from 'crypto-js/enc-base64';
+import WordArray from 'crypto-js/lib-typedarrays';
 export interface PresignedPutResponse {
   url: string;
   fields: Record<string, string>;
@@ -21,10 +22,10 @@ export const calculateMD5 = async (blob: Blob): Promise<string> => {
     reader.onload = () => {
       try {
         const arrayBuffer = reader.result as ArrayBuffer;
-        const wordArray = CryptoJS.lib.WordArray.create(arrayBuffer);
-        const md5 = CryptoJS.MD5(wordArray);
+        const wordArray = WordArray.create(arrayBuffer);
+        const md5 = MD5(wordArray);
         // Convert to base64 as expected by S3
-        const md5Base64 = CryptoJS.enc.Base64.stringify(md5);
+        const md5Base64 = Base64.stringify(md5);
         resolve(md5Base64);
       } catch (error) {
         reject(error);
@@ -38,18 +39,20 @@ export const calculateMD5 = async (blob: Blob): Promise<string> => {
 /**
  * Request a presigned PUT URL from the backend
  */
-export const requestPresignedPost = async (request: MediaUploadRequest): Promise<PresignedPutResponse> => {
+export const requestPresignedPost = async (
+  requests: MediaUploadRequest[]
+): Promise<PresignedPutResponse[]> => {
   const response = await fetch('/api/media', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
     credentials: 'include',
-    body: JSON.stringify(request),
+    body: JSON.stringify(requests),
   });
 
   if (!response.ok) {
-    throw new Error(`Failed to get presigned URL: ${response.statusText}`);
+    throw new Error(`Failed to get presigned URLs: ${response.statusText}`);
   }
 
   return response.json();
@@ -109,14 +112,18 @@ export const uploadProfilePicture = async (
       key: profileImageKey,
       contentType: 'image/webp',
       size: imageBlob.size,
-      md5: '', // Empty MD5 for testing
+      md5: await calculateMD5(imageBlob), // Calculate MD5 for testing
     };
 
     // Get presigned URL
-    const presignedPut = await requestPresignedPost(uploadRequest);
+  // requestPresignedPost now accepts an array and returns an array.
+  const presignedPuts = await requestPresignedPost([uploadRequest]);
 
-    // Upload to S3
-    await uploadToS3(presignedPut, imageBlob);
+  // Use the first presigned response for this single upload
+  const presignedPut = presignedPuts[0];
+
+  // Upload to S3
+  await uploadToS3(presignedPut, imageBlob);
     
   } catch (error) {
     console.error('Error uploading profile picture:', error);

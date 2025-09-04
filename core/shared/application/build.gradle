@@ -1,0 +1,8 @@
+plugins { 
+    id 'porflyo.micronaut-base' 
+}
+
+dependencies {
+  api project(':shared:domain')
+  implementation 'jakarta.validation:jakarta.validation-api'
+}

@@ -1,0 +1,31 @@
+plugins { id 'porflyo.lambda-handler' }
+
+micronaut {
+    nativeLambda {
+        lambdaRuntimeClassName = "com.porflyo.ApiNativeEntrypoint"
+    }
+}
+
+dependencies{
+    implementation("io.micronaut:micronaut-http-client")
+}
+
+application {
+    mainClass = 'com.porflyo.ApiNativeEntrypoint'
+}
+
+graalvmNative {
+  binaries {
+    main {
+      imageName = "fortune-optimized"
+      buildArgs.addAll([
+/*         "-H:+UnlockExperimentalVMOptions", */
+        "-Ob",                   // si tu versión lo soporta, si no, puedes omitirlo o usar otros flags
+/*         "-H:+BuildReport",       // genera reporte en edición Community o Enterprise
+        "--no-fallback",         // más pequeño, sin bytecode fallback
+        "--gc=serial",           // GC sencillo
+        "-H:+StripDebugInfo" // recorta información redundante */
+      ])
+    }
+  }
+}

@@ -1,0 +1,137 @@
+/* Dark two-column template styles */
+.tpl-two-column-dark {
+  --bg: #2a303d;
+  --panel-bg: #47494c;
+  --accent: #2dd4bf;
+  --text: #e6eef6;
+  background: var(--bg);
+  color: var(--text);
+  width: 100%;
+  box-sizing: border-box;
+  padding: 20px;
+}
+
+.tpl-two-column-dark .two-top {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.tpl-two-column-dark .col {
+  flex: 1 1 0;
+  background: var(--panel-bg);
+  padding: 0px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+  min-height: 120px;
+  box-sizing: border-box;
+}
+
+.tpl-two-column-dark .bottom {
+  display: flex;
+  flex-direction: column;
+  background: var(--panel-bg);
+  /* padding: 20px; */
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+}
+
+.tpl-two-column-dark .tpl-section {
+  width: 100%;
+}
+
+.tpl-two-column-dark .tpl-item {
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.03);
+  padding: 8px 10px;
+  margin-bottom: 8px;
+  border-radius: 6px;
+  color: var(--text);
+}
+
+.tpl-two-column-dark .section-title {
+  color: var(--accent);
+  font-weight: 600;
+  margin: 16px;
+}
+
+/* Portfolio Item Overrides for Dark Template */
+.tpl-dark .portfolio-item-base {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.08);
+  color: var(--text, #e6eef6);
+}
+
+.tpl-dark .portfolio-item-base:hover {
+  background: rgba(255,255,255,0.05);
+  border-color: rgba(255,255,255,0.15);
+}
+
+/* Specific styles for textPhoto items in dark template */
+.tpl-dark .item-textPhoto {
+  min-height: 140px;
+  padding: 16px;
+}
+
+/* Left section: taller textPhoto items with larger images */
+.tpl-dark .section-left .item-textPhoto {
+  min-height: 240px;
+}
+
+.tpl-dark .section-left .item-textPhoto .textPhotoImageSection {
+  width: 160px;
+  height: 120px;
+}
+
+/* Bottom section: spacious textPhoto items */
+.tpl-dark .section-bottom .item-textPhoto {
+  min-height: 180px;
+}
+
+.tpl-dark .section-bottom .item-textPhoto .textPhotoImageSection {
+  width: 140px;
+  height: 105px;
+}
+
+/* Text items adjustments */
+.tpl-dark .item-text {
+  min-height: 80px;
+  padding: 14px;
+}
+
+.tpl-dark .item-doubleText {
+  min-height: 100px;
+  padding: 14px;
+}
+
+/* Style text inputs in dark theme */
+.tpl-dark .item-textPhoto input {
+  background: rgba(255,255,255,0.05);
+  border-color: rgba(255,255,255,0.15);
+  color: var(--text, #e6eef6);
+}
+
+.tpl-dark .item-textPhoto input::placeholder {
+  color: rgba(255,255,255,0.4);
+}
+
+.tpl-dark .item-textPhoto input:focus {
+  background: rgba(255,255,255,0.08);
+  border-color: var(--accent, #2dd4bf);
+  color: var(--text, #e6eef6);
+}
+
+.tpl-two-column-dark .section-title-editable:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.tpl-two-column-dark .section-title-input {
+  background: #1f2937;
+  color: white;
+  border-color: #3b82f6;
+}
+
+.tpl-two-column-dark .section-title-input:focus {
+  border-color: #60a5fa;
+  box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.1);
+}

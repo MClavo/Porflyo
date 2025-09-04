@@ -38,6 +38,32 @@ const ProfilePage: React.FC = () => {
     return `https://${trimmedUrl}`;
   };
 
+  // Type for socials stored in the form/user
+  type SocialsLike = Record<string, string> | string[] | undefined | null;
+
+  // Normalize socials into a plain object with only non-empty values.
+  // This converts arrays (if any) into objects and removes empty/null values.
+  const normalizeSocials = (s: SocialsLike): Record<string, string> => {
+    if (!s) return {};
+    // If it's an array, convert numeric indices to string keys but skip empty entries
+    if (Array.isArray(s)) {
+      const obj: Record<string, string> = {};
+      s.forEach((v, i) => {
+        if (v !== undefined && v !== null && String(v).trim() !== '') {
+          obj[String(i)] = String(v);
+        }
+      });
+      return obj;
+    }
+    // If it's already an object, copy only non-empty values
+    return Object.entries(s as Record<string, unknown> || {}).reduce((acc: Record<string, string>, [k, v]) => {
+      if (v !== undefined && v !== null && String(v).trim() !== '') {
+        acc[k] = String(v);
+      }
+      return acc;
+    }, {});
+  };
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     if (name.startsWith('socials.')) {
@@ -45,7 +71,7 @@ const ProfilePage: React.FC = () => {
       setFormData(prev => ({
         ...prev,
         socials: {
-          ...prev.socials,
+          ...normalizeSocials(prev.socials),
           [socialKey]: value
         }
       }));
@@ -62,7 +88,7 @@ const ProfilePage: React.FC = () => {
     setFormData(prev => ({
       ...prev,
       socials: {
-        ...prev.socials,
+        ...normalizeSocials(prev.socials),
         [platform]: urlWithProtocol
       }
     }));
@@ -74,7 +100,7 @@ const ProfilePage: React.FC = () => {
       setFormData(prev => ({
         ...prev,
         socials: {
-          ...prev.socials,
+          ...normalizeSocials(prev.socials),
           [newSocialPlatform.toLowerCase().trim()]: urlWithProtocol
         }
       }));
@@ -85,11 +111,13 @@ const ProfilePage: React.FC = () => {
 
   const removeSocialNetwork = (platform: string) => {
     setFormData(prev => {
-      const newSocials = { ...prev.socials };
+      // Ensure we're working with a normalized object (not an array)
+      const newSocials = { ...normalizeSocials(prev.socials) };
       delete newSocials[platform];
+      // If there are no keys left, return an empty object to signal "cleared"
       return {
         ...prev,
-        socials: newSocials
+        socials: Object.keys(newSocials).length ? newSocials : {}
       };
     });
   };
@@ -102,20 +130,23 @@ const ProfilePage: React.FC = () => {
     try {
       // Only send fields that have changed
       const changes: Record<string, unknown> = {};
-      
+
       if (formData.name !== user.name) {
         changes.name = formData.name;
       }
-      
+
       if (formData.email !== user.email) {
         changes.email = formData.email;
       }
 
-      // Check for changes in socials
-      const socialsChanged = JSON.stringify(formData.socials) !== JSON.stringify(user.socials);
-      
+      // Normalize socials for reliable comparison and sending
+      const normalizedFormSocials = normalizeSocials(formData.socials);
+      const normalizedUserSocials = normalizeSocials(user.socials);
+      const socialsChanged = JSON.stringify(normalizedFormSocials) !== JSON.stringify(normalizedUserSocials);
+
       if (socialsChanged) {
-        changes.socials = formData.socials;
+        // If there are no socials left, send an explicit empty object {}
+        changes.socials = Object.keys(normalizedFormSocials).length ? normalizedFormSocials : {};
       }
 
       if (Object.keys(changes).length === 0) {
@@ -150,6 +181,15 @@ const ProfilePage: React.FC = () => {
       // Refresh user data to get the updated profile image URL
       // The backend automatically generates the full URL from the profileImageKey
       await checkAuthStatus(); // This will fetch fresh user data from the API
+
+      // The returned profileImage URL may be cached by the browser/CDN. Force the
+      // UI to show the updated image by adding a cache-busting query parameter.
+      if (user) {
+        const currentUrl = user.profileImage || '';
+        const separator = currentUrl.includes('?') ? '&' : '?';
+        const busted = `${currentUrl}${separator}cb=${Date.now()}`;
+        updateUser({ ...user, profileImage: busted });
+      }
       
       setAvatarUploadMessage({ type: 'success', text: 'Profile picture updated successfully' });
 

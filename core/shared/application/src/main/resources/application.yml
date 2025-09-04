@@ -1,0 +1,96 @@
+micronaut:
+  test:
+    resources:
+      enabled: false  # Only enable resources for integration tests that require DynamoDB
+  application:
+    name: porflyo-api
+    
+  # Environment Configuration  
+  environments:
+    deduction: false
+    
+  # HTTP Configuration
+  http:
+    client:
+      read-timeout: 30s
+      pool:
+        enabled: true
+        max-connections: 10
+        
+  # Security Configuration (simplified for our custom implementation)
+  security:
+    enabled: false
+    
+  # Jackson Configuration
+  jackson:
+    serialization:
+      indent-output: true
+      write-dates-as-timestamps: false
+      
+  # Function Configuration for AWS Lambda
+  function:
+    enabled: true
+
+
+
+
+dynamodb:
+  table-name: user-test    
+  region: us-east-1
+
+s3:
+  access-key: test
+  secret-key: test
+  expiration: 5
+  region: us-east-1
+  bucket-name: porflyo-media-test
+
+quota:
+  max-saved-sections: 10
+  max-portfolios: 3
+
+# Custom OAuth Configuration (using environment variables)
+oauth:
+  provider-name: '${OAUTH_GITHUB_PROVIDER_NAME:github}'
+  client-id: '${OAUTH_GITHUB_CLIENT_ID:your-github-client-id}'
+  client-secret: '${OAUTH_GITHUB_CLIENT_SECRET:your-github-client-secret}'
+  redirect-uri: '${OAUTH_GITHUB_REDIRECT_URI:https://your-domain.com/oauth/callback/github}'
+  scope: '${OAUTH_GITHUB_SCOPE:user:email,read:user,public_repo}'      # Read-only scopes for GitHub API access
+  user-agent: '${OAUTH_GITHUB_USER_AGENT:porflyo-app}'
+
+github:
+  api:
+    base-url: https://api.github.com
+    oauth-base-url: https://github.com
+    timeout: 30  # Timeout for GitHub API requests
+
+
+# JWT Configuration
+jwt:
+  secret: '${JWT_SECRET:porflyo-default-jwt-secret-key-change-in-production-for-security}'
+  expiration: '${JWT_EXPIRATION:3600}'
+
+# Frontend Configuration
+frontend:
+  url: '${FRONTEND_URL:http://localhost:5173}'
+  
+# Logging Configuration
+logger:
+  levels:
+    com.porflyo: DEBUG
+    io.micronaut.http: DEBUG
+    root: INFO 
+    # Removed redirect section that was causing conflicts
+    
+  http:
+    services:
+      githubv3:
+        url: "https://api.github.com"
+ 
+aws:
+  region: us-east-1
+
+
+
+# DynamoDB configuration is now only in test profile configurations
+# See application-integration.yml for integration tests
