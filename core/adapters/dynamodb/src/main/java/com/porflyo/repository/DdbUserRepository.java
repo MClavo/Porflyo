@@ -8,11 +8,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.porflyo.dto.UserPatchDto;
-import com.porflyo.ports.output.UserRepository;
 import com.porflyo.model.ids.ProviderUserId;
 import com.porflyo.model.ids.UserId;
 import com.porflyo.model.user.ProviderAccount;
 import com.porflyo.model.user.User;
+import com.porflyo.ports.UserRepository;
 import com.porflyo.Item.DdbUserItem;
 import com.porflyo.mapper.DdbUserMapper;
 import  com.porflyo.schema.UserTableSchema;

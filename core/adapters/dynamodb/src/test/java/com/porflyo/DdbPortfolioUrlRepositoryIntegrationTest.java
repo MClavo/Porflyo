@@ -11,7 +11,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 
 import com.porflyo.configuration.DdbConfig;
-import com.porflyo.ports.output.PortfolioUrlRepositoryContract;
+import com.porflyo.ports.PortfolioUrlRepositoryContract;
 import com.porflyo.repository.DdbPortfolioUrlRepository;
 import  com.porflyo.schema.PortfolioUrlTableSchema;
 

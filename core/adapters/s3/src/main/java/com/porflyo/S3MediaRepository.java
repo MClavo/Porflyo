@@ -13,7 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.porflyo.dto.PresignedPostDto;
-import com.porflyo.ports.output.MediaRepository;
+import com.porflyo.ports.MediaRepository;
 
 import io.micronaut.context.annotation.Requires;
 import jakarta.inject.Inject;

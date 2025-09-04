@@ -4,7 +4,7 @@ import java.util.Map;
 
 import org.junit.jupiter.api.TestInstance;
 
-import com.porflyo.ports.output.JwtPortContract;
+import com.porflyo.ports.JwtPortContract;
 
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import io.micronaut.test.support.TestPropertyProvider;

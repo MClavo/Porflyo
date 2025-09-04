@@ -6,7 +6,7 @@ import java.util.Optional;
 
 import com.porflyo.dto.PortfolioPatchDto;
 import com.porflyo.model.portfolio.PortfolioSection;
-import com.porflyo.ports.input.MediaUseCase;
+import com.porflyo.usecase.MediaUseCase;
 
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;

@@ -27,11 +27,12 @@ import com.porflyo.model.ids.UserId;
 import com.porflyo.model.portfolio.Portfolio;
 import com.porflyo.model.portfolio.PortfolioSection;
 import com.porflyo.model.portfolio.Slug;
-import com.porflyo.ports.input.MediaUseCase;
-import com.porflyo.ports.output.PortfolioRepository;
-import com.porflyo.ports.output.PortfolioUrlRepository;
-import com.porflyo.ports.output.QuotaRepository;
-import com.porflyo.ports.output.SlugGeneratorPort;
+import com.porflyo.ports.PortfolioRepository;
+import com.porflyo.ports.PortfolioUrlRepository;
+import com.porflyo.ports.QuotaRepository;
+import com.porflyo.ports.SlugGeneratorPort;
+import com.porflyo.usecase.MediaUseCase;
+import com.porflyo.usecase.PortfolioUseCase;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("PortfolioService (unit)")
@@ -43,7 +44,7 @@ class PortfolioServiceTest {
     @Mock QuotaRepository quotaRepository;
     @Mock SlugGeneratorPort slugGenerator;
 
-    @InjectMocks PortfolioService service;
+    @InjectMocks PortfolioUseCase portfolioUseCase;
 
     private final UserId userId = new UserId("u1");
     private final PortfolioId pid = new PortfolioId("p1");
@@ -62,7 +63,7 @@ class PortfolioServiceTest {
         given(draft.userId()).willReturn(userId);
 
         // when
-        service.createDraft(draft);
+        portfolioUseCase.createDraft(draft);
 
         // then
         then(quotaRepository).should().updatePortfolioCount(userId, +1);
@@ -78,7 +79,7 @@ class PortfolioServiceTest {
         willThrow(new RuntimeException("boom")).given(portfolioRepository).save(draft);
 
         // when
-        assertThatThrownBy(() -> service.createDraft(draft))
+        assertThatThrownBy(() -> portfolioUseCase.createDraft(draft))
             .isInstanceOf(RuntimeException.class);
 
         // then (best-effort rollback)
@@ -113,7 +114,7 @@ class PortfolioServiceTest {
         given(portfolioRepository.patch(eq(userId), eq(pid), eq(patch))).willReturn(persisted);
 
         // when
-        Portfolio result = service.patchPortfolio(userId, pid, patch);
+        Portfolio result = portfolioUseCase.patchPortfolio(userId, pid, patch);
 
         // then
         assertThat(result).isSameAs(persisted);
@@ -147,7 +148,7 @@ class PortfolioServiceTest {
         given(portfolioRepository.patch(eq(userId), eq(pid), eq(patch))).willReturn(persisted);
 
         // when
-        Portfolio result = service.patchPortfolio(userId, pid, patch);
+        Portfolio result = portfolioUseCase.patchPortfolio(userId, pid, patch);
 
         // then
         assertThat(result).isSameAs(persisted);
@@ -173,7 +174,7 @@ class PortfolioServiceTest {
         given(portfolioRepository.setUrlAndVisibility(userId, pid, normalized, true)).willReturn(persisted);
 
         // when
-        var result = service.setUrlAndVisibility(userId, pid, "New ", true);
+        var result = portfolioUseCase.setUrlAndVisibility(userId, pid, "New ", true);
 
         // then
         then(portfolioUrlRepository).should()
@@ -200,7 +201,7 @@ class PortfolioServiceTest {
         given(portfolioRepository.setUrlAndVisibility(userId, pid, same, true)).willReturn(persisted);
 
         // when
-        var result = service.setUrlAndVisibility(userId, pid, "same", true);
+        var result = portfolioUseCase.setUrlAndVisibility(userId, pid, "same", true);
 
         // then
         then(portfolioUrlRepository).shouldHaveNoInteractions();
@@ -222,7 +223,7 @@ class PortfolioServiceTest {
         given(portfolioRepository.findById(userId, pid)).willReturn(Optional.of(current));
 
         // when
-        service.delete(userId, pid);
+        portfolioUseCase.delete(userId, pid);
 
         // then
         then(mediaUseCase).should().decrementUsageAndDeleteUnused(userId, List.of("a","b"));

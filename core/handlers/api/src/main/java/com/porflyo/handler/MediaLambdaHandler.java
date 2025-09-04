@@ -10,13 +10,11 @@ import com.amazonaws.services.lambda.runtime.events.APIGatewayV2HTTPResponse;
 import com.porflyo.LambdaHttpUtils;
 import com.porflyo.dto.PresignRequestDto;
 import com.porflyo.dto.PresignedPostDto;
-import com.porflyo.ports.input.MediaUseCase;
+import com.porflyo.usecase.MediaUseCase;
 
 import io.micronaut.json.JsonMapper;
 import jakarta.inject.Inject;
-import jakarta.inject.Singleton;
 
-@Singleton
 public class MediaLambdaHandler {
     private final Logger log = LoggerFactory.getLogger(MediaLambdaHandler.class);   
     private final JsonMapper jsonMapper;

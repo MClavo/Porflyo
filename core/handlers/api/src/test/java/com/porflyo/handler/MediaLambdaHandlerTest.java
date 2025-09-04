@@ -19,7 +19,7 @@ import com.amazonaws.services.lambda.runtime.events.APIGatewayV2HTTPEvent;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayV2HTTPResponse;
 import com.porflyo.dto.PresignRequestDto;
 import com.porflyo.dto.PresignedPostDto;
-import com.porflyo.ports.input.MediaUseCase;
+import com.porflyo.usecase.MediaUseCase;
 
 import io.micronaut.json.JsonMapper;
 

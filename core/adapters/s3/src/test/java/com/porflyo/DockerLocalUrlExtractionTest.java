@@ -50,20 +50,20 @@ class DockerLocalUrlExtractionTest {
     
     @Test 
     void testProductionS3UrlExtraction() {
-        // Configuración para producción (endpoint vacío)
+        // Configuración para producción (endpoint null)
         S3Config prodConfig = new S3Config(
             5, 
             "us-east-1", 
             "my-production-bucket", 
-            ""
+            null
         );
         
         S3UrlBuilder urlBuilder = new S3UrlBuilder(prodConfig);
         
-        String testUrl = "https://my-production-bucket.s3.amazonaws.com/portfolio/123/image.png";
+        String testUrl = "https://media.porflyo.com/portfolio/123/image.png";
         String extractedKey = urlBuilder.extractKeyFromUrl(testUrl);
         
-        assertNotNull(extractedKey, "extractKeyFromUrl should not return null for S3 URL");
+        assertNotNull(extractedKey, "extractKeyFromUrl should not return null for production URL");
         assertEquals("portfolio/123/image.png", extractedKey);
     }
     
@@ -94,7 +94,7 @@ class DockerLocalUrlExtractionTest {
             5, 
             "us-east-1", 
             "my-bucket", 
-            ""
+            null
         );
         
         S3UrlBuilder urlBuilder = new S3UrlBuilder(prodConfig);

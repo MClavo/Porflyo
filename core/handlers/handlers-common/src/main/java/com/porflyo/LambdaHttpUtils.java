@@ -133,14 +133,23 @@ public final class LambdaHttpUtils {
      * @return the value of the cookie, or null if not found
      */
     public static String extractCookieValue(APIGatewayV2HTTPEvent input, String cookieName) {
-        if (input.getCookies() == null) {
-            return null;
-        }
-        for (String cookie : input.getCookies()) {
-            if (cookie.startsWith(cookieName + "=")) {
-                return cookie.substring(cookieName.length() + 1);
+        // First, prefer the structured cookies list if present
+        if (input.getCookies() != null) {
+            for (String cookie : input.getCookies()) {
+                if (cookie.startsWith(cookieName + "=")) {
+                    return cookie.substring(cookieName.length() + 1);
+                }
             }
         }
+
+        // Fall back to the Cookie header (some tests and integrations set cookies here)
+        if (input.getHeaders() != null) {
+            String cookieHeader = input.getHeaders().get("Cookie");
+            if (cookieHeader != null) {
+                return extractFromHeader(cookieHeader, cookieName);
+            }
+        }
+
         return null;
     }
 

@@ -5,7 +5,7 @@ import java.net.URI;
 import com.porflyo.dto.PublicUserDto;
 import com.porflyo.model.user.ProviderAccount;
 import com.porflyo.model.user.User;
-import com.porflyo.ports.input.MediaUseCase;
+import com.porflyo.usecase.MediaUseCase;
 
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;

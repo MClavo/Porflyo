@@ -56,7 +56,7 @@ public class DdbClientFactory {
 
     @Singleton
     @Named("lowDynamoDbClient")
-    @Requires(env = "local")
+    @Requires(env = {"local", "integration"})
     DynamoDbClient localClient() {
         Region region = Region.of(cfg.region());
 
@@ -75,7 +75,7 @@ public class DdbClientFactory {
 
     @Singleton
     @Named("lowDynamoDbClient")
-    @Requires(notEnv = "local")
+    @Requires(notEnv = {"local", "integration"})
     DynamoDbClient prodClient() {
         Region region = Region.of(cfg.region());
 

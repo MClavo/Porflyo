@@ -8,7 +8,6 @@ import io.micronaut.context.event.ApplicationEventListener;
 import io.micronaut.context.event.StartupEvent;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
-import jakarta.inject.Singleton;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.BucketAlreadyExistsException;
 import software.amazon.awssdk.services.s3.model.CreateBucketRequest;
@@ -22,9 +21,8 @@ import software.amazon.awssdk.services.s3.model.CreateBucketRequest;
  * </p>
  * !!!! NEVER use this in production !!!!
  */
-@Singleton
 @Requires(beans = {S3Config.class})
-@Requires(env = {"s3-integration"}) // Only loads in s3-integration environments
+@Requires(env = {"s3-integration", "integration"}) // Only loads in test environments
 public class S3Bootstrap implements ApplicationEventListener<StartupEvent> {
 
     private static final Logger logger = LoggerFactory.getLogger(S3Bootstrap.class);

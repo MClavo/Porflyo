@@ -11,7 +11,7 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 
-import com.porflyo.ports.output.MediaRepositoryContract;
+import com.porflyo.ports.MediaRepositoryContract;
 
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import io.micronaut.test.support.TestPropertyProvider;
@@ -20,7 +20,7 @@ import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import software.amazon.awssdk.services.s3.S3Client;
 
-@MicronautTest(environments = {"s3-integration"})
+@MicronautTest(environments = {"integration"})
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @Testcontainers
 class S3MediaRepositoryIntegrationTest

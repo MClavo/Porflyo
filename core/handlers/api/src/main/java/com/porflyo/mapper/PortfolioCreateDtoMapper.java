@@ -9,7 +9,7 @@ import com.porflyo.model.ids.PortfolioId;
 import com.porflyo.model.ids.UserId;
 import com.porflyo.model.portfolio.Portfolio;
 import com.porflyo.model.portfolio.PortfolioSection;
-import com.porflyo.ports.input.MediaUseCase;
+import com.porflyo.usecase.MediaUseCase;
 
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;

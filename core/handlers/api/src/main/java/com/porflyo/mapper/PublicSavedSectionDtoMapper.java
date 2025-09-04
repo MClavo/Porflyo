@@ -5,7 +5,7 @@ import java.util.List;
 import com.porflyo.dto.PublicSavedSectionDto;
 import com.porflyo.model.portfolio.PortfolioSection;
 import com.porflyo.model.portfolio.SavedSection;
-import com.porflyo.ports.input.MediaUseCase;
+import com.porflyo.usecase.MediaUseCase;
 
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;

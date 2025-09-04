@@ -24,8 +24,8 @@ import com.porflyo.mapper.PublicUserDtoMapper;
 import com.porflyo.model.ids.UserId;
 import com.porflyo.model.user.User;
 import com.porflyo.model.user.UserClaims;
-import com.porflyo.ports.input.AuthUseCase;
-import com.porflyo.ports.input.UserUseCase;
+import com.porflyo.usecase.AuthUseCase;
+import com.porflyo.usecase.UserUseCase;
 
 import io.micronaut.json.JsonMapper;
 

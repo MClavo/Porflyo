@@ -11,7 +11,6 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.porflyo.ports.output.PortfolioUrlRepository;
 import com.porflyo.exceptions.publicUrl.StaleUrlOwnershipException;
 import com.porflyo.exceptions.publicUrl.UrlAlreadyTakenException;
 import com.porflyo.exceptions.publicUrl.UrlNotFoundException;
@@ -19,6 +18,7 @@ import com.porflyo.model.ids.PortfolioId;
 import com.porflyo.model.ids.UserId;
 import com.porflyo.model.portfolio.PortfolioUrl;
 import com.porflyo.model.portfolio.Slug;
+import com.porflyo.ports.PortfolioUrlRepository;
 import com.porflyo.Item.DdbPortfolioUrlItem;
 import com.porflyo.mapper.DdbPortfolioUrlMapper;
 import  com.porflyo.schema.PortfolioUrlTableSchema;

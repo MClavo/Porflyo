@@ -1,19 +1,17 @@
 package com.porflyo.mapper;
 
-import static com.porflyo.common.DdbKeys.USER_PK_PREFIX;
 import static com.porflyo.common.DdbKeys.USER_MEDIA_SK_PREFIX;
+import static com.porflyo.common.DdbKeys.USER_PK_PREFIX;
 import static com.porflyo.common.DdbKeys.pk;
 
 import java.util.Map;
 
-import com.porflyo.model.ids.UserId;
 import com.porflyo.Item.DdbMediaCountItem;
 import com.porflyo.common.DataCompressor;
+import com.porflyo.model.ids.UserId;
 
 import jakarta.inject.Inject;
-import jakarta.inject.Singleton;
 
-@Singleton
 public class DdbMediaCountMapper {
     private final DataCompressor dataCompressor;
 

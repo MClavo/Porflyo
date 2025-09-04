@@ -9,7 +9,7 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 
-import com.porflyo.ports.output.SavedSectionRepositoryContract;
+import com.porflyo.ports.SavedSectionRepositoryContract;
 import com.porflyo.repository.DbdSavedSectionRepository;
 
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;

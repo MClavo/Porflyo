@@ -17,6 +17,8 @@ dependencies {
     implementation project(':adapters:jwt')
     implementation project(':adapters:s3')
     implementation project(':adapters:slug')
+    
+    testImplementation project(':shared:application').sourceSets.test.output
 }
 
 micronaut {

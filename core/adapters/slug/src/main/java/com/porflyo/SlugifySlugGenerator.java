@@ -4,7 +4,7 @@ import java.util.Locale;
 
 import com.github.slugify.Slugify;
 import com.porflyo.model.portfolio.Slug;
-import com.porflyo.ports.output.SlugGeneratorPort;
+import com.porflyo.ports.SlugGeneratorPort;
 
 import io.micronaut.context.annotation.Requires;
 import jakarta.inject.Singleton;

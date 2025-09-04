@@ -11,12 +11,11 @@ import com.porflyo.LambdaHttpUtils;
 import com.porflyo.dto.AvailabilityResponseDto;
 import com.porflyo.dto.PublicPortfolioView;
 import com.porflyo.model.portfolio.Slug;
-import com.porflyo.ports.input.PublicPortfolioQueryUseCase;
-import com.porflyo.ports.output.SlugGeneratorPort;
+import com.porflyo.ports.SlugGeneratorPort;
+import com.porflyo.usecase.PublicPortfolioQueryUseCase;
 
 import io.micronaut.json.JsonMapper;
 import jakarta.inject.Inject;
-import jakarta.inject.Singleton;
 
 /**
  * Lambda handler for public portfolio queries.
@@ -25,7 +24,6 @@ import jakarta.inject.Singleton;
  * It allows anonymous users to view published portfolios by their public URL.
  * </p>
  */
-@Singleton
 public class PublicPortfolioLambdaHandler {
     private static final Logger log = LoggerFactory.getLogger(PublicPortfolioLambdaHandler.class);
     

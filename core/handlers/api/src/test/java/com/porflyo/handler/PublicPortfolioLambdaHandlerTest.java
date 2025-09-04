@@ -24,8 +24,8 @@ import com.porflyo.dto.AvailabilityResponseDto;
 import com.porflyo.dto.PublicPortfolioView;
 import com.porflyo.model.portfolio.PortfolioSection;
 import com.porflyo.model.portfolio.Slug;
-import com.porflyo.ports.input.PublicPortfolioQueryUseCase;
-import com.porflyo.ports.output.SlugGeneratorPort;
+import com.porflyo.ports.SlugGeneratorPort;
+import com.porflyo.usecase.PublicPortfolioQueryUseCase;
 
 import io.micronaut.json.JsonMapper;
 

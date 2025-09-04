@@ -8,12 +8,11 @@ import com.porflyo.LambdaHttpUtils;
 import com.porflyo.model.ids.UserId;
 import com.porflyo.model.provider.ProviderRepo;
 import com.porflyo.model.user.UserClaims;
-import com.porflyo.ports.input.AuthUseCase;
-import com.porflyo.ports.input.ProviderUseCase;
+import com.porflyo.usecase.AuthUseCase;
+import com.porflyo.usecase.ProviderUseCase;
 
 import io.micronaut.json.JsonMapper;
 import jakarta.inject.Inject;
-import jakarta.inject.Singleton;
 
 /**
  * Handler for AWS Lambda requests related to GitHub repositories.
@@ -34,7 +33,6 @@ import jakarta.inject.Singleton;
  *
  * @since 1.0
  */
-@Singleton
 public class ProviderRepoLambdaHandler {
 
     private final ProviderUseCase repoService;

@@ -21,7 +21,6 @@ import com.porflyo.model.user.User;
 
 import io.micronaut.core.annotation.NonNull;
 import jakarta.inject.Inject;
-import jakarta.inject.Singleton;
 
 /**
  * Converts between domain {@link User} and low-level Dynamo representations.
@@ -29,7 +28,6 @@ import jakarta.inject.Singleton;
  * Contains NO infrastructure code besides the mapping itself.
  * </p>
  */
-@Singleton
 public final class DdbUserMapper {
 
     private final DataCompressor dataCompressor;

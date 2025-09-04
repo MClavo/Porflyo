@@ -9,8 +9,8 @@ import static com.porflyo.common.DdbKeys.pk;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.porflyo.ports.output.QuotaRepository;
 import com.porflyo.model.ids.UserId;
+import com.porflyo.ports.QuotaRepository;
 import com.porflyo.Item.DdbQuotaItem;
 import  com.porflyo.schema.QuotaTableSchema;
 import com.porflyo.configuration.DdbConfig;

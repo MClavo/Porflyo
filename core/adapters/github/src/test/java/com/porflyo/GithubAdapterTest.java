@@ -22,7 +22,7 @@ import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import com.porflyo.exception.GithubAuthenticationException;
 import com.porflyo.model.provider.ProviderRepo;
 import com.porflyo.model.provider.ProviderUser;
-import com.porflyo.ports.output.ProviderPort;
+import com.porflyo.ports.ProviderPort;
 
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import io.micronaut.test.support.TestPropertyProvider;

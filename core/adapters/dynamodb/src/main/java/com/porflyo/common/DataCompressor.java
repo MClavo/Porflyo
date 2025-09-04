@@ -9,13 +9,10 @@ import java.util.Map;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
-
 import io.micronaut.core.type.Argument;
 import io.micronaut.json.JsonMapper;
 import jakarta.inject.Inject;
-import jakarta.inject.Singleton;
 
-@Singleton
 public final class DataCompressor {
 
     private final JsonMapper jsonMapper;

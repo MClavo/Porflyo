@@ -9,7 +9,7 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 
-import com.porflyo.ports.output.PortfolioRepositoryContract;
+import com.porflyo.ports.PortfolioRepositoryContract;
 import com.porflyo.repository.DdbPortfolioRepository;
 
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;

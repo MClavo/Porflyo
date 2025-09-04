@@ -21,13 +21,12 @@ import com.porflyo.model.ids.PortfolioId;
 import com.porflyo.model.ids.UserId;
 import com.porflyo.model.portfolio.Portfolio;
 import com.porflyo.model.user.UserClaims;
-import com.porflyo.ports.input.AuthUseCase;
-import com.porflyo.ports.input.PortfolioUseCase;
+import com.porflyo.usecase.AuthUseCase;
+import com.porflyo.usecase.PortfolioUseCase;
 
 import io.micronaut.core.type.Argument;
 import io.micronaut.json.JsonMapper;
 import jakarta.inject.Inject;
-import jakarta.inject.Singleton;
 
 /**
  * Lambda handler for portfolio-related operations.
@@ -39,7 +38,6 @@ import jakarta.inject.Singleton;
  *
  * This handler is always invoked after the user has been authenticated.
  */
-@Singleton
 public class PortfolioLambdaHandler {
     private static final Logger log = LoggerFactory.getLogger(PortfolioLambdaHandler.class);
     

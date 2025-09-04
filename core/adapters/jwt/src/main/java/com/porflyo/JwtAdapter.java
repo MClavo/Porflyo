@@ -22,7 +22,7 @@ import com.porflyo.exceptions.auth.JwtInvalidSignatureException;
 import com.porflyo.exceptions.auth.JwtMalformedException;
 import com.porflyo.exceptions.auth.JwtVerificationException;
 import com.porflyo.model.user.UserClaims;
-import com.porflyo.ports.output.JwtPort;
+import com.porflyo.ports.JwtPort;
 
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;

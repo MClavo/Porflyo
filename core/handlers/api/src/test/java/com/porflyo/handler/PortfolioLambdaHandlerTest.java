@@ -36,8 +36,8 @@ import com.porflyo.model.ids.PortfolioId;
 import com.porflyo.model.ids.UserId;
 import com.porflyo.model.portfolio.Portfolio;
 import com.porflyo.model.user.UserClaims;
-import com.porflyo.ports.input.AuthUseCase;
-import com.porflyo.ports.input.PortfolioUseCase;
+import com.porflyo.usecase.AuthUseCase;
+import com.porflyo.usecase.PortfolioUseCase;
 
 import io.micronaut.core.type.Argument;
 import io.micronaut.json.JsonMapper;

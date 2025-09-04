@@ -13,3 +13,13 @@ dependencies{
 application {
     mainClass = 'com.porflyo.AuthenticationNativeEntrypoint'
 }
+
+graalvmNative {
+  binaries {
+    main {
+      buildArgs.addAll([
+        "-Ob",
+      ])
+    }
+  }
+}

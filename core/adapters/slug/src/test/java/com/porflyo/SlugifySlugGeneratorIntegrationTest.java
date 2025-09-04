@@ -1,7 +1,7 @@
 package com.porflyo;
 
-import com.porflyo.ports.output.SlugGeneratorPort;
-import com.porflyo.ports.output.SlugGeneratorPortContract;
+import com.porflyo.ports.SlugGeneratorPort;
+import com.porflyo.ports.SlugGeneratorPortContract;
 
 import io.micronaut.context.annotation.Property;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;

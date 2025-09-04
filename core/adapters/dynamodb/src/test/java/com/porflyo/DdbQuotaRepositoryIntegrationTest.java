@@ -10,7 +10,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 
 import com.porflyo.configuration.QuotaConfig;
-import com.porflyo.ports.output.QuotaRepositoryContract;
+import com.porflyo.ports.QuotaRepositoryContract;
 import com.porflyo.repository.DdbQuotaRepository;
 
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;

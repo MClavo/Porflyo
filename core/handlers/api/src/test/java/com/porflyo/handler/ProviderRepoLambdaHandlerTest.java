@@ -20,8 +20,8 @@ import com.amazonaws.services.lambda.runtime.events.APIGatewayV2HTTPResponse;
 import com.porflyo.model.ids.UserId;
 import com.porflyo.model.provider.ProviderRepo;
 import com.porflyo.model.user.UserClaims;
-import com.porflyo.ports.input.AuthUseCase;
-import com.porflyo.ports.input.ProviderUseCase;
+import com.porflyo.usecase.AuthUseCase;
+import com.porflyo.usecase.ProviderUseCase;
 
 import io.micronaut.json.JsonMapper;
 

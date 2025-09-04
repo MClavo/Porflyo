@@ -24,7 +24,7 @@ import com.porflyo.exception.TransientGithubException;
 import com.porflyo.mapper.GithubDtoMapper;
 import com.porflyo.model.provider.ProviderRepo;
 import com.porflyo.model.provider.ProviderUser;
-import com.porflyo.ports.output.ProviderPort;
+import com.porflyo.ports.ProviderPort;
 
 import io.micronaut.json.JsonMapper;
 import io.micronaut.retry.annotation.Retryable;

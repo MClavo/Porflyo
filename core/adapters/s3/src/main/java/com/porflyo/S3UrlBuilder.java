@@ -4,9 +4,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
 import jakarta.inject.Inject;
-import jakarta.inject.Singleton;
 
-@Singleton
 public class S3UrlBuilder {
 
     private final S3Config s3Config;

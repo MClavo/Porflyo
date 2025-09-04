@@ -10,19 +10,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import com.porflyo.Item.DdbPortfolioItem;
+import com.porflyo.common.DataCompressor;
 import com.porflyo.dto.PortfolioPatchDto;
 import com.porflyo.model.ids.PortfolioId;
 import com.porflyo.model.ids.UserId;
 import com.porflyo.model.portfolio.Portfolio;
 import com.porflyo.model.portfolio.PortfolioSection;
 import com.porflyo.model.portfolio.Slug;
-import com.porflyo.Item.DdbPortfolioItem;
-import com.porflyo.common.DataCompressor;
 
 import jakarta.inject.Inject;
-import jakarta.inject.Singleton;
 
-@Singleton
 public final class DdbPortfolioMapper {
 
     private final DataCompressor dataCompressor;

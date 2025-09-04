@@ -6,17 +6,15 @@ import static com.porflyo.common.DdbKeys.idFrom;
 import static com.porflyo.common.DdbKeys.pk;
 import static com.porflyo.common.DdbKeys.sk;
 
+import com.porflyo.Item.DdbSavedSectionItem;
+import com.porflyo.common.DataCompressor;
 import com.porflyo.model.ids.SectionId;
 import com.porflyo.model.ids.UserId;
 import com.porflyo.model.portfolio.PortfolioSection;
 import com.porflyo.model.portfolio.SavedSection;
-import com.porflyo.Item.DdbSavedSectionItem;
-import com.porflyo.common.DataCompressor;
 
 import jakarta.inject.Inject;
-import jakarta.inject.Singleton;
 
-@Singleton
 public final class DdbSavedSectionMapper {
 
     private final DataCompressor dataCompressor;

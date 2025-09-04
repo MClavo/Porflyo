@@ -12,11 +12,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.porflyo.dto.PortfolioPatchDto;
-import com.porflyo.ports.output.PortfolioRepository;
 import com.porflyo.model.ids.PortfolioId;
 import com.porflyo.model.ids.UserId;
 import com.porflyo.model.portfolio.Portfolio;
 import com.porflyo.model.portfolio.Slug;
+import com.porflyo.ports.PortfolioRepository;
 import com.porflyo.Item.DdbPortfolioItem;
 import com.porflyo.mapper.DdbPortfolioMapper;
 import  com.porflyo.schema.PortfolioTableSchema;

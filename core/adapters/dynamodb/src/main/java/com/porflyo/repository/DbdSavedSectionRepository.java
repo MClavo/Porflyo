@@ -16,7 +16,7 @@ import com.porflyo.mapper.DdbSavedSectionMapper;
 import com.porflyo.model.ids.SectionId;
 import com.porflyo.model.ids.UserId;
 import com.porflyo.model.portfolio.SavedSection;
-import com.porflyo.ports.output.SavedSectionRepository;
+import com.porflyo.ports.SavedSectionRepository;
 import  com.porflyo.schema.SavedSectionTableSchema;
 
 import io.micronaut.context.annotation.Requires;

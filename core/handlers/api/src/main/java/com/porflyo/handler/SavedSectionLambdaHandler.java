@@ -15,12 +15,11 @@ import com.porflyo.model.ids.SectionId;
 import com.porflyo.model.ids.UserId;
 import com.porflyo.model.portfolio.SavedSection;
 import com.porflyo.model.user.UserClaims;
-import com.porflyo.ports.input.AuthUseCase;
-import com.porflyo.ports.input.SavedSectionUseCase;
+import com.porflyo.usecase.AuthUseCase;
+import com.porflyo.usecase.SavedSectionUseCase;
 
 import io.micronaut.json.JsonMapper;
 import jakarta.inject.Inject;
-import jakarta.inject.Singleton;
 
 /**
  * Lambda handler for saved section operations.
@@ -32,7 +31,6 @@ import jakarta.inject.Singleton;
  *
  * This handler is always invoked after the user has been authenticated.
  */
-@Singleton
 public class SavedSectionLambdaHandler {
     private static final Logger log = LoggerFactory.getLogger(SavedSectionLambdaHandler.class);
     

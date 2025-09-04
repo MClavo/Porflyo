@@ -30,8 +30,8 @@ import com.porflyo.model.ids.UserId;
 import com.porflyo.model.portfolio.PortfolioSection;
 import com.porflyo.model.portfolio.SavedSection;
 import com.porflyo.model.user.UserClaims;
-import com.porflyo.ports.input.AuthUseCase;
-import com.porflyo.ports.input.SavedSectionUseCase;
+import com.porflyo.usecase.AuthUseCase;
+import com.porflyo.usecase.SavedSectionUseCase;
 
 import io.micronaut.json.JsonMapper;
 

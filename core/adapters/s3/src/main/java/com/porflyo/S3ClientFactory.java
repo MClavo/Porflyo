@@ -39,7 +39,7 @@ public class S3ClientFactory {
 
     @Singleton
     @Named("lowS3Client")
-    @Requires(env = "local")
+    @Requires(env = {"local", "integration"})
     S3Client localS3Client() {
         Region region = Region.of(s3Config.region());
         return S3Client.builder()
@@ -52,7 +52,7 @@ public class S3ClientFactory {
     }
 
     @Singleton
-    @Requires(env = "local")
+    @Requires(env = {"local", "integration"})
     S3Presigner localS3Presigner() {
         Region region = Region.of(s3Config.region());
         return S3Presigner.builder()
@@ -68,7 +68,7 @@ public class S3ClientFactory {
 
     @Singleton
     @Named("lowS3Client")
-    @Requires(notEnv = "local")
+    @Requires(notEnv = {"local", "integration"})
     S3Client prodS3Client() {
         Region region = Region.of(s3Config.region());
         return S3Client.builder()
@@ -81,7 +81,7 @@ public class S3ClientFactory {
     
 
     @Singleton
-    @Requires(notEnv = "local")
+    @Requires(notEnv = {"local", "integration"})
     S3Presigner prodS3Presigner() {
         Region region = Region.of(s3Config.region());
         return S3Presigner.builder()

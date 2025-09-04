@@ -5,11 +5,11 @@ import static com.porflyo.common.DdbKeys.SLUG_PORTFOLIO_SK_PREFIX;
 import static com.porflyo.common.DdbKeys.idFrom;
 import static com.porflyo.common.DdbKeys.pk;
 
+import com.porflyo.Item.DdbPortfolioUrlItem;
 import com.porflyo.model.ids.PortfolioId;
 import com.porflyo.model.ids.UserId;
 import com.porflyo.model.portfolio.PortfolioUrl;
 import com.porflyo.model.portfolio.Slug;
-import com.porflyo.Item.DdbPortfolioUrlItem;
 
 import jakarta.inject.Singleton;
 

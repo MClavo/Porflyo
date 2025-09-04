@@ -11,7 +11,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 
 import com.porflyo.configuration.DdbConfig;
-import com.porflyo.ports.output.UserRepositoryContract;
+import com.porflyo.ports.UserRepositoryContract;
 import com.porflyo.repository.DdbUserRepository;
 import  com.porflyo.schema.UserTableSchema;
 

@@ -3,7 +3,7 @@ package com.porflyo;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayV2HTTPEvent;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayV2HTTPResponse;
 import com.porflyo.exceptions.auth.JwtMalformedException;
-import com.porflyo.ports.input.AuthUseCase;
+import com.porflyo.usecase.AuthUseCase;
 
 import io.micronaut.context.ApplicationContext;
 import io.micronaut.context.env.Environment;

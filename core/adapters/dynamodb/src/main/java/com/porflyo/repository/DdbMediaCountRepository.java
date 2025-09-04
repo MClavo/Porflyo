@@ -19,7 +19,7 @@ import com.porflyo.Item.DdbMediaCountItem;
 import com.porflyo.configuration.DdbConfig;
 import com.porflyo.mapper.DdbMediaCountMapper;
 import com.porflyo.model.ids.UserId;
-import com.porflyo.ports.output.MediaCountRepository;
+import com.porflyo.ports.MediaCountRepository;
 import com.porflyo.schema.MediaCountTableSchema;
 
 import io.micronaut.context.annotation.Requires;

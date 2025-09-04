@@ -17,7 +17,7 @@ import com.porflyo.model.ids.ProviderUserId;
 import com.porflyo.model.ids.UserId;
 import com.porflyo.model.user.ProviderAccount;
 import com.porflyo.model.user.User;
-import com.porflyo.ports.input.MediaUseCase;
+import com.porflyo.usecase.MediaUseCase;
 
 @ExtendWith(MockitoExtension.class)
 class PublicUserDtoMapperTest {

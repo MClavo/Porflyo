@@ -15,7 +15,7 @@ import com.porflyo.dto.PortfolioCreateDto;
 import com.porflyo.model.ids.UserId;
 import com.porflyo.model.portfolio.Portfolio;
 import com.porflyo.model.portfolio.PortfolioSection;
-import com.porflyo.ports.input.MediaUseCase;
+import com.porflyo.usecase.MediaUseCase;
 
 @DisplayName("PortfolioCreateDtoMapper (unit)")
 class PortfolioCreateDtoMapperTest {
