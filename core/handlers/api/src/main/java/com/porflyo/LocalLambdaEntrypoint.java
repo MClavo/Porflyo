@@ -43,10 +43,14 @@ public class LocalLambdaEntrypoint extends MicronautRequestHandler<APIGatewayV2H
             String token = LambdaHttpUtils.extractCookieValue(input, "session");
 
             if (token == null || token.trim().isEmpty()) {
-                throw new JwtMalformedException("Missing or empty session token");
+                return LambdaHttpUtils.createErrorResponse(401, "Missing or empty session token");
             }
 
-            authUseCase.verifyTokenOrThrow(token);
+            try {
+                authUseCase.verifyTokenOrThrow(token);
+            } catch (JwtMalformedException e) {
+                return LambdaHttpUtils.createErrorResponse(401, e.getMessage());
+            }
         }
 
         try (ApiLambdaEntrypoint apiEntrypoint = new ApiLambdaEntrypoint()) {

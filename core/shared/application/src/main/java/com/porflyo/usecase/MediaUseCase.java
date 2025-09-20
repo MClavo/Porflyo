@@ -11,12 +11,15 @@ import com.porflyo.model.ids.UserId;
 import com.porflyo.ports.MediaCountRepository;
 import com.porflyo.ports.MediaRepository;
 
+import jakarta.inject.Inject;
+
 public class MediaUseCase {
     private static final Logger log = LoggerFactory.getLogger(MediaUseCase.class);
 
     private final MediaRepository mediaRepository;
     private final MediaCountRepository mediaCountRepository;
 
+    @Inject
     public MediaUseCase(MediaRepository mediaRepository,
                         MediaCountRepository mediaCountRepository) {
         this.mediaRepository = mediaRepository;

@@ -29,7 +29,6 @@ Resources:
       MemorySize: 256
       Environment:
         Variables:
-          AWS_LAMBDA_FUNCTION_HANDLER: io.micronaut.function.aws.proxy.payload2.APIGatewayV2HTTPEventFunction
           OAUTH_CLIENT_ID: !Ref OAUTH_CLIENT_ID
           OAUTH_CLIENT_SECRET: !Ref OAUTH_CLIENT_SECRET
           OAUTH_REDIRECT_URI: !Ref OAUTH_REDIRECT_URI
