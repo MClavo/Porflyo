@@ -1,0 +1,83 @@
+
+body {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center; /* center the page content horizontally */
+  align-items: flex-start; /* keep content at the top */
+  /* padding: 2rem 1rem; */
+  box-sizing: border-box;
+
+}
+
+.test .project-card {
+  
+  flex: 0 1 400px;    
+  max-width: 800px;
+  width: 800px;
+
+}
+
+.project-section{
+  display: flex;
+  justify-content: space-evenly;/* misma separación entre items y bordes */
+  align-content: space-evenly;  /* opcional: misma lógica entre filas */
+  flex-wrap: wrap;
+  flex-direction: row;
+}
+
+.cards {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.wrapper button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 3rem;
+  flex-wrap: wrap;
+}
+
+.wrapper h1{
+  margin-bottom: 2rem;
+}
+
+
+.card:nth-child(3),
+.card:nth-child(5),
+.card:nth-child(6) {
+  flex-grow: 1;
+  width: 40%;
+
+}
+
+.card:nth-child(1),
+.card:nth-child(2),
+.card:nth-child(4) {
+  width: 100%;
+}
+
+.card {
+  padding: 1rem 2rem;
+  border-style: solid;
+  border-radius: 16px;
+  border-width: 2px;
+  height: auto;
+}
+
+.wrapper {
+  /* min-height: 95vh; */
+  display: flex;
+  flex-direction: column;
+  gap: 6rem;
+  /* width: 100%; */
+  max-width: 80vw; /* constrain content width */
+  margin: 0 auto;
+  align-items: center; /* center children horizontally within wrapper */
+}
+
+.container {
+  display: grid;
+  gap: 2rem;
+}

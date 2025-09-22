@@ -1,75 +1,39 @@
-import axios, { type AxiosResponse } from 'axios';
+import { apiGet, apiPost, apiDelete } from './base.client';
 import type { 
   SavedSectionCreateDto, 
   PublicSavedSectionDto,
-  ApiResponse,
-  ApiError 
-} from '../../types/savedSections.types';
+  ApiResponse
+} from '../types';
 
-// Base axios instance for saved sections API
-const api = axios.create({
-  baseURL: '/api',
-  headers: {
-    'Content-Type': 'application/json',
-  },
-});
-
-// API response handler
-const handleResponse = <T>(response: AxiosResponse<T>): ApiResponse<T> => ({
-  data: response.data,
-  status: response.status,
-});
-
-// API error handler
-const handleError = (error: unknown): never => {
-  const errorResponse = error as { response?: { data?: { message?: string }; status?: number }; message?: string };
-  const apiError: ApiError = {
-    message: errorResponse?.response?.data?.message || errorResponse?.message || 'Unknown error',
-    status: errorResponse?.response?.status || 500,
-  };
-  throw apiError;
-};
+/**
+ * Saved Sections API client
+ */
 
 /**
  * Create a new saved section
  * POST /api/sections
  */
-export const createSavedSection = async (
+export async function createSavedSection(
   createDto: SavedSectionCreateDto
-): Promise<ApiResponse<PublicSavedSectionDto>> => {
-  try {
-    const response = await api.post<PublicSavedSectionDto>('/sections', createDto);
-    return handleResponse(response);
-  } catch (error) {
-    return handleError(error);
-  }
-};
+): Promise<ApiResponse<PublicSavedSectionDto>> {
+  const data = await apiPost<PublicSavedSectionDto>('/sections', createDto);
+  return { data, status: 201 };
+}
 
 /**
  * Get all saved sections
  * GET /api/sections
  */
-export const getSavedSections = async (): Promise<ApiResponse<PublicSavedSectionDto[]>> => {
-  try {
-    const response = await api.get<PublicSavedSectionDto[]>('/sections');
-    return handleResponse(response);
-  } catch (error) {
-    return handleError(error);
-  }
-};
+export async function getSavedSections(): Promise<ApiResponse<PublicSavedSectionDto[]>> {
+  const data = await apiGet<PublicSavedSectionDto[]>('/sections');
+  return { data, status: 200 };
+}
 
 /**
  * Delete a saved section by ID
  * DELETE /api/sections/{itemId}
  */
-export const deleteSavedSection = async (itemId: string): Promise<ApiResponse<void>> => {
-  try {
-    const response = await api.delete<void>(`/sections/${itemId}`);
-    return handleResponse(response);
-  } catch (error) {
-    return handleError(error);
-  }
-};
-
-// Export the api instance for potential customization
-export { api as savedSectionsApi };
+export async function deleteSavedSection(itemId: string): Promise<ApiResponse<void>> {
+  await apiDelete<void>(`/sections/${itemId}`);
+  return { status: 204 };
+}

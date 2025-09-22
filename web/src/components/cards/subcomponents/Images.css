@@ -1,0 +1,71 @@
+.images-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  /* ensure wrapper is above drag-capture */
+  position: relative;
+  z-index: 200;
+}
+
+.images {
+  display: flex;
+  overflow-x: auto;
+  gap: 8px;
+  padding: 8px;
+  align-items: center;
+  position: relative;
+  z-index: 200;
+}
+
+.images img {
+  max-height: 160px;
+  object-fit: contain;
+}
+
+.image-item {
+  position: relative;
+  /* keep item positioned but avoid outranking the overlay */
+  z-index: 100;
+}
+
+.image-index-overlay {
+  position: absolute;
+  right: 6px;
+  bottom: 6px;
+  background: rgba(0,0,0,0.6);
+  color: white;
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: 10px;
+  z-index: 1000; /* ensure badge sits above the image */
+  pointer-events: auto;
+}
+
+.images.editable {
+  border: 1px dashed transparent;
+}
+
+.images.drag-over {
+  border-color: #66aaff;
+  background: rgba(102,170,255,0.03);
+}
+
+.images-controls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  z-index: 205;
+}
+
+.images-controls-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.images-error {
+  color: #b00020;
+  font-size: 12px;
+  margin-top: 4px;
+}

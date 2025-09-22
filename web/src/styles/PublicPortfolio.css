@@ -1,0 +1,119 @@
+.public-portfolio-container {
+  min-height: 100vh;
+  background-color: #ffffff;
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 50vh;
+  gap: 1rem;
+}
+
+.loading-spinner {
+  width: 2rem;
+  height: 2rem;
+  border: 3px solid #e5e7eb;
+  border-top: 3px solid #3b82f6;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.error-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 50vh;
+  text-align: center;
+  gap: 1rem;
+  padding: 2rem;
+}
+
+.error-container h1 {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #1f2937;
+  margin: 0;
+}
+
+.error-container p {
+  color: #6b7280;
+  margin: 0;
+}
+
+.portfolio-header {
+  text-align: center;
+  padding: 2rem 1rem;
+  background: linear-gradient(to bottom, #f9fafb, #ffffff);
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.portfolio-title {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #1f2937;
+  margin: 0;
+  line-height: 1.2;
+}
+
+/* Template-specific layouts */
+.template-layout {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.template1-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+}
+
+.template2-layout {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 2rem;
+}
+
+.template-section {
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .portfolio-title {
+    font-size: 2rem;
+  }
+  
+  .template2-layout {
+    grid-template-columns: 1fr;
+  }
+  
+  .template-layout {
+    padding: 1rem;
+  }
+}
+
+/* Remove editor-specific UI elements for public view */
+.public-portfolio-container .test-header {
+  display: none;
+}
+
+.public-portfolio-container .sidebar-toggle {
+  display: none;
+}
+
+.public-portfolio-container .portfolio-sidebar {
+  display: none;
+}

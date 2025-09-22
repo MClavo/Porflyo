@@ -1,0 +1,70 @@
+
+:root{
+  /* layout */
+  --spacing: 24;
+  --dot-size: 0.1;
+
+  /* influence / motion */
+  --influence-radius: 220;
+  --max-offset: 8;
+  --return-lerp: 0.05;
+
+  /* heat mapping */
+  --heat-decay: 0.95;
+  /* map slower movement to more visible heat */
+  --heat-gain: 0.18;
+  --speed-gain: 0.02;
+  /* softer gamma so moderate speeds matter more */
+  --speed-gamma: 2.0;
+  /* lower proximity gamma so points near pointer brighten more easily */
+  --proximity-gamma: 1.6;
+  --color-gamma: 4.0;
+
+  /* inner layer */
+  --inner-offset-max: 0.02;
+  --inner-dot-size: 0.1;
+  --inner-hue: 200;
+  --inner-saturation: 36;
+  --inner-lightness: 36;
+  --inner-opacity: 0.55;
+  --inner-power: 0.016;
+  --inner-mouse-strength: 0.06;
+
+  /* star / sparkle tuning */
+  --dot-color: #bde2ff;
+  --dot-growth: 2;
+  --dot-brightness-base: 0.25;
+  --dot-brightness-peak: 1.0;
+  /* reduce number of bloom-producing stars */
+  /* make more stars eligible and easier to show */
+  --star-probability: 0.22;
+  --star-length: 4;
+  --star-thickness: 1.5;
+  --star-rotation-variance: 0.9;
+  --star-flicker-speed: 2.5;
+  /* lower threshold so stars light up with less movement */
+  --star-activation-threshold: 0.01;
+  /* faster animation lerp for snappier appearance */
+  --star-anim-lerp: 0.08; /* how fast stars animate appearance/disappearance */
+  /* faster selection so different points become eligible sooner */
+  --star-selection-speed: 0.01; /* how quickly which points become eligible */
+
+  /* parallax tuning */
+  --parallax-center-strength: 0.08; /* multiplier for center-offset parallax */
+  --parallax-near-mult: 0.55; /* how much near layers move more */
+
+  /* bloom / glow tuning */
+  --bloom-alpha: 0.35; /* additive composite alpha for bloom */
+  --bloom-downscale: 15; /* downscale factor used for cheap blur */
+  --bloom-size-mult: 0.5; /* multiplier for glow spot radius */
+  --bloom-fade: 0.000006; /* how quickly the glow buffer fades each frame (0..1) smaller = more persistence */
+  /* flow temporal evolution (very small = very slow) */
+  --flow-time-scale: 0.00015;
+  /* gloom tuning: chance that a star contributes to bloom and activation threshold for non-star glow */
+  --star-gloom-prob: 0.0002; /* fraction of stars that also produce gloom */
+  --gloom-activation-threshold: 0.0002; /* activation required for ordinary points to contribute to glow */
+}
+
+/* Capa interior: desplaza puntos hacia el centro (gradiente radial) */
+/* :root {
+} */

@@ -1,0 +1,84 @@
+.publication-settings {
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background-color: #f9fafb;
+}
+
+.publication-title {
+  margin: 0 0 1rem 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+.publication-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.visibility-control {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.visibility-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  font-weight: 500;
+  color: #374151;
+}
+
+.visibility-checkbox {
+  width: 1rem;
+  height: 1rem;
+  cursor: pointer;
+}
+
+.visibility-text {
+  font-size: 0.875rem;
+}
+
+.visibility-description {
+  margin: 0;
+  font-size: 0.75rem;
+  color: #6b7280;
+  margin-left: 1.5rem;
+}
+
+.publish-button {
+  padding: 0.75rem 1rem;
+  background-color: #059669;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  align-self: flex-start;
+}
+
+.publish-button:hover:not(:disabled) {
+  background-color: #047857;
+}
+
+.publish-button:disabled {
+  background-color: #9ca3af;
+  cursor: not-allowed;
+}
+
+.publish-warning {
+  margin: 0;
+  font-size: 0.75rem;
+  color: #dc2626;
+  background-color: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 4px;
+  padding: 0.5rem;
+}

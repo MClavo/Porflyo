@@ -1,0 +1,87 @@
+/* Minimal styles for the add-card area inside a section */
+.section-add-card {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 8px 0 12px 0; /* small gap between title and cards */
+}
+
+.section-add-card .add-card-root {
+  margin-top: 0; /* AddCardButton had top margin; reset when placed here */
+}
+
+/* Drag and Drop styles */
+.section-cards {
+  position: relative;
+  min-height: 100px; /* Minimum height for drop zones */
+}
+
+/* Dragging states */
+.section-cards.dragging {
+  transition: background-color 0.2s ease;
+}
+
+/* Card drag hover effects */
+.sortable-card {
+  width: fit-content;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Ensure wrapper is positioned so the absolute overlay can cover it */
+.sortable-card {
+  position: relative;
+}
+
+.sortable-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* .sortable-card.dragging {
+  transform: rotate(5deg);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  z-index: 1000;
+} */
+
+/* Drag overlay styles */
+/* .drag-overlay {
+  pointer-events: none;
+  transform: rotate(5deg);
+  opacity: 0.8;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  z-index: 1001;
+} */
+
+/* Ensure smooth animations */
+/* * {
+  box-sizing: border-box;
+} */
+
+/* Grab cursor for draggable items in edit mode */
+[data-sortable-id] {
+  cursor: grab;
+}
+
+[data-sortable-id]:active {
+  cursor: grabbing;
+}
+
+/* Invisible overlay that captures drag pointer events. Keep z-index below interactive fields */
+.sortable-card .drag-capture {
+  position: absolute;
+  inset: 0;
+  z-index: 2; /* fields (text inputs) should be above, e.g., z-index:10 */
+  background: transparent;
+  cursor: grab;
+}
+
+.sortable-card.dragging .drag-capture {
+  cursor: grabbing;
+}
+
+/* Drop zone indicators */
+.section-cards.drop-target {
+  background-color: rgba(59, 130, 246, 0.1);
+  border: 2px dashed rgba(59, 130, 246, 0.5);
+  border-radius: 8px;
+}

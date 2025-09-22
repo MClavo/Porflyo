@@ -1,144 +1,122 @@
-import { Navigate } from 'react-router-dom';
-import { LoginButton } from '../features/auth/components/LoginButton';
-import { useAuthUser } from '../features/auth/hooks/useAuthUser';
-import './keycaps.css';
-import { GlassKeycapButton } from './keycap/GlassKeycapButton';
-import { DndContext, closestCenter, DragOverlay } from '@dnd-kit/core';
-import { SortableContext, arrayMove } from '@dnd-kit/sortable';
-import { useState } from 'react';
-import type { DragEndEvent, DragStartEvent } from '@dnd-kit/core';
-import { useSortable } from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
+import "../styles/main.css";
+import "../styles/root.css";
+import "../styles/grafite.css";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import DotGridBackground from "../components/DotGrid";
+import ProjectCard from "../components/cards/ProjectCard";
+import { LoginButton } from "../components/auth/LoginButton";
+import { useAuthContext } from "../hooks/useAuthContext";
 
-/**
- * Root page (unauthenticated) — moved from HomePage
- */
-export default function Root() {
-  const { isAuthenticated } = useAuthUser();
+export const DarkModeToggle = () => {
+  const title1 = "Project 1";
+  const title2 = "Project 2";
+  const title3 = "Project 3";
 
-  // State to manage the order of keycaps
-  const [keycaps, setKeycaps] = useState([
-    { id: 'P', glyph: 'P' },
-    { id: 'O', glyph: 'O' },
-    { id: 'R', glyph: 'R' },
-    { id: 'F', glyph: 'F' },
-    { id: 'L', glyph: 'L' },
-    { id: 'Y', glyph: 'Y' },
-    { id: 'O2', glyph: 'O' },
-  ]);
+  const description1 = "a simple card component that displays an image, title, and description. It is designed to be reusable and customizable, allowing you to easily showcase different content in a visually appealing way.";
+  const description2 = "another simple card component that displays an image, title, and description. It is designed to be reusable and customizable, allowing you to easily showcase different content in a visually appealing way. The component supports responsive layouts, configurable styles and subtle animations, includes accessible markup and keyboard support, and can optionally render action buttons, tags, or links for interaction—making it ideal for galleries, portfolios, feature highlights, and modular UI compositions.";
+  const description3 = "";
 
-  // activeId for DragOverlay
-  const [activeId, setActiveId] = useState<string | null>(null);
+  const technologies1 = ["React", "TypeScript", "CSS", "HTML", "Node.js", "Express", "MongoDB"];
+  
+  const technologies3 = ["Python", "Django", "PostgreSQL", "Docker", "AWS"];
 
-  const handleDragStart = (event: DragStartEvent) => {
-    setActiveId(String(event.active.id));
-  };
+  const image1 = "https://i.pinimg.com/1200x/ea/c2/b7/eac2b7844ad390cd510dc94bb4e7a7ab.jpg";
+  const image2 = "https://i.pinimg.com/736x/f0/81/b9/f081b9c555b8588b4a39d95eab73310d.jpg";
+  const image3 = "https://i.pinimg.com/736x/53/3d/c4/533dc4300696a27d40dc8d2e5969073c.jpg";
 
-  const handleDragEnd = (event: DragEndEvent) => {
-    const { active, over } = event;
-
-    if (active && over && active.id !== over.id) {
-      setKeycaps((items) => {
-        const oldIndex = items.findIndex((item) => item.id === active.id);
-        const newIndex = items.findIndex((item) => item.id === over.id);
-        return arrayMove(items, oldIndex, newIndex);
-      });
-    }
-
-    // clear overlay at the end of drag so the moved element reappears in its new place
-    setActiveId(null);
-  };
-
-  function SortableKeycap({ id, glyph, size }: { id: string; glyph: string; size: number }) {
-    const {
-      attributes,
-      listeners,
-      setNodeRef,
-      transform,
-      transition,
-      isDragging,
-    } = useSortable({ id });
-
-    const style = {
-      transform: CSS.Transform.toString(transform),
-      transition,
-      visibility: isDragging ? 'hidden' as const : undefined,
-    };
-
+  const ProjectSection = () => {
     return (
-      <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
-        <GlassKeycapButton glyph={glyph} aria-label={`${glyph} key`} size={size} />
+      <div className="card">
+        <h2>Projects</h2>
+          <div className="project-section test">
+            <ProjectCard images={[image1]} title={title1} description={description1} techTitle="Technologies" technologies={technologies1} />
+            <ProjectCard images={[image2]} title={title2} description={description2} techTitle="Tech Stack" technologies={[]} />
+            <ProjectCard images={[image3]} title={title3} description={description3} techTitle="Technologies" technologies={technologies3} />
+
+          </div>
       </div>
     );
-  }
-
-  // If already authenticated, send the user to the authenticated home dashboard
-  if (isAuthenticated) {
-    return <Navigate to="/home" replace />;
-  }
+  };
 
   return (
-    <div>
-      {/* Hero Section */}
-      <div className="main-content" >
-        <div className="text-center">
-          <h1 style={{ fontSize: '3rem', fontWeight: 'bold', marginBottom: '1.5rem' }}>
-            Create and publish your
-            <span style={{ color: 'var(--primary-color)' }}> portfolio</span>
-          </h1>
-          <p className="text-lg mb-6" style={{ maxWidth: '48rem', margin: '0 auto 2rem auto', color: 'var(--text-secondary)' }}>
-            Build beautiful, professional portfolios that showcase your work. 
-            Connect your GitHub repositories and create multiple portfolio views 
-            for different purposes.
-          </p>
-
-          
-          
-
-          {/* Keycaps with DnD */}
-          <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd} onDragStart={handleDragStart} onDragCancel={() => setActiveId(null)}>
-             <SortableContext items={keycaps.map((keycap) => keycap.id)}>
-               <div className="keycaps">
-                 {keycaps.map(({ id, glyph }) => (
-                   <SortableKeycap key={id} id={id} glyph={glyph} size={120} />
-                 ))}
-               </div>
-             </SortableContext>
-            <DragOverlay dropAnimation={{ duration: 160, easing: 'cubic-bezier(0.2, 0, 0, 1)' }}>
-              {activeId ? (() => {
-                const item = keycaps.find(k => k.id === activeId);
-                return item ? <GlassKeycapButton glyph={item.glyph} size={120} /> : null;
-              })() : null}
-            </DragOverlay>
-           </DndContext>
-              
-           <div className="mb-6">
-            <LoginButton className="btn btn-lg">
-              Sign in with GitHub to get started
-            </LoginButton>
-          </div>
-
-        </div>
-      </div>
-
-      {/* Testing Section */}
-      <div style={{ background: 'var(--surface)', borderTop: '1px solid var(--border)' }}>
-        <div className="main-content">
-          <div className="text-center">
-            <h2 style={{ fontSize: '1.5rem', fontWeight: '600', marginBottom: '1rem' }}>
-              Want to see a portfolio in action?
-            </h2>
-            <p style={{ color: 'var(--text-secondary)', marginBottom: '1.5rem' }}>
-              View public portfolios using their slug URLs
-            </p>
-            <div style={{ maxWidth: '24rem', margin: '0 auto' }}>
-              <div style={{ background: 'var(--background)', borderRadius: 'var(--radius)', padding: '1rem', fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
-                <span style={{ fontFamily: 'monospace' }}>porflyo.com/p/[slug]</span>
-              </div>
-            </div>
+    <section>
+      <div className="cards">
+        <div className="title card glass">
+          <h1>poRflyo</h1>
+          <p>the easy way to build your project portfolios</p>
+          <div style={{ marginTop: '1rem' }}>
+            <LoginButton className="glass" />
           </div>
         </div>
+        <ProjectSection />
+        <div className="card">
+          <h2>Example Section 2</h2>
+          <p>This is another example paragraph.</p>
+        </div>
+        <div className="card">
+          <h2>Example Section 3</h2>
+          <p>Este es un párrafo de ejemplo en español.</p>
+        </div>
+        <div className="card">
+          <h2>Example Section 4</h2>
+          <p>This is yet another example paragraph.</p>
+        </div>
+        <div className="card">
+          <h2>Example Section 5</h2>
+          <p>This is a final example paragraph.</p>
+        </div>
       </div>
-    </div>
+    </section>
+  );
+};
+
+function Root() {
+  const navigate = useNavigate();
+  const { isLoading, refetch } = useAuthContext();
+
+  useEffect(() => {
+    const handleOAuthReturn = async () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const hasOAuthParams = urlParams.has('code') || urlParams.has('state') || urlParams.has('access_token');
+      
+      if (hasOAuthParams) {
+        try {
+          // Set flag to indicate OAuth return
+          sessionStorage.setItem('oauth_return', 'true');
+          
+          // Refetch auth status to get the latest user data
+          await refetch();
+          
+          // Clean up URL parameters
+          const newUrl = new URL(window.location.href);
+          newUrl.search = '';
+          window.history.replaceState({}, '', newUrl.pathname);
+          
+          // Navigate to home after successful OAuth
+          navigate('/home', { replace: true });
+        } catch (error) {
+          console.error('Error processing OAuth return:', error);
+          sessionStorage.removeItem('oauth_return');
+        }
+      }
+    };
+
+    // Only handle OAuth return if we're not loading and have OAuth parameters
+    if (!isLoading) {
+      handleOAuthReturn();
+    }
+  }, [isLoading, refetch, navigate]);
+
+  return (
+    <>
+      <DotGridBackground />
+      <div className="wrapper">
+       
+      <DarkModeToggle />
+      </div>
+    </>
   );
 }
+
+export default Root;
