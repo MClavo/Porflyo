@@ -5,12 +5,6 @@ export interface SlugAvailabilityResult {
   slug: string;
 }
 
-/**
- * Hook para validar la disponibilidad de slug con debounce
- * @param slug - El slug a validar
- * @param enabled - Si la validación está habilitada
- * @param delayMs - Delay en milisegundos para el debounce
- */
 export function useDebouncedSlugAvailability(
   slug: string,
   enabled: boolean = true,
@@ -33,18 +27,13 @@ export function useDebouncedSlugAvailability(
 
     const timeoutId = setTimeout(async () => {
       try {
-        // Usar el endpoint correcto del backend
         const response = await fetch(`/public/isurlavailable/${encodeURIComponent(slug)}`);
         
         if (response.status === 500) {
-          // Error 500 significa que el slug no está disponible
-          setData({
-            available: false,
-            slug: slug
-          });
+          setData({ available: false, slug });
           return;
         }
-        
+
         if (!response.ok) {
           throw new Error('Failed to check slug availability');
         }
@@ -52,15 +41,8 @@ export function useDebouncedSlugAvailability(
         const result: SlugAvailabilityResult = await response.json();
         setData(result);
       } catch (err) {
-        // Si hay error de red u otro tipo, usar fallback mock
-        const unavailableSlugS = ['admin', 'api', 'www', 'mail', 'test', 'demo'];
-        const isAvailable = !unavailableSlugS.includes(slug.toLowerCase());
-        
-        setData({
-          available: isAvailable,
-          slug: slug
-        });
-        
+        const unavailable = ['admin','api','www','mail','test','demo'];
+        setData({ available: !unavailable.includes(slug.toLowerCase()), slug });
         console.warn('Slug availability check failed, using mock data:', err);
       } finally {
         setIsLoading(false);
@@ -73,9 +55,5 @@ export function useDebouncedSlugAvailability(
     };
   }, [slug, enabled, delayMs]);
 
-  return {
-    data,
-    isLoading,
-    error
-  };
+  return { data, isLoading, error };
 }

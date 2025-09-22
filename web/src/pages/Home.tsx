@@ -1,7 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuthContext } from '../hooks/useAuthContext';
-import { usePortfoliosContext } from '../hooks/usePortfoliosContext';
-import { usePortfolioActions } from '../hooks/usePortfolioActions';
+import { useAuthContext } from '../hooks/ui/useAuthContext';
+import { usePortfoliosContext } from '../hooks/ui/usePortfoliosContext';
+import { usePortfolioActions } from '../hooks/ui/usePortfolioActions';
 import '../styles/components/buttons.css';
 import '../styles/pages/home.css';
 /* import '../styles/cards/cards.css'; */

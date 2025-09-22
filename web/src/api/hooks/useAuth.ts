@@ -3,6 +3,7 @@ import type { PublicUserDto } from '../types';
 import { checkAuth } from '../clients/auth.api';
 import { getUser } from '../clients/user.api';
 import { ApiClientError } from '../clients/base.client';
+import { isPageRefresh } from '../../lib/pageRefresh';
 
 interface AuthUserResult {
   user: PublicUserDto | null;
@@ -20,6 +21,7 @@ interface AuthUserResult {
  * Flow:
  * 1. First performs a lightweight auth status check against /auth
  * 2. If authenticated, fetches full user data with getUser
+ * 3. Forces refresh when page is refreshed (F5) to get fresh data
  * 
  * Returns:
  * - user: PublicUserDto if authenticated, null if not
@@ -107,14 +109,26 @@ export function useAuth(): AuthUserResult {
     const hasOAuthParams = urlParams.has('code') || urlParams.has('state') || urlParams.has('access_token');
     const oauthReturn = sessionStorage.getItem('oauth_return');
     const hasCachedUser = localStorage.getItem('auth_user');
-    const isRootPage = window.location.pathname === '/';
+    
+    // Check current route - only load auth on specific routes during refresh
+    const currentPath = window.location.pathname;
+    const isHome = currentPath === '/' || currentPath === '/home';
+    const isPortfolioRoute = currentPath.startsWith('/portfolios/');
+    const isProfileRoute = currentPath === '/profile' || currentPath.startsWith('/profile/');
+    const isRootPage = currentPath === '/';
+    
+    // Check if this is a page refresh - forces fresh data
+    const pageRefresh = isPageRefresh();
     
     // Only fetch auth status if:
     // 1. We just returned from OAuth (has OAuth params or oauth_return flag)
     // 2. We're on a protected route that requires auth verification AND we don't have cached user
     // 3. We're NOT on the root page (landing page should not trigger auth checks)
+    // 4. This is a page refresh AND we're on an allowed route (home, portfolios, profile)
+    const isAllowedRouteForRefresh = isHome || isPortfolioRoute || isProfileRoute;
     const shouldFetchAuth = (hasOAuthParams || oauthReturn === 'true') || 
-                          (!isRootPage && !hasCachedUser);
+                          (!isRootPage && !hasCachedUser) ||
+                          (pageRefresh && isAllowedRouteForRefresh);
     
     if (shouldFetchAuth) {
       fetchAuthStatus();

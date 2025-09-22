@@ -1,10 +1,10 @@
 import { useEffect, useRef } from "react";
-import { SavedCards } from "../../components/savedcards";
+import { SavedCards } from "../savedcards";
 import { useSavedCardsWithApi } from "../../state/SavedCards.enhanced.hooks";
-import { useSavedSectionsContext } from "../../hooks/useSavedSectionsContext";
-import { isBlobUrl } from "../../components/media/mediaService";
+import type { SavedCard, SavedCardsAction } from "../../state/SavedCards.types";
+import { isBlobUrl } from "../media/mediaService";
 import type { TemplateKey } from "../../templates/Template.types";
-import type { Mode } from "../../components/cards/subcomponents/Fields.types";
+import type { Mode } from "../cards/subcomponents/Fields.types";
 import type { AnyCard } from "../../state/Cards.types";
 
 /**
@@ -64,23 +64,46 @@ export default function SavedSidebar(props: {
   mode: Mode;
   template: TemplateKey;
   onImageUrlsReplaced?: (urlMapping: Record<string, string>) => void;
+  // Optional external state/dispatch to integrate with EditorTestContainer
+  // Accept either the raw SavedCardsState or an object with a 'state' property (for compatibility)
+  savedCardsState?: unknown | { state: unknown };
+  savedCardsDispatch?: React.Dispatch<SavedCardsAction>;
 }) {
-  const { mode, template, onImageUrlsReplaced } = props;
+  const { mode, template, onImageUrlsReplaced, savedCardsState: externalState, savedCardsDispatch } = props;
   
-  // Use enhanced hooks that handle API calls
-  const { savedCards, saveCard, removeSavedCard, loadSavedCardsFromApi } = useSavedCardsWithApi();
-  const { isLoaded: savedSectionsLoaded } = useSavedSectionsContext();
+  // Use enhanced hooks that handle API calls (or external state if provided)
+      if (savedCardsDispatch) {
+        // Keep a harmless reference to avoid unused prop lint errors in some strict configs
+        console.debug('external savedCardsDispatch provided');
+      }
+  const enhanced = useSavedCardsWithApi();
+  const { savedCards, saveCard, removeSavedCard, loadSavedCardsFromApi } = enhanced;
+
+  // If external saved cards state/dispatch provided, use them when rendering SavedCards
+  function hasStateShape(val: unknown): val is { state: { savedCards?: Record<string, SavedCard> } } {
+    return typeof val === 'object' && val !== null && 'state' in val;
+  }
+
+  function hasSavedCardsShape(val: unknown): val is { savedCards: Record<string, SavedCard> } {
+    return typeof val === 'object' && val !== null && Object.prototype.hasOwnProperty.call(val, 'savedCards');
+  }
+
+  const runtimeSavedCards = (
+    hasStateShape(externalState) ? externalState.state.savedCards :
+    hasSavedCardsShape(externalState) ? externalState.savedCards :
+    savedCards
+  ) as Record<string, SavedCard>;
   
   // Use ref to track if we've already tried to load
   const hasTriedToLoadRef = useRef(false);
 
-  // Load saved cards from API when saved sections are loaded
+  // Load saved cards from API when component mounts (sections will auto-load)
   useEffect(() => {
-    if (savedSectionsLoaded && !hasTriedToLoadRef.current) {
+    if (!hasTriedToLoadRef.current) {
       hasTriedToLoadRef.current = true;
       loadSavedCardsFromApi();
     }
-  }, [savedSectionsLoaded, loadSavedCardsFromApi]);
+  }, [loadSavedCardsFromApi]);
 
   // Handle saving a card (with API call)
   const handleSave = async (card: AnyCard, originSectionId: string, originSectionType: string, name: string) => {
@@ -118,7 +141,7 @@ export default function SavedSidebar(props: {
   return (
     <div className="saved-cards-sidebar">
       <SavedCards
-        savedCards={savedCards}
+        savedCards={runtimeSavedCards}
         mode={mode}
         template={template}
         onSave={handleSave}

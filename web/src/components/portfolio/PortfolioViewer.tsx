@@ -3,7 +3,7 @@ import type { PortfolioState } from '../../state/Portfolio.types';
 import type { AnyCard } from '../../state/Cards.types';
 import type { SectionState } from '../../state/Sections.types';
 import SectionCard from '../sections/SectionCard';
-import LayoutPreview from '../../pages/editor/LayoutPreview';
+import LayoutPreview from './LayoutPreview';
 import './PortfolioViewer.css';
 
 import '../../templates/template1/template1.css';

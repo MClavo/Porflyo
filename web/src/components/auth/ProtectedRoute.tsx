@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { useAuthContext } from '../../hooks/useAuthContext';
+import { useAuthContext } from '../../hooks/ui/useAuthContext';
 
 /**
  * HOC to protect routes that require authentication

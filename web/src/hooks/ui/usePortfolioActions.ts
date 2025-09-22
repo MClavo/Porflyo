@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { usePortfoliosContext } from './usePortfoliosContext';
-import { useDeletePortfolio } from '../api/hooks/usePortfolios';
+import { useDeletePortfolio } from '../../api/hooks/usePortfolios';
 
 export interface UsePortfolioActionsResult {
   handleEdit: (portfolioId: string) => void;
@@ -52,3 +52,4 @@ export function usePortfolioActions(): UsePortfolioActionsResult {
     deleteError: deleteMutation.error,
   };
 }
+// Removed stray re-export that pointed to an incorrect relative path

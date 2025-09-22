@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useDebouncedSlugAvailability } from '../../hooks/useSlugAvailability';
+import { useDebouncedSlugAvailability } from '../../hooks/publication/useSlugAvailability';
 import { sanitizeSlugInput } from '../../lib/slug/toSlug';
 import './SlugInput.css';
 

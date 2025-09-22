@@ -1,5 +1,5 @@
 import { useState } from "react";
-import EditorContainer from "./EditorContainer";
+import EditorContainer from "./EditorTestContainer";
 import SavedDataSidebar from "../components/SavedDataSidebar";
 import type { PortfolioState } from "../state/Portfolio.types";
 

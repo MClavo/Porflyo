@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useAuthContext } from '../hooks/useAuthContext';
+import { useAuthContext } from '../hooks/ui/useAuthContext';
 import type { PublicUserDto } from '../api/types';
 import {
   ProfileHeader,

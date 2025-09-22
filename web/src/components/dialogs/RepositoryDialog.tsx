@@ -1,5 +1,5 @@
 import React from 'react';
-import { useRepositoriesContext } from '../../hooks/useRepositoriesContext';
+import { useRepositoriesContext } from '../../hooks/ui/useRepositoriesContext';
 import type { Repository } from '../../api/types/repository.types';
 import './RepositoryDialog.css';
 
@@ -53,7 +53,7 @@ export function RepositoryDialog({ isOpen, onClose, onSelectRepo }: RepositoryDi
               </div>
             )}
             
-            {!isLoading && !error && repositories.length === 0 && (
+        {!isLoading && !error && (repositories?.length ?? 0) === 0 && (
               <div className="repository-empty">
                 <div className="repository-empty-icon">📁</div>
                 <div>No repositories found</div>

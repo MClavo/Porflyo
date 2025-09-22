@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 import { useSavedCards } from './SavedCards.hooks';
-import { useSavedSectionsContext } from '../hooks/useSavedSectionsContext';
+import { useSavedSectionsContext } from '../hooks/ui/useSavedSectionsContext';
 import { createSavedSection, deleteSavedSection } from '../api/clients/savedSections.api';
 import { uploadCardImages, isBlobUrl } from '../components/media/mediaService';
 import type { AnyCard } from './Cards.types';

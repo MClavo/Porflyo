@@ -1,6 +1,6 @@
 import { useContext } from 'react';
-import { SavedSectionsContext } from '../contexts/SavedSectionsContextDefinition';
-import type { SavedSectionsContextType } from '../contexts/SavedSectionsContextDefinition';
+import { SavedSectionsContext } from '../../contexts/SavedSectionsContextDefinition';
+import type { SavedSectionsContextType } from '../../contexts/SavedSectionsContextDefinition';
 
 /**
  * Hook to use SavedSectionsContext

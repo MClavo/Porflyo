@@ -6,7 +6,9 @@ import { useNavigate } from "react-router-dom";
 import DotGridBackground from "../components/DotGrid";
 import ProjectCard from "../components/cards/ProjectCard";
 import { LoginButton } from "../components/auth/LoginButton";
-import { useAuthContext } from "../hooks/useAuthContext";
+// Update the import path to match the actual file name (e.g., useAuthContext.ts or useAuthContext/index.ts)
+// For example, if the file is named useAuthContext.tsx:
+import { useAuthContext } from "../hooks/ui/useAuthContext";
 
 export const DarkModeToggle = () => {
   const title1 = "Project 1";

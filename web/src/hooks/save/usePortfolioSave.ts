@@ -2,7 +2,7 @@ import { useState, useCallback } from 'react';
 import type { PortfolioState } from '../../state/Portfolio.types';
 import { useCreatePortfolio, usePatchPortfolio } from '../../api/hooks/usePortfolios';
 import { mapPortfolioStateToCreateDto, mapPortfolioStateToPatchDto } from '../../api/mappers/portfolio.mappers';
-import { usePortfoliosContext } from '../../hooks/usePortfoliosContext';
+import { usePortfoliosContext } from '../ui/usePortfoliosContext';
 
 export interface UsePortfolioSaveResult {
   savePortfolio: (portfolio: PortfolioState, portfolioId?: string, description?: string) => Promise<void>;

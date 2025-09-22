@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { toSlug } from '../lib/slug/toSlug';
-import type { PublicPortfolioDto } from '../api/types/dto';
+import { toSlug } from '../../lib/slug/toSlug';
+import type { PublicPortfolioDto } from '../../api/types/dto';
 
 interface UseSlugManagerProps {
   isEditing: boolean;
