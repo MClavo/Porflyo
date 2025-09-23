@@ -29,6 +29,8 @@ export interface PublicUserDto {
  * Mirrors ProviderRepo.java
  */
 export interface ProviderRepo {
+  // Unique id provided by the provider/backend (e.g. GitHub repo id)
+  id?: number;
   name: string;
   description: string;
   html_url: string;

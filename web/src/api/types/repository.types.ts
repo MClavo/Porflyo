@@ -21,6 +21,8 @@ export interface Repository extends ProviderRepo {
  * Repository with UI-specific fields for project cards
  */
 export interface RepositoryForCard {
+  // provider repo id
+  repoId?: number;
   name: string;
   description: string;
   html_url: string;
@@ -36,6 +38,7 @@ export interface RepositoryForCard {
  */
 export function mapRepositoryForCard(repo: Repository): RepositoryForCard {
   return {
+    repoId: repo.id,
     name: repo.name,
     description: repo.description || '',
     html_url: repo.html_url,

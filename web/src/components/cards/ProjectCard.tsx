@@ -23,6 +23,7 @@ interface ProjectCardProps {
   techTitle: string;
   technologies?: string[];
   // Repository fields
+  repoId?: number;
   repoUrl?: string;
   liveUrl?: string;
   stars?: number;
@@ -38,6 +39,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   description,
   techTitle = "Technologies:",
   technologies = [],
+  repoId,
   repoUrl,
   liveUrl,
   stars,
@@ -49,6 +51,11 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   // Use a ref and ResizeObserver to keep a CSS variable with the
   // current card width so styles can use it (e.g. to size images).
   const cardRef = React.useRef<HTMLDivElement | null>(null);
+
+  // Debug: Log repoId to verify it's being passed correctly
+  React.useEffect(() => {
+    console.log(`🏷️ ProjectCard "${title}" mounted with repoId:`, repoId);
+  }, [repoId, title]);
 
   React.useEffect(() => {
     const el = cardRef.current;
@@ -69,7 +76,12 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   }, []);
 
   return (
-    <div ref={cardRef} className="project-card" data-mode={mode}>
+    <div 
+      ref={cardRef} 
+      className="project-card" 
+      data-mode={mode}
+      data-project-id={repoId ? String(repoId) : 'unknown-project'}
+    >
       {/* render injected children (e.g. delete button) */}
       {children}
       {(images.length > 0 || mode === "edit") && (

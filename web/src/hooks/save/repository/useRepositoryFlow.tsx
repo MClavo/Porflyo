@@ -20,6 +20,7 @@ export function useRepositoryFlow({ dispatch, showNotification }: {
 
     const mappedRepo = mapRepositoryForCard(repository);
     const initialData = {
+      repoId: mappedRepo.repoId,
       title: mappedRepo.name,
       description: mappedRepo.description,
       techTitle: 'Technologies:',

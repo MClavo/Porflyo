@@ -11,6 +11,8 @@ export type ProjectCardSaved = {
   technologies: string[];
   images: string[];
   // Repository fields
+  // id of the repository in the provider/backend (kept when creating from provider and persisted)
+  repoId?: number;
   repoUrl?: string;
   liveUrl?: string;
   stars?: number;

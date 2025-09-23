@@ -32,6 +32,8 @@ export const cardFactories: Record<CardType, () => AnyCard> = {
       techTitle: "Technologies:",
       technologies: [],
       images: [],
+      // repository provider id (keeps track of the origin repo when created from provider)
+      repoId: undefined,
       repoUrl: undefined,
       liveUrl: undefined,
       stars: undefined,

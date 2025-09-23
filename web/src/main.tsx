@@ -14,50 +14,62 @@ import EditorTest from './pages/EditorTest.tsx'
 import ProfilePage from './pages/ProfilePage.tsx'
 import PortfolioEditor from './pages/PortfolioEditor.tsx'
 import PublicPortfolio from './pages/PublicPortfolio.tsx'
+import MetricsTest from './pages/MetricsTest.tsx'
+// analytics initialization intentionally removed from global startup.
+// When running MetricsTest we will initialize analytics locally there.
 
 createRoot(document.getElementById('root')!).render(
   <BrowserRouter>
+    <Routes>
+      <Route path="/metrics-test" element={<MetricsTest />} />
+      <Route path="/*" element={<AppWithProviders />} />
+    </Routes>
+  </BrowserRouter>
+)
+
+export function AppWithProviders() {
+  return (
     <AuthProvider>
       <PortfoliosProvider>
         <SavedSectionsProvider>
           <RepositoriesProvider>
             <SavedCardsProvider>
-            <Routes>
-              <Route path="/" element={<Root />} />
-              <Route path="/auth/callback" element={<OAuthCallback />} />
-              
-              {/* Public portfolio route - no authentication required */}
-              <Route path="/p/:slug" element={<PublicPortfolio />} />
-              
-              <Route path="/home" element={
-                  <ProtectedRoute fallback={<Root />}>
-                    <Home />
-                  </ProtectedRoute>
-                } 
-              />
-              <Route path="/profile" element={
-                <ProtectedRoute fallback={<Root />}>
-                  <ProfilePage />
-                </ProtectedRoute>
-              } />
+              <Routes>
+                <Route path="/" element={<Root />} />
+                <Route path="/auth/callback" element={<OAuthCallback />} />
 
-              <Route path='/portfolios/new' element={
-                <ProtectedRoute fallback={<Root />}>
-                  <PortfolioEditor />
-                </ProtectedRoute>
-              } />
-              <Route path='/portfolios/:id/edit' element={
-                <ProtectedRoute fallback={<Root />}>
-                  <PortfolioEditor />
-                </ProtectedRoute>
-              } />
-              <Route path="/t" element={<Test />} />
-              <Route path="/editor-test" element={<EditorTest />} />
-            </Routes>
+                {/* Public portfolio route - no authentication required */}
+                <Route path="/p/:slug" element={<PublicPortfolio />} />
+
+                <Route path="/home" element={
+                    <ProtectedRoute fallback={<Root />}>
+                      <Home />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route path="/profile" element={
+                  <ProtectedRoute fallback={<Root />}> 
+                    <ProfilePage />
+                  </ProtectedRoute>
+                } />
+
+                <Route path='/portfolios/new' element={
+                  <ProtectedRoute fallback={<Root />}>
+                    <PortfolioEditor />
+                  </ProtectedRoute>
+                } />
+                <Route path='/portfolios/:id/edit' element={
+                  <ProtectedRoute fallback={<Root />}>
+                    <PortfolioEditor />
+                  </ProtectedRoute>
+                } />
+                <Route path="/t" element={<Test />} />
+                <Route path="/editor-test" element={<EditorTest />} />
+              </Routes>
             </SavedCardsProvider>
           </RepositoriesProvider>
         </SavedSectionsProvider>
       </PortfoliosProvider>
     </AuthProvider>
-  </BrowserRouter>
-)
+  )
+}

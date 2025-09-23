@@ -2,6 +2,7 @@
 // Types for GitHub repositories from the backend API
 
 export interface GithubRepo {
+  id: number;
   name: string;
   description?: string | null;
   html_url: string;
