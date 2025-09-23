@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import type { HeatmapOptions, HeatmapData, TopCell } from '../../lib/heatmap';
 import { HeatmapRenderer, HeatmapGrid } from '../../lib/heatmap';
+import { produce } from 'immer';
 
 export function useHeatmap(containerRef: React.RefObject<HTMLElement | null>, opts?: HeatmapOptions) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -218,24 +219,23 @@ export function useHeatmap(containerRef: React.RefObject<HTMLElement | null>, op
     if (!gridRef.current) return [];
     
     const grid = gridRef.current.getGrid();
-    const activeCells: { index: number; value: number }[] = [];
     
-    // Obtener solo las celdas que tienen valor > 0
-    for (let i = 0; i < grid.length; i++) {
-      if (grid[i] > 0) {
-        activeCells.push({ index: i, value: grid[i] });
+    return produce([] as { index: number; value: number }[], draft => {
+      // Obtener solo las celdas que tienen valor > 0
+      for (let i = 0; i < grid.length; i++) {
+        if (grid[i] > 0) {
+          draft.push({ index: i, value: grid[i] });
+        }
       }
-    }
-    
-    // Ordenar por valor descendente
-    activeCells.sort((a, b) => b.value - a.value);
-    
-    // Si se especifica topN, limitar los resultados
-    if (topN) {
-      return activeCells.slice(0, topN);
-    }
-    
-    return activeCells;
+      
+      // Ordenar por valor descendente
+      draft.sort((a, b) => b.value - a.value);
+      
+      // Si se especifica topN, limitar los resultados
+      if (topN) {
+        draft.splice(topN);
+      }
+    });
   };
 
   // API para obtener las N celdas con mayor valor

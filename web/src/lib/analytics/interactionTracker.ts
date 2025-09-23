@@ -1,6 +1,8 @@
 // Interaction metrics tracker
 // Tracks time to first interaction and interaction rate
 
+import { produce } from 'immer';
+
 export type InteractionMetrics = {
   timeToFirstInteractionMs: number | null;
   totalInteractions: number;
@@ -264,22 +266,21 @@ class InteractionTracker {
     const sessionDurationMinutes = sessionDurationMs / 60000;
     const globalInteractionRate = sessionDurationMinutes > 0 ? this.totalInteractions / sessionDurationMinutes : 0;
 
-    // Convert project data to plain object
-    const projectMetrics: Record<string, ProjectInteractionData> = {};
-    this.projectData.forEach((data, projectId) => {
-      projectMetrics[projectId] = { ...data };
+    // Convert project data to plain object and return metrics using immer
+    return produce({} as InteractionMetrics, draft => {
+      draft.timeToFirstInteractionMs = this.firstInteractionActiveTimeMs;
+      draft.totalInteractions = this.totalInteractions;
+      draft.interactionRatePerMinute = globalInteractionRate;
+      draft.sessionStartMs = this.sessionStartMs || 0;
+      draft.firstInteractionMs = this.firstInteractionActiveTimeMs;
+      draft.totalViews = this.totalViews;
+      draft.externalClicks = this.externalClicks;
+      draft.projectMetrics = {};
+      
+      this.projectData.forEach((data, projectId) => {
+        draft.projectMetrics[projectId] = { ...data };
+      });
     });
-
-    return {
-      timeToFirstInteractionMs: this.firstInteractionActiveTimeMs,
-      totalInteractions: this.totalInteractions,
-      interactionRatePerMinute: globalInteractionRate,
-      sessionStartMs: this.sessionStartMs || 0,
-      firstInteractionMs: this.firstInteractionActiveTimeMs,
-      totalViews: this.totalViews,
-      externalClicks: this.externalClicks,
-      projectMetrics
-    };
   }
 
   // Clear all metrics

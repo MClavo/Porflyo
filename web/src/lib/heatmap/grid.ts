@@ -1,4 +1,5 @@
 import type { HeatmapData, TopCell } from './types';
+import { produce } from 'immer';
 
 export class HeatmapGrid {
   private grid: Float32Array;
@@ -79,37 +80,40 @@ export class HeatmapGrid {
   }
 
   getData(): HeatmapData {
-    return {
-      cols: this.cols,
-      rows: this.rows,
-      cellWidth: this.cellWidth,
-      cellHeight: this.cellHeight,
-      totalInteractions: this.getTotalInteractions(),
-      maxCount: this.maxCount,
-      isRecording: false, // Esto se maneja en el hook principal
-      gridData: Array.from(this.grid),
-    };
+    return produce({} as HeatmapData, draft => {
+      draft.cols = this.cols;
+      draft.rows = this.rows;
+      draft.cellWidth = this.cellWidth;
+      draft.cellHeight = this.cellHeight;
+      draft.totalInteractions = this.getTotalInteractions();
+      draft.maxCount = this.maxCount;
+      draft.isRecording = false; // Esto se maneja en el hook principal
+      draft.gridData = Array.from(this.grid);
+    });
   }
 
   getTopCells(topN: number): TopCell[] {
-    const cellsWithIndex = Array.from(this.grid)
-      .map((value, index) => {
-        const row = Math.floor(index / this.cols);
-        const col = index % this.cols;
-        return {
-          index,
-          value,
-          col,
-          row,
-          x: col * this.cellWidth + this.cellWidth / 2,
-          y: row * this.cellHeight + this.cellHeight / 2,
-        };
-      })
-      .filter(cell => cell.value > 0)
-      .sort((a, b) => b.value - a.value)
-      .slice(0, topN);
-
-    return cellsWithIndex;
+    return produce([] as TopCell[], draft => {
+      Array.from(this.grid)
+        .map((value, index) => {
+          const row = Math.floor(index / this.cols);
+          const col = index % this.cols;
+          return {
+            index,
+            value,
+            col,
+            row,
+            x: col * this.cellWidth + this.cellWidth / 2,
+            y: row * this.cellHeight + this.cellHeight / 2,
+          };
+        })
+        .filter(cell => cell.value > 0)
+        .sort((a, b) => b.value - a.value)
+        .slice(0, topN)
+        .forEach(cell => {
+          draft.push(cell);
+        });
+    });
   }
 
   reset(): void {

@@ -4,6 +4,7 @@
 import { track } from './index';
 import { scrollTracker, type ScrollMetrics } from './scrollTracker';
 import { interactionTracker, type InteractionMetrics } from './interactionTracker';
+import { produce } from 'immer';
 
 export type ProjectMetrics = {
   activeTimeMs: number;
@@ -149,11 +150,12 @@ class MetricsCollector {
       return; // No trackear estos botones
     }
 
-    if (!this.projectInteractions[projectId]) {
-      this.projectInteractions[projectId] = { buttonClicks: 0, linkClicks: 0 };
-    }
-    
-    this.projectInteractions[projectId].buttonClicks++;
+    this.projectInteractions = produce(this.projectInteractions, draft => {
+      if (!draft[projectId]) {
+        draft[projectId] = { buttonClicks: 0, linkClicks: 0 };
+      }
+      draft[projectId].buttonClicks++;
+    });
     
     // Track in interaction tracker
     interactionTracker.recordButtonClick(projectId);
@@ -168,11 +170,12 @@ class MetricsCollector {
 
   // Record a link click for a specific project  
   recordProjectLinkClick(projectId: string, href: string) {
-    if (!this.projectInteractions[projectId]) {
-      this.projectInteractions[projectId] = { buttonClicks: 0, linkClicks: 0 };
-    }
-    
-    this.projectInteractions[projectId].linkClicks++;
+    this.projectInteractions = produce(this.projectInteractions, draft => {
+      if (!draft[projectId]) {
+        draft[projectId] = { buttonClicks: 0, linkClicks: 0 };
+      }
+      draft[projectId].linkClicks++;
+    });
     
     // Track in interaction tracker
     interactionTracker.recordLinkClick(projectId, href);
@@ -306,7 +309,7 @@ class MetricsCollector {
   clear() {
     this.sessionStart = null;
     this.totalActiveMs = 0;
-    this.projectInteractions = {};
+    this.projectInteractions = produce(this.projectInteractions, () => ({}));
     this.heatmapDataProvider = null;
     // Clear scroll metrics
     scrollTracker.clear();
