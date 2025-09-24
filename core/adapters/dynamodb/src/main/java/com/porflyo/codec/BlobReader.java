@@ -26,7 +26,7 @@ import java.util.Set;
  *   <li>Decode integer values from a section using {@link #decodeSection(int)}.</li>
  * </ul>
  */
-public final class PackedBlobReader {
+public final class BlobReader {
 
     private static final byte[] MAGIC = new byte[]{'H','M','B','1'};
 
@@ -50,11 +50,11 @@ public final class PackedBlobReader {
     private final byte[] blob;
     private final Map<Integer, SectionInfo> sections;
 
-    private PackedBlobReader(int version, int headerLen, byte[] blob, Map<Integer, SectionInfo> sections) {
+    private BlobReader(int version, int headerLen, byte[] blob, Map<Integer, SectionInfo> sections) {
         this.version = version; this.headerLen = headerLen; this.blob = blob; this.sections = sections;
     }
 
-    public static PackedBlobReader parse(byte[] blob) {
+    public static BlobReader parse(byte[] blob) {
         Objects.requireNonNull(blob, "blob");
         if (blob.length < 8) throw new IllegalArgumentException("Blob too small");
 
@@ -84,7 +84,7 @@ public final class PackedBlobReader {
             cursor += len;
         }
 
-        return new PackedBlobReader(version, headerLen, blob, map);
+        return new BlobReader(version, headerLen, blob, map);
     }
 
     public int version() { return version; }

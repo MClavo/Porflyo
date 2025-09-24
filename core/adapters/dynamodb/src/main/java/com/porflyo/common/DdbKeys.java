@@ -1,6 +1,10 @@
 package com.porflyo.common;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
 import jakarta.validation.constraints.NotNull;
+import reactor.util.Metrics;
 
 public final class DdbKeys {
     private DdbKeys() {}
@@ -22,9 +26,11 @@ public final class DdbKeys {
     public static final String SLUG_PORTFOLIO_SK_PREFIX = "SLUG";
 
     // ────────────────────────── METRICS ──────────────────────────
-    public static final String PORTFOLIO_METRICS_PK_PREFIX = "P#";
-    public static final String PORTFOLIO_METRICS_SK_PREFIX = "M#";
-    public static final String PORTFOLIO_METRICS_SLOT_SK_PREFIX = "S#";
+    public static final String METRICS_PK_PREFIX = "P#";
+    public static final String METRICS_SK_PREFIX = "M#";
+    public static final String METRICS_SLOT_SK_PREFIX = "S#";
+    private static final int METRICS_DAY_COUNT = 10;
+    private static final int METRICS_SLOT_COUNT = 10;
 
 
     public static String pk(@NotNull String prefix, @NotNull String id) {
@@ -46,5 +52,25 @@ public final class DdbKeys {
             throw new IllegalArgumentException("Key does not start with prefix");
         }
         return key.substring(prefix.length());
+    }
+
+    public static String skTodayMonthShard(){
+        // Calculate today's Shard SK
+        int dayOfMonth = LocalDate.now().getDayOfMonth();
+        int slot = (dayOfMonth - 1) / (31 / METRICS_DAY_COUNT);
+        
+        // Format SK as M#yyyy-MM#Shard
+        String today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM"));
+
+        return String.format("%s%s#%d", METRICS_SK_PREFIX, today, slot);
+    }
+
+    public static String skTodaySlot() {
+        // Get current date and calculate slot based on days since epoch
+        long daysSinceEpoch = LocalDate.now().toEpochDay();
+        int slot = (int) (daysSinceEpoch % METRICS_SLOT_COUNT);
+
+        // Format SK as S#Slot
+        return String.format("%s#%d", METRICS_SK_PREFIX, slot);
     }
 }

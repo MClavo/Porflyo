@@ -1,6 +1,7 @@
 package com.porflyo.model.metrics;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import com.porflyo.model.ids.PortfolioId;
 
@@ -14,8 +15,7 @@ public record PortfolioHeatmap(
     LocalDate date,
     String version,
     Integer columns,
-    Integer rows,
-    Integer[] Indexes,
-    Integer[] Values,
-    Integer[] Counts
+    List<Integer> Indexes,
+    List<Integer> Values,
+    List<Integer> Counts
 ) {}
