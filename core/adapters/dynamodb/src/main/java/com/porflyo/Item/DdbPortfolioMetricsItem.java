@@ -11,12 +11,13 @@ public class DdbPortfolioMetricsItem {
     
     // ────────────────────────── Key & Index ──────────────────────────
 
-    private String pk; // "P#{portfolioId}"
-    private String sk; // "M#{yyyy-MM}#{segment}" 
+    private String Pk; // "P#{portfolioId}"
+    private String Sk; // "M#{yyyy-MM}#{segment}" 
 
 
     // ────────────────────────── Attributes ──────────────────────────
-    
+    private String version;
+
     private List<Integer> dayIntegers;
 
     // Engagement
@@ -42,20 +43,28 @@ public class DdbPortfolioMetricsItem {
 
     // ────────────────────────── getters & setters ──────────────────────────
     
-    public String getPk() {
-        return pk;
+    public String getPK() {
+        return Pk;
     }
 
-    public void setPk(String pk) {
-        this.pk = pk;
+    public void setPK(String pk) {
+        this.Pk = pk;
     }
 
-    public String getSk() {
-        return sk;
+    public String getSK() {
+        return Sk;
     }
 
-    public void setSk(String sk) {
-        this.sk = sk;
+    public void setSK(String sk) {
+        this.Sk = sk;
+    }
+
+    public String getVersion() {
+        return version;
+    }
+    
+    public void setVersion(String version) {
+        this.version = version;
     }
 
     public List<Integer> getDayIntegers() {

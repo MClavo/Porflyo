@@ -6,8 +6,8 @@ public class DdbSlotMetricsItem {
     
     // ────────────────────────── Key & Index ──────────────────────────
 
-    private String pk; // "P#{portfolioId}"
-    private String sk; // "S#{slotId}"
+    private String Pk; // "P#{portfolioId}"
+    private String Sk; // "S#{slotId}"
 
     
     private String date; // "yyyy-MM-dd"
@@ -26,7 +26,7 @@ public class DdbSlotMetricsItem {
 
     private String version;
     private Integer columns;
-    private byte[] heatmap;         // Compressed heatmap data (Indexes, Values, Counts)
+    private byte[] heatMap;         // Compressed heatmap data (Indexes, Values, Counts)
  
 
     public DdbSlotMetricsItem() {}
@@ -34,20 +34,20 @@ public class DdbSlotMetricsItem {
 
     // ────────────────────────── getters & setters ──────────────────────────
 
-    public String getPk() {
-        return pk;
+    public String getPK() {
+        return Pk;
     }
 
-    public void setPk(String pk) {
-        this.pk = pk;
+    public void setPK(String pk) {
+        this.Pk = pk;
     }
 
-    public String getSk() {
-        return sk;
+    public String getSK() {
+        return Sk;
     }
 
-    public void setSk(String sk) {
-        this.sk = sk;
+    public void setSK(String sk) {
+        this.Sk = sk;
     }
 
     public String getDate() {
@@ -114,14 +114,11 @@ public class DdbSlotMetricsItem {
         this.columns = columns;
     }
 
-    public byte[] getHeatmap() {
-        return heatmap;
+    public byte[] getHeatMap() {
+        return heatMap;
     }
 
-    public void setHeatmap(byte[] heatmap) {
-        this.heatmap = heatmap;
+    public void setHeatMap(byte[] heatmap) {
+        this.heatMap = heatmap;
     }
-
-    
-
 }
