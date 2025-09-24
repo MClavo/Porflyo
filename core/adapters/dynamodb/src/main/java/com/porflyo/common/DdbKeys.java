@@ -10,6 +10,7 @@ public final class DdbKeys {
     public static final String USER_SK_PREFIX = "PROFILE";
     public static final String GSI_PROVIDER_USER_ID = "provider-user-id-index";
     
+    // ────────────────────────── PORTFOLIO ──────────────────────────
     public static final String USER_PORTFOLIO_SK_PREFIX = "PORTFOLIO#";
     public static final String USER_SAVED_SECTION_SK_PREFIX = "SSECTION#";
     public static final String USER_QUOTA_SK_PREFIX = "QUOTA";
@@ -19,6 +20,11 @@ public final class DdbKeys {
     // ────────────────────────── SLUG ──────────────────────────
     public static final String SLUG_PK_PREFIX = "URL#";
     public static final String SLUG_PORTFOLIO_SK_PREFIX = "SLUG";
+
+    // ────────────────────────── METRICS ──────────────────────────
+    public static final String PORTFOLIO_METRICS_PK_PREFIX = "P#";
+    public static final String PORTFOLIO_METRICS_SK_PREFIX = "M#";
+    public static final String PORTFOLIO_METRICS_SLOT_SK_PREFIX = "S#";
 
 
     public static String pk(@NotNull String prefix, @NotNull String id) {
