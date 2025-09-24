@@ -1,0 +1,204 @@
+:root{
+  --card-padding: 20px;
+  --title-bottom-margin: 12px;
+  --title-color: #FAFAFA;
+  --description-color: #f8f8ffea;
+  --card-min-width: 360px;
+  /* Make card width responsive: clamp(min, preferred, max) */
+  --card-width: 500px;
+  --card-min-height: 600px;
+  /* --current-card-width will be kept in sync by the component (px value). */
+}
+
+
+.project-card {
+  border: 1px solid #ccc;
+  background: rgba(57, 57, 62, 0.848);
+  border-radius: 8px;
+
+  width: var(--card-width);
+  min-width: var(--card-min-width);
+  /* max-width: 500px; */
+  overflow: hidden;
+  height: auto;
+  min-height: var(--card-min-height);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  font-family: "Poppins", sans-serif;
+  font-weight: 300;
+  font-style: normal;
+
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-self: stretch; /* allow the card to stretch to the tallest sibling */
+  /* justify-content: center; */
+  padding: var(--card-padding);
+  padding-top: 0;
+  box-sizing: border-box;
+  
+  /* Definir la variable personalizada con el ancho actual de la tarjeta */
+  --current-card-width: 100%;
+}
+
+/* Keep only structural and card-level styles here. Subcomponent styles moved to subcomopnents/*.css */
+
+.project-card {
+  border: 1px solid #ccc;
+  background: rgba(57, 57, 62, 0.848);
+  border-radius: 8px;
+  width: var(--card-width);
+  min-width: var(--card-min-width);
+  overflow: hidden;
+  height: auto;
+  min-height: var(--card-min-height);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  font-family: "Poppins", sans-serif;
+  font-weight: 300;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-self: stretch;
+  padding: var(--card-padding);
+  padding-top: 0;
+  box-sizing: border-box;
+  --current-card-width: 100%;
+}
+
+.project-card .top-border {
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  position: relative;
+  margin-top: 24px;
+}
+
+.project-card .footer {
+  position: relative;
+  align-self: baseline;
+  width: 100%;
+  padding-top: 12px;
+  display: flex;
+  gap: 10px;
+  z-index: 10;
+  margin-top: auto; /* Ensures the footer is pushed to the bottom */
+}
+
+.project-card .images{
+  /* Expand to the card edges by cancelling the horizontal padding */
+  position: relative;
+  margin: 0 calc(-1 * var(--card-padding));
+  padding: 0;
+  width: calc(100% + (2 * var(--card-padding)));
+  left: 0;
+  right: 0;
+}
+
+/* Images sizing: use the measured --current-card-width (set by the component)
+   so images get the same width as the card. Give them a uniform height
+   using a ratio of the width. Adjust the ratio as needed. */
+.project-card .images img {
+  display: block;
+  width: var(--current-card-width, 100%);
+  /* Make all images have the same height. We choose 0.56 (16:9) as an
+     example; change to desired ratio or a fixed px value. */
+  height: calc(var(--current-card-width, 100%) * 0.56);
+  object-fit: cover;
+}
+
+.project-card .btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  color: var(--description-color);
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  width: 100%;
+}
+
+.project-card .btn:hover { background: rgba(255, 255, 255, 0.2); }
+
+/* Edit-mode generic inputs: keep simple shared affordances here */
+.project-card[data-mode="edit"] input,
+.project-card[data-mode="edit"] textarea {
+  border: none;
+  border-radius: 8px;
+  margin: 0;
+  background: rgba(178, 212, 229, 0.18);
+}
+
+.project-card[data-mode="edit"] textarea { font: inherit; }
+
+.project-card[data-mode="edit"] :focus{ outline: dashed 2px #bababaa4; }
+
+.project-card .technologies-title {
+  padding: 0;
+  margin-bottom: 0;
+  padding-bottom: 0;
+  bottom: 0;
+  padding-top: 16px;
+  top: 4px;
+  
+  color: var(--title-color, #FAFAFA);
+  font-size: 24px;
+  font-weight: 500;
+  line-height: 1.2;
+  position: relative;
+  z-index: 20;
+}
+
+.project-card .technologies{
+  top: 0;
+  padding-top:0;
+  margin-top: 16px;
+}
+
+/* URL inputs for edit mode */
+.project-card .url-inputs {
+  padding: 16px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.project-card .url-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.project-card .url-label {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.project-card .url-input {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
+  padding: 8px 12px;
+  color: white;
+  font-size: 14px;
+  font-family: inherit;
+  transition: all 0.2s ease;
+}
+
+.project-card .url-input:focus {
+  outline: none;
+  border-color: rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.project-card .url-input::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* Disabled button styles */
+.project-card .btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.project-card .btn:disabled:hover {
+  background: inherit;
+}

@@ -1,0 +1,58 @@
+.add-card-root {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 12px;
+}
+
+.add-card-button {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: none;
+  background: #0b5fff;
+  color: white;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  font-size: 20px;
+}
+
+.add-card-button:focus {
+  outline: 2px solid rgba(11,95,255,0.3);
+}
+
+.add-card-popup {
+  position: absolute;
+  bottom: 56px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background: white;
+  border: 1px solid #ddd;
+  padding: 8px;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+  min-width: 120px;
+  z-index: 30;
+}
+
+.add-card-option {
+  background: transparent;
+  border: none;
+  padding: 6px 8px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.add-card-option:hover {
+  background: #f3f7ff;
+}
+
+.add-card-plus {
+  font-weight: 700;
+  line-height: 1;
+}

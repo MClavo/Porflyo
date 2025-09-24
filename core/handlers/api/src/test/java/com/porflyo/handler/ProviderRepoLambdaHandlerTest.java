@@ -52,8 +52,8 @@ class ProviderRepoLambdaHandlerTest {
         String userId = "user-123";
         UserClaims userClaims = new UserClaims(userId, Instant.now(), Instant.now().plusSeconds(3600));
         
-        ProviderRepo repo1 = new ProviderRepo("repo1", "Test Repo 1", "https://github.com/user/repo1", null, null, 0, 0, null);
-        ProviderRepo repo2 = new ProviderRepo("repo2", "Test Repo 2", "https://github.com/user/repo2", null, null, 0, 0, null);
+        ProviderRepo repo1 = new ProviderRepo(1L, "repo1", "Test Repo 1", "https://github.com/user/repo1", null, null, 0, 0, null);
+        ProviderRepo repo2 = new ProviderRepo(312L, "repo2", "Test Repo 2", "https://github.com/user/repo2", null, null, 0, 0, null);
         List<ProviderRepo> repos = List.of(repo1, repo2);
         
         String expectedJson = "[{\"id\":\"repo1\",\"name\":\"Test Repo 1\",\"url\":\"https://github.com/user/repo1\",\"stars\":\"0\",\"forks\":\"0\"}"
@@ -150,7 +150,7 @@ class ProviderRepoLambdaHandlerTest {
         String userId = "user-123";
         UserClaims userClaims = new UserClaims(userId, Instant.now(), Instant.now().plusSeconds(3600));
         
-        ProviderRepo repo = new ProviderRepo("repo1", "Test Repo 1", "https://github.com/user/repo1", null, null, 0, 0, null);
+        ProviderRepo repo = new ProviderRepo(1L, "repo1", "Test Repo 1", "https://github.com/user/repo1", null, null, 0, 0, null);
         List<ProviderRepo> repos = List.of(repo);
         
         APIGatewayV2HTTPEvent event = createEventWithCookie("session", sessionCookie);

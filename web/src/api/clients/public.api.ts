@@ -1,9 +1,9 @@
-import { PublicClientError, publicGet } from '../../lib/http/publicClient';
-import type { AvailabilityResponseDto, PublicPortfolioView } from '../../types/dto';
+import { publicGet, ApiClientError } from './base.client';
+import type { AvailabilityResponseDto, PublicPortfolioView } from '../types/dto';
 
 /**
  * Public Portfolio API client
- * Uses credentials:'omit' for public endpoints
+ * Uses public endpoints without authentication
  */
 
 /**
@@ -15,7 +15,7 @@ export async function getPublicPortfolioView(slug: string): Promise<PublicPortfo
   try {
     return await publicGet<PublicPortfolioView>(`/portfolio/${slug}`);
   } catch (error) {
-    if (error instanceof PublicClientError && error.status === 404) {
+    if (error instanceof ApiClientError && error.status === 404) {
       throw "NOT_FOUND";
     }
     throw error;

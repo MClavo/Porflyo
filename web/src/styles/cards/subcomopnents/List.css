@@ -1,0 +1,83 @@
+/* Technologies / list styles extracted from ProjectCard.css and made reusable */
+.list {
+  padding: 0;
+  padding-top: 12px;
+  list-style: none;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+  row-gap: 10px;
+  /* keep the UL structurally positioned but avoid creating a stacking context
+    so its children (li) can be stacked above the global drag overlay */
+  position: relative;
+}
+
+.list h2 {
+  width: 100%;
+  font-size: 18px;
+  margin: 0 0 8px 0;
+  color: var(--title-color, #FAFAFA);
+  font-weight: 300;
+}
+
+.list li {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  width: fit-content;
+  box-sizing: border-box;
+  color: var(--description-color, #f8f8ffea);
+  padding: 6px 10px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.1);
+  font-size: 14px;
+  position: relative;
+  z-index: 20; /* keep list items above the overlay */
+}
+
+.list li:hover {
+  background: rgba(255, 255, 255, 0.2);
+  cursor: pointer;
+}
+
+/* Inputs and icon buttons used inside the list */
+.list-element {
+  background: transparent;
+  border: none;
+  padding: 4px 6px;
+  color: inherit;
+  width: auto;
+  font: inherit;
+  box-sizing: border-box;
+  position: relative;
+  z-index: 20;
+}
+
+.icon-btn {
+  background: transparent;
+  border: none;
+  color: var(--description-color, #f8f8ffea);
+  cursor: pointer;
+  padding: 4px 6px;
+  border-radius: 6px;
+  position: relative;
+  z-index: 20;
+}
+
+/* Special handling for the "Add" button item to make it full width inside edit lists */
+.list > li.btn-row {
+  order: 1;
+  flex-basis: 100%;
+  width: 100%;
+  align-self: flex-start;
+  margin-top: 6px;
+  display: block;
+}
+
+/* Fallback using :last-child if :has() isn't supported by the browser */
+.list > li:last-child > .btn {
+  display: block;
+  width: 100%;
+}

@@ -1,11 +1,14 @@
-// API client for GitHub repositories
-
-import { apiGet } from '../../lib/http/apiClient';
-import type { GithubRepo } from '../../types/repoDto';
+import { apiGet } from './base.client';
+import type { ProviderRepo } from '../types/dto';
 
 /**
- * Get user's GitHub repositories
+ * API client for repositories
+ * Mirrors backend repositories endpoints exactly
  */
-export function getUserRepos(): Promise<GithubRepo[]> {
-  return apiGet<GithubRepo[]>('/repos');
+
+/**
+ * Get user repositories
+ */
+export function getRepos(): Promise<ProviderRepo[]> {
+  return apiGet<ProviderRepo[]>('/repos');
 }

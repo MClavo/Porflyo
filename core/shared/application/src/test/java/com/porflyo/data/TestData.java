@@ -81,6 +81,7 @@ public final class TestData {
     );
 
     public static final ProviderRepo REPO_1 = new ProviderRepo(
+        1L,
         "project-alpha",
         "My first repo",
         "https://github.com/testuser/project-alpha",
@@ -92,6 +93,7 @@ public final class TestData {
     );
 
     public static final ProviderRepo REPO_2 = new ProviderRepo(
+        312L,
         "project-beta",
         "Second repo",
         "https://github.com/testuser/project-beta",

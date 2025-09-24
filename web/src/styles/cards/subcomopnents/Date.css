@@ -1,0 +1,143 @@
+:root{
+	--month-item-height: 36px;
+}
+
+/* Simple floating month picker */
+.month-button {
+	border: 1px solid #ccc;
+	padding: 6px 10px;
+	border-radius: 4px;
+	cursor: pointer;
+}
+
+.month-picker-popup {
+	position: absolute;
+	top: calc(100% + 6px);
+	left: 0;
+	z-index: 100;
+	background: #fff;
+	border: 1px solid rgba(0,0,0,0.12);
+	box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+	padding: 6px;
+	border-radius: 6px;
+	max-height: 240px;
+	overflow: auto;
+	min-width: 160px;
+}
+
+.month-picker-popup .month-option {
+	display: block;
+	width: 100%;
+	text-align: left;
+	padding: 8px 10px;
+	background: transparent;
+	border: none;
+	border-radius: 4px;
+	cursor: pointer;
+}
+
+.month-picker-popup .month-option:hover,
+.month-picker-popup .month-option.selected {
+	background: rgba(0,0,0,0.06);
+}
+
+/* month wheel styles */
+.month-wheel {
+	position: absolute;
+	left: 0;
+	top: calc(100% + 6px);
+	z-index: 100;
+	background: #fff;
+	border: 1px solid rgba(0,0,0,0.12);
+	box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+	border-radius: 6px;
+	min-width: 160px;
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+	overflow: hidden;
+}
+
+.month-wheel.collapsed {
+	height: 40px; /* show only the centered item */
+	justify-content: center;
+}
+
+.month-wheel.expanded {
+	max-height: 240px;
+	overflow: auto;
+	padding: 6px 0;
+}
+
+.month-item {
+	background: transparent;
+	border: none;
+	text-align: left;
+	padding: 8px 12px;
+	cursor: pointer;
+	width: 100%;
+}
+
+.month-item.selected {
+	background: rgba(0,0,0,0.06);
+	font-weight: 600;
+}
+
+/* Minimal display + list */
+.month-display {
+	padding: 6px 10px;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	background: #fff;
+	cursor: pointer;
+	display: inline-block;
+}
+
+.month-list {
+	/* --month-item-height: 36px; */
+	position: absolute;
+	top: calc(100% + 6px);
+	left: 0;
+		/* z-index: */
+	background: #fff;
+	border: 1px solid rgba(0,0,0,0.12);
+	box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+	border-radius: 6px;
+	padding: 6px 0;
+	min-width: 160px;
+	/* always the maximum: height to contain all months, no scrollbar */
+	height: calc(var(--month-item-height) * 12);
+	max-height: none;
+	overflow: visible; /* allow transform to show items outside without scroll */
+	transition: transform 220ms cubic-bezier(.2,.9,.2,1);
+  
+  overflow: hidden;
+	translate: 0 -42px;
+}
+
+
+
+.month-list .month-item {
+	padding: 8px 12px;
+	cursor: pointer;
+	height: var(--month-item-height); /* fixed height for predictable centering */
+	box-sizing: border-box;
+}
+
+.month-list .month-item:hover {
+	background: rgba(0,0,0,0.04);
+}
+
+.date-input-container{
+  height: var(--month-item-height);
+  width: 160px;
+  background: rgba(0, 0, 0, 0.426);
+	border-radius: 6px;
+  overflow: hidden;
+	z-index: 100;
+}
+
+.date-input-container::focus {
+	overflow: visible;
+	z-index: 9900;
+}

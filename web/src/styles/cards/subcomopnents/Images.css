@@ -1,0 +1,121 @@
+/* Images / Carousel styles extracted from ProjectCard.css */
+.images {
+  position: relative;
+  align-self: center;
+  top: 0;
+  left: 0;
+  right: 0;
+  margin: 0;
+  gap: 40px;
+  display: flex;
+  /* keep images left-aligned for correct scroll/first-image visibility */
+  /* let the images area extend into the card padding so slides can be edge-to-edge */
+  width: calc(100% + 2 * var(--card-padding));
+  margin-left: calc(-1 * var(--card-padding));
+  padding: 0 var(--card-padding);
+  box-sizing: border-box;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+  user-select: none;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE 10+ */
+  /* ensure images area sits above the drag overlay so controls are usable */
+  z-index: 20;
+}
+
+.images::-webkit-scrollbar { display: none; }
+
+.image-edit-item {
+  position: relative;
+  align-self: center;
+  scroll-snap-align: center;
+  scroll-snap-stop: always;
+  box-sizing: border-box;
+  flex-shrink: 0;
+  /* make edit-item span the full visual card width (including padding) */
+  width: calc(var(--current-card-width) + 2 * var(--card-padding));
+  overflow: hidden; /* ensure children (img, button) are clipped to the slide */
+}
+
+.image-edit-item img {
+  position: relative;
+  z-index: 0; /* keep image beneath the button */
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Direct images (view mode) should match edit-item sizing and not stretch */
+.images > img {
+  flex: 0 0 calc(var(--current-card-width) + 2 * var(--card-padding));
+  display: block;
+  box-sizing: border-box;
+  min-width: var(--card-min-width);
+  height: calc(var(--card-min-height) * 0.4);
+  object-fit: cover;
+  object-position: center;
+  align-self: center;
+}
+
+.image-slide {
+  flex: 0 0 auto;
+  scroll-snap-align: center;
+  position: relative;
+  width: clamp(220px, 50vw, 420px);
+  aspect-ratio: 16 / 9;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #111;
+}
+
+.image-slide img,
+.images img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.remove-btn,
+.image-rmv-btn {
+  position: absolute;
+  top: 8px;
+  right: 50px;
+  border: none;
+  background: rgba(0,0,0,.55);
+  color: white;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  line-height: 1;
+  cursor: pointer;
+  z-index: 5; 
+}
+
+/* ensure remove buttons and other controls sit above the drag overlay */
+.remove-btn,
+.image-rmv-btn {
+  position: relative;
+  z-index: 20;
+}
+
+.remove-btn:hover,
+.image-rmv-btn:hover { background: rgba(0,0,0,.7); }
+
+.images img {
+  position: relative;
+  align-self: center;
+  /* Make the displayed image fill the expanded slide width */
+  width: calc(var(--current-card-width) + 2 * var(--card-padding));
+  min-width: var(--card-min-width);
+  height: calc(var(--card-min-height) * 0.4);
+  object-position: center;
+  object-fit: cover;
+  z-index: 0;
+  pointer-events: none;
+  user-select: none;
+}

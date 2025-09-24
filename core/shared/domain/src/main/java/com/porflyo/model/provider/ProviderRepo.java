@@ -15,6 +15,7 @@ import java.util.List;
 @Serdeable
 @Introspected
 public record ProviderRepo(
+    Long id,
     String name,
     String description,
     String html_url,
