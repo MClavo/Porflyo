@@ -55,13 +55,13 @@ public final class DdbKeys {
 
     public static String skTodayMonthShard(){
         // Calculate today's Shard SK
-        int dayOfMonth = LocalDate.now().getDayOfMonth();
+        LocalDate today = LocalDate.now();
+        int dayOfMonth = today.getDayOfMonth();
         int slot = (dayOfMonth - 1) / (31 / METRICS_DAY_COUNT);
         
         // Format SK as M#yyyy-MM#Shard
-        String today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM"));
-
-        return String.format("%s%s#%d", METRICS_SK_PREFIX, today, slot);
+        String monthYear = today.format(DateTimeFormatter.ofPattern("yyyy-MM"));
+        return String.format("%s%s#%d", METRICS_SK_PREFIX, monthYear, slot);
     }
 
     public static String skTodaySlot() {

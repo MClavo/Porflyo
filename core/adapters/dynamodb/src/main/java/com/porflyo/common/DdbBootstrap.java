@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.porflyo.configuration.DdbConfig;
 import com.porflyo.schema.MediaCountTableSchema;
+import com.porflyo.schema.PortfolioMetricsTableSchema;
 import com.porflyo.schema.PortfolioTableSchema;
 import com.porflyo.schema.PortfolioUrlTableSchema;
 import com.porflyo.schema.QuotaTableSchema;
@@ -42,7 +43,7 @@ public class DdbBootstrap implements ApplicationEventListener<StartupEvent> {
         this.ddbConfig = ddbConfig;
     }
 
-    private static final List<TableSchema<?>> SCHEMAS = List.of(
+    private static final List<TableSchema<?>> USER_TABLE_SCHEMAS = List.of(
         UserTableSchema.SCHEMA,
         SavedSectionTableSchema.SCHEMA,
         PortfolioTableSchema.SCHEMA,
@@ -51,13 +52,23 @@ public class DdbBootstrap implements ApplicationEventListener<StartupEvent> {
         QuotaTableSchema.SCHEMA
     );
 
+    private static final List<TableSchema<?>> METRICS_TABLE_SCHEMAS = List.of(
+        PortfolioMetricsTableSchema.SCHEMA
+    );
+
 
     @Override
     public void onApplicationEvent(StartupEvent event) {
-        final String tableName = ddbConfig.userTable();
+        // Create user table and warm up its schemas
+        createTableAndWarmupSchemas(ddbConfig.userTable(), USER_TABLE_SCHEMAS);
+        
+        // Create metrics table and warm up its schemas
+        createTableAndWarmupSchemas(ddbConfig.metricsTable(), METRICS_TABLE_SCHEMAS);
+    }
 
+    private void createTableAndWarmupSchemas(String tableName, List<TableSchema<?>> schemas) {
         // Choose the creator schema. It must define the PK/SK used by the single table.
-        TableSchema<?> creatorSchema = SCHEMAS.get(0);
+        TableSchema<?> creatorSchema = schemas.get(0);
 
         // Create the table once (if missing) using the creator schema
         DynamoDbTable<?> creatorHandle = enhanced.table(tableName, creatorSchema);
@@ -67,8 +78,8 @@ public class DdbBootstrap implements ApplicationEventListener<StartupEvent> {
 
         // Warm up handles for all other schemas WITHOUT creating tables again
         // (this is safe; it only builds typed views over the same physical table).
-        for (int i = 1; i < SCHEMAS.size(); i++) {
-            TableSchema<?> schema = SCHEMAS.get(i);
+        for (int i = 1; i < schemas.size(); i++) {
+            TableSchema<?> schema = schemas.get(i);
             enhanced.table(tableName, schema);
         }
     }

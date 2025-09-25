@@ -25,7 +25,7 @@ public final class PortfolioMetricsTableSchema {
 
             
             // ────────────────────────── Portfolio Metrics Attributes ──────────────────────────
-            .addAttribute(String.class, a -> a.name("v")
+            .addAttribute(String.class, a -> a.name("V")
                 .getter(DdbPortfolioMetricsItem::getVersion)
                 .setter(DdbPortfolioMetricsItem::setVersion))
             .addAttribute(EnhancedType.listOf(Integer.class), a -> a.name("D")
@@ -34,6 +34,9 @@ public final class PortfolioMetricsTableSchema {
             .addAttribute(EnhancedType.listOf(Integer.class), a -> a.name("v")
                 .getter(DdbPortfolioMetricsItem::getViews)
                 .setter(DdbPortfolioMetricsItem::setViews))
+            .addAttribute(EnhancedType.listOf(Integer.class), a -> a.name("a")
+                .getter(DdbPortfolioMetricsItem::getActiveTime)
+                .setter(DdbPortfolioMetricsItem::setActiveTime))
             .addAttribute(EnhancedType.listOf(Integer.class), a -> a.name("e")
                 .getter(DdbPortfolioMetricsItem::getEmailCopies)
                 .setter(DdbPortfolioMetricsItem::setEmailCopies))

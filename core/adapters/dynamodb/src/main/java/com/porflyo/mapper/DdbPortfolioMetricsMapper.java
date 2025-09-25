@@ -1,9 +1,10 @@
 package com.porflyo.mapper;
 
 import static com.porflyo.common.DdbKeys.METRICS_PK_PREFIX;
+import static com.porflyo.common.DdbKeys.METRICS_SK_PREFIX;
+import static com.porflyo.common.DdbKeys.METRICS_DAY_COUNT;
 import static com.porflyo.common.DdbKeys.idFrom;
 import static com.porflyo.common.DdbKeys.pk;
-import static com.porflyo.common.DdbKeys.skTodayMonthShard;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
@@ -30,6 +31,18 @@ public final class DdbPortfolioMetricsMapper {
 
     private static final String VERSION = "1";
 
+    /**
+     * Generate a sort key for a specific date using the same logic as skTodayMonthShard but for any date
+     */
+    private static String generateSortKey(LocalDate date) {
+        int dayOfMonth = date.getDayOfMonth();
+        int slot = (dayOfMonth - 1) / (31 / METRICS_DAY_COUNT);
+        
+        // Format SK as M#yyyy-MM#Shard
+        String monthYear = date.format(DateTimeFormatter.ofPattern("yyyy-MM"));
+        
+        return String.format("%s%s#%d", METRICS_SK_PREFIX, monthYear, slot);
+    }
 
     // ────────────────────────── Domain -> ITEM ──────────────────────────
 
@@ -53,7 +66,7 @@ public final class DdbPortfolioMetricsMapper {
         DdbPortfolioMetricsItem item = new DdbPortfolioMetricsItem();
 
         item.setPK(pk(METRICS_PK_PREFIX, portfolioId));
-        item.setSK(skTodayMonthShard());
+        item.setSK(generateSortKey(domain.get(0).date()));
         item.setVersion(VERSION);
 
         item.setDayIntegers(getIntegers(domain, "day"));
@@ -81,7 +94,7 @@ public final class DdbPortfolioMetricsMapper {
      * Assumptions:
      * <ul>
      *  <li>All integer lists in the item are parallel and have the same length.</li>
-     *  <li>SK follows the pattern S#yyyy-MM#slot as produced by {@link DdbKeys#skTodayMonthShard()}.</li>
+     *  <li>SK follows the pattern M#yyyy-MM#slot as produced by {@link DdbKeys#skTodayMonthShard()}.</li>
      * </ul>
      */
     public static final List<PortfolioMetrics> fromItem(DdbPortfolioMetricsItem item) {
@@ -91,12 +104,12 @@ public final class DdbPortfolioMetricsMapper {
         String portfolioIdStr = idFrom(METRICS_PK_PREFIX, pk);
         PortfolioId portfolioId = new PortfolioId(portfolioIdStr);
 
-        // Extract year-month from SK: S#yyyy-MM#slot
+        // Extract year-month from SK: M#yyyy-MM#slot
         String sk = item.getSK();
-        if (sk == null || !sk.startsWith(DdbKeys.METRICS_SLOT_SK_PREFIX)) {
+        if (sk == null || !sk.startsWith(DdbKeys.METRICS_SK_PREFIX)) {
             throw new IllegalArgumentException("Invalid SK format: " + sk);
         }
-        // sk = S#yyyy-MM#slot or S#yyyy-MM
+        // sk = M#yyyy-MM#slot or M#yyyy-MM
         String[] parts = sk.split("#");
 
         String yearMonthStr = parts[1];
