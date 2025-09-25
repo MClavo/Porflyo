@@ -68,9 +68,9 @@ public final class FixedBitCodec {
         final int[] bitCount = {0};
 
         IntStream.of(values.stream().mapToInt(Integer::intValue).toArray()).forEach(value -> {
-            if (value < 0 || (bitsPerValue < 32 && (value >>> bitsPerValue) != 0)) {
+            if (value < 0 || (bitsPerValue < 32 && (value >>> bitsPerValue) != 0)) 
                 throw new IllegalArgumentException("Value " + value + " does not fit in " + bitsPerValue + " bits");
-            }
+            
             int masked = (bitsPerValue == 32) ? value : (value & ((1 << bitsPerValue) - 1));
             state[0] = (state[0] << bitsPerValue) | masked;
             bitCount[0] += bitsPerValue;
@@ -104,6 +104,7 @@ public final class FixedBitCodec {
     public static List<Integer> decode(byte[] data, int bitsPerValue, int count) {
         Objects.requireNonNull(data, "data");
         validateBits(bitsPerValue);
+
         if (count < 0) throw new IllegalArgumentException("count must be >= 0");
 
         var result = new ArrayList<Integer>(count);
@@ -123,6 +124,7 @@ public final class FixedBitCodec {
                 state[0] &= (shift == 32) ? -1 : ((1 << shift) - 1);
             }
         });
+
         return result;
     }
 
@@ -133,8 +135,8 @@ public final class FixedBitCodec {
      * @throws IllegalArgumentException if {@code bitsPerValue} is not in 1..32
      */
     private static void validateBits(int bitsPerValue) {
-        if (bitsPerValue <= 0 || bitsPerValue > 32) {
+        if (bitsPerValue <= 0 || bitsPerValue > 32) 
             throw new IllegalArgumentException("bitsPerValue must be in 1..32");
-        }
+        
     }
 }

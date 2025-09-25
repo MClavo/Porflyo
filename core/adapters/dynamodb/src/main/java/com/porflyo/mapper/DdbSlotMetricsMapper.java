@@ -24,7 +24,7 @@ public final class DdbSlotMetricsMapper {
     private static final int SEC_VALUE = 2;
     private static final int SEC_COUNTS = 3;
 
-    private static final int B_IDX = 16;        // 64 * 1024 -> 16B: 16 bits x 400 = 6400 bits -> ceil(6400/8) = 800 B
+    private static final int B_IDX = 15;        // 64 * 512 -> 16B: 15 bits x 400 = 6000 bits -> ceil(6000/8) = 750 B
     private static final int B_VALUE = 12;      // 12 bits x 400 = 4800 bits -> 600 B
     private static final int B_COUNTS = 6;      // 6  bits x 400 = 2400 bits -> 300 B
 

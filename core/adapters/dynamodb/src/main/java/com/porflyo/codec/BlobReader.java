@@ -38,8 +38,11 @@ public final class BlobReader {
         public final int length; // payload length in bytes
 
         SectionInfo(int id, int bitsPerValue, int count, int offset, int length) {
-            this.id = id; this.bitsPerValue = bitsPerValue; this.count = count;
-            this.offset = offset; this.length = length;
+            this.id = id;
+            this.bitsPerValue = bitsPerValue;
+            this.count = count;
+            this.offset = offset; 
+            this.length = length;
         }
     }
 
@@ -51,7 +54,10 @@ public final class BlobReader {
     private final Map<Integer, SectionInfo> sections;
 
     private BlobReader(int version, int headerLen, byte[] blob, Map<Integer, SectionInfo> sections) {
-        this.version = version; this.headerLen = headerLen; this.blob = blob; this.sections = sections;
+        this.version = version;
+        this.headerLen = headerLen;
+        this.blob = blob;
+        this.sections = sections;
     }
 
     public static BlobReader parse(byte[] blob) {
@@ -62,24 +68,29 @@ public final class BlobReader {
 
         byte[] magic = new byte[4];
         buf.get(magic);
-        if (!Arrays.equals(magic, MAGIC)) throw new IllegalArgumentException("Invalid magic");
+
+        if (!Arrays.equals(magic, MAGIC)) 
+            throw new IllegalArgumentException("Invalid magic");
 
         int version = Byte.toUnsignedInt(buf.get());
         int sectionCount = Byte.toUnsignedInt(buf.get());
         int headerLen = Short.toUnsignedInt(buf.getShort());
-        if (blob.length < headerLen) throw new IllegalArgumentException("Truncated header");
+
+        if (blob.length < headerLen) 
+            throw new IllegalArgumentException("Truncated header");
 
         Map<Integer, SectionInfo> map = new HashMap<>(sectionCount);
         int cursor = headerLen;
+
         for (int i = 0; i < sectionCount; i++) {
             int id   = Byte.toUnsignedInt(buf.get());
             int bits = Byte.toUnsignedInt(buf.get());
             int cnt  = buf.getInt();
             int len  = buf.getInt();
 
-            if (len < 0 || cursor + len > blob.length) {
+            if (len < 0 || cursor + len > blob.length) 
                 throw new IllegalArgumentException("Section out of bounds: id=" + id);
-            }
+            
             map.put(id, new SectionInfo(id, bits, cnt, cursor, len));
             cursor += len;
         }
@@ -95,7 +106,9 @@ public final class BlobReader {
 
     public SectionInfo info(int id) {
         var s = sections.get(id);
-        if (s == null) throw new NoSuchElementException("Section " + id + " not found");
+        if (s == null) 
+            throw new NoSuchElementException("Section " + id + " not found");
+            
         return s;
     }
 

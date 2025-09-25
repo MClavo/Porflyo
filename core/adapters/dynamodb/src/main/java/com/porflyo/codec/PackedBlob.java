@@ -92,9 +92,14 @@ public final class PackedBlob {
             final int id, bitsPerValue;
             final List<Integer> values;
             byte[] payload; // filled on build
+
             Section(int id, int bitsPerValue, List<Integer> values) {
-                if (id < 0 || id > 255) throw new IllegalArgumentException("id must be 0..255");
-                if (bitsPerValue <= 0 || bitsPerValue > 32) throw new IllegalArgumentException("bitsPerValue must be 1..32");
+                if (id < 0 || id > 255) 
+                    throw new IllegalArgumentException("id must be 0..255");
+
+                if (bitsPerValue <= 0 || bitsPerValue > 32) 
+                    throw new IllegalArgumentException("bitsPerValue must be 1..32");
+                    
                 this.id = id;
                 this.bitsPerValue = bitsPerValue;
                 this.values = Objects.requireNonNull(values, "values");
@@ -104,7 +109,8 @@ public final class PackedBlob {
         private final List<Section> sections = new ArrayList<>();
 
         public Builder version(int version) {
-            if (version <= 0 || version > 255) throw new IllegalArgumentException("version must be 1..255");
+            if (version <= 0 || version > 255) 
+                throw new IllegalArgumentException("version must be 1..255");
             this.version = version;
             return this;
         }
@@ -121,7 +127,8 @@ public final class PackedBlob {
         }
 
         public PackedBlob build() {
-            if (sections.isEmpty()) throw new IllegalStateException("No sections added");
+            if (sections.isEmpty()) 
+                throw new IllegalStateException("No sections added");
 
             // 1) encode payloads
             sections.forEach(s -> s.payload = FixedBitCodec.encode(s.values, s.bitsPerValue));
