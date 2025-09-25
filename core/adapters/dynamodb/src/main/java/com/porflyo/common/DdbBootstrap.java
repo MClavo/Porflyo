@@ -9,6 +9,7 @@ import com.porflyo.schema.PortfolioTableSchema;
 import com.porflyo.schema.PortfolioUrlTableSchema;
 import com.porflyo.schema.QuotaTableSchema;
 import com.porflyo.schema.SavedSectionTableSchema;
+import com.porflyo.schema.SlotMetricsTableSchema;
 import com.porflyo.schema.UserTableSchema;
 
 import io.micronaut.context.annotation.Requires;
@@ -53,7 +54,8 @@ public class DdbBootstrap implements ApplicationEventListener<StartupEvent> {
     );
 
     private static final List<TableSchema<?>> METRICS_TABLE_SCHEMAS = List.of(
-        PortfolioMetricsTableSchema.SCHEMA
+        PortfolioMetricsTableSchema.SCHEMA,
+        SlotMetricsTableSchema.SCHEMA
     );
 
 

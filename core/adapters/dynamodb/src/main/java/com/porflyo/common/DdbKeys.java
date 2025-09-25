@@ -70,6 +70,6 @@ public final class DdbKeys {
         int slot = (int) (daysSinceEpoch % METRICS_SLOT_COUNT);
 
         // Format SK as S#Slot
-        return String.format("%s#%d", METRICS_SK_PREFIX, slot);
+        return String.format("%s%d", METRICS_SLOT_SK_PREFIX, slot);
     }
 }

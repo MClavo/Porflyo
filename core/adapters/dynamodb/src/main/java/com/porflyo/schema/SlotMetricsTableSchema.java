@@ -49,7 +49,7 @@ public final class SlotMetricsTableSchema {
 
 
             // ────────────────────────── HeatMap ──────────────────────────
-            .addAttribute(String.class, a -> a.name("v")
+            .addAttribute(String.class, a -> a.name("V")
                 .getter(DdbSlotMetricsItem::getVersion)
                 .setter(DdbSlotMetricsItem::setVersion))
             .addAttribute(Integer.class, a -> a.name("m")
