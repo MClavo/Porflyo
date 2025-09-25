@@ -1,6 +1,5 @@
 package com.porflyo.model.metrics;
 
-import java.time.LocalDate;
 import java.util.List;
 
 import com.porflyo.model.ids.PortfolioId;
@@ -12,7 +11,6 @@ import io.micronaut.serde.annotation.Serdeable;
 @Introspected
 public record PortfolioHeatmap(
     PortfolioId portfolioId,
-    LocalDate date,
     String version,
     Integer columns,
     List<Integer> Indexes,

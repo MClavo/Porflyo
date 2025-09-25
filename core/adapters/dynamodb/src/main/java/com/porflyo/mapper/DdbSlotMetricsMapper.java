@@ -46,7 +46,7 @@ public final class DdbSlotMetricsMapper {
         DdbSlotMetricsItem item = new DdbSlotMetricsItem();
         item.setPK(PK);
         item.setSK(SK);
-        item.setDate(heatmap.date().toString());
+        item.setDate(LocalDate.now().toString());
 
         // projects -> parallel lists
         List<Integer> ids = new ArrayList<>();
@@ -114,7 +114,7 @@ public final class DdbSlotMetricsMapper {
             Integer cv = i < codeViews.size() ? codeViews.get(i) : 0;
             Integer lv = i < liveViews.size() ? liveViews.get(i) : 0;
 
-            projects.add(new ProjectMetricsWithId(id, date, vt, t, cv, lv));
+            projects.add(new ProjectMetricsWithId(id, vt, t, cv, lv));
         }
 
         // decode heatmap from blob
@@ -122,7 +122,6 @@ public final class DdbSlotMetricsMapper {
 
         PortfolioHeatmap heatmap = new PortfolioHeatmap(
             portfolioId,
-            date,
             item.getVersion(),
             item.getColumns(),
             reader.decodeSection(SEC_IDX),

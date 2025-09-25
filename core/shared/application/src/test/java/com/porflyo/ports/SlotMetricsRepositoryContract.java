@@ -57,8 +57,7 @@ public abstract class SlotMetricsRepositoryContract {
         
         DetailSlot saved = retrieved.get();
         assertEquals(heatmap.portfolioId(), saved.heatmap().portfolioId());
-        assertEquals(heatmap.date(), saved.date());
-        assertEquals(projects.size(), saved.projectMetrics().size());
+        assertEquals(projects.size(), saved.projects().size());
     }
 
     @Test
@@ -76,7 +75,7 @@ public abstract class SlotMetricsRepositoryContract {
         assertTrue(retrieved.isPresent(), "Metrics with empty projects should be saved");
         
         DetailSlot saved = retrieved.get();
-        assertTrue(saved.projectMetrics().isEmpty(), "Project metrics should be empty");
+        assertTrue(saved.projects().isEmpty(), "Project metrics should be empty");
         assertEquals(heatmap.version(), saved.heatmap().version());
     }
 
@@ -89,7 +88,6 @@ public abstract class SlotMetricsRepositoryContract {
         
         PortfolioHeatmap secondHeatmap = new PortfolioHeatmap(
             testPortfolioId,
-            LocalDate.now(),
             "2.0.0", // Different version
             8,
             List.of(0, 1, 2, 3, 4, 5, 6, 7),
@@ -97,7 +95,7 @@ public abstract class SlotMetricsRepositoryContract {
             List.of(50, 60, 63, 45, 55, 35, 40, 30)
         );
         List<ProjectMetricsWithId> secondProjects = List.of(
-            new ProjectMetricsWithId(99, LocalDate.now(), 9999999, 999, 99, 99)
+            new ProjectMetricsWithId(99, 9999999, 999, 99, 99)
         );
 
         // When
@@ -110,8 +108,8 @@ public abstract class SlotMetricsRepositoryContract {
         
         DetailSlot saved = retrieved.get();
         assertEquals("2.0.0", saved.heatmap().version(), "Should contain the latest version");
-        assertEquals(1, saved.projectMetrics().size(), "Should contain the latest project count");
-        assertEquals(Integer.valueOf(99), saved.projectMetrics().get(0).id(), "Should contain the latest project data");
+        assertEquals(1, saved.projects().size(), "Should contain the latest project count");
+        assertEquals(Integer.valueOf(99), saved.projects().get(0).id(), "Should contain the latest project data");
     }
 
     // ────────────────────── GET TODAY METRICS TESTS ──────────────────────
@@ -147,7 +145,7 @@ public abstract class SlotMetricsRepositoryContract {
         assertEquals(LocalDate.now(), retrieved.date());
         assertEquals(heatmap.portfolioId(), retrieved.heatmap().portfolioId());
         assertEquals(heatmap.version(), retrieved.heatmap().version());
-        assertEquals(projects.size(), retrieved.projectMetrics().size());
+        assertEquals(projects.size(), retrieved.projects().size());
     }
 
     @Test
@@ -168,7 +166,6 @@ public abstract class SlotMetricsRepositoryContract {
         
         // Verify all heatmap components
         assertEquals(complexHeatmap.portfolioId(), saved.portfolioId());
-        assertEquals(LocalDate.now(), saved.date()); // SlotMetrics always uses today's date
         assertEquals(complexHeatmap.version(), saved.version());
         assertEquals(complexHeatmap.columns(), saved.columns());
         assertEquals(complexHeatmap.Indexes(), saved.Indexes());
@@ -190,7 +187,7 @@ public abstract class SlotMetricsRepositoryContract {
         Optional<DetailSlot> retrieved = repository.getTodayMetrics(testPortfolioId);
         assertTrue(retrieved.isPresent(), "Complex projects should be found");
 
-        List<ProjectMetricsWithId> saved = retrieved.get().projectMetrics();
+        List<ProjectMetricsWithId> saved = retrieved.get().projects();
         assertEquals(complexProjects.size(), saved.size());
         
         for (int i = 0; i < complexProjects.size(); i++) {
@@ -198,7 +195,6 @@ public abstract class SlotMetricsRepositoryContract {
             ProjectMetricsWithId actual = saved.get(i);
             
             assertEquals(expected.id(), actual.id());
-            assertEquals(LocalDate.now(), actual.date()); // SlotMetrics always uses today's date
             assertEquals(expected.viewTime(), actual.viewTime());  
             assertEquals(expected.TTFI(), actual.TTFI());
             assertEquals(expected.codeViews(), actual.codeViews());
@@ -252,7 +248,6 @@ public abstract class SlotMetricsRepositoryContract {
         // Then
         assertEquals(1, result.size(), "Should retrieve the single saved metric");
         DetailSlot retrieved = result.get(0);
-        assertEquals(heatmap.date(), retrieved.date());
         assertEquals(heatmap.version(), retrieved.heatmap().version());
     }
 
@@ -351,7 +346,7 @@ public abstract class SlotMetricsRepositoryContract {
     protected void shouldHandleVariousSlotMetricScenarios(String scenarioName, DetailSlot testSlot) {
         // Given
         PortfolioHeatmap heatmap = testSlot.heatmap();
-        List<ProjectMetricsWithId> projects = testSlot.projectMetrics();
+        List<ProjectMetricsWithId> projects = testSlot.projects();
 
         // When
         repository.saveTodayMetrics(heatmap, projects);
@@ -363,7 +358,7 @@ public abstract class SlotMetricsRepositoryContract {
         DetailSlot saved = retrieved.get(); 
         assertEquals(heatmap.portfolioId(), saved.heatmap().portfolioId());
         assertEquals(heatmap.version(), saved.heatmap().version());
-        assertEquals(projects.size(), saved.projectMetrics().size());
+        assertEquals(projects.size(), saved.projects().size());
     }
 
     @Test
@@ -384,7 +379,7 @@ public abstract class SlotMetricsRepositoryContract {
         assertEquals(zeroHeatmap.Values(), saved.heatmap().Values());
         assertEquals(zeroHeatmap.Counts(), saved.heatmap().Counts());
         
-        for (ProjectMetricsWithId project : saved.projectMetrics()) {
+        for (ProjectMetricsWithId project : saved.projects()) {
             assertEquals(Integer.valueOf(0), project.viewTime());
             assertEquals(Integer.valueOf(0), project.TTFI());
             assertEquals(Integer.valueOf(0), project.codeViews());
@@ -408,11 +403,11 @@ public abstract class SlotMetricsRepositoryContract {
         
         DetailSlot saved = retrieved.get();
         assertEquals(highHeatmap.Values(), saved.heatmap().Values());
-        assertEquals(highProjects.size(), saved.projectMetrics().size());
+        assertEquals(highProjects.size(), saved.projects().size());
         
         // Verify some high values are preserved (within bit limits)
         assertTrue(saved.heatmap().Values().stream().anyMatch(v -> v > 50));
-        assertTrue(saved.projectMetrics().stream().anyMatch(p -> p.viewTime() > 50000000));
+        assertTrue(saved.projects().stream().anyMatch(p -> p.viewTime() > 50000000));
     }
 
     // ────────────────────── UTILITY METHODS ──────────────────────

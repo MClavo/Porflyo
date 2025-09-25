@@ -22,7 +22,6 @@ public final class SlotMetricsTestData {
 
     public static final PortfolioHeatmap TODAY_HEATMAP = new PortfolioHeatmap(
         DEFAULT_PORTFOLIO_ID,
-        LocalDate.now(),
         "1.0.0",
         12,
         Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11),
@@ -32,7 +31,6 @@ public final class SlotMetricsTestData {
 
     public static final PortfolioHeatmap CURRENT_MONTH_DAY_20_HEATMAP = new PortfolioHeatmap(
         DEFAULT_PORTFOLIO_ID,
-        LocalDate.now().withDayOfMonth(20),
         "1.2.0",
         16,
         Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15),
@@ -42,7 +40,6 @@ public final class SlotMetricsTestData {
 
     public static final PortfolioHeatmap PREVIOUS_MONTH_HEATMAP = new PortfolioHeatmap(
         DEFAULT_PORTFOLIO_ID,
-        LocalDate.now().minusMonths(1).withDayOfMonth(15),
         "0.9.5",
         8,
         Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7),
@@ -52,7 +49,6 @@ public final class SlotMetricsTestData {
 
     public static final PortfolioHeatmap ZERO_VALUES_HEATMAP = new PortfolioHeatmap(
         DEFAULT_PORTFOLIO_ID,
-        LocalDate.now().withDayOfMonth(25),
         "1.0.0",
         4,
         Arrays.asList(0, 1, 2, 3),
@@ -62,7 +58,6 @@ public final class SlotMetricsTestData {
 
     public static final PortfolioHeatmap HIGH_VALUES_HEATMAP = new PortfolioHeatmap(
         DEFAULT_PORTFOLIO_ID,
-        LocalDate.now().withDayOfMonth(23),
         "2.0.0",
         20,
         Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19),
@@ -72,7 +67,6 @@ public final class SlotMetricsTestData {
 
     public static final PortfolioHeatmap DIFFERENT_PORTFOLIO_HEATMAP = new PortfolioHeatmap(
         DIFFERENT_PORTFOLIO_ID,
-        LocalDate.now(),
         "1.1.0",
         6,
         Arrays.asList(0, 1, 2, 3, 4, 5),
@@ -83,39 +77,39 @@ public final class SlotMetricsTestData {
     // ────────────────────── PROJECT METRICS TEST DATA ──────────────────────
 
     public static final List<ProjectMetricsWithId> TODAY_PROJECTS = Arrays.asList(
-        new ProjectMetricsWithId(1, LocalDate.now(), 1800000, 2500, 8, 5),
-        new ProjectMetricsWithId(2, LocalDate.now(), 2400000, 3200, 12, 7),
-        new ProjectMetricsWithId(3, LocalDate.now(), 1200000, 1800, 6, 3)
+        new ProjectMetricsWithId(1, 1800000, 2500, 8, 5),
+        new ProjectMetricsWithId(2, 2400000, 3200, 12, 7),
+        new ProjectMetricsWithId(3, 1200000, 1800, 6, 3)
     );
 
     public static final List<ProjectMetricsWithId> CURRENT_MONTH_DAY_20_PROJECTS = Arrays.asList(
-        new ProjectMetricsWithId(1, LocalDate.now().withDayOfMonth(20), 5400000, 1200, 25, 18),
-        new ProjectMetricsWithId(2, LocalDate.now().withDayOfMonth(20), 7200000, 800, 35, 22),
-        new ProjectMetricsWithId(3, LocalDate.now().withDayOfMonth(20), 3600000, 1500, 15, 12),
-        new ProjectMetricsWithId(4, LocalDate.now().withDayOfMonth(20), 4800000, 1000, 20, 14)
+        new ProjectMetricsWithId(1, 5400000, 1200, 25, 18),
+        new ProjectMetricsWithId(2, 7200000, 800, 35, 22),
+        new ProjectMetricsWithId(3, 3600000, 1500, 15, 12),
+        new ProjectMetricsWithId(4, 4800000, 1000, 20, 14)
     );
 
     public static final List<ProjectMetricsWithId> PREVIOUS_MONTH_PROJECTS = Arrays.asList(
-        new ProjectMetricsWithId(1, LocalDate.now().minusMonths(1).withDayOfMonth(15), 3000000, 4500, 18, 10),
-        new ProjectMetricsWithId(2, LocalDate.now().minusMonths(1).withDayOfMonth(15), 1800000, 5200, 10, 6)
+        new ProjectMetricsWithId(1, 3000000, 4500, 18, 10),
+        new ProjectMetricsWithId(2, 1800000, 5200, 10, 6)
     );
 
     public static final List<ProjectMetricsWithId> ZERO_VALUES_PROJECTS = Arrays.asList(
-        new ProjectMetricsWithId(1, LocalDate.now().withDayOfMonth(25), 0, 0, 0, 0),
-        new ProjectMetricsWithId(2, LocalDate.now().withDayOfMonth(25), 0, 0, 0, 0)
+        new ProjectMetricsWithId(1, 0, 0, 0, 0),
+        new ProjectMetricsWithId(2, 0, 0, 0, 0)
     );
 
     public static final List<ProjectMetricsWithId> HIGH_VALUES_PROJECTS = Arrays.asList(
-        new ProjectMetricsWithId(1, LocalDate.now().withDayOfMonth(23), 86400000, 500, 1000, 800),
-        new ProjectMetricsWithId(2, LocalDate.now().withDayOfMonth(23), 72000000, 300, 800, 600),
-        new ProjectMetricsWithId(3, LocalDate.now().withDayOfMonth(23), 108000000, 200, 1200, 900),
-        new ProjectMetricsWithId(4, LocalDate.now().withDayOfMonth(23), 54000000, 700, 600, 400),
-        new ProjectMetricsWithId(5, LocalDate.now().withDayOfMonth(23), 144000000, 100, 1500, 1200)
+        new ProjectMetricsWithId(1, 86400000, 500, 1000, 800),
+        new ProjectMetricsWithId(2, 72000000, 300, 800, 600),
+        new ProjectMetricsWithId(3, 108000000, 200, 1200, 900),
+        new ProjectMetricsWithId(4, 54000000, 700, 600, 400),
+        new ProjectMetricsWithId(5, 144000000, 100, 1500, 1200)
     );
 
     public static final List<ProjectMetricsWithId> DIFFERENT_PORTFOLIO_PROJECTS = Arrays.asList(
-        new ProjectMetricsWithId(1, LocalDate.now(), 900000, 6000, 4, 2),
-        new ProjectMetricsWithId(2, LocalDate.now(), 1500000, 4500, 7, 4)
+        new ProjectMetricsWithId(1, 900000, 6000, 4, 2),
+        new ProjectMetricsWithId(2, 1500000, 4500, 7, 4)
     );
 
     public static final List<ProjectMetricsWithId> EMPTY_PROJECTS = Arrays.asList();
@@ -162,7 +156,6 @@ public final class SlotMetricsTestData {
         LocalDate.now().withDayOfMonth(10),
         new PortfolioHeatmap(
             DEFAULT_PORTFOLIO_ID,
-            LocalDate.now().withDayOfMonth(10),
             "1.0.0",
             1,
             Arrays.asList(0),

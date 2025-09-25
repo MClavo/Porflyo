@@ -9,7 +9,6 @@ import io.micronaut.serde.annotation.Serdeable;
 @Introspected
 public record ProjectMetricsWithId(
     Integer id,             // Provider Project ID 
-    LocalDate date,
     Integer viewTime,
     Integer TTFI,           // Time To First Interaction
     Integer codeViews,

@@ -12,6 +12,6 @@ import io.micronaut.serde.annotation.Serdeable;
 @Introspected
 public record PortfolioMetricsBundle(
     PortfolioId portfolioId,
-    PortfolioMetrics[] aggregates,  
+    List<PortfolioMetrics> aggregates,  
     List<DetailSlot> slots          // detail slots (heatmap + project metrics)
 ) {}
