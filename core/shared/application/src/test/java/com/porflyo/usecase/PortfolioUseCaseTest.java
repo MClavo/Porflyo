@@ -1,4 +1,4 @@
-package com.porflyo.services;
+package com.porflyo.usecase;
 
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -31,12 +31,10 @@ import com.porflyo.ports.PortfolioRepository;
 import com.porflyo.ports.PortfolioUrlRepository;
 import com.porflyo.ports.QuotaRepository;
 import com.porflyo.ports.SlugGeneratorPort;
-import com.porflyo.usecase.MediaUseCase;
-import com.porflyo.usecase.PortfolioUseCase;
 
 @ExtendWith(MockitoExtension.class)
-@DisplayName("PortfolioService (unit)")
-class PortfolioServiceTest {
+@DisplayName("PortfolioUseCase (unit)")
+class PortfolioUseCaseTest {
 
     @Mock PortfolioRepository portfolioRepository;
     @Mock PortfolioUrlRepository portfolioUrlRepository;

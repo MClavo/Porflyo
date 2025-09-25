@@ -14,5 +14,5 @@ import io.micronaut.serde.annotation.Serdeable;
 public record DetailSlot(
     LocalDate date,
     PortfolioHeatmap heatmap,
-    List<ProjectMetricsWithId> projectMetrics
+    List<ProjectMetricsWithId> projects
 ) {}
