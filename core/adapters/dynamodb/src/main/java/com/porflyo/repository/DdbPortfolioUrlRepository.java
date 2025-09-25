@@ -63,7 +63,7 @@ public class DdbPortfolioUrlRepository implements PortfolioUrlRepository {
     public DdbPortfolioUrlRepository(DynamoDbEnhancedClient enhanced,
             @Named("lowDynamoDbClient")DynamoDbClient lowLevel,
             DdbConfig config, DdbPortfolioUrlMapper mapper) {
-        this.tableName = config.tableName();
+        this.tableName = config.userTable();
         this.lowLevel = lowLevel;
         this.table = enhanced.table(tableName, PortfolioUrlTableSchema.SCHEMA);
         this.mapper = mapper;

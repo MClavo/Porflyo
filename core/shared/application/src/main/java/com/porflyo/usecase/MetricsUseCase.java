@@ -1,4 +1,4 @@
-package com.porflyo.ports;
+package com.porflyo.usecase;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -11,8 +11,7 @@ import com.porflyo.model.metrics.PortfolioHeatmap;
 import com.porflyo.model.metrics.PortfolioMetrics;
 import com.porflyo.model.metrics.ProjectMetricsWithId;
 
-public interface MetricsRepository {
-
+public class MetricsUseCase {
     /**
      * Returns aggregate PortfolioMetrics for the last {@code monthsBack} months.
      * Also returns (separately) the detail slots: heatmaps and per-project metrics for each day.
@@ -22,13 +21,13 @@ public interface MetricsRepository {
      * @param monthsBack months to go back
      * @return array of aggregate PortfolioMetrics (most-recent first)
      */
-    PortfolioMetrics[] getPortfolioMetrics(PortfolioId portfolioId, int monthsBack);
+    List<PortfolioMetrics> getPortfolioMetrics(PortfolioId portfolioId, int monthsBack);
 
 
     /**
      * Returns aggregates for a specific month (monthsBack = 0 means current month).
      */
-    PortfolioMetrics[] getPortfolioMetricsOneMonth(PortfolioId portfolioId, int monthsBack);
+    List<PortfolioMetrics> getPortfolioMetricsOneMonth(PortfolioId portfolioId, int monthsBack);
 
     /**
      * Returns aggregate PortfolioMetrics for the last {@code monthsBack} months.

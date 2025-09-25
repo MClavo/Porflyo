@@ -44,7 +44,7 @@ public class DdbPortfolioRepository implements PortfolioRepository {
     public DdbPortfolioRepository(DynamoDbEnhancedClient enhanced, DdbConfig dynamoDbConfig, DdbPortfolioMapper portfolioMapper) {
         this.mapper = portfolioMapper;
         this.table = enhanced.table(
-            dynamoDbConfig.tableName(),
+            dynamoDbConfig.userTable(),
             PortfolioTableSchema.SCHEMA);
     }
 

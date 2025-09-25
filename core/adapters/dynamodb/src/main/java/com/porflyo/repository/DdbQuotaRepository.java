@@ -33,7 +33,7 @@ public class DdbQuotaRepository implements QuotaRepository {
     @Inject
     public DdbQuotaRepository(DynamoDbEnhancedClient enhanced, DdbConfig dynamoDbConfig, QuotaConfig quotaConfig) {
         this.table = enhanced.table(
-            dynamoDbConfig.tableName(),
+            dynamoDbConfig.userTable(),
             QuotaTableSchema.SCHEMA);
         this.quotaConfig = quotaConfig;
     }

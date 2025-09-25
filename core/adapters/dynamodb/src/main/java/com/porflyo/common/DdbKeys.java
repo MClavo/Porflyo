@@ -4,7 +4,6 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 import jakarta.validation.constraints.NotNull;
-import reactor.util.Metrics;
 
 public final class DdbKeys {
     private DdbKeys() {}
@@ -29,8 +28,8 @@ public final class DdbKeys {
     public static final String METRICS_PK_PREFIX = "P#";
     public static final String METRICS_SK_PREFIX = "M#";
     public static final String METRICS_SLOT_SK_PREFIX = "S#";
-    private static final int METRICS_DAY_COUNT = 10;
-    private static final int METRICS_SLOT_COUNT = 10;
+    public static final int METRICS_DAY_COUNT = 10;
+    public static final int METRICS_SLOT_COUNT = 10;
 
 
     public static String pk(@NotNull String prefix, @NotNull String id) {

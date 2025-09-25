@@ -34,15 +34,13 @@ public final class DdbSlotMetricsMapper {
     // ────────────────────────── Domain -> ITEM ──────────────────────────
 
     public static final DdbSlotMetricsItem toItem(
-            PortfolioId portfolioId,
-            List<ProjectMetricsWithId> projectMetrics,
-            PortfolioHeatmap heatmap
+            PortfolioHeatmap heatmap,
+            List<ProjectMetricsWithId> projectMetrics
     ) {
-        Objects.requireNonNull(portfolioId, "portfolioId");
         Objects.requireNonNull(projectMetrics, "projectMetrics");
         Objects.requireNonNull(heatmap, "heatmap");
 
-        String PK = pk(METRICS_PK_PREFIX, portfolioId.value());
+        String PK = pk(METRICS_PK_PREFIX, heatmap.portfolioId().value());
         String SK = skTodaySlot();
 
         DdbSlotMetricsItem item = new DdbSlotMetricsItem();

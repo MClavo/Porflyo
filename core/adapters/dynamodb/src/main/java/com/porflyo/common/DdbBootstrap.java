@@ -54,7 +54,7 @@ public class DdbBootstrap implements ApplicationEventListener<StartupEvent> {
 
     @Override
     public void onApplicationEvent(StartupEvent event) {
-        final String tableName = ddbConfig.tableName();
+        final String tableName = ddbConfig.userTable();
 
         // Choose the creator schema. It must define the PK/SK used by the single table.
         TableSchema<?> creatorSchema = SCHEMAS.get(0);

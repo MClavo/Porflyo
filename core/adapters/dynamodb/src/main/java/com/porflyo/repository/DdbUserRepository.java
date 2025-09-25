@@ -47,7 +47,7 @@ public class DdbUserRepository implements UserRepository {
 
     @Inject
     public DdbUserRepository(DynamoDbEnhancedClient enhanced, DdbConfig dynamoDbConfig, DdbUserMapper ddbUserMapper) {
-        this.table = enhanced.table(dynamoDbConfig.tableName(), UserTableSchema.SCHEMA);
+        this.table = enhanced.table(dynamoDbConfig.userTable(), UserTableSchema.SCHEMA);
         this.ddbUserMapper = ddbUserMapper;
     }
 
