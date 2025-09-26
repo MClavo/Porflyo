@@ -7,5 +7,5 @@ import io.micronaut.serde.annotation.Serdeable;
 @Introspected
 public record Devices(
     Integer desktopViews,
-    Integer deviceViews // Mobile and Tablet combined
+    Integer mobileTabletViews // Mobile and Tablet combined
 ) {}

@@ -165,7 +165,7 @@ public final class DdbPortfolioMetricsMapper {
         Map.entry("activeTime", pm -> pm.engagement().activeTime()),
         Map.entry("views", pm -> pm.engagement().views()),
         Map.entry("emailCopies", pm -> pm.engagement().emailCopies()),
-        Map.entry("deviceViews", pm -> pm.engagement().devices().deviceViews()),
+        Map.entry("deviceViews", pm -> pm.engagement().devices().mobileTabletViews()),
         Map.entry("totalScrollScore", pm -> pm.scroll().avgScore()),
         Map.entry("maxScrollScore", pm -> pm.scroll().maxScore()),
         Map.entry("totalScrollTime", pm -> pm.scroll().avgScrollTime()),

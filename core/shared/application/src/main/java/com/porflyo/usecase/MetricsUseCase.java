@@ -1,10 +1,12 @@
 package com.porflyo.usecase;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -16,12 +18,17 @@ import com.porflyo.dto.HeatmapSnapshot;
 import com.porflyo.dto.PortfolioMetricsBundle;
 import com.porflyo.dto.PortfolioMetricsSnapshot;
 import com.porflyo.model.ids.PortfolioId;
+import com.porflyo.model.metrics.Engagement;
 import com.porflyo.model.metrics.PortfolioHeatmap;
 import com.porflyo.model.metrics.PortfolioMetrics;
+import com.porflyo.model.metrics.ProjectMetrics;
 import com.porflyo.model.metrics.ProjectMetricsWithId;
+import com.porflyo.model.metrics.ScrollMetrics;
+import com.porflyo.model.portfolio.Portfolio;
 import com.porflyo.ports.PortfolioMetricsRepository;
 import com.porflyo.ports.SlotMetricsRepository;
-import com.porflyo.utils.MetricsHeatmapUtils;
+import com.porflyo.utils.HeatmapUtils;
+import com.porflyo.utils.PortfolioMetricsUtils;
 
 import jakarta.inject.Inject;
 
@@ -36,7 +43,7 @@ public class MetricsUseCase {
             PortfolioMetricsRepository portfolioMetricsRepository,
             SlotMetricsRepository slotMetricsRepository,
             MetricsConfig metricsConfig
-    ) { 
+    ) {
         this.portfolioMetricsRepository = portfolioMetricsRepository;
         this.slotMetricsRepository = slotMetricsRepository;
         this.metricsConfig = metricsConfig;
@@ -46,18 +53,38 @@ public class MetricsUseCase {
     // ────────────────────────── Create ──────────────────────────
 
     /**
-     * Upsert the aggregate PortfolioMetrics for today.
+     * Save the aggregate PortfolioMetrics for today.
      * The repository implementation is responsible for creating or updating the record as needed.
      *
      * @param portfolioId target portfolio
-     * @param aggregate today's aggregate metrics
+     * @param engagement today's engagement metrics
+     * @param scroll today's scroll metrics
+     * @param cumProjects today's cumulative project metrics
      */
     public void saveTodayPortfolioMetrics(
-        PortfolioId portfolioId,
-        PortfolioMetrics aggregate
-    ) {
-        portfolioMetricsRepository.saveTodayMetrics(aggregate);
-        log.debug("Saved today's portfolio metrics for portfolio {}", portfolioId);
+            PortfolioId portfolioId,
+            Engagement engagement,
+            ScrollMetrics scroll,
+            ProjectMetrics cumProjects){
+
+        Optional<PortfolioMetrics> existing = portfolioMetricsRepository.getTodayMetrics(portfolioId);
+        PortfolioMetrics toSave;
+
+        if (existing.isPresent()) {
+            toSave = PortfolioMetricsUtils.updatePortfolioMetrics(
+                    existing.get(),
+                    engagement,
+                    scroll,
+                    cumProjects);
+            
+            log.debug("Updating existing metrics for portfolio {} on date {}", portfolioId, existing.get().date());
+
+        } else {
+            toSave = new PortfolioMetrics(portfolioId, LocalDate.now(), engagement, scroll, cumProjects);
+        }
+
+        portfolioMetricsRepository.saveTodayMetrics(toSave);
+        log.debug("Saved today's portfolio metrics for portfolio {}", toSave.portfolioId());
     }
 
 
@@ -75,21 +102,24 @@ public class MetricsUseCase {
         HeatmapSnapshot heatmap,
         List<ProjectMetricsWithId> projects
     ) {
-        DetailSlot dbSlot = slotMetricsRepository.getTodayMetrics(portfolioId).orElse(null);
+        Optional<DetailSlot> dbSlot = slotMetricsRepository.getTodayMetrics(portfolioId);
+        PortfolioHeatmap heatmapToSave;
+        List<ProjectMetricsWithId> projectsToSave;
 
-        if (dbSlot == null) {
-            PortfolioHeatmap portfolioHeatmap = convertToPortfolioHeatmap(heatmap);
-            slotMetricsRepository.saveTodayMetrics(portfolioHeatmap, projects);
+        if (dbSlot.isEmpty()) {
+            heatmapToSave = convertToPortfolioHeatmap(heatmap);
+            projectsToSave = projects;
+            
             log.debug("Created new slot for portfolio {}", portfolioId);
         
         } else {
-            PortfolioHeatmap updatedHeatmap = MetricsHeatmapUtils.updateHeatmap(dbSlot.heatmap(), heatmap, metricsConfig.heatmapCellCount());
-            List<ProjectMetricsWithId> updatedProjects = updateProjects(dbSlot.projects(), projects);
-            
-            // Save updated metrics
-            slotMetricsRepository.saveTodayMetrics(updatedHeatmap, updatedProjects);
+            heatmapToSave = HeatmapUtils.updateHeatmap(dbSlot.get().heatmap(), heatmap, metricsConfig.heatmapCellCount());
+            projectsToSave = updateProjects(dbSlot.get().projects(), projects);
+
             log.debug("Updated existing slot for portfolio {}", portfolioId);
         }
+
+        slotMetricsRepository.saveTodayMetrics(heatmapToSave, projectsToSave);
     }
 
 
@@ -155,7 +185,6 @@ public class MetricsUseCase {
     }
 
 
-
     // ────────────────────────── Helpers ──────────────────────────
 
     /**
@@ -182,14 +211,15 @@ public class MetricsUseCase {
                 continue;
             }
 
-            int viewTime = safe(ep.viewTime()) + safe(np.viewTime());
-            int ttfi = safe(ep.TTFI()) + safe(np.TTFI());
-            int codeViews = safe(ep.codeViews()) + safe(np.codeViews());
-            int liveViews = safe(ep.liveViews()) + safe(np.liveViews());
+            Integer viewTime = safe(ep.viewTime()) + safe(np.viewTime());
+            Integer ttfi = PortfolioMetricsUtils.applyEma(ep.TTFI(), np.TTFI(), PortfolioMetricsUtils.EMA_ALPHA);
+            Integer codeViews = safe(ep.codeViews()) + safe(np.codeViews());
+            Integer liveViews = safe(ep.liveViews()) + safe(np.liveViews());
 
             merged.put(id, new ProjectMetricsWithId(id, viewTime, ttfi, codeViews, liveViews));
         }
 
+        log.debug("Merged {} existing and {} new projects into {} total projects", existing.size(), news.size(), merged.size());
         return new ArrayList<>(merged.values());
     }
 
@@ -206,7 +236,6 @@ public class MetricsUseCase {
         List<Integer> counts = snapshot.Indexes().stream().map(i -> 1).collect(Collectors.toList());
 
         return new PortfolioHeatmap(
-            snapshot.portfolioId(),
             snapshot.version(),
             snapshot.columns(),
             snapshot.Indexes(),
@@ -214,8 +243,4 @@ public class MetricsUseCase {
             counts
         );
     }
-
-
-
-
 }

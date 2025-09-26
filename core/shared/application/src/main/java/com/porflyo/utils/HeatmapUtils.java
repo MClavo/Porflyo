@@ -12,9 +12,9 @@ import com.porflyo.model.metrics.PortfolioHeatmap;
 /**
  * Utility functions for metrics heatmap manipulation.
  */
-public final class MetricsHeatmapUtils {
+public final class HeatmapUtils {
 
-    private MetricsHeatmapUtils() {}
+    private HeatmapUtils() {}
 
     private static class CellData {
         public int index;
@@ -32,7 +32,6 @@ public final class MetricsHeatmapUtils {
 
     public static PortfolioHeatmap updateHeatmap(PortfolioHeatmap existingHeatmap, HeatmapSnapshot newHeatmap, int maxCells) {
         // Use new metadata (date, version, columns)
-        var portfolioId = newHeatmap.portfolioId();
         String version = newHeatmap.version();
         Integer columns = newHeatmap.columns();
 
@@ -78,7 +77,7 @@ public final class MetricsHeatmapUtils {
             resultCounts.add(cell.count);
         }
 
-        return new PortfolioHeatmap(portfolioId, version, columns, resultIndexes, resultValues, resultCounts);
+        return new PortfolioHeatmap(version, columns, resultIndexes, resultValues, resultCounts);
     }
 
     private static List<CellData> selectMostRelevantCells(List<CellData> allCells, int maxCells) {
