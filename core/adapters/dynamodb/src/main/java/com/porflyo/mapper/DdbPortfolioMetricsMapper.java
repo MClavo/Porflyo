@@ -23,7 +23,7 @@ import com.porflyo.model.metrics.Devices;
 import com.porflyo.model.metrics.Engagement;
 import com.porflyo.model.metrics.PortfolioMetrics;
 import com.porflyo.model.metrics.ProjectMetrics;
-import com.porflyo.model.metrics.ScrollMetrics;
+import com.porflyo.model.metrics.InteractionMetrics;
 
 public final class DdbPortfolioMetricsMapper {
     
@@ -65,21 +65,30 @@ public final class DdbPortfolioMetricsMapper {
 
         DdbPortfolioMetricsItem item = new DdbPortfolioMetricsItem();
 
+        // KEY
         item.setPK(pk(METRICS_PK_PREFIX, portfolioId));
         item.setSK(generateSortKey(domain.get(0).date()));
+        
+        // ATTRIBUTES
         item.setVersion(VERSION);
-
         item.setDayIntegers(getIntegers(domain, "day"));
+
+        // Engagement
         item.setActiveTime(getIntegers(domain, "activeTime"));
         item.setViews(getIntegers(domain, "views"));
         item.setEmailCopies(getIntegers(domain, "emailCopies"));
+        item.setSocialClicks(getIntegers(domain, "socialClicks"));
         item.setDeviceViews(getIntegers(domain, "deviceViews"));
+
+        // Interaction
         item.setTotalScrollScore(getIntegers(domain, "totalScrollScore"));
-        item.setMaxScrollScore(getIntegers(domain, "maxScrollScore"));
         item.setTotalScrollTime(getIntegers(domain, "totalScrollTime"));
-        item.setMaxScrollTime(getIntegers(domain, "maxScrollTime"));
+        item.setTtfiSumMs(getIntegers(domain, "ttfiSumMs"));
+        item.setTtfiCount(getIntegers(domain, "ttfiCount"));
+
+        // Projects
         item.setViewTime(getIntegers(domain, "viewTime"));
-        item.setTTFI(getIntegers(domain, "TTFI"));
+        item.setExposures(getIntegers(domain, "exposures"));
         item.setCodeViews(getIntegers(domain, "codeViews"));
         item.setLiveViews(getIntegers(domain, "liveViews"));
 
@@ -126,16 +135,25 @@ public final class DdbPortfolioMetricsMapper {
             return lst;
         };
 
+
+        // Engagement
         List<Integer> activeTime = norm.apply(item.getActiveTime());
         List<Integer> views = norm.apply(item.getViews());
+        List<Integer> qualityVisits = norm.apply(item.getQualityVisits());
         List<Integer> emailCopies = norm.apply(item.getEmailCopies());
+        List<Integer> socialClicks = norm.apply(item.getSocialClicks());
         List<Integer> deviceViews = norm.apply(item.getDeviceViews());
+
+        // Interaction
         List<Integer> totalScrollScore = norm.apply(item.getTotalScrollScore());
-        List<Integer> maxScrollScore = norm.apply(item.getMaxScrollScore());
         List<Integer> totalScrollTime = norm.apply(item.getTotalScrollTime());
-        List<Integer> maxScrollTime = norm.apply(item.getMaxScrollTime());
+        List<Integer> ttfiSumMs = norm.apply(item.getTtfiSumMs());
+        List<Integer> ttfiCount = norm.apply(item.getTtfiCount());
+
+
+        // Projects
         List<Integer> viewTime = norm.apply(item.getViewTime());
-        List<Integer> ttfi = norm.apply(item.getTTFI());
+        List<Integer> exposures = norm.apply(item.getExposures());
         List<Integer> codeViews = norm.apply(item.getCodeViews());
         List<Integer> liveViews = norm.apply(item.getLiveViews());
 
@@ -147,10 +165,30 @@ public final class DdbPortfolioMetricsMapper {
             int dv = deviceViews.get(i) == null ? 0 : deviceViews.get(i);
             int totalV = views.get(i) == null ? 0 : views.get(i);
             int desktop = Math.max(0, totalV - dv);
+
             Devices devices = new Devices(desktop, dv);
-            Engagement engagement = new Engagement(activeTime.get(i), totalV, emailCopies.get(i), devices);
-            ScrollMetrics scroll = new ScrollMetrics(totalScrollScore.get(i), maxScrollScore.get(i), totalScrollTime.get(i), maxScrollTime.get(i));
-            ProjectMetrics projects = new ProjectMetrics(viewTime.get(i), ttfi.get(i), codeViews.get(i), liveViews.get(i));
+            Engagement engagement = new Engagement(
+                activeTime.get(i),
+                views.get(i),
+                qualityVisits.get(i),
+                emailCopies.get(i),
+                socialClicks.get(i),
+                devices
+            );
+
+            InteractionMetrics scroll = new InteractionMetrics(
+                totalScrollScore.get(i),
+                totalScrollTime.get(i),
+                ttfiSumMs.get(i),
+                ttfiCount.get(i)
+            );
+            
+            ProjectMetrics projects = new ProjectMetrics(
+                viewTime.get(i),
+                exposures.get(i),
+                codeViews.get(i),
+                liveViews.get(i)
+            );
 
             out.add(new PortfolioMetrics(portfolioId, date, engagement, scroll, projects));
         }
@@ -161,17 +199,26 @@ public final class DdbPortfolioMetricsMapper {
 
     // Map of field name -> extractor function
     private static final Map<String, ToIntFunction<PortfolioMetrics>> EXTRACTORS = Map.ofEntries(
+        // Attributes
         Map.entry("day", pm -> pm.date().getDayOfMonth()),
+
+        // Engagement
         Map.entry("activeTime", pm -> pm.engagement().activeTime()),
         Map.entry("views", pm -> pm.engagement().views()),
+        Map.entry("qualityVisits", pm -> pm.engagement().qualityVisits()),
         Map.entry("emailCopies", pm -> pm.engagement().emailCopies()),
+        Map.entry("socialClicks", pm -> pm.engagement().socialClicks()),
         Map.entry("deviceViews", pm -> pm.engagement().devices().mobileTabletViews()),
+
+        // Interaction
         Map.entry("totalScrollScore", pm -> pm.scroll().avgScore()),
-        Map.entry("maxScrollScore", pm -> pm.scroll().maxScore()),
         Map.entry("totalScrollTime", pm -> pm.scroll().avgScrollTime()),
-        Map.entry("maxScrollTime", pm -> pm.scroll().maxScrollTime()),
+        Map.entry("ttfiSumMs", pm -> pm.scroll().ttfiSumMs()),
+        Map.entry("ttfiCount", pm -> pm.scroll().ttfiCount()),
+
+        // Projects
         Map.entry("viewTime", pm -> pm.cumProjects().viewTime()),
-        Map.entry("TTFI", pm -> pm.cumProjects().TTFI()),
+        Map.entry("exposures", pm -> pm.cumProjects().exposures()),
         Map.entry("codeViews", pm -> pm.cumProjects().codeViews()),
         Map.entry("liveViews", pm -> pm.cumProjects().liveViews())
     );

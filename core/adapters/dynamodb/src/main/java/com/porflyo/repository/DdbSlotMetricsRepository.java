@@ -49,9 +49,13 @@ public class DdbSlotMetricsRepository implements SlotMetricsRepository {
 
 
     @Override
-    public void saveTodayMetrics(PortfolioHeatmap heatmap, List<ProjectMetricsWithId> projects) {
-        table.putItem(DdbSlotMetricsMapper.toItem(heatmap, projects));
-        log.debug("Saved HeatMap and Project metrics for portfolio: {}", heatmap.portfolioId().value());
+    public void saveTodayMetrics(
+            PortfolioId portfolioId,
+            PortfolioHeatmap heatmap,
+            List<ProjectMetricsWithId> projects) 
+            {
+        table.putItem(DdbSlotMetricsMapper.toItem(portfolioId, heatmap, projects));
+        log.debug("Saved HeatMap and Project metrics for portfolio: {}", portfolioId.value());
     }
 
     @Override

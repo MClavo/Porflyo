@@ -1,7 +1,6 @@
 package com.porflyo.mapper;
 
 import static com.porflyo.common.DdbKeys.METRICS_PK_PREFIX;
-import static com.porflyo.common.DdbKeys.idFrom;
 import static com.porflyo.common.DdbKeys.pk;
 import static com.porflyo.common.DdbKeys.skTodaySlot;
 
@@ -34,13 +33,14 @@ public final class DdbSlotMetricsMapper {
     // ────────────────────────── Domain -> ITEM ──────────────────────────
 
     public static final DdbSlotMetricsItem toItem(
+            PortfolioId portfolioId,
             PortfolioHeatmap heatmap,
             List<ProjectMetricsWithId> projectMetrics
     ) {
         Objects.requireNonNull(projectMetrics, "projectMetrics");
         Objects.requireNonNull(heatmap, "heatmap");
 
-        String PK = pk(METRICS_PK_PREFIX, heatmap.portfolioId().value());
+        String PK = pk(METRICS_PK_PREFIX, portfolioId.value());
         String SK = skTodaySlot();
 
         DdbSlotMetricsItem item = new DdbSlotMetricsItem();
@@ -51,21 +51,21 @@ public final class DdbSlotMetricsMapper {
         // projects -> parallel lists
         List<Integer> ids = new ArrayList<>();
         List<Integer> viewTime = new ArrayList<>();
-        List<Integer> ttfi = new ArrayList<>();
+        List<Integer> exposures = new ArrayList<>();
         List<Integer> codeViews = new ArrayList<>();
         List<Integer> liveViews = new ArrayList<>();
 
         for (ProjectMetricsWithId p : projectMetrics) {
             ids.add(p.id());
             viewTime.add(p.viewTime() == null ? 0 : p.viewTime());
-            ttfi.add(p.TTFI() == null ? 0 : p.TTFI());
+            exposures.add(p.exposures() == null ? 0 : p.exposures());
             codeViews.add(p.codeViews() == null ? 0 : p.codeViews());
             liveViews.add(p.liveViews() == null ? 0 : p.liveViews());
         }
 
         item.setProjectId(ids);
         item.setViewTime(viewTime);
-        item.setTTFI(ttfi);
+        item.setExposures(exposures);
         item.setCodeViews(codeViews);
         item.setLiveViews(liveViews);
 
@@ -93,14 +93,11 @@ public final class DdbSlotMetricsMapper {
 
     public static final DetailSlot toDomain(DdbSlotMetricsItem item) {
         Objects.requireNonNull(item, "item");
-
-        String portfolioIdStr = idFrom(METRICS_PK_PREFIX, item.getPK());
-        PortfolioId portfolioId = new PortfolioId(portfolioIdStr);
         LocalDate date = LocalDate.parse(item.getDate());
 
         List<Integer> ids = item.getProjectId() == null ? List.of() : item.getProjectId();
         List<Integer> viewTime = item.getViewTime() == null ? List.of() : item.getViewTime();
-        List<Integer> ttfi = item.getTTFI() == null ? List.of() : item.getTTFI();
+        List<Integer> exposures = item.getExposures() == null ? List.of() : item.getExposures();
         List<Integer> codeViews = item.getCodeViews() == null ? List.of() : item.getCodeViews();
         List<Integer> liveViews = item.getLiveViews() == null ? List.of() : item.getLiveViews();
 
@@ -110,7 +107,7 @@ public final class DdbSlotMetricsMapper {
         for (int i = 0; i < n; i++) {
             Integer id = ids.get(i);
             Integer vt = i < viewTime.size() ? viewTime.get(i) : 0;
-            Integer t = i < ttfi.size() ? ttfi.get(i) : 0;
+            Integer t = i < exposures.size() ? exposures.get(i) : 0;
             Integer cv = i < codeViews.size() ? codeViews.get(i) : 0;
             Integer lv = i < liveViews.size() ? liveViews.get(i) : 0;
 
@@ -121,7 +118,6 @@ public final class DdbSlotMetricsMapper {
         BlobReader reader = BlobReader.parse(item.getHeatMap());
 
         PortfolioHeatmap heatmap = new PortfolioHeatmap(
-            portfolioId,
             item.getVersion(),
             item.getColumns(),
             reader.decodeSection(SEC_IDX),

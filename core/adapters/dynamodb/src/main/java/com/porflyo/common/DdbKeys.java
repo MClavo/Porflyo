@@ -28,7 +28,7 @@ public final class DdbKeys {
     public static final String METRICS_PK_PREFIX = "P#";
     public static final String METRICS_SK_PREFIX = "M#";
     public static final String METRICS_SLOT_SK_PREFIX = "S#";
-    public static final int METRICS_DAY_COUNT = 10;
+    public static final int METRICS_DAY_COUNT = 11;  // 11 slots to cover all days in month (31/3=10.33 -> 11)  
     public static final int METRICS_SLOT_COUNT = 10;
 
 

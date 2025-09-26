@@ -12,29 +12,30 @@ public class DdbPortfolioMetricsItem {
     // ────────────────────────── Key & Index ──────────────────────────
 
     private String Pk; // "P#{portfolioId}"
-    private String Sk; // "M#{yyyy-MM}#{segment}" 
+    private String Sk; // "M#{yyyy-MM}#{shard}" 
 
 
     // ────────────────────────── Attributes ──────────────────────────
     private String version;
-
     private List<Integer> dayIntegers;
 
     // Engagement
     private List<Integer> activeTime;
     private List<Integer> views;
+    private List<Integer> qualityVisits;
     private List<Integer> emailCopies;
+    private List<Integer> socialClicks;
     private List<Integer> deviceViews; 
 
-    // Scroll
+    // Interaction
     private List<Integer> totalScrollScore;
-    private List<Integer> maxScrollScore;
     private List<Integer> totalScrollTime;
-    private List<Integer> maxScrollTime;
+    private List<Integer> ttfiSumMs;
+    private List<Integer> ttfiCount;
 
     // Projects
     private List<Integer> viewTime;
-    private List<Integer> TTFI;
+    private List<Integer> exposures;
     private List<Integer> codeViews;
     private List<Integer> liveViews;
 
@@ -42,13 +43,13 @@ public class DdbPortfolioMetricsItem {
 
 
     // ────────────────────────── getters & setters ──────────────────────────
-    
+
     public String getPK() {
         return Pk;
     }
 
     public void setPK(String pk) {
-        this.Pk = pk;
+        Pk = pk;
     }
 
     public String getSK() {
@@ -56,13 +57,13 @@ public class DdbPortfolioMetricsItem {
     }
 
     public void setSK(String sk) {
-        this.Sk = sk;
+        Sk = sk;
     }
 
     public String getVersion() {
         return version;
     }
-    
+
     public void setVersion(String version) {
         this.version = version;
     }
@@ -91,12 +92,28 @@ public class DdbPortfolioMetricsItem {
         this.views = views;
     }
 
+    public List<Integer> getQualityVisits() {
+        return qualityVisits;
+    }
+
+    public void setQualityVisits(List<Integer> qualityVisits) {
+        this.qualityVisits = qualityVisits;
+    }
+
     public List<Integer> getEmailCopies() {
         return emailCopies;
     }
 
     public void setEmailCopies(List<Integer> emailCopies) {
         this.emailCopies = emailCopies;
+    }
+
+    public List<Integer> getSocialClicks() {
+        return socialClicks;
+    }
+
+    public void setSocialClicks(List<Integer> socialClicks) {
+        this.socialClicks = socialClicks;
     }
 
     public List<Integer> getDeviceViews() {
@@ -115,14 +132,6 @@ public class DdbPortfolioMetricsItem {
         this.totalScrollScore = totalScrollScore;
     }
 
-    public List<Integer> getMaxScrollScore() {
-        return maxScrollScore;
-    }
-
-    public void setMaxScrollScore(List<Integer> maxScrollScore) {
-        this.maxScrollScore = maxScrollScore;
-    }
-
     public List<Integer> getTotalScrollTime() {
         return totalScrollTime;
     }
@@ -131,12 +140,20 @@ public class DdbPortfolioMetricsItem {
         this.totalScrollTime = totalScrollTime;
     }
 
-    public List<Integer> getMaxScrollTime() {
-        return maxScrollTime;
+    public List<Integer> getTtfiSumMs() {
+        return ttfiSumMs;
     }
 
-    public void setMaxScrollTime(List<Integer> maxScrollTime) {
-        this.maxScrollTime = maxScrollTime;
+    public void setTtfiSumMs(List<Integer> ttfiSumMs) {
+        this.ttfiSumMs = ttfiSumMs;
+    }
+
+    public List<Integer> getTtfiCount() {
+        return ttfiCount;
+    }
+
+    public void setTtfiCount(List<Integer> ttfiCount) {
+        this.ttfiCount = ttfiCount;
     }
 
     public List<Integer> getViewTime() {
@@ -147,12 +164,12 @@ public class DdbPortfolioMetricsItem {
         this.viewTime = viewTime;
     }
 
-    public List<Integer> getTTFI() {
-        return TTFI;
+    public List<Integer> getExposures() {
+        return exposures;
     }
 
-    public void setTTFI(List<Integer> tTFI) {
-        TTFI = tTFI;
+    public void setExposures(List<Integer> exposures) {
+        this.exposures = exposures;
     }
 
     public List<Integer> getCodeViews() {
@@ -170,4 +187,5 @@ public class DdbPortfolioMetricsItem {
     public void setLiveViews(List<Integer> liveViews) {
         this.liveViews = liveViews;
     }
+
 }

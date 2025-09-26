@@ -25,6 +25,7 @@ public interface SlotMetricsRepository {
      * @param projects today's per-project metrics
      */
     void saveTodayMetrics(
+        PortfolioId portfolioId,
         PortfolioHeatmap heatmap,
         List<ProjectMetricsWithId> projects);
 

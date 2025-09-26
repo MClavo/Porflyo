@@ -7,7 +7,7 @@ public class DdbSlotMetricsItem {
     // ────────────────────────── Key & Index ──────────────────────────
 
     private String Pk; // "P#{portfolioId}"
-    private String Sk; // "S#{slotId}"
+    private String Sk; // "S#{slot}"
 
     
     private String date; // "yyyy-MM-dd"
@@ -17,7 +17,7 @@ public class DdbSlotMetricsItem {
 
     private List<Integer> projectId;
     private List<Integer> viewTime;
-    private List<Integer> TTFI;           // Time To First Interaction
+    private List<Integer> exposures;
     private List<Integer> codeViews;
     private List<Integer> liveViews;
 
@@ -74,12 +74,12 @@ public class DdbSlotMetricsItem {
         this.viewTime = viewTime;
     }
 
-    public List<Integer> getTTFI() {
-        return TTFI;
+    public List<Integer> getExposures() {
+        return exposures;
     }
 
-    public void setTTFI(List<Integer> tTFI) {
-        TTFI = tTFI;
+    public void setExposures(List<Integer> exposures) {
+        this.exposures = exposures;
     }
 
     public List<Integer> getCodeViews() {
