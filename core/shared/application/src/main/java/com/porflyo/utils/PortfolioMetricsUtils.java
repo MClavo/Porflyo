@@ -70,8 +70,8 @@ public final class PortfolioMetricsUtils {
      * Aggregate interaction data using EMA for averages and addition for sums.
      */
     private static InteractionMetrics aggregateScrollData(InteractionMetrics ps, InteractionMetrics is) {
-        Integer avgScore = ps.avgScore() + is.avgScore();
-        Integer avgScrollTime = ps.avgScrollTime() + is.avgScrollTime();
+        Integer avgScore = ps.scoreTotal() + is.scoreTotal();
+        Integer avgScrollTime = ps.scrollTimeTotal() + is.scrollTimeTotal();
         Integer ttfiSumMs = ps.ttfiSumMs() + is.ttfiSumMs();
         Integer ttfiCount = ps.ttfiCount() + is.ttfiCount();
 

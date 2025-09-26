@@ -212,8 +212,8 @@ public final class DdbPortfolioMetricsMapper {
         Map.entry("deviceViews", pm -> pm.engagement().devices().mobileTabletViews()),
 
         // Interaction
-        Map.entry("totalScrollScore", pm -> pm.scroll().avgScore()),
-        Map.entry("totalScrollTime", pm -> pm.scroll().avgScrollTime()),
+        Map.entry("totalScrollScore", pm -> pm.scroll().scoreTotal()),
+        Map.entry("totalScrollTime", pm -> pm.scroll().scrollTimeTotal()),
         Map.entry("ttfiSumMs", pm -> pm.scroll().ttfiSumMs()),
         Map.entry("ttfiCount", pm -> pm.scroll().ttfiCount()),
 

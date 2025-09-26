@@ -111,7 +111,7 @@ public abstract class PortfolioMetricsRepositoryContract {
         
         // Verify it's the updated values, not the first ones
         assertEquals(300, saved.engagement().views());
-        assertEquals(95, saved.scroll().avgScore());
+        assertEquals(95, saved.scroll().scoreTotal());
     }
 
     // ────────────────────────── Historical Metrics Tests ──────────────────────────
@@ -211,7 +211,7 @@ public abstract class PortfolioMetricsRepositoryContract {
         // Verify zero values are preserved
         assertEquals(0, saved.engagement().views());
         assertEquals(0, saved.engagement().activeTime());
-        assertEquals(0, saved.scroll().avgScore());
+        assertEquals(0, saved.scroll().scoreTotal());
         assertEquals(0, saved.cumProjects().viewTime());
     }
 
@@ -234,7 +234,7 @@ public abstract class PortfolioMetricsRepositoryContract {
         // Verify high values are preserved
         assertEquals(10000, saved.engagement().views());
         assertEquals(86400000, saved.engagement().activeTime()); // 24 hours
-        assertEquals(100, saved.scroll().avgScore());
+        assertEquals(100, saved.scroll().scoreTotal());
         assertEquals(14400000, saved.cumProjects().viewTime()); // 4 hours
     }
 
@@ -263,8 +263,8 @@ public abstract class PortfolioMetricsRepositoryContract {
         assertEquals(complexMetrics.engagement().devices().mobileTabletViews(), saved.engagement().devices().mobileTabletViews());
         
         // Verify all interaction components
-        assertEquals(complexMetrics.scroll().avgScore(), saved.scroll().avgScore());
-        assertEquals(complexMetrics.scroll().avgScrollTime(), saved.scroll().avgScrollTime());
+        assertEquals(complexMetrics.scroll().scoreTotal(), saved.scroll().scoreTotal());
+        assertEquals(complexMetrics.scroll().scrollTimeTotal(), saved.scroll().scrollTimeTotal());
         assertEquals(complexMetrics.scroll().ttfiSumMs(), saved.scroll().ttfiSumMs());
         assertEquals(complexMetrics.scroll().ttfiCount(), saved.scroll().ttfiCount());
         
@@ -408,9 +408,9 @@ public abstract class PortfolioMetricsRepositoryContract {
                 "Device views should match");
         
         // Interaction assertions
-        assertEquals(expected.scroll().avgScore(), actual.scroll().avgScore(), 
+        assertEquals(expected.scroll().scoreTotal(), actual.scroll().scoreTotal(), 
                 "Average scroll score should match");
-        assertEquals(expected.scroll().avgScrollTime(), actual.scroll().avgScrollTime(), 
+        assertEquals(expected.scroll().scrollTimeTotal(), actual.scroll().scrollTimeTotal(), 
                 "Average scroll time should match");
         assertEquals(expected.scroll().ttfiSumMs(), actual.scroll().ttfiSumMs(), 
                 "TTFI sum should match");

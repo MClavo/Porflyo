@@ -39,7 +39,7 @@ class PortfolioMetricsUtilsTest {
         assertThat(result.portfolioId()).isEqualTo(pid);
         assertThat(result.engagement().activeTime()).isEqualTo(100);
         assertThat(result.engagement().views()).isEqualTo(5);
-        assertThat(result.scroll().avgScore()).isEqualTo(50);
+        assertThat(result.scroll().scoreTotal()).isEqualTo(50);
         assertThat(result.cumProjects().viewTime()).isEqualTo(300);
     }
 
@@ -83,8 +83,8 @@ class PortfolioMetricsUtilsTest {
         PortfolioMetrics out = PortfolioMetricsUtils.updatePortfolioMetrics(prev, incEng, incScroll, incProj);
 
         // Now we expect simple sums (no EMA/max behavior)
-        assertThat(out.scroll().avgScore()).isEqualTo(150); // 100 + 50
-        assertThat(out.scroll().avgScrollTime()).isEqualTo(450); // 200 + 250
+        assertThat(out.scroll().scoreTotal()).isEqualTo(150); // 100 + 50
+        assertThat(out.scroll().scrollTimeTotal()).isEqualTo(450); // 200 + 250
         assertThat(out.scroll().ttfiSumMs()).isEqualTo(1900); // 1000 + 900
         assertThat(out.cumProjects().exposures()).isEqualTo(600); // 200 + 400
     }
@@ -109,7 +109,7 @@ class PortfolioMetricsUtilsTest {
 
         // then - previous values should be preserved where incoming is null
         assertThat(out.engagement().activeTime()).isEqualTo(50);
-        assertThat(out.scroll().avgScore()).isEqualTo(30);
+        assertThat(out.scroll().scoreTotal()).isEqualTo(30);
         assertThat(out.cumProjects().viewTime()).isEqualTo(200);
     }
 
