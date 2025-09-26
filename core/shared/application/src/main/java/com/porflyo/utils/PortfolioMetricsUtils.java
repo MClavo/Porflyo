@@ -38,7 +38,8 @@ public final class PortfolioMetricsUtils {
             PortfolioMetrics previous,
             Engagement incomingEngagement,
             InteractionMetrics incomingScroll,
-            ProjectMetrics incomingProjects) {
+            ProjectMetrics incomingProjects
+    ) {
 
         Engagement resultEng = aggregateEngagementData(previous.engagement(), incomingEngagement);
         InteractionMetrics resultScroll = aggregateScrollData(previous.scroll(), incomingScroll);
@@ -69,8 +70,8 @@ public final class PortfolioMetricsUtils {
      * Aggregate interaction data using EMA for averages and addition for sums.
      */
     private static InteractionMetrics aggregateScrollData(InteractionMetrics ps, InteractionMetrics is) {
-        Integer avgScore = applyEma(ps.avgScore(), is.avgScore(), EMA_ALPHA);
-        Integer avgScrollTime = applyEma(ps.avgScrollTime(), is.avgScrollTime(), EMA_ALPHA);
+        Integer avgScore = ps.avgScore() + is.avgScore();
+        Integer avgScrollTime = ps.avgScrollTime() + is.avgScrollTime();
         Integer ttfiSumMs = ps.ttfiSumMs() + is.ttfiSumMs();
         Integer ttfiCount = ps.ttfiCount() + is.ttfiCount();
 

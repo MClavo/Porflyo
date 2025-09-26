@@ -22,14 +22,18 @@ class PortfolioMetricsUtilsTest {
     void should_create_updated_metrics_when_previous_null() {
         // given
         PortfolioId pid = new PortfolioId("p1");
-        PortfolioMetrics previous = new PortfolioMetrics(pid, LocalDate.now(), null, null, null);
+        // previous metrics are now represented as zero-valued metrics instead of null
+        PortfolioMetrics previous = new PortfolioMetrics(pid, LocalDate.now(),
+                new Engagement(0, 0, 0, 0, 0, new Devices(0, 0)), new InteractionMetrics(0, 0, 0, 0),
+                new ProjectMetrics(0, 0, 0, 0));
 
         Engagement incomingEng = new Engagement(100, 5, 2, 1, 1, new Devices(3, 2));
         InteractionMetrics incomingScroll = new InteractionMetrics(50, 100, 200, 400);
         ProjectMetrics incomingProj = new ProjectMetrics(300, 120, 10, 5);
 
         // when
-        PortfolioMetrics result = PortfolioMetricsUtils.updatePortfolioMetrics(previous, incomingEng, incomingScroll, incomingProj);
+        PortfolioMetrics result = PortfolioMetricsUtils.updatePortfolioMetrics(previous, incomingEng, incomingScroll,
+                incomingProj);
 
         // then
         assertThat(result.portfolioId()).isEqualTo(pid);
@@ -44,7 +48,9 @@ class PortfolioMetricsUtilsTest {
     void should_sum_engagement_and_devices() {
         // given
         PortfolioId pid = new PortfolioId("p2");
-        PortfolioMetrics prev = new PortfolioMetrics(pid, LocalDate.now(), new Engagement(120, 10, 1, 1, 1, new Devices(5, 4)), new InteractionMetrics(40, 80, 150, 300), new ProjectMetrics(500, 100, 20, 10));
+        PortfolioMetrics prev = new PortfolioMetrics(pid, LocalDate.now(),
+                new Engagement(120, 10, 1, 1, 1, new Devices(5, 4)), new InteractionMetrics(40, 80, 150, 300),
+                new ProjectMetrics(500, 100, 20, 10));
 
         Engagement incEng = new Engagement(80, 3, 2, 1, 1, new Devices(2, 1));
         InteractionMetrics incScroll = new InteractionMetrics(60, 90, 160, 320);
@@ -65,25 +71,22 @@ class PortfolioMetricsUtilsTest {
     void should_apply_ema_and_max_correctly() {
         // given
         PortfolioId pid = new PortfolioId("p3");
-        PortfolioMetrics prev = new PortfolioMetrics(pid, LocalDate.now(), new Engagement(0,0,0,1,1,new Devices(0,0)), new InteractionMetrics(100, 200, 1000, 2000), new ProjectMetrics(1000, 200, 50, 10));
+        PortfolioMetrics prev = new PortfolioMetrics(pid, LocalDate.now(),
+                new Engagement(0, 0, 0, 1, 1, new Devices(0, 0)), new InteractionMetrics(100, 200, 1000, 2000),
+                new ProjectMetrics(1000, 200, 50, 10));
 
-        Engagement incEng = new Engagement(0,0,0,1,1,new Devices(0,0));
+        Engagement incEng = new Engagement(0, 0, 0, 1, 1, new Devices(0, 0));
         InteractionMetrics incScroll = new InteractionMetrics(50, 250, 900, 2500);
         ProjectMetrics incProj = new ProjectMetrics(0, 400, 0, 0);
 
         // when
         PortfolioMetrics out = PortfolioMetricsUtils.updatePortfolioMetrics(prev, incEng, incScroll, incProj);
 
-        // then - EMA with alpha=0.18: updated = prev + 0.18*(inc - prev)
-        int expectedAvgScore = (int) Math.round(100 + 0.18 * (50 - 100));
-        int expectedAvgScrollTime = (int) Math.round(1000 + 0.18 * (900 - 1000));
-        int expectedTtfi = (int) Math.round(200 + 0.18 * (400 - 200));
-
-        assertThat(out.scroll().avgScore()).isEqualTo(expectedAvgScore);
-        assertThat(out.scroll().avgScore()).isEqualTo(250); // max(200,250)
-        assertThat(out.scroll().avgScrollTime()).isEqualTo(expectedAvgScrollTime);
-        assertThat(out.scroll().avgScrollTime()).isEqualTo(2500); // max(2000,2500)
-        assertThat(out.cumProjects().exposures()).isEqualTo(expectedTtfi);
+        // Now we expect simple sums (no EMA/max behavior)
+        assertThat(out.scroll().avgScore()).isEqualTo(150); // 100 + 50
+        assertThat(out.scroll().avgScrollTime()).isEqualTo(450); // 200 + 250
+        assertThat(out.scroll().ttfiSumMs()).isEqualTo(1900); // 1000 + 900
+        assertThat(out.cumProjects().exposures()).isEqualTo(600); // 200 + 400
     }
 
     @Test
@@ -91,12 +94,15 @@ class PortfolioMetricsUtilsTest {
     void should_handle_null_incoming_fields() {
         // given
         PortfolioId pid = new PortfolioId("p4");
-        PortfolioMetrics prev = new PortfolioMetrics(pid, LocalDate.now(), new Engagement(50, 2, 1, 1, 1, new Devices(1,1)), new InteractionMetrics(30, 60, 120, 240), new ProjectMetrics(200, 80, 5, 2));
+        PortfolioMetrics prev = new PortfolioMetrics(pid, LocalDate.now(),
+                new Engagement(50, 2, 1, 1, 1, new Devices(1, 1)), new InteractionMetrics(30, 60, 120, 240),
+                new ProjectMetrics(200, 80, 5, 2));
 
-        // incoming with some nulls
-        Engagement incEng = new Engagement(null, null, null, null, null, new Devices(0,0));
-        InteractionMetrics incScroll = new InteractionMetrics(null, null, null, null);
-        ProjectMetrics incProj = new ProjectMetrics(null, null, null, null);
+        // incoming with zeros (previously tests passed nulls; current implementation
+        // sums values)
+        Engagement incEng = new Engagement(0, 0, 0, 0, 0, new Devices(0, 0));
+        InteractionMetrics incScroll = new InteractionMetrics(0, 0, 0, 0);
+        ProjectMetrics incProj = new ProjectMetrics(0, 0, 0, 0);
 
         // when
         PortfolioMetrics out = PortfolioMetricsUtils.updatePortfolioMetrics(prev, incEng, incScroll, incProj);

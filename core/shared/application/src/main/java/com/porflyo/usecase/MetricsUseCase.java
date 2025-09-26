@@ -19,12 +19,11 @@ import com.porflyo.dto.PortfolioMetricsBundle;
 import com.porflyo.dto.PortfolioMetricsSnapshot;
 import com.porflyo.model.ids.PortfolioId;
 import com.porflyo.model.metrics.Engagement;
+import com.porflyo.model.metrics.InteractionMetrics;
 import com.porflyo.model.metrics.PortfolioHeatmap;
 import com.porflyo.model.metrics.PortfolioMetrics;
 import com.porflyo.model.metrics.ProjectMetrics;
 import com.porflyo.model.metrics.ProjectMetricsWithId;
-import com.porflyo.model.metrics.InteractionMetrics;
-import com.porflyo.model.portfolio.Portfolio;
 import com.porflyo.ports.PortfolioMetricsRepository;
 import com.porflyo.ports.SlotMetricsRepository;
 import com.porflyo.utils.HeatmapUtils;
@@ -44,6 +43,7 @@ public class MetricsUseCase {
             SlotMetricsRepository slotMetricsRepository,
             MetricsConfig metricsConfig
     ) {
+
         this.portfolioMetricsRepository = portfolioMetricsRepository;
         this.slotMetricsRepository = slotMetricsRepository;
         this.metricsConfig = metricsConfig;
@@ -65,7 +65,8 @@ public class MetricsUseCase {
             PortfolioId portfolioId,
             Engagement engagement,
             InteractionMetrics scroll,
-            ProjectMetrics cumProjects){
+            ProjectMetrics cumProjects
+    ){
 
         Optional<PortfolioMetrics> existing = portfolioMetricsRepository.getTodayMetrics(portfolioId);
         PortfolioMetrics toSave;
@@ -190,7 +191,10 @@ public class MetricsUseCase {
     /**
      * Updates the project metrics list by combining existing and new data.
      */
-    private List<ProjectMetricsWithId> updateProjects(List<ProjectMetricsWithId> existingProjects, List<ProjectMetricsWithId> newProjects) {
+    private List<ProjectMetricsWithId> updateProjects(
+            List<ProjectMetricsWithId> existingProjects,
+            List<ProjectMetricsWithId> newProjects
+    ) {
         List<ProjectMetricsWithId> existing = existingProjects == null ? Collections.emptyList() : existingProjects;
         List<ProjectMetricsWithId> news = newProjects == null ? Collections.emptyList() : newProjects;
 
