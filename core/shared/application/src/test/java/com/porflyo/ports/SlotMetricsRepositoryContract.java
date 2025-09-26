@@ -279,10 +279,10 @@ public abstract class SlotMetricsRepositoryContract {
         List<ProjectMetricsWithId> projects1 = SlotMetricsTestData.TODAY_PROJECTS;
         repository.saveTodayMetrics(testPortfolioId, heatmap1, projects1);
         
-        // Save metrics for second portfolio
-        PortfolioHeatmap heatmap2 = SlotMetricsTestData.DIFFERENT_PORTFOLIO_HEATMAP;
-        List<ProjectMetricsWithId> projects2 = SlotMetricsTestData.DIFFERENT_PORTFOLIO_PROJECTS;
-        repository.saveTodayMetrics(testPortfolioId, heatmap2, projects2);
+    // Save metrics for second portfolio
+    PortfolioHeatmap heatmap2 = SlotMetricsTestData.DIFFERENT_PORTFOLIO_HEATMAP;
+    List<ProjectMetricsWithId> projects2 = SlotMetricsTestData.DIFFERENT_PORTFOLIO_PROJECTS;
+    repository.saveTodayMetrics(differentPortfolioId, heatmap2, projects2);
 
         // When
         repository.deleteAllMetrics(testPortfolioId);
@@ -317,9 +317,9 @@ public abstract class SlotMetricsRepositoryContract {
         PortfolioHeatmap heatmap2 = SlotMetricsTestData.DIFFERENT_PORTFOLIO_HEATMAP;
         List<ProjectMetricsWithId> projects2 = SlotMetricsTestData.DIFFERENT_PORTFOLIO_PROJECTS;
 
-        // When
-        repository.saveTodayMetrics(testPortfolioId, heatmap1, projects1);
-        repository.saveTodayMetrics(testPortfolioId, heatmap2, projects2);
+    // When
+    repository.saveTodayMetrics(testPortfolioId, heatmap1, projects1);
+    repository.saveTodayMetrics(differentPortfolioId, heatmap2, projects2);
 
         // Then
         Optional<DetailSlot> result1 = repository.getTodayMetrics(testPortfolioId);
