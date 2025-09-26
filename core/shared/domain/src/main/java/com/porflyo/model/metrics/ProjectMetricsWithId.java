@@ -8,7 +8,7 @@ import io.micronaut.serde.annotation.Serdeable;
 public record ProjectMetricsWithId(
     Integer id,             // Provider Project ID 
     Integer viewTime,
-    Integer TTFI,           // Time To First Interaction
+    Integer exposures,
     Integer codeViews,
     Integer liveViews
 ){}

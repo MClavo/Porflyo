@@ -13,6 +13,6 @@ public record PortfolioMetrics(
     PortfolioId portfolioId,
     LocalDate date,
     Engagement engagement,
-    ScrollMetrics scroll,
+    InteractionMetrics scroll,
     ProjectMetrics cumProjects
 ) {}

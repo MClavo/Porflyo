@@ -7,7 +7,7 @@ import io.micronaut.serde.annotation.Serdeable;
 @Introspected
 public record ProjectMetrics(
     Integer viewTime,
-    Integer TTFI,           // Time To First Interaction
+    Integer exposures,
     Integer codeViews,
     Integer liveViews
 ){}

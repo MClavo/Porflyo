@@ -8,6 +8,8 @@ import io.micronaut.serde.annotation.Serdeable;
 public record Engagement(
     Integer activeTime,
     Integer views,
+    Integer qualityVisits,
     Integer emailCopies,
+    Integer socialClicks,
     Devices devices
 ) {}

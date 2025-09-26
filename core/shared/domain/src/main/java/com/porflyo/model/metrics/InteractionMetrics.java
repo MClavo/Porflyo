@@ -5,9 +5,9 @@ import io.micronaut.serde.annotation.Serdeable;
 
 @Serdeable
 @Introspected
-public record ScrollMetrics(
+public record InteractionMetrics(
     Integer avgScore,
-    Integer maxScore,
     Integer avgScrollTime,
-    Integer maxScrollTime
+    Integer ttfiSumMs,  // Time To First Interaction
+    Integer ttfiCount
 ) {}
