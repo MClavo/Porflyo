@@ -256,19 +256,21 @@ public abstract class PortfolioMetricsRepositoryContract {
         // Verify all engagement components
         assertEquals(complexMetrics.engagement().activeTime(), saved.engagement().activeTime());
         assertEquals(complexMetrics.engagement().views(), saved.engagement().views());
+        assertEquals(complexMetrics.engagement().qualityVisits(), saved.engagement().qualityVisits());
         assertEquals(complexMetrics.engagement().emailCopies(), saved.engagement().emailCopies());
+        assertEquals(complexMetrics.engagement().socialClicks(), saved.engagement().socialClicks());
         assertEquals(complexMetrics.engagement().devices().desktopViews(), saved.engagement().devices().desktopViews());
-        assertEquals(complexMetrics.engagement().devices().deviceViews(), saved.engagement().devices().deviceViews());
+        assertEquals(complexMetrics.engagement().devices().mobileTabletViews(), saved.engagement().devices().mobileTabletViews());
         
-        // Verify all scroll components
+        // Verify all interaction components
         assertEquals(complexMetrics.scroll().avgScore(), saved.scroll().avgScore());
-        assertEquals(complexMetrics.scroll().maxScore(), saved.scroll().maxScore());
         assertEquals(complexMetrics.scroll().avgScrollTime(), saved.scroll().avgScrollTime());
-        assertEquals(complexMetrics.scroll().maxScrollTime(), saved.scroll().maxScrollTime());
+        assertEquals(complexMetrics.scroll().ttfiSumMs(), saved.scroll().ttfiSumMs());
+        assertEquals(complexMetrics.scroll().ttfiCount(), saved.scroll().ttfiCount());
         
         // Verify all project components
         assertEquals(complexMetrics.cumProjects().viewTime(), saved.cumProjects().viewTime());
-        assertEquals(complexMetrics.cumProjects().TTFI(), saved.cumProjects().TTFI());
+        assertEquals(complexMetrics.cumProjects().exposures(), saved.cumProjects().exposures());
         assertEquals(complexMetrics.cumProjects().codeViews(), saved.cumProjects().codeViews());
         assertEquals(complexMetrics.cumProjects().liveViews(), saved.cumProjects().liveViews());
     }
@@ -394,28 +396,32 @@ public abstract class PortfolioMetricsRepositoryContract {
                 "Active time should match");
         assertEquals(expected.engagement().views(), actual.engagement().views(), 
                 "Views should match");
+        assertEquals(expected.engagement().qualityVisits(), actual.engagement().qualityVisits(), 
+                "Quality visits should match");
         assertEquals(expected.engagement().emailCopies(), actual.engagement().emailCopies(), 
                 "Email copies should match");
+        assertEquals(expected.engagement().socialClicks(), actual.engagement().socialClicks(), 
+                "Social clicks should match");
         assertEquals(expected.engagement().devices().desktopViews(), actual.engagement().devices().desktopViews(), 
                 "Desktop views should match");
-        assertEquals(expected.engagement().devices().deviceViews(), actual.engagement().devices().deviceViews(), 
+        assertEquals(expected.engagement().devices().mobileTabletViews(), actual.engagement().devices().mobileTabletViews(), 
                 "Device views should match");
         
-        // Scroll assertions
+        // Interaction assertions
         assertEquals(expected.scroll().avgScore(), actual.scroll().avgScore(), 
                 "Average scroll score should match");
-        assertEquals(expected.scroll().maxScore(), actual.scroll().maxScore(), 
-                "Max scroll score should match");
         assertEquals(expected.scroll().avgScrollTime(), actual.scroll().avgScrollTime(), 
                 "Average scroll time should match");
-        assertEquals(expected.scroll().maxScrollTime(), actual.scroll().maxScrollTime(), 
-                "Max scroll time should match");
+        assertEquals(expected.scroll().ttfiSumMs(), actual.scroll().ttfiSumMs(), 
+                "TTFI sum should match");
+        assertEquals(expected.scroll().ttfiCount(), actual.scroll().ttfiCount(), 
+                "TTFI count should match");
         
         // Project assertions
         assertEquals(expected.cumProjects().viewTime(), actual.cumProjects().viewTime(), 
                 "Project view time should match");
-        assertEquals(expected.cumProjects().TTFI(), actual.cumProjects().TTFI(), 
-                "TTFI should match");
+        assertEquals(expected.cumProjects().exposures(), actual.cumProjects().exposures(), 
+                "Exposures should match");
         assertEquals(expected.cumProjects().codeViews(), actual.cumProjects().codeViews(), 
                 "Code views should match");
         assertEquals(expected.cumProjects().liveViews(), actual.cumProjects().liveViews(), 

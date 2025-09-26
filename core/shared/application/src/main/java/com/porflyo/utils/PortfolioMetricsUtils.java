@@ -3,7 +3,7 @@ package com.porflyo.utils;
 import com.porflyo.model.metrics.Devices;
 import com.porflyo.model.metrics.PortfolioMetrics;
 import com.porflyo.model.metrics.ProjectMetrics;
-import com.porflyo.model.metrics.ScrollMetrics;
+import com.porflyo.model.metrics.InteractionMetrics;
 import com.porflyo.model.metrics.Engagement;
 
 public final class PortfolioMetricsUtils {
@@ -37,11 +37,11 @@ public final class PortfolioMetricsUtils {
     public static PortfolioMetrics updatePortfolioMetrics(
             PortfolioMetrics previous,
             Engagement incomingEngagement,
-            ScrollMetrics incomingScroll,
+            InteractionMetrics incomingScroll,
             ProjectMetrics incomingProjects) {
 
         Engagement resultEng = aggregateEngagementData(previous.engagement(), incomingEngagement);
-        ScrollMetrics resultScroll = aggregateScrollData(previous.scroll(), incomingScroll);
+        InteractionMetrics resultScroll = aggregateScrollData(previous.scroll(), incomingScroll);
         ProjectMetrics resultProj = aggregateProjectMetrics(previous.cumProjects(), incomingProjects);
 
         return new PortfolioMetrics(previous.portfolioId(), previous.date(), resultEng, resultScroll, resultProj);
@@ -58,32 +58,34 @@ public final class PortfolioMetricsUtils {
         Integer views = pe.views() + ie.views();
         Integer emailCopies = pe.emailCopies() + ie.emailCopies();
 
-        Engagement resultEng = new Engagement(activeTime, views, emailCopies, devices);
+        Integer qualityVisits = pe.qualityVisits() + ie.qualityVisits();
+        Integer socialClicks = pe.socialClicks() + ie.socialClicks();
+        Engagement resultEng = new Engagement(activeTime, views, qualityVisits, emailCopies, socialClicks, devices);
         return resultEng;
     }
 
 
     /**
-     * Aggregate scroll data using EMA for averages and max for maximums.
+     * Aggregate interaction data using EMA for averages and addition for sums.
      */
-    private static ScrollMetrics aggregateScrollData(ScrollMetrics ps, ScrollMetrics is) {
+    private static InteractionMetrics aggregateScrollData(InteractionMetrics ps, InteractionMetrics is) {
         Integer avgScore = applyEma(ps.avgScore(), is.avgScore(), EMA_ALPHA);
-        Integer maxScore = Math.max(safeInt(ps.maxScore()), safeInt(is.maxScore()));
         Integer avgScrollTime = applyEma(ps.avgScrollTime(), is.avgScrollTime(), EMA_ALPHA);
-        Integer maxScrollTime = Math.max(safeInt(ps.maxScrollTime()), safeInt(is.maxScrollTime()));
+        Integer ttfiSumMs = ps.ttfiSumMs() + is.ttfiSumMs();
+        Integer ttfiCount = ps.ttfiCount() + is.ttfiCount();
 
-        ScrollMetrics resultScroll = new ScrollMetrics(avgScore, maxScore, avgScrollTime, maxScrollTime);
-        return resultScroll;
+        InteractionMetrics resultInteraction = new InteractionMetrics(avgScore, avgScrollTime, ttfiSumMs, ttfiCount);
+        return resultInteraction;
     }
 
 
     private static ProjectMetrics aggregateProjectMetrics(ProjectMetrics pp, ProjectMetrics ip) {
         Integer viewTime = pp.viewTime() + ip.viewTime();
-        Integer ttfi = applyEma(pp.TTFI(), ip.TTFI(), EMA_ALPHA);
+        Integer exposures = pp.exposures() + ip.exposures();
         Integer codeViews = pp.codeViews() + ip.codeViews();
         Integer liveViews = pp.liveViews() + ip.liveViews();
 
-        ProjectMetrics resultProj = new ProjectMetrics(viewTime, ttfi, codeViews, liveViews);
+        ProjectMetrics resultProj = new ProjectMetrics(viewTime, exposures, codeViews, liveViews);
         return resultProj;
     }
 }

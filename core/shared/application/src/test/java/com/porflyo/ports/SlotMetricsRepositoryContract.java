@@ -49,14 +49,13 @@ public abstract class SlotMetricsRepositoryContract {
         List<ProjectMetricsWithId> projects = SlotMetricsTestData.TODAY_PROJECTS;
 
         // When
-        assertDoesNotThrow(() -> repository.saveTodayMetrics(heatmap, projects));
+        assertDoesNotThrow(() -> repository.saveTodayMetrics(testPortfolioId, heatmap, projects));
 
         // Then
         Optional<DetailSlot> retrieved = repository.getTodayMetrics(testPortfolioId);
         assertTrue(retrieved.isPresent(), "Today's metrics should be saved and retrievable");
         
         DetailSlot saved = retrieved.get();
-        assertEquals(heatmap.portfolioId(), saved.heatmap().portfolioId());
         assertEquals(projects.size(), saved.projects().size());
     }
 
@@ -68,7 +67,7 @@ public abstract class SlotMetricsRepositoryContract {
         List<ProjectMetricsWithId> emptyProjects = SlotMetricsTestData.EMPTY_PROJECTS;
 
         // When
-        assertDoesNotThrow(() -> repository.saveTodayMetrics(heatmap, emptyProjects));
+        assertDoesNotThrow(() -> repository.saveTodayMetrics(testPortfolioId, heatmap, emptyProjects));
 
         // Then
         Optional<DetailSlot> retrieved = repository.getTodayMetrics(testPortfolioId);
@@ -87,7 +86,6 @@ public abstract class SlotMetricsRepositoryContract {
         List<ProjectMetricsWithId> firstProjects = SlotMetricsTestData.TODAY_PROJECTS;
         
         PortfolioHeatmap secondHeatmap = new PortfolioHeatmap(
-            testPortfolioId,
             "2.0.0", // Different version
             8,
             List.of(0, 1, 2, 3, 4, 5, 6, 7),
@@ -99,8 +97,8 @@ public abstract class SlotMetricsRepositoryContract {
         );
 
         // When
-        repository.saveTodayMetrics(firstHeatmap, firstProjects);
-        repository.saveTodayMetrics(secondHeatmap, secondProjects);
+        repository.saveTodayMetrics(testPortfolioId, firstHeatmap, firstProjects);
+        repository.saveTodayMetrics(testPortfolioId, secondHeatmap, secondProjects);
 
         // Then
         Optional<DetailSlot> retrieved = repository.getTodayMetrics(testPortfolioId);
@@ -133,7 +131,7 @@ public abstract class SlotMetricsRepositoryContract {
         // Given
         PortfolioHeatmap heatmap = SlotMetricsTestData.TODAY_HEATMAP;
         List<ProjectMetricsWithId> projects = SlotMetricsTestData.TODAY_PROJECTS;
-        repository.saveTodayMetrics(heatmap, projects);
+        repository.saveTodayMetrics(testPortfolioId, heatmap, projects);
 
         // When
         Optional<DetailSlot> result = repository.getTodayMetrics(testPortfolioId);
@@ -143,7 +141,6 @@ public abstract class SlotMetricsRepositoryContract {
         
         DetailSlot retrieved = result.get();
         assertEquals(LocalDate.now(), retrieved.date());
-        assertEquals(heatmap.portfolioId(), retrieved.heatmap().portfolioId());
         assertEquals(heatmap.version(), retrieved.heatmap().version());
         assertEquals(projects.size(), retrieved.projects().size());
     }
@@ -156,7 +153,7 @@ public abstract class SlotMetricsRepositoryContract {
         List<ProjectMetricsWithId> projects = SlotMetricsTestData.TODAY_PROJECTS;
 
         // When
-        repository.saveTodayMetrics(complexHeatmap, projects);
+        repository.saveTodayMetrics(testPortfolioId, complexHeatmap, projects);
 
         // Then
         Optional<DetailSlot> retrieved = repository.getTodayMetrics(testPortfolioId);
@@ -165,7 +162,6 @@ public abstract class SlotMetricsRepositoryContract {
         PortfolioHeatmap saved = retrieved.get().heatmap();
         
         // Verify all heatmap components
-        assertEquals(complexHeatmap.portfolioId(), saved.portfolioId());
         assertEquals(complexHeatmap.version(), saved.version());
         assertEquals(complexHeatmap.columns(), saved.columns());
         assertEquals(complexHeatmap.Indexes(), saved.Indexes());
@@ -181,7 +177,7 @@ public abstract class SlotMetricsRepositoryContract {
         List<ProjectMetricsWithId> complexProjects = SlotMetricsTestData.TODAY_PROJECTS;
 
         // When
-        repository.saveTodayMetrics(heatmap, complexProjects);
+        repository.saveTodayMetrics(testPortfolioId, heatmap, complexProjects);
 
         // Then
         Optional<DetailSlot> retrieved = repository.getTodayMetrics(testPortfolioId);
@@ -195,8 +191,8 @@ public abstract class SlotMetricsRepositoryContract {
             ProjectMetricsWithId actual = saved.get(i);
             
             assertEquals(expected.id(), actual.id());
-            assertEquals(expected.viewTime(), actual.viewTime());  
-            assertEquals(expected.TTFI(), actual.TTFI());
+            assertEquals(expected.viewTime(), actual.viewTime());
+            assertEquals(expected.exposures(), actual.exposures());
             assertEquals(expected.codeViews(), actual.codeViews());
             assertEquals(expected.liveViews(), actual.liveViews());
         }
@@ -225,7 +221,7 @@ public abstract class SlotMetricsRepositoryContract {
         List<ProjectMetricsWithId> projects = SlotMetricsTestData.TODAY_PROJECTS;
         
         // When
-        repository.saveTodayMetrics(heatmap, projects);
+        repository.saveTodayMetrics(testPortfolioId, heatmap, projects);
         List<DetailSlot> result = repository.getAllMetrics(testPortfolioId);
 
         // Then
@@ -240,7 +236,7 @@ public abstract class SlotMetricsRepositoryContract {
         // Given
         PortfolioHeatmap heatmap = SlotMetricsTestData.TODAY_HEATMAP;
         List<ProjectMetricsWithId> projects = SlotMetricsTestData.TODAY_PROJECTS;
-        repository.saveTodayMetrics(heatmap, projects);
+        repository.saveTodayMetrics(testPortfolioId, heatmap, projects);
 
         // When
         List<DetailSlot> result = repository.getAllMetrics(testPortfolioId);
@@ -259,7 +255,7 @@ public abstract class SlotMetricsRepositoryContract {
         // Given
         PortfolioHeatmap heatmap = SlotMetricsTestData.TODAY_HEATMAP;
         List<ProjectMetricsWithId> projects = SlotMetricsTestData.TODAY_PROJECTS;
-        repository.saveTodayMetrics(heatmap, projects);
+        repository.saveTodayMetrics(testPortfolioId, heatmap, projects);
         
         // Verify metrics exist
         assertTrue(repository.getTodayMetrics(testPortfolioId).isPresent());
@@ -281,12 +277,12 @@ public abstract class SlotMetricsRepositoryContract {
         // Save metrics for first portfolio
         PortfolioHeatmap heatmap1 = SlotMetricsTestData.TODAY_HEATMAP;
         List<ProjectMetricsWithId> projects1 = SlotMetricsTestData.TODAY_PROJECTS;
-        repository.saveTodayMetrics(heatmap1, projects1);
+        repository.saveTodayMetrics(testPortfolioId, heatmap1, projects1);
         
         // Save metrics for second portfolio
         PortfolioHeatmap heatmap2 = SlotMetricsTestData.DIFFERENT_PORTFOLIO_HEATMAP;
         List<ProjectMetricsWithId> projects2 = SlotMetricsTestData.DIFFERENT_PORTFOLIO_PROJECTS;
-        repository.saveTodayMetrics(heatmap2, projects2);
+        repository.saveTodayMetrics(testPortfolioId, heatmap2, projects2);
 
         // When
         repository.deleteAllMetrics(testPortfolioId);
@@ -322,8 +318,8 @@ public abstract class SlotMetricsRepositoryContract {
         List<ProjectMetricsWithId> projects2 = SlotMetricsTestData.DIFFERENT_PORTFOLIO_PROJECTS;
 
         // When
-        repository.saveTodayMetrics(heatmap1, projects1);
-        repository.saveTodayMetrics(heatmap2, projects2);
+        repository.saveTodayMetrics(testPortfolioId, heatmap1, projects1);
+        repository.saveTodayMetrics(testPortfolioId, heatmap2, projects2);
 
         // Then
         Optional<DetailSlot> result1 = repository.getTodayMetrics(testPortfolioId);
@@ -334,10 +330,6 @@ public abstract class SlotMetricsRepositoryContract {
         
         assertEquals(heatmap1.version(), result1.get().heatmap().version());
         assertEquals(heatmap2.version(), result2.get().heatmap().version());
-        
-        assertNotEquals(result1.get().heatmap().portfolioId(), 
-                       result2.get().heatmap().portfolioId(), 
-                       "Portfolios should remain independent");
     }
 
     @ParameterizedTest(name = "{0}")
@@ -349,14 +341,13 @@ public abstract class SlotMetricsRepositoryContract {
         List<ProjectMetricsWithId> projects = testSlot.projects();
 
         // When
-        repository.saveTodayMetrics(heatmap, projects);
+        repository.saveTodayMetrics(testPortfolioId, heatmap, projects);
 
         // Then
         Optional<DetailSlot> retrieved = repository.getTodayMetrics(testPortfolioId);
         assertTrue(retrieved.isPresent(), "Metrics should be saved and retrievable for: " + scenarioName);
         
         DetailSlot saved = retrieved.get(); 
-        assertEquals(heatmap.portfolioId(), saved.heatmap().portfolioId());
         assertEquals(heatmap.version(), saved.heatmap().version());
         assertEquals(projects.size(), saved.projects().size());
     }
@@ -369,7 +360,7 @@ public abstract class SlotMetricsRepositoryContract {
         List<ProjectMetricsWithId> zeroProjects = SlotMetricsTestData.ZERO_VALUES_PROJECTS;
 
         // When
-        repository.saveTodayMetrics(zeroHeatmap, zeroProjects);
+        repository.saveTodayMetrics(testPortfolioId, zeroHeatmap, zeroProjects);
 
         // Then
         Optional<DetailSlot> retrieved = repository.getTodayMetrics(testPortfolioId);
@@ -381,7 +372,7 @@ public abstract class SlotMetricsRepositoryContract {
         
         for (ProjectMetricsWithId project : saved.projects()) {
             assertEquals(Integer.valueOf(0), project.viewTime());
-            assertEquals(Integer.valueOf(0), project.TTFI());
+            assertEquals(Integer.valueOf(0), project.exposures());
             assertEquals(Integer.valueOf(0), project.codeViews());
             assertEquals(Integer.valueOf(0), project.liveViews());
         }
@@ -395,7 +386,7 @@ public abstract class SlotMetricsRepositoryContract {
         List<ProjectMetricsWithId> highProjects = SlotMetricsTestData.HIGH_VALUES_PROJECTS;
 
         // When
-        repository.saveTodayMetrics(highHeatmap, highProjects);
+        repository.saveTodayMetrics(testPortfolioId, highHeatmap, highProjects);
 
         // Then
         Optional<DetailSlot> retrieved = repository.getTodayMetrics(testPortfolioId);

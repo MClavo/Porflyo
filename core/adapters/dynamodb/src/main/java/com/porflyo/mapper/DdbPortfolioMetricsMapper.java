@@ -76,6 +76,7 @@ public final class DdbPortfolioMetricsMapper {
         // Engagement
         item.setActiveTime(getIntegers(domain, "activeTime"));
         item.setViews(getIntegers(domain, "views"));
+        item.setQualityVisits(getIntegers(domain, "qualityVisits"));
         item.setEmailCopies(getIntegers(domain, "emailCopies"));
         item.setSocialClicks(getIntegers(domain, "socialClicks"));
         item.setDeviceViews(getIntegers(domain, "deviceViews"));

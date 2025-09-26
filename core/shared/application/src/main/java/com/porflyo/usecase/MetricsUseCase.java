@@ -23,7 +23,7 @@ import com.porflyo.model.metrics.PortfolioHeatmap;
 import com.porflyo.model.metrics.PortfolioMetrics;
 import com.porflyo.model.metrics.ProjectMetrics;
 import com.porflyo.model.metrics.ProjectMetricsWithId;
-import com.porflyo.model.metrics.ScrollMetrics;
+import com.porflyo.model.metrics.InteractionMetrics;
 import com.porflyo.model.portfolio.Portfolio;
 import com.porflyo.ports.PortfolioMetricsRepository;
 import com.porflyo.ports.SlotMetricsRepository;
@@ -64,7 +64,7 @@ public class MetricsUseCase {
     public void saveTodayPortfolioMetrics(
             PortfolioId portfolioId,
             Engagement engagement,
-            ScrollMetrics scroll,
+            InteractionMetrics scroll,
             ProjectMetrics cumProjects){
 
         Optional<PortfolioMetrics> existing = portfolioMetricsRepository.getTodayMetrics(portfolioId);
@@ -119,7 +119,7 @@ public class MetricsUseCase {
             log.debug("Updated existing slot for portfolio {}", portfolioId);
         }
 
-        slotMetricsRepository.saveTodayMetrics(heatmapToSave, projectsToSave);
+        slotMetricsRepository.saveTodayMetrics(portfolioId, heatmapToSave, projectsToSave);
     }
 
 
@@ -212,11 +212,11 @@ public class MetricsUseCase {
             }
 
             Integer viewTime = safe(ep.viewTime()) + safe(np.viewTime());
-            Integer ttfi = PortfolioMetricsUtils.applyEma(ep.TTFI(), np.TTFI(), PortfolioMetricsUtils.EMA_ALPHA);
+            Integer exposures = safe(ep.exposures()) + safe(np.exposures());
             Integer codeViews = safe(ep.codeViews()) + safe(np.codeViews());
             Integer liveViews = safe(ep.liveViews()) + safe(np.liveViews());
 
-            merged.put(id, new ProjectMetricsWithId(id, viewTime, ttfi, codeViews, liveViews));
+            merged.put(id, new ProjectMetricsWithId(id, viewTime, exposures, codeViews, liveViews));
         }
 
         log.debug("Merged {} existing and {} new projects into {} total projects", existing.size(), news.size(), merged.size());

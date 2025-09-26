@@ -21,7 +21,6 @@ public final class SlotMetricsTestData {
     // ──────────────────────── HEATMAP TEST DATA ────────────────────────
 
     public static final PortfolioHeatmap TODAY_HEATMAP = new PortfolioHeatmap(
-        DEFAULT_PORTFOLIO_ID,
         "1.0.0",
         12,
         Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11),
@@ -30,7 +29,6 @@ public final class SlotMetricsTestData {
     );
 
     public static final PortfolioHeatmap CURRENT_MONTH_DAY_20_HEATMAP = new PortfolioHeatmap(
-        DEFAULT_PORTFOLIO_ID,
         "1.2.0",
         16,
         Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15),
@@ -39,7 +37,6 @@ public final class SlotMetricsTestData {
     );
 
     public static final PortfolioHeatmap PREVIOUS_MONTH_HEATMAP = new PortfolioHeatmap(
-        DEFAULT_PORTFOLIO_ID,
         "0.9.5",
         8,
         Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7),
@@ -48,7 +45,6 @@ public final class SlotMetricsTestData {
     );
 
     public static final PortfolioHeatmap ZERO_VALUES_HEATMAP = new PortfolioHeatmap(
-        DEFAULT_PORTFOLIO_ID,
         "1.0.0",
         4,
         Arrays.asList(0, 1, 2, 3),
@@ -57,7 +53,6 @@ public final class SlotMetricsTestData {
     );
 
     public static final PortfolioHeatmap HIGH_VALUES_HEATMAP = new PortfolioHeatmap(
-        DEFAULT_PORTFOLIO_ID,
         "2.0.0",
         20,
         Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19),
@@ -66,7 +61,6 @@ public final class SlotMetricsTestData {
     );
 
     public static final PortfolioHeatmap DIFFERENT_PORTFOLIO_HEATMAP = new PortfolioHeatmap(
-        DIFFERENT_PORTFOLIO_ID,
         "1.1.0",
         6,
         Arrays.asList(0, 1, 2, 3, 4, 5),
@@ -155,7 +149,6 @@ public final class SlotMetricsTestData {
     public static final DetailSlot EMPTY_PROJECTS_DETAIL_SLOT = new DetailSlot(
         LocalDate.now().withDayOfMonth(10),
         new PortfolioHeatmap(
-            DEFAULT_PORTFOLIO_ID,
             "1.0.0",
             1,
             Arrays.asList(0),
