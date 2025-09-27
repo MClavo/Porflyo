@@ -52,6 +52,23 @@ This directory contains the complete metrics dashboard system built with strict 
 
 ---
 
+### 📅 DailyPage.tsx
+**Purpose**: Zoom into a specific day with detailed metrics  
+**Goal**: "Zoom into a day"
+
+**Features**:
+- Date picker with latest day as default from dailyIndex[0]
+- Daily KPIs row (same metrics as Overview but for selected day)
+- Medium portfolio heatmap placeholder for visual context
+- Sortable projects table with tiny progress bars for visual cues
+- Click-to-sort headers with sort direction indicators
+- Comprehensive project metrics: exposures, view time, avg time, CTR rates
+- Skeleton loading states for data not ready
+
+**Data Sources**: `useDailyPageData` hook with daily KPIs and sortable project data
+
+---
+
 ## Technical Architecture
 
 ### Data Layer
