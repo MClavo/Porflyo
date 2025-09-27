@@ -2,12 +2,14 @@ plugins { id 'porflyo.lambda-handler' }
 
 micronaut {
     nativeLambda {
-        lambdaRuntimeClassName = "com.porflyo.MetrricsNativeEntrypoint"
+        lambdaRuntimeClassName = "com.porflyo.MetricsNativeEntrypoint"
     }
 }
 
 dependencies{
     implementation("io.micronaut:micronaut-http-client")
+    implementation("io.micronaut.serde:micronaut-serde-jackson")
+    implementation("io.micronaut.validation:micronaut-validation")
     testImplementation project(':shared:application').sourceSets.test.output
 }
 
