@@ -36,6 +36,22 @@ This directory contains the complete metrics dashboard system built with strict 
 
 ---
 
+### 📈 ProjectsPage.tsx
+**Purpose**: Prioritize projects with actionable insights  
+**Goal**: "Prioritize projects; simple, actionable"
+
+**Features**:
+- Range selection (10/30/60 days) and sort controls (Avg Time/Code CTR/Live CTR)
+- Three ranking tabs with animated horizontal progress bars
+- Project comparison chart with dual line visualization  
+- Graceful divide-by-zero handling (displays "—")
+- Animated bars on mount with smooth transitions
+- Responsive grid layout with mobile optimization
+
+**Data Sources**: `useProjectsData` hook with project rankings and comparison data
+
+---
+
 ## Technical Architecture
 
 ### Data Layer

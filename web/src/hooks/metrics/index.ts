@@ -21,6 +21,9 @@ export type {
   ProjectAggregated 
 } from './useProjectsAggregated';
 
+export { useProjectsData } from './useProjectsData';
+export type { ProjectsData, SortBy } from './useProjectsData';
+
 export { useDaily } from './useDaily';
 export type { DailyData, SlotRow } from './useDaily';
 
