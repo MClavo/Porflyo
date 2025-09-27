@@ -4,8 +4,8 @@ import com.porflyo.dto.DetailSlot;
 import com.porflyo.dto.EnhancedPortfolioMetrics;
 import com.porflyo.dto.common.DailyDerivedDto;
 import com.porflyo.dto.common.DailyRawDto;
-import com.porflyo.dto.response.TodayResponseDto;
 import com.porflyo.dto.response.TodayDailyDto;
+import com.porflyo.dto.response.TodayResponseDto;
 
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;

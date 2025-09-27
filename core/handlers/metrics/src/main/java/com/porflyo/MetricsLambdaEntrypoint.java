@@ -12,17 +12,6 @@ import io.micronaut.context.env.Environment;
 import io.micronaut.function.aws.MicronautRequestHandler;
 import jakarta.inject.Inject;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.amazonaws.services.lambda.runtime.events.APIGatewayV2HTTPEvent;
-import com.amazonaws.services.lambda.runtime.events.APIGatewayV2HTTPResponse;
-
-import io.micronaut.context.ApplicationContext;
-import io.micronaut.context.env.Environment;
-import io.micronaut.function.aws.MicronautRequestHandler;
-import jakarta.inject.Inject;
-
 public class MetricsLambdaEntrypoint extends MicronautRequestHandler<APIGatewayV2HTTPEvent, APIGatewayV2HTTPResponse>{
     private static final Logger log = LoggerFactory.getLogger(MetricsLambdaEntrypoint.class);
     

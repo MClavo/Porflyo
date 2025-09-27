@@ -19,7 +19,6 @@ import com.amazonaws.services.lambda.runtime.events.APIGatewayV2HTTPResponse;
 import com.porflyo.dto.EnhancedPortfolioMetricsBundle;
 import com.porflyo.dto.EnhancedPortfolioMetricsSnapshot;
 import com.porflyo.dto.response.BootstrapResponseDto;
-import com.porflyo.dto.response.MonthResponseDto;
 import com.porflyo.dto.response.TodayResponseDto;
 import com.porflyo.mapper.BootstrapResponseMapper;
 import com.porflyo.mapper.MonthResponseMapper;
@@ -100,7 +99,7 @@ class MetricsLambdaHandlerSimpleTest {
         given(http.getMethod()).willReturn("GET");
         given(metricsUseCase.getPortfolioMetricsWithSlots(any(PortfolioId.class), any(Integer.class)))
             .willReturn(bundle);
-        given(bootstrapMapper.map(any(), any())).willReturn(responseDto);
+        given(bootstrapMapper.map(any(), any(), any())).willReturn(responseDto);
         given(jsonMapper.writeValueAsString(responseDto)).willReturn(expectedJson);
 
         // when
@@ -124,7 +123,7 @@ class MetricsLambdaHandlerSimpleTest {
         given(event.getRawPath()).willReturn("/metrics/today");
         given(metricsUseCase.getTodayMetricsWithDetails(any(PortfolioId.class)))
             .willReturn(snapshot);
-        given(todayMapper.map(any())).willReturn(responseDto);
+        given(todayMapper.map(any(), any(), any())).willReturn(responseDto);
         given(jsonMapper.writeValueAsString(responseDto)).willReturn(expectedJson);
 
         // when

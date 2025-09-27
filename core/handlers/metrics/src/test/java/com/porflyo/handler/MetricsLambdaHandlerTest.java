@@ -1,7 +1,6 @@
 package com.porflyo.handler;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
@@ -18,15 +17,9 @@ import org.mockito.quality.Strictness;
 
 import com.amazonaws.services.lambda.runtime.events.APIGatewayV2HTTPEvent;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayV2HTTPResponse;
-import com.porflyo.dto.EnhancedPortfolioMetricsBundle;
-import com.porflyo.dto.EnhancedPortfolioMetricsSnapshot;
-import com.porflyo.dto.response.BootstrapResponseDto;
-import com.porflyo.dto.response.MonthResponseDto;
-import com.porflyo.dto.response.TodayResponseDto;
 import com.porflyo.mapper.BootstrapResponseMapper;
 import com.porflyo.mapper.MonthResponseMapper;
 import com.porflyo.mapper.TodayResponseMapper;
-import com.porflyo.model.ids.PortfolioId;
 import com.porflyo.model.user.UserClaims;
 import com.porflyo.usecase.AuthUseCase;
 import com.porflyo.usecase.MetricsUseCase;

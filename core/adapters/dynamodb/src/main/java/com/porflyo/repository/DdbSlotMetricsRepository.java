@@ -1,5 +1,6 @@
 package com.porflyo.repository;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -67,13 +68,16 @@ public class DdbSlotMetricsRepository implements SlotMetricsRepository {
                 k -> k.partitionValue(PK).sortValue(DdbKeys.METRICS_SLOT_SK_PREFIX)))
             .build();
 
+        LocalDate cutoff = LocalDate.now().minusDays(DdbKeys.METRICS_SLOT_COUNT - 1);
+
         List<DetailSlot> slots = table.query(req)
             .items()
             .stream()
             .map(DdbSlotMetricsMapper::toDomain)
+            // filter out detail slots older than cutoff
+            .filter(s -> !s.date().isBefore(cutoff))
             .sorted(Comparator.comparing(DetailSlot::date).reversed()) // desc
             .toList();
-
         
         log.debug("Fetched {} detail slots for portfolio: {}", slots.size(), portfolioId.value());
         return slots;

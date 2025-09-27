@@ -17,7 +17,6 @@ import com.porflyo.dto.common.SlotEntryDto;
 import com.porflyo.dto.response.BootstrapResponseDto;
 import com.porflyo.model.metrics.PortfolioHeatmap;
 import com.porflyo.model.metrics.ProjectMetricsWithId;
-import com.porflyo.utils.HeatmapUtils;
 
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;

@@ -8,10 +8,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.porflyo.dto.common.BaselineDto;
-import com.porflyo.dto.common.DeviceMixDto;
 import com.porflyo.dto.common.MetaDto;
 import com.porflyo.dto.common.UnitsDto;
-import com.porflyo.model.metrics.DerivedMetrics;
 import com.porflyo.model.metrics.ZScores;
 
 import jakarta.inject.Singleton;

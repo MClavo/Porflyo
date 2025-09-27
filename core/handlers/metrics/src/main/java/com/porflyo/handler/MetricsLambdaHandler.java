@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayV2HTTPEvent;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayV2HTTPResponse;
 import com.porflyo.LambdaHttpUtils;
-import com.porflyo.dto.DetailSlot;
 import com.porflyo.dto.EnhancedPortfolioMetrics;
 import com.porflyo.dto.EnhancedPortfolioMetricsBundle;
 import com.porflyo.dto.EnhancedPortfolioMetricsSnapshot;
@@ -25,7 +24,6 @@ import com.porflyo.model.user.UserClaims;
 import com.porflyo.usecase.AuthUseCase;
 import com.porflyo.usecase.MetricsUseCase;
 
-import io.micronaut.core.type.Argument;
 import io.micronaut.json.JsonMapper;
 import jakarta.inject.Inject;
 
