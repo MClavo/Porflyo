@@ -1,6 +1,5 @@
 package com.porflyo.utils;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.porflyo.dto.EnhancedProjectMetricsWithId;
@@ -101,7 +100,7 @@ public final class DerivedMetricsCalculator {
             return createEmptyZScores();
         }
 
-        // Build limited baseline list (exclude current date) up to windowDays
+        // prepare limited baseline (exclude current day)
         List<PortfolioMetrics> baseline = baselineMetrics.stream()
             .filter(m -> !m.date().equals(currentMetrics.date()))
             .limit(windowDays)
@@ -111,71 +110,88 @@ public final class DerivedMetricsCalculator {
             return createEmptyZScores();
         }
 
-        // Current day values (may be null or NaN)
-        Integer currentViewsInt = currentMetrics.engagement() != null ? currentMetrics.engagement().views() : null;
-        Double currentViews = currentViewsInt != null ? currentViewsInt.doubleValue() : null;
+        // extract current values (may be null)
+        Double currentViews = asDoubleOrNull(currentMetrics.engagement() != null ? currentMetrics.engagement().views() : null);
+        Double currentEngagement = asNullableDouble(calculateEngagementAvg(currentMetrics.engagement(), currentMetrics.scroll()));
+        Double currentTtfi = asNullableDouble(calculateTtfiMean(currentMetrics.scroll()));
+        Double currentQualityVisitRate = asNullableDouble(calculateQualityVisitRate(currentMetrics.engagement()));
+        Double currentSocialCtr = asNullableDouble(calculateSocialCtr(currentMetrics.engagement()));
 
-        double tmpEng = calculateEngagementAvg(currentMetrics.engagement(), currentMetrics.scroll());
-        Double currentEngagement = Double.isNaN(tmpEng) ? null : tmpEng;
-
-        double tmpTtfi = calculateTtfiMean(currentMetrics.scroll());
-        Double currentTtfi = Double.isNaN(tmpTtfi) ? null : tmpTtfi;
-
-        double tmpQuality = calculateQualityVisitRate(currentMetrics.engagement());
-        Double currentQualityVisitRate = Double.isNaN(tmpQuality) ? null : tmpQuality;
-
-        double tmpSocial = calculateSocialCtr(currentMetrics.engagement());
-        Double currentSocialCtr = Double.isNaN(tmpSocial) ? null : tmpSocial;
-
-        // Collect baseline values in a single pass
-        ArrayList<Double> viewsList = new ArrayList<>();
-        ArrayList<Double> engagementList = new ArrayList<>();
-        ArrayList<Double> ttfiList = new ArrayList<>();
-        ArrayList<Double> qualityList = new ArrayList<>();
-        ArrayList<Double> socialList = new ArrayList<>();
-
-        for (PortfolioMetrics m : baseline) {
-            // views
-            if (m.engagement() != null && m.engagement().views() != null) {
-                viewsList.add(m.engagement().views().doubleValue());
-            }
-            // engagement avg
-            double eAvg = calculateEngagementAvg(m.engagement(), m.scroll());
-            if (!Double.isNaN(eAvg)) engagementList.add(eAvg);
-            // ttfi
-            double tAvg = calculateTtfiMean(m.scroll());
-            if (!Double.isNaN(tAvg)) ttfiList.add(tAvg);
-            // quality visit rate
-            double q = calculateQualityVisitRate(m.engagement());
-            if (!Double.isNaN(q)) qualityList.add(q);
-            // social ctr
-            double s = calculateSocialCtr(m.engagement());
-            if (!Double.isNaN(s)) socialList.add(s);
-        }
-
-/*         // Helper to convert List<Double> -> double[]
-        Function<List<Double>, double[]> toPrimitive = list -> {
-            double[] arr = new double[list.size()];
-            for (int i = 0; i < list.size(); i++) arr[i] = list.get(i);
-            return arr;
-        };
-
-        double[] viewsArr = toPrimitive.apply(viewsList);
-        double[] engArr = toPrimitive.apply(engagementList);
-        double[] ttfiArr = toPrimitive.apply(ttfiList);
-        double[] qualArr = toPrimitive.apply(qualityList);
-        double[] socialArr = toPrimitive.apply(socialList); */
+        // build primitive baseline arrays in a single pass
+        BaselineArrays arrays = buildBaselineArrays(baseline);
 
         return new ZScores(
-            calculateZScore(currentViews, viewsList),
-            calculateZScore(currentEngagement, engagementList),
-            calculateInvertedZScore(currentTtfi, ttfiList, true),
-            calculateZScore(currentQualityVisitRate, qualityList),
-            calculateZScore(currentSocialCtr, socialList)
+            calculateZScore(currentViews, arrays.views),
+            calculateZScore(currentEngagement, arrays.engagementAvg),
+            calculateInvertedZScore(currentTtfi, arrays.ttfi, true),
+            calculateZScore(currentQualityVisitRate, arrays.qualityRate),
+            calculateZScore(currentSocialCtr, arrays.socialCtr)
         );
     }
 
+    
     // ────────────────────────── Private Helper Methods ──────────────────────────
+
+    // helper container for baseline primitive arrays
+    private static final class BaselineArrays {
+        final double[] views;
+        final double[] engagementAvg;
+        final double[] ttfi;
+        final double[] qualityRate;
+        final double[] socialCtr;
+
+        BaselineArrays(double[] views, double[] engagementAvg, double[] ttfi, double[] qualityRate, double[] socialCtr) {
+            this.views = views;
+            this.engagementAvg = engagementAvg;
+            this.ttfi = ttfi;
+            this.qualityRate = qualityRate;
+            this.socialCtr = socialCtr;
+        }
+    }
+
+    /**
+     * Builds trimmed primitive arrays for each baseline metric in a single pass.
+     */
+    private static BaselineArrays buildBaselineArrays(List<PortfolioMetrics> baseline) {
+        int max = baseline.size();
+        double[] viewsArr = new double[max];
+        double[] engArr = new double[max];
+        double[] ttfiArr = new double[max];
+        double[] qualArr = new double[max];
+        double[] socialArr = new double[max];
+
+        int vCnt = 0, eCnt = 0, tCnt = 0, qCnt = 0, sCnt = 0;
+
+        for (PortfolioMetrics m : baseline) {
+            if (m.engagement() != null && m.engagement().views() != null) {
+                viewsArr[vCnt++] = m.engagement().views().doubleValue();
+            }
+            double eAvg = calculateEngagementAvg(m.engagement(), m.scroll());
+            if (!Double.isNaN(eAvg)) engArr[eCnt++] = eAvg;
+            double tAvg = calculateTtfiMean(m.scroll());
+            if (!Double.isNaN(tAvg)) ttfiArr[tCnt++] = tAvg;
+            double q = calculateQualityVisitRate(m.engagement());
+            if (!Double.isNaN(q)) qualArr[qCnt++] = q;
+            double s = calculateSocialCtr(m.engagement());
+            if (!Double.isNaN(s)) socialArr[sCnt++] = s;
+        }
+
+        return new BaselineArrays(
+            java.util.Arrays.copyOf(viewsArr, vCnt),
+            java.util.Arrays.copyOf(engArr, eCnt),
+            java.util.Arrays.copyOf(ttfiArr, tCnt),
+            java.util.Arrays.copyOf(qualArr, qCnt),
+            java.util.Arrays.copyOf(socialArr, sCnt)
+        );
+    }
+
+    private static Double asDoubleOrNull(Integer v) {
+        return v == null ? null : v.doubleValue();
+    }
+
+    private static Double asNullableDouble(double x) {
+        return Double.isNaN(x) ? null : x;
+    }
 
     /**
      * Safe division that returns null if divisor is null or zero.
@@ -275,24 +291,20 @@ public final class DerivedMetricsCalculator {
     }
 
     /**
-     * Calculates z-score for a value against a baseline list.
+     * Calculates z-score for a value against a primitive baseline array.
      * Single-pass (Welford) computation for mean and sample variance.
-     * Returns null if current value is null or baseline is insufficient.
+     * Returns null if current value is null or baseline has fewer than 2 valid points.
      */
-    private static Double calculateZScore(Double currentValue, List<Double> baselineValues) {
-        if (currentValue == null || baselineValues == null) {
+    private static Double calculateZScore(Double currentValue, double[] baselineValues) {
+        if (currentValue == null || baselineValues == null || baselineValues.length < 2) {
             return null;
         }
 
-        // Welford algorithm to compute mean and sample variance in one pass,
-        // skipping null baseline entries.
         int n = 0;
         double mean = 0.0;
         double m2 = 0.0;
 
-        for (Double d : baselineValues) {
-            if (d == null) continue;
-            double x = d.doubleValue();
+        for (double x : baselineValues) {
             n++;
             double delta = x - mean;
             mean += delta / n;
@@ -304,7 +316,7 @@ public final class DerivedMetricsCalculator {
             return null;
         }
 
-        double variance = m2 / (n - 1); // sample variance
+        double variance = m2 / (n - 1);
         double std = Math.sqrt(Math.max(variance, 0.0));
 
         if (std == 0.0) {
@@ -319,18 +331,31 @@ public final class DerivedMetricsCalculator {
      * Calculates inverted z-score for "lower is better" metrics like TTFI.
      * Optionally applies log transformation for TTFI.
      */
-    private static Double calculateInvertedZScore(Double currentValue, List<Double> baselineValues, boolean useLogTransform) {
-        if (currentValue == null || baselineValues == null || baselineValues.size() < 2) {
+    private static Double calculateInvertedZScore(
+            Double currentValue,
+            double[] baselineValues,
+            boolean useLogTransform        
+    ) {
+
+        if (currentValue == null || baselineValues == null || baselineValues.length < 2) {
             return null;
         }
 
         double transformedCurrent = useLogTransform ? Math.log(Math.max(currentValue, 1.0)) : currentValue;
-        List<Double> transformedBaseline = useLogTransform
-            ? baselineValues.stream().map(v -> Math.log(Math.max(v, 1.0))).toList()
-            : baselineValues;
+        double[] transformedBaseline;
+
+        if (useLogTransform) {
+            transformedBaseline = new double[baselineValues.length];
+            for (int i = 0; i < baselineValues.length; i++) {
+                transformedBaseline[i] = Math.log(Math.max(baselineValues[i], 1.0));
+            }
+            
+        } else {
+            transformedBaseline = baselineValues;
+        }
 
         Double zScore = calculateZScore(transformedCurrent, transformedBaseline);
-        return zScore != null ? -zScore : null; // Invert the sign
+        return zScore != null ? -zScore : null; // invert sign: lower is better
     }
 
     /**
