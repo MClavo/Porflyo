@@ -1,8 +1,8 @@
 import React from 'react';
-import { FiArrowUp, FiArrowDown, FiMinus } from 'react-icons/fi';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 import './KpiCard.css';
+import { FiTrendingDown, FiTrendingUp } from 'react-icons/fi';
 
 export interface KpiCardProps {
   title: string;
@@ -68,11 +68,11 @@ export const KpiCard: React.FC<KpiCardProps> = ({
     if (!change) return null;
     
     if (change.type === 'positive') {
-      return <FiArrowUp className="change-icon positive" />;
+      return <span className="change-icon positive"><FiTrendingUp /></span>;
     } else if (change.type === 'negative') {
-      return <FiArrowDown className="change-icon negative" />;
+      return <span className="change-icon negative"><FiTrendingDown /></span>;
     }
-    return <FiMinus className="change-icon neutral" />;
+    return <span className="change-icon neutral">→</span>;
   };
 
   const getChangeText = () => {
@@ -97,22 +97,23 @@ export const KpiCard: React.FC<KpiCardProps> = ({
       </div>
       
       <div className="kpi-card-content">
-        <div className="kpi-card-value">
-          {formatValue(value)}
+        <div className="kpi-card-main">
+          <div className="kpi-card-value">
+            {formatValue(value)}
+          </div>
+          {change && (
+            <div className={`kpi-card-change kpi-card-change--${change.type}`}>
+              {getChangeIcon()}
+              <span className="change-value">
+                {getChangeText()}
+              </span>
+            </div>
+          )}
         </div>
         
         {subtitle && (
           <div className="kpi-card-subtitle">
             {subtitle}
-          </div>
-        )}
-        
-        {change && (
-          <div className={`kpi-card-change kpi-card-change--${change.type}`}>
-            {getChangeIcon()}
-            <span className="change-value">
-              {getChangeText()}
-            </span>
           </div>
         )}
       </div>

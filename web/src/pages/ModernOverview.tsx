@@ -9,7 +9,7 @@ import { useOverviewData, useTrends } from "../hooks/metrics";
 import { formatMs } from "../lib/format";  
 import { useMetricsStore } from "../state/metrics.store";
 import { latest } from "../lib/dates";
-import { KpiCard, KpiGrid, DashboardHeader, MiniProgressRing, MiniProgressBar } from "../components/dashboard";
+import { KpiCard, KpiGrid, DashboardHeader, SplitProgressBar } from "../components/dashboard";
 import "../styles/dashboard-theme.css";
 
 function ModernOverviewContent() {
@@ -99,19 +99,7 @@ function ModernOverviewContent() {
           
           <KpiCard
             title="Engagement Rate"
-            value={isLoading ? "N/A" : (engagementRate ? (
-              <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-                <span style={{ fontSize: "var(--font-2xl)", fontWeight: "800" }}>
-                  {engagementRate.toFixed(1)}
-                </span>
-                <MiniProgressRing 
-                  value={Math.min(engagementRate * 10, 100)} 
-                  color="var(--accent-green)"
-                  size={36}
-                  thickness={4}
-                />
-              </div>
-            ) : "N/A")}
+            value={isLoading ? "N/A" : (engagementRate ? engagementRate.toFixed(1) : "N/A")}
             subtitle="avg score"
             change={engagementChange ? {
               value: engagementChange,
@@ -141,56 +129,30 @@ function ModernOverviewContent() {
           
           <KpiCard
             title="Conversion Rate"
-            value={isLoading ? "N/A" : (conversionRate !== "N/A" ? (
-              <div style={{ display: "flex", flexDirection: "column", gap: "8px", alignItems: "flex-start" }}>
-                <span style={{ fontSize: "var(--font-2xl)", fontWeight: "800" }}>
-                  {conversionRate}
-                </span>
-                <MiniProgressBar 
-                  value={parseFloat(conversionRate.replace('%', ''))} 
-                  color="var(--accent-pink)" 
-                  width={100}
-                  height={8}
-                />
-              </div>
-            ) : "N/A")}
+            value={isLoading ? "N/A" : conversionRate}
             subtitle="email copies"
             icon={<FiMail />}
-            color="pink"
+            color="orange"
             isLoading={isLoading}
           />
           
           <KpiCard
             title="Device Mix"
             value={isLoading ? "N/A" : (deviceMix ? (
-              <div style={{ display: "flex", flexDirection: "column", gap: "8px", alignItems: "flex-start" }}>
-                <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                  <span style={{ fontSize: "var(--font-sm)", color: "var(--text-secondary)", minWidth: "50px" }}>
-                    Desktop: {(deviceMix.desktop * 100).toFixed(0)}%
-                  </span>
-                  <MiniProgressBar 
-                    value={deviceMix.desktop * 100} 
-                    color="var(--accent-blue)" 
-                    width={80}
-                    height={6}
-                  />
-                </div>
-                <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                  <span style={{ fontSize: "var(--font-sm)", color: "var(--text-secondary)", minWidth: "50px" }}>
-                    Mobile: {(deviceMix.mobile * 100).toFixed(0)}%
-                  </span>
-                  <MiniProgressBar 
-                    value={deviceMix.mobile * 100} 
-                    color="var(--accent-green)" 
-                    width={80}
-                    height={6}
-                  />
-                </div>
-              </div>
+              <SplitProgressBar 
+                leftValue={deviceMix.desktop * 100}
+                rightValue={deviceMix.mobile * 100}
+                leftColor="var(--accent-blue)"
+                rightColor="var(--accent-purple)"
+                leftLabel="Desktop"
+                rightLabel="Mobile"
+                width={140}
+                height={10}
+              />
             ) : "N/A")}
             subtitle="device distribution"
             icon={<FiMonitor />}
-            color="blue"
+            color="purple"
             isLoading={isLoading}
           />
         </KpiGrid>

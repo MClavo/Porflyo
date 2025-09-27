@@ -4,3 +4,4 @@ export { KpiGrid, type KpiGridProps } from './layouts';
 export { DashboardHeader, type DashboardHeaderProps } from './headers';
 export { SkeletonProvider } from './providers';
 export { MiniProgressRing, MiniProgressBar } from './indicators/MiniIndicators';
+export { SplitProgressBar } from './indicators/SplitProgressBar';
