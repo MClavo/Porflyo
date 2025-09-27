@@ -18,7 +18,12 @@ import MetricsTest from './pages/MetricsTest.tsx'
 import { ChakraProvider } from '@chakra-ui/react'
 import theme from './styles/theme'
 import { Layout } from './components/layout/Layout'
+import './styles/modern-dashboard.css'
+import './styles/professional-dashboard.css'
+import './styles/dashboard-theme.css'
 import OverviewPage from './pages/OverviewPage'
+import ModernOverview from './pages/ModernOverview'
+import ModernDashboardTest from './pages/ModernDashboardTest'
 import HeatmapPage from './pages/HeatmapPage'
 import ProjectsPage from './pages/ProjectsPage'
 import DailyPage from './pages/DailyPage'
@@ -86,6 +91,20 @@ export function AppWithProviders() {
                   <ChakraProvider value={theme}>
                     <Layout>
                       <OverviewPage />
+                    </Layout>
+                  </ChakraProvider>
+                } />
+                <Route path="/dashboard/modern" element={
+                  <ChakraProvider value={theme}>
+                    <Layout>
+                      <ModernOverview />
+                    </Layout>
+                  </ChakraProvider>
+                } />
+                <Route path="/dashboard/test" element={
+                  <ChakraProvider value={theme}>
+                    <Layout>
+                      <ModernDashboardTest />
                     </Layout>
                   </ChakraProvider>
                 } />

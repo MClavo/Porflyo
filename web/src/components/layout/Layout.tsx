@@ -24,8 +24,8 @@ const navItems = [
 
 export const Layout: React.FC<LayoutProps> = ({ children }) => {
   return (
-    <Box minH='100vh' bg='gray.50'>
-      {/* Header Navigation */}
+    <Box minH='100vh' bgGradient='linear(to-br, gray.50, blue.50, purple.50)'>
+      {/* Modern Header Navigation */}
       <Box
         bg='white'
         borderBottom='1px'
@@ -33,32 +33,46 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
         position='sticky'
         top={0}
         zIndex={10}
-        boxShadow='sm'
+        boxShadow='lg'
+        backdropFilter='blur(10px)'
       >
-        <Container maxW='7xl' py={4}>
+        <Container maxW='100%' px={6} py={4}>
           <HStack justify='space-between' align='center'>
-            {/* Logo/Brand */}
-            <Text fontSize='xl' fontWeight='bold' color='gray.900'>
-              Porflyo Metrics
-            </Text>
+            {/* Modern Logo/Brand */}
+            <Box>
+              <Text 
+                fontSize='2xl' 
+                fontWeight='800' 
+                bgGradient='linear(to-r, blue.600, purple.600, pink.600)'
+                bgClip='text'
+              >
+                📊 Porflyo Analytics
+              </Text>
+              <Text fontSize='xs' color='gray.500' mt={-1}>
+                Real-time portfolio insights
+              </Text>
+            </Box>
 
-            {/* Navigation Links */}
-            <HStack gap={1}>
+            {/* Modern Navigation Links */}
+            <HStack gap={2}>
               {navItems.map((item) => (
                 <Box
                   key={item.path}
-                  px={3}
+                  px={4}
                   py={2}
-                  borderRadius='md'
+                  borderRadius='xl'
                   fontSize='sm'
-                  fontWeight='medium'
+                  fontWeight='600'
                   color='gray.700'
                   bg='transparent'
+                  border='2px solid transparent'
                   _hover={{
-                    bg: 'gray.100',
+                    bg: 'blue.50',
+                    borderColor: 'blue.200',
                     textDecoration: 'none',
+                    transform: 'translateY(-1px)',
                   }}
-                  transition='all 0.2s'
+                  transition='all 0.3s ease'
                   cursor='pointer'
                   onClick={() => {
                     window.location.href = item.path;
@@ -72,7 +86,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
         </Container>
       </Box>
 
-      {/* Main Content */}
+      {/* Main Content - Full Width */}
       <Box>{children}</Box>
     </Box>
   );

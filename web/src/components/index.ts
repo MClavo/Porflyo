@@ -20,6 +20,10 @@ export { ProjectBarList } from './projects/ProjectBarList';
 // Tables
 export { ProjectsDayTable } from './tables/ProjectsDayTable';
 
+// Dashboard Components
+export * from './dashboard';
+
+
 // Types
 export type { StatCardProps } from './stats/StatCard';
 export type { DeviceMixBadgeProps } from './stats/DeviceMixBadge';
