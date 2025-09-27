@@ -1,0 +1,26 @@
+plugins { id 'porflyo.lambda-handler' }
+
+micronaut {
+    nativeLambda {
+        lambdaRuntimeClassName = "com.porflyo.MetrricsNativeEntrypoint"
+    }
+}
+
+dependencies{
+    implementation("io.micronaut:micronaut-http-client")
+    testImplementation project(':shared:application').sourceSets.test.output
+}
+
+application {
+    mainClass = 'com.porflyo.MetricsNativeEntrypoint'
+}
+
+graalvmNative {
+  binaries {
+    main {
+      buildArgs.addAll([
+        "-Ob",
+      ])
+    }
+  }
+}
