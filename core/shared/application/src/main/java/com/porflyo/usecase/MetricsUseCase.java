@@ -32,7 +32,8 @@ import com.porflyo.model.metrics.ProjectMetricsWithId;
 import com.porflyo.model.metrics.ZScores;
 import com.porflyo.ports.PortfolioMetricsRepository;
 import com.porflyo.ports.SlotMetricsRepository;
-import com.porflyo.utils.DerivedMetricsCalculator;
+import com.porflyo.utils.derived.ProjectDerivedCalculator;
+import com.porflyo.utils.facade.PortfolioAnalyticsFacade;
 import com.porflyo.utils.HeatmapUtils;
 import com.porflyo.utils.PortfolioMetricsUtils;
 
@@ -219,13 +220,13 @@ public class MetricsUseCase {
                 1 // Get current month for baseline calculation
             );
             
-            DerivedMetrics derived = DerivedMetricsCalculator.calculateDerivedMetrics(
+            DerivedMetrics derived = PortfolioAnalyticsFacade.calculateDerivedMetrics(
                 aggregate.engagement(), 
                 aggregate.scroll(), 
                 aggregate.cumProjects()
             );
             
-            ZScores zScores = DerivedMetricsCalculator.calculateZScores(
+            ZScores zScores = PortfolioAnalyticsFacade.calculateZScores(
                 aggregate, 
                 baselineMetrics, 
                 metricsConfig.baselineWindowDays()
@@ -267,7 +268,7 @@ public class MetricsUseCase {
             PortfolioMetrics currentMetric = rawMetrics.get(i);
             
             // Calculate derived metrics
-            DerivedMetrics derived = DerivedMetricsCalculator.calculateDerivedMetrics(
+            DerivedMetrics derived = PortfolioAnalyticsFacade.calculateDerivedMetrics(
                 currentMetric.engagement(),
                 currentMetric.scroll(), 
                 currentMetric.cumProjects()
@@ -280,7 +281,7 @@ public class MetricsUseCase {
                 .limit(metricsConfig.baselineWindowDays())
                 .collect(Collectors.toList());
                 
-            ZScores zScores = DerivedMetricsCalculator.calculateZScores(
+            ZScores zScores = PortfolioAnalyticsFacade.calculateZScores(
                 currentMetric,
                 baselineMetrics,
                 metricsConfig.baselineWindowDays()
@@ -307,7 +308,7 @@ public class MetricsUseCase {
         return detailSlots.stream()
             .map(slot -> {
                 List<EnhancedProjectMetricsWithId> enhancedProjects = slot.projects().stream()
-                    .map(DerivedMetricsCalculator::enhanceProjectMetrics)
+                    .map(ProjectDerivedCalculator::enhance)
                     .collect(Collectors.toList());
                 
                 return new EnhancedDetailSlot(slot.date(), slot.heatmap(), enhancedProjects);
