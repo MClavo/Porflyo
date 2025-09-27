@@ -19,9 +19,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.porflyo.configuration.MetricsConfig;
 import com.porflyo.dto.DetailSlot;
+import com.porflyo.dto.EnhancedPortfolioMetrics;
+import com.porflyo.dto.EnhancedPortfolioMetricsBundle;
+import com.porflyo.dto.EnhancedPortfolioMetricsSnapshot;
 import com.porflyo.dto.HeatmapSnapshot;
-import com.porflyo.dto.PortfolioMetricsBundle;
-import com.porflyo.dto.PortfolioMetricsSnapshot;
 import com.porflyo.model.ids.PortfolioId;
 import com.porflyo.model.metrics.PortfolioHeatmap;
 import com.porflyo.model.metrics.PortfolioMetrics;
@@ -173,71 +174,85 @@ class MetricsUseCaseTest {
     // ────────────────────────── Read Operations ──────────────────────────
 
     @Test
-    @DisplayName("should get portfolio metrics for specified months")
-    void should_get_portfolio_metrics_for_months() {
+    @DisplayName("should get enhanced portfolio metrics for specified months")
+    void should_get_enhanced_portfolio_metrics_for_months() {
         // given
-        List<PortfolioMetrics> expectedMetrics = List.of(TODAY_METRICS, CURRENT_MONTH_DAY_20);
-        given(portfolioMetricsRepository.findPortfolioMetrics(portfolioId, 3)).willReturn(expectedMetrics);
+        List<PortfolioMetrics> rawMetrics = List.of(TODAY_METRICS, CURRENT_MONTH_DAY_20);
+        given(portfolioMetricsRepository.findPortfolioMetrics(portfolioId, 3)).willReturn(rawMetrics);
+        given(metricsConfig.baselineWindowDays()).willReturn(28);
 
         // when
-        List<PortfolioMetrics> result = metricsUseCase.getPortfolioMetrics(portfolioId, 3);
+        List<EnhancedPortfolioMetrics> result = metricsUseCase.getPortfolioMetrics(portfolioId, 3);
 
         // then
-        assertThat(result).isSameAs(expectedMetrics);
+        assertThat(result).hasSize(2);
+        assertThat(result.get(0).portfolioId()).isEqualTo(portfolioId);
+        assertThat(result.get(0).derived()).isNotNull();
+        assertThat(result.get(0).zScores()).isNotNull();
         then(portfolioMetricsRepository).should().findPortfolioMetrics(portfolioId, 3);
     }
 
     @Test
-    @DisplayName("should get portfolio metrics for one month")
-    void should_get_portfolio_metrics_one_month() {
+    @DisplayName("should get enhanced portfolio metrics for one month")
+    void should_get_enhanced_portfolio_metrics_one_month() {
         // given
-        List<PortfolioMetrics> expectedMetrics = CURRENT_MONTH_METRICS;
-        given(portfolioMetricsRepository.findPortfolioMetricsOneMonth(portfolioId, 0)).willReturn(expectedMetrics);
+        List<PortfolioMetrics> rawMetrics = CURRENT_MONTH_METRICS;
+        given(portfolioMetricsRepository.findPortfolioMetricsOneMonth(portfolioId, 0)).willReturn(rawMetrics);
+        given(metricsConfig.baselineWindowDays()).willReturn(28);
 
         // when
-        List<PortfolioMetrics> result = metricsUseCase.getPortfolioMetricsOneMonth(portfolioId, 0);
+        List<EnhancedPortfolioMetrics> result = metricsUseCase.getPortfolioMetricsOneMonth(portfolioId, 0);
 
         // then
-        assertThat(result).isSameAs(expectedMetrics);
+        assertThat(result).isNotEmpty();
+        assertThat(result.get(0).derived()).isNotNull();
+        assertThat(result.get(0).zScores()).isNotNull();
         then(portfolioMetricsRepository).should().findPortfolioMetricsOneMonth(portfolioId, 0);
     }
 
     @Test
-    @DisplayName("should get portfolio metrics with slots")
-    void should_get_portfolio_metrics_with_slots() {
+    @DisplayName("should get enhanced portfolio metrics with slots")
+    void should_get_enhanced_portfolio_metrics_with_slots() {
         // given
-        List<PortfolioMetrics> expectedMetrics = CURRENT_MONTH_METRICS;
+        List<PortfolioMetrics> rawMetrics = CURRENT_MONTH_METRICS;
         List<DetailSlot> expectedSlots = List.of(TODAY_DETAIL_SLOT, CURRENT_MONTH_DAY_20_DETAIL_SLOT);
         
-        given(portfolioMetricsRepository.findPortfolioMetrics(portfolioId, 2)).willReturn(expectedMetrics);
+        given(portfolioMetricsRepository.findPortfolioMetrics(portfolioId, 2)).willReturn(rawMetrics);
         given(slotMetricsRepository.getAllMetrics(portfolioId)).willReturn(expectedSlots);
+        given(metricsConfig.baselineWindowDays()).willReturn(28);
 
         // when
-        PortfolioMetricsBundle result = metricsUseCase.getPortfolioMetricsWithSlots(portfolioId, 2);
+        EnhancedPortfolioMetricsBundle result = metricsUseCase.getPortfolioMetricsWithSlots(portfolioId, 2);
 
         // then
         assertThat(result.portfolioId()).isEqualTo(portfolioId);
-        assertThat(result.aggregates()).isSameAs(expectedMetrics);
+        assertThat(result.aggregates()).isNotEmpty();
+        assertThat(result.aggregates().get(0).derived()).isNotNull();
         assertThat(result.slots()).isSameAs(expectedSlots);
     }
 
     @Test
-    @DisplayName("should get today's metrics with details")
-    void should_get_todays_metrics_with_details() {
+    @DisplayName("should get today's enhanced metrics with details")
+    void should_get_todays_enhanced_metrics_with_details() {
         // given
-        PortfolioMetrics expectedAggregate = TODAY_METRICS;
+        PortfolioMetrics rawAggregate = TODAY_METRICS;
         DetailSlot expectedDetails = TODAY_DETAIL_SLOT;
+        List<PortfolioMetrics> baselineMetrics = List.of(TODAY_METRICS, CURRENT_MONTH_DAY_20);
         
-        given(portfolioMetricsRepository.getTodayMetrics(portfolioId)).willReturn(Optional.of(expectedAggregate));
+        given(portfolioMetricsRepository.getTodayMetrics(portfolioId)).willReturn(Optional.of(rawAggregate));
         given(slotMetricsRepository.getTodayMetrics(portfolioId)).willReturn(Optional.of(expectedDetails));
+        given(portfolioMetricsRepository.findPortfolioMetrics(portfolioId, 1)).willReturn(baselineMetrics);
+        given(metricsConfig.baselineWindowDays()).willReturn(28);
 
         // when
-        PortfolioMetricsSnapshot result = metricsUseCase.getTodayMetricsWithDetails(portfolioId);
+        EnhancedPortfolioMetricsSnapshot result = metricsUseCase.getTodayMetricsWithDetails(portfolioId);
 
         // then
         assertThat(result.portfolioId()).isEqualTo(portfolioId);
-        assertThat(result.aggregate()).isEqualTo(expectedAggregate);
-        assertThat(result.todaySlot()).isEqualTo(expectedDetails);
+        assertThat(result.aggregate()).isNotNull();
+        assertThat(result.aggregate().derived()).isNotNull();
+        assertThat(result.aggregate().zScores()).isNotNull();
+        assertThat(result.details()).isEqualTo(expectedDetails);
     }
 
     @Test
@@ -248,12 +263,12 @@ class MetricsUseCaseTest {
         given(slotMetricsRepository.getTodayMetrics(portfolioId)).willReturn(Optional.empty());
 
         // when
-        PortfolioMetricsSnapshot result = metricsUseCase.getTodayMetricsWithDetails(portfolioId);
+        EnhancedPortfolioMetricsSnapshot result = metricsUseCase.getTodayMetricsWithDetails(portfolioId);
 
         // then
         assertThat(result.portfolioId()).isEqualTo(portfolioId);
         assertThat(result.aggregate()).isNull();
-        assertThat(result.todaySlot()).isNull();
+        assertThat(result.details()).isNull();
     }
 
     // ────────────────────────── Delete Operations ──────────────────────────
