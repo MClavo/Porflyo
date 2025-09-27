@@ -15,6 +15,14 @@ import ProfilePage from './pages/ProfilePage.tsx'
 import PortfolioEditor from './pages/PortfolioEditor.tsx'
 import PublicPortfolio from './pages/PublicPortfolio.tsx'
 import MetricsTest from './pages/MetricsTest.tsx'
+import { ChakraProvider } from '@chakra-ui/react'
+import theme from './styles/theme'
+import { Layout } from './components/layout/Layout'
+import OverviewPage from './pages/OverviewPage'
+import HeatmapPage from './pages/HeatmapPage'
+import ProjectsPage from './pages/ProjectsPage'
+import DailyPage from './pages/DailyPage'
+import TrendsPage from './pages/TrendsPage'
 // analytics initialization intentionally removed from global startup.
 // When running MetricsTest we will initialize analytics locally there.
 
@@ -65,6 +73,50 @@ export function AppWithProviders() {
                 } />
                 <Route path="/t" element={<Test />} />
                 <Route path="/editor-test" element={<EditorTest />} />
+                
+                {/* Metrics Dashboard Routes */}
+                <Route path="/metrics" element={
+                  <ChakraProvider value={theme}>
+                    <Layout>
+                      <OverviewPage />
+                    </Layout>
+                  </ChakraProvider>
+                } />
+                <Route path="/metrics/overview" element={
+                  <ChakraProvider value={theme}>
+                    <Layout>
+                      <OverviewPage />
+                    </Layout>
+                  </ChakraProvider>
+                } />
+                <Route path="/metrics/heatmap" element={
+                  <ChakraProvider value={theme}>
+                    <Layout>
+                      <HeatmapPage />
+                    </Layout>
+                  </ChakraProvider>
+                } />
+                <Route path="/metrics/projects" element={
+                  <ChakraProvider value={theme}>
+                    <Layout>
+                      <ProjectsPage />
+                    </Layout>
+                  </ChakraProvider>
+                } />
+                <Route path="/metrics/daily" element={
+                  <ChakraProvider value={theme}>
+                    <Layout>
+                      <DailyPage />
+                    </Layout>
+                  </ChakraProvider>
+                } />
+                <Route path="/metrics/trends" element={
+                  <ChakraProvider value={theme}>
+                    <Layout>
+                      <TrendsPage />
+                    </Layout>
+                  </ChakraProvider>
+                } />
               </Routes>
             </SavedCardsProvider>
           </RepositoriesProvider>

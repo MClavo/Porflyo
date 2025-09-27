@@ -8,9 +8,8 @@ import {
   HStack, 
   VStack,
   Skeleton,
-  Icon,
 } from '@chakra-ui/react';
-import { ArrowUpIcon, ArrowDownIcon } from '@chakra-ui/icons';
+import { TiArrowUp, TiArrowDown } from 'react-icons/ti';
 
 export interface StatCardProps {
   label: string;
@@ -69,10 +68,11 @@ export function StatCard({
           {/* Delta indicator */}
           {delta !== null && delta !== undefined && !isLoading && (
             <HStack gap={1} color={deltaColor}>
-              <Icon 
-                as={deltaIsPositive ? ArrowUpIcon : ArrowDownIcon} 
-                boxSize={3}
-              />
+              {deltaIsPositive ? (
+                <TiArrowUp size={12} color={deltaIsPositive ? '#38a169' : '#e53e3e'} />
+              ) : (
+                <TiArrowDown size={12} color={deltaIsPositive ? '#38a169' : '#e53e3e'} />
+              )}
               <Text fontSize="sm" fontWeight="medium">
                 {Math.abs(delta * 100).toFixed(1)}%
               </Text>
