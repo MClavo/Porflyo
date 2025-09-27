@@ -6,6 +6,7 @@ import static com.porflyo.common.DdbKeys.idFrom;
 import static com.porflyo.common.DdbKeys.pk;
 import static com.porflyo.common.DdbKeys.sk;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -53,6 +54,7 @@ public final class DdbPortfolioMapper {
         item.setPK(PK);
         item.setSK(SK);
 
+        item.setCreatedAt(portfolio.createdAt().toString());
         item.setTemplate(portfolio.template());
         item.setTitle(portfolio.title());
         item.setDescription(description);
@@ -110,6 +112,7 @@ public final class DdbPortfolioMapper {
         return new Portfolio(
             new PortfolioId(portfolioId),
             new UserId(userId),
+            LocalDate.parse(item.getCreatedAt()),
             item.getTemplate(),
             item.getTitle(),
             description,

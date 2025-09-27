@@ -14,7 +14,7 @@ public class DdbPortfolioItem {
     
 
     // ────────────────────────── Attributes ──────────────────────────
-
+    private String createdAt; // ISO 8601 timestamp
     private String template;
     private String title;
     private byte[] description;     // Compressed description for WCU optimization
@@ -35,6 +35,10 @@ public class DdbPortfolioItem {
     public String getSK() { return SK; }
 
     public void setSK(String sK) { SK = sK; }
+
+    public String getCreatedAt() { return createdAt; }
+
+    public void setCreatedAt(String createdAt) { this.createdAt = createdAt; }
 
     public String getTemplate() { return template; }
 

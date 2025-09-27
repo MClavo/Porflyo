@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -214,6 +215,7 @@ public abstract class PortfolioRepositoryContract {
         Portfolio portfolio2 = new Portfolio(
                 portfolio2Id,
                 testUserId,
+                LocalDate.parse("2025-05-05"),
                 "Template 2",
                 "Second Portfolio",
                 "Second portfolio description",

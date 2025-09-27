@@ -66,6 +66,7 @@ public class PublicPortfolioQueryUseCase {
     private PublicPortfolioView toPublicPortfolioView(Portfolio portfolio) {
         return new PublicPortfolioView(
                 portfolio.id().value(),
+                portfolio.createdAt().toString(),
                 portfolio.template(),
                 portfolio.title(),
                 portfolio.description(),

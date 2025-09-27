@@ -1,5 +1,6 @@
 package com.porflyo.model.portfolio;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import com.porflyo.model.ids.PortfolioId;
@@ -18,6 +19,7 @@ public record Portfolio(
     @NotNull @Valid PortfolioId id,
     @NotNull @Valid UserId userId,
     
+    @NotNull LocalDate createdAt, // ISO 8601 timestamp
     @NotBlank String template,
     String title,
     String description,
