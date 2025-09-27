@@ -27,6 +27,9 @@ export type { ProjectsData, SortBy } from './useProjectsData';
 export { useDailyPageData } from './useDailyPageData';
 export type { DailyPageData, DailySortBy } from './useDailyPageData';
 
+export { useTrendsPageData } from './useTrendsPageData';
+export type { TrendsPageData } from './useTrendsPageData';
+
 export { useDaily } from './useDaily';
 export type { DailyData, SlotRow } from './useDaily';
 

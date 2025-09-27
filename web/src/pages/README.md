@@ -69,6 +69,24 @@ This directory contains the complete metrics dashboard system built with strict 
 
 ---
 
+### 📈 TrendsPage.tsx
+**Purpose**: Bigger picture view with minimal noise  
+**Goal**: "Bigger picture, minimal noise"
+
+**Features**:
+- **Calendar Tab**: Monthly calendar heatmap showing visits by day
+- **Series Tab**: Up to 3 panels with time series analysis
+  - Stacked area chart: visits by device (desktop vs mobile)
+  - Line chart: engagement average over time
+  - Line chart: TTFI (Time to First Interaction) performance
+- Responsive layout ensuring at most 3 panels visible at once
+- Month selector for calendar view
+- 90-day lookback for series data (bigger picture perspective)
+
+**Data Sources**: `useTrendsPageData` hook with calendar and time series data
+
+---
+
 ## Technical Architecture
 
 ### Data Layer
