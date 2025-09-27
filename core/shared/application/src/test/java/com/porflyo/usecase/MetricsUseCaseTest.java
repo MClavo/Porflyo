@@ -228,7 +228,12 @@ class MetricsUseCaseTest {
         assertThat(result.portfolioId()).isEqualTo(portfolioId);
         assertThat(result.aggregates()).isNotEmpty();
         assertThat(result.aggregates().get(0).derived()).isNotNull();
-        assertThat(result.slots()).isSameAs(expectedSlots);
+        assertThat(result.slots()).hasSize(expectedSlots.size());
+        // Note: slots are now processed through enhanceDetailSlots and converted back to DetailSlot format
+        // so they won't be the same reference, but should have the same structure
+        assertThat(result.slots().get(0).date()).isEqualTo(expectedSlots.get(0).date());
+        assertThat(result.slots().get(0).heatmap()).isEqualTo(expectedSlots.get(0).heatmap());
+        assertThat(result.slots().get(0).projects()).hasSize(expectedSlots.get(0).projects().size());
     }
 
     @Test

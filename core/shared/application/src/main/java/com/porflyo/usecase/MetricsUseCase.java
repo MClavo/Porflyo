@@ -149,37 +149,20 @@ public class MetricsUseCase {
 
     /**
      * Returns portfolio metrics with derived metrics and z-scores for the last {@code monthsBack} months.
-     * Also returns detail slots (heatmaps and per-project metrics).
+     * Also returns detail slots (heatmaps and per-project metrics) with enhanced project-level derived metrics.
      *
      * @param portfolioId target portfolio
      * @param monthsBack months to go back
-     * @return bundle with computed analytics
+     * @return bundle with computed analytics including project-level metrics
      */
     public EnhancedPortfolioMetricsBundle getPortfolioMetricsWithSlots(PortfolioId portfolioId, int monthsBack) {
         List<PortfolioMetrics> rawMetrics = portfolioMetricsRepository.findPortfolioMetrics(portfolioId, monthsBack);
         List<DetailSlot> slots = slotMetricsRepository.getAllMetrics(portfolioId);
         
         List<EnhancedPortfolioMetrics> enhancedMetrics = enhanceMetricsWithAnalytics(rawMetrics);
-        
-        return new EnhancedPortfolioMetricsBundle(portfolioId, enhancedMetrics, slots);
-    }
-
-    /**
-     * Returns portfolio metrics with derived metrics and z-scores for the last {@code monthsBack} months.
-     * Also returns enhanced detail slots with project-level derived metrics.
-     *
-     * @param portfolioId target portfolio
-     * @param monthsBack months to go back
-     * @return bundle with computed analytics including project-level metrics
-     */
-    public EnhancedPortfolioMetricsBundle getPortfolioMetricsWithEnhancedSlots(PortfolioId portfolioId, int monthsBack) {
-        List<PortfolioMetrics> rawMetrics = portfolioMetricsRepository.findPortfolioMetrics(portfolioId, monthsBack);
-        List<DetailSlot> slots = slotMetricsRepository.getAllMetrics(portfolioId);
-        
-        List<EnhancedPortfolioMetrics> enhancedMetrics = enhanceMetricsWithAnalytics(rawMetrics);
         List<EnhancedDetailSlot> enhancedSlots = enhanceDetailSlots(slots);
         
-        // Convert to regular detail slots for the bundle (maintaining interface compatibility)
+        // Convert enhanced slots back to regular DetailSlot shape for backward compatibility
         List<DetailSlot> regularSlots = enhancedSlots.stream()
             .map(es -> new DetailSlot(es.date(), es.heatmap(), 
                 es.projects().stream()
