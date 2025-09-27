@@ -1,9 +1,12 @@
 /**
  * Line chart showing engagement metrics over time
+ * Uses Chakra Charts with mount-only animations
  */
 
+import { useMemo } from 'react';
 import { Box, Skeleton } from '@chakra-ui/react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { Chart, useChart } from '@chakra-ui/charts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
 
 export interface LineEngagementProps {
   data: Array<{
@@ -25,63 +28,64 @@ export function LineEngagement({
   label = "Engagement",
   formatValue = (value) => value.toFixed(1)
 }: LineEngagementProps) {
+  // Memoize chart data to prevent re-animations on every render
+  const chartData = useMemo(() => data, [data]);
+  
+  // Animation key that only changes on mount
+  const animationKey = useMemo(() => Date.now(), []);
+
+  const chart = useChart({
+    data: chartData,
+    series: [
+      { name: 'value', color: 'blue.solid', label },
+    ],
+  });
+
   if (isLoading) {
     return <Skeleton height={`${height}px`} borderRadius="md" />;
   }
 
   return (
     <Box height={`${height}px`} width="100%">
-      <ResponsiveContainer width="100%" height="100%">
-        <LineChart
-          data={data}
-          margin={{
-            top: 10,
-            right: 30,
-            left: 0,
-            bottom: 0,
-          }}
-        >
-          <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+      <Chart.Root maxH={`${height}px`} chart={chart} key={animationKey}>
+        <LineChart data={chart.data}>
+          <CartesianGrid stroke={chart.color('border')} strokeDasharray="3 3" vertical={false} />
           <XAxis 
-            dataKey="date" 
+            axisLine={false}
+            dataKey={chart.key('date')}
             tick={{ fontSize: 12 }}
+            stroke={chart.color('border')}
             tickFormatter={(value) => {
               const date = new Date(value);
               return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
             }}
           />
           <YAxis 
-            tick={{ fontSize: 12 }}
+            axisLine={false}
+            tickLine={false}
+            tickMargin={10}
+            stroke={chart.color('border')}
             tickFormatter={formatValue}
           />
           <Tooltip
-            contentStyle={{
-              backgroundColor: '#ffffff',
-              border: '1px solid #e2e8f0',
-              borderRadius: '8px',
-              boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
-            }}
-            labelFormatter={(value) => {
-              const date = new Date(value);
-              return date.toLocaleDateString('en-US', { 
-                weekday: 'short',
-                month: 'short', 
-                day: 'numeric' 
-              });
-            }}
-            formatter={(value: number) => [formatValue(value), label]}
+            animationDuration={100}
+            cursor={false}
+            content={<Chart.Tooltip />}
           />
-          <Line
-            type="monotone"
-            dataKey="value"
-            stroke={color}
-            strokeWidth={2}
-            dot={{ fill: color, strokeWidth: 2, r: 4 }}
-            activeDot={{ r: 6, stroke: color, strokeWidth: 2 }}
-            animationDuration={800}
-          />
+          {chart.series.map((item) => (
+            <Line
+              key={item.name}
+              type="monotone"
+              dataKey={chart.key(item.name)}
+              stroke={color}
+              strokeWidth={2}
+              dot={{ fill: color, strokeWidth: 2, r: 4 }}
+              activeDot={{ r: 6, stroke: color, strokeWidth: 2 }}
+              isAnimationActive={false} // Disable re-animations
+            />
+          ))}
         </LineChart>
-      </ResponsiveContainer>
+      </Chart.Root>
     </Box>
   );
 }

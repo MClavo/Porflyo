@@ -1,9 +1,12 @@
 /**
  * Horizontal bar chart for project metrics
+ * Uses Chakra Charts with mount-only animations
  */
 
+import { useMemo } from 'react';
 import { Box, Skeleton, VStack, Text } from '@chakra-ui/react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { Chart, useChart } from '@chakra-ui/charts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
 
 export interface ProjectBarListProps {
   items: Array<{
@@ -26,6 +29,22 @@ export function ProjectBarList({
   valueFormatter = (value) => value.toString(),
   title
 }: ProjectBarListProps) {
+  // Memoize sorted data to prevent re-animations on every render
+  const chartData = useMemo(() => 
+    [...items].sort((a, b) => b.value - a.value),
+    [items]
+  );
+  
+  // Animation key that only changes on mount
+  const animationKey = useMemo(() => Date.now(), []);
+
+  const chart = useChart({
+    data: chartData,
+    series: [
+      { name: 'value', color: 'blue.solid', label: 'Value' },
+    ],
+  });
+
   if (isLoading) {
     return (
       <VStack align="stretch" gap={4}>
@@ -45,9 +64,6 @@ export function ProjectBarList({
     );
   }
 
-  // Sort items by value (descending) for better visualization
-  const sortedItems = [...items].sort((a, b) => b.value - a.value);
-
   return (
     <VStack align="stretch" gap={4}>
       {title && (
@@ -57,9 +73,9 @@ export function ProjectBarList({
       )}
       
       <Box height={`${height}px`} width="100%">
-        <ResponsiveContainer width="100%" height="100%">
+        <Chart.Root maxH={`${height}px`} chart={chart} key={animationKey}>
           <BarChart
-            data={sortedItems}
+            data={chart.data}
             layout="horizontal"
             margin={{
               top: 20,
@@ -68,40 +84,38 @@ export function ProjectBarList({
               bottom: 5,
             }}
           >
-            <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+            <CartesianGrid stroke={chart.color('border')} strokeDasharray="3 3" />
             <XAxis 
               type="number" 
+              axisLine={false}
               tick={{ fontSize: 12 }}
+              stroke={chart.color('border')}
               tickFormatter={valueFormatter}
             />
             <YAxis 
               type="category" 
-              dataKey="label" 
+              dataKey={chart.key('label')} 
+              axisLine={false}
               tick={{ fontSize: 12 }}
+              stroke={chart.color('border')}
               width={70}
             />
             <Tooltip
-              contentStyle={{
-                backgroundColor: '#ffffff',
-                border: '1px solid #e2e8f0',
-                borderRadius: '8px',
-                boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
-              }}
-              formatter={(value: number) => [
-                valueFormatter(value),
-                'Value'
-              ]}
-              labelFormatter={(label: string) => `Project: ${label}`}
+              animationDuration={100}
+              cursor={false}
+              content={<Chart.Tooltip />}
             />
-            <Bar 
-              dataKey="value" 
-              fill={color}
-              radius={[0, 4, 4, 0]}
-              animationDuration={800}
-              animationBegin={0}
-            />
+            {chart.series.map((item) => (
+              <Bar 
+                key={item.name}
+                dataKey={chart.key(item.name)} 
+                fill={color}
+                radius={[0, 4, 4, 0]}
+                isAnimationActive={false} // Disable re-animations
+              />
+            ))}
           </BarChart>
-        </ResponsiveContainer>
+        </Chart.Root>
       </Box>
     </VStack>
   );

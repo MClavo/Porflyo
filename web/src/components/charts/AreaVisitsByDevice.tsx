@@ -1,9 +1,12 @@
 /**
  * Area chart showing visits by device type over time
+ * Uses Chakra Charts with mount-only animations
  */
 
+import { useMemo } from 'react';
 import { Box, Skeleton } from '@chakra-ui/react';
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { Chart, useChart } from '@chakra-ui/charts';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
 
 export interface AreaVisitsByDeviceProps {
   data: Array<{
@@ -20,70 +23,64 @@ export function AreaVisitsByDevice({
   isLoading = false, 
   height = 300 
 }: AreaVisitsByDeviceProps) {
+  // Memoize chart data to prevent re-animations on every render
+  const chartData = useMemo(() => data, [data]);
+  
+  // Animation key that only changes on mount
+  const animationKey = useMemo(() => Date.now(), []);
+
+  const chart = useChart({
+    data: chartData,
+    series: [
+      { name: 'mobile', color: 'blue.solid', label: '📱 Mobile' },
+      { name: 'desktop', color: 'gray.solid', label: '💻 Desktop' },
+    ],
+  });
+
   if (isLoading) {
     return <Skeleton height={`${height}px`} borderRadius="md" />;
   }
 
   return (
     <Box height={`${height}px`} width="100%">
-      <ResponsiveContainer width="100%" height="100%">
-        <AreaChart
-          data={data}
-          margin={{
-            top: 10,
-            right: 30,
-            left: 0,
-            bottom: 0,
-          }}
-        >
-          <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+      <Chart.Root maxH={`${height}px`} chart={chart} key={animationKey}>
+        <AreaChart data={chart.data}>
+          <CartesianGrid stroke={chart.color('border')} strokeDasharray="3 3" />
           <XAxis 
-            dataKey="date" 
+            axisLine={false}
+            dataKey={chart.key('date')}
             tick={{ fontSize: 12 }}
+            stroke={chart.color('border')}
             tickFormatter={(value) => {
               const date = new Date(value);
               return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
             }}
           />
-          <YAxis tick={{ fontSize: 12 }} />
+          <YAxis 
+            axisLine={false}
+            tickLine={false}
+            tickMargin={10}
+            stroke={chart.color('border')}
+          />
           <Tooltip
-            contentStyle={{
-              backgroundColor: '#ffffff',
-              border: '1px solid #e2e8f0',
-              borderRadius: '8px',
-              boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
-            }}
-            labelFormatter={(value) => {
-              const date = new Date(value);
-              return date.toLocaleDateString('en-US', { 
-                weekday: 'short',
-                month: 'short', 
-                day: 'numeric' 
-              });
-            }}
-            formatter={(value: number, name: string) => [
-              value.toLocaleString(),
-              name === 'desktop' ? '💻 Desktop' : '📱 Mobile'
-            ]}
+            animationDuration={100}
+            cursor={false}
+            content={<Chart.Tooltip />}
           />
-          <Area
-            type="monotone"
-            dataKey="mobile"
-            stackId="1"
-            stroke="#3182ce"
-            fill="#3182ce"
-            fillOpacity={0.6}
-          />
-          <Area
-            type="monotone"
-            dataKey="desktop"
-            stackId="1"
-            stroke="#718096"
-            fill="#718096"
-            fillOpacity={0.6}
-          />
+          {chart.series.map((item) => (
+            <Area
+              key={item.name}
+              type="monotone"
+              dataKey={chart.key(item.name)}
+              stackId="device"
+              stroke={chart.color(item.color)}
+              fill={chart.color(item.color)}
+              fillOpacity={0.6}
+              isAnimationActive={false} // Disable re-animations
+            />
+          ))}
         </AreaChart>
-      </ResponsiveContainer>
+      </Chart.Root>
     </Box>
   );
 }
