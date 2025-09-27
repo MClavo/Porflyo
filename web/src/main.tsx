@@ -75,42 +75,42 @@ export function AppWithProviders() {
                 <Route path="/editor-test" element={<EditorTest />} />
                 
                 {/* Metrics Dashboard Routes */}
-                <Route path="/metrics" element={
+                <Route path="/dashboard" element={
                   <ChakraProvider value={theme}>
                     <Layout>
                       <OverviewPage />
                     </Layout>
                   </ChakraProvider>
                 } />
-                <Route path="/metrics/overview" element={
+                <Route path="/dashboard/overview" element={
                   <ChakraProvider value={theme}>
                     <Layout>
                       <OverviewPage />
                     </Layout>
                   </ChakraProvider>
                 } />
-                <Route path="/metrics/heatmap" element={
+                <Route path="/dashboard/heatmap" element={
                   <ChakraProvider value={theme}>
                     <Layout>
                       <HeatmapPage />
                     </Layout>
                   </ChakraProvider>
                 } />
-                <Route path="/metrics/projects" element={
+                <Route path="/dashboard/projects" element={
                   <ChakraProvider value={theme}>
                     <Layout>
                       <ProjectsPage />
                     </Layout>
                   </ChakraProvider>
                 } />
-                <Route path="/metrics/daily" element={
+                <Route path="/dashboard/daily" element={
                   <ChakraProvider value={theme}>
                     <Layout>
                       <DailyPage />
                     </Layout>
                   </ChakraProvider>
                 } />
-                <Route path="/metrics/trends" element={
+                <Route path="/dashboard/trends" element={
                   <ChakraProvider value={theme}>
                     <Layout>
                       <TrendsPage />

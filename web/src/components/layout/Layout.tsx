@@ -15,11 +15,11 @@ interface LayoutProps {
 }
 
 const navItems = [
-  { path: '/overview', label: 'Overview' },
-  { path: '/heatmap', label: 'Heatmap' },
-  { path: '/projects', label: 'Projects' },
-  { path: '/daily', label: 'Daily' },
-  { path: '/trends', label: 'Trends' },
+  { path: '/dashboard/overview', label: 'Overview' },
+  { path: '/dashboard/heatmap', label: 'Heatmap' },
+  { path: '/dashboard/projects', label: 'Projects' },
+  { path: '/dashboard/daily', label: 'Daily' },
+  { path: '/dashboard/trends', label: 'Trends' },
 ];
 
 export const Layout: React.FC<LayoutProps> = ({ children }) => {
