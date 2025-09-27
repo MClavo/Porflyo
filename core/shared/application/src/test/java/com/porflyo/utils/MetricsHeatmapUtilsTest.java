@@ -35,7 +35,7 @@ class MetricsHeatmapUtilsTest {
 
         // then
         assertThat(result.version()).isEqualTo("2.0");
-        assertThat(result.columns()).isEqualTo(12);
+        assertThat(result.rows()).isEqualTo(12);
         assertThat(result.Indexes()).containsExactly(0, 1, 2);
         assertThat(result.Values()).containsExactly(10, 20, 15);
         assertThat(result.Counts()).containsExactly(1, 1, 1); // New cells have count = 1
@@ -64,7 +64,7 @@ class MetricsHeatmapUtilsTest {
 
         // then
         assertThat(result.version()).isEqualTo("2.0");
-        assertThat(result.columns()).isEqualTo(12);
+        assertThat(result.rows()).isEqualTo(12);
         
         // Should have 3 cells: [0: 5×2, 1: 25×4, 2: 25×1]
         assertThat(result.Indexes()).containsExactlyInAnyOrder(0, 1, 2);
@@ -135,7 +135,7 @@ class MetricsHeatmapUtilsTest {
 
         // then - should keep existing cells but update metadata
         assertThat(result.version()).isEqualTo("2.0");
-        assertThat(result.columns()).isEqualTo(12);
+        assertThat(result.rows()).isEqualTo(12);
         assertThat(result.Indexes()).containsExactly(0, 1);
         assertThat(result.Values()).containsExactly(10, 20);
         assertThat(result.Counts()).containsExactly(2, 3);
@@ -163,7 +163,7 @@ class MetricsHeatmapUtilsTest {
 
         // then - should return only the most relevant cell
         assertThat(result.version()).isEqualTo("2.0");
-        assertThat(result.columns()).isEqualTo(12);
+        assertThat(result.rows()).isEqualTo(12);
         assertThat(result.Indexes()).hasSize(1);
         assertThat(result.Values()).hasSize(1);
         assertThat(result.Counts()).hasSize(1);

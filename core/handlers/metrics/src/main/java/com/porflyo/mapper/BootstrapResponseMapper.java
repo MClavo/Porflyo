@@ -135,8 +135,7 @@ public class BootstrapResponseMapper {
         
         return new HeatmapDto(
             new HeatmapMetaDto(
-                50, // rows - typical viewport rows
-                heatmap.columns(),
+                heatmap.rows(),
                 cells.size() // k - number of cells
             ),
             cells

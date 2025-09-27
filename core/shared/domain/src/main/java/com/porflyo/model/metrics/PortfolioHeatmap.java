@@ -9,7 +9,7 @@ import io.micronaut.serde.annotation.Serdeable;
 @Introspected
 public record PortfolioHeatmap(
     String version,
-    Integer columns,
+    Integer rows,
     List<Integer> Indexes,
     List<Integer> Values,
     List<Integer> Counts

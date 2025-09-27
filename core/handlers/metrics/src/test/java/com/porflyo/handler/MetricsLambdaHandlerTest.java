@@ -27,22 +27,15 @@ import com.porflyo.usecase.MetricsUseCase;
 import io.micronaut.json.JsonMapper;
 
 @ExtendWith(MockitoExtension.class)
-@MockitoSettings(strictness = Strictness.LENIENT)
 @DisplayName("Metrics Lambda Handler Basic Tests")
-class MetricsLambdaHandlerBasicTest {
+class MetricsLambdaHandlerTest {
 
-    @Mock
-    private JsonMapper jsonMapper;
-    @Mock
-    private BootstrapResponseMapper bootstrapMapper;
-    @Mock
-    private TodayResponseMapper todayMapper;
-    @Mock
-    private MonthResponseMapper monthMapper;
-    @Mock
-    private MetricsUseCase metricsUseCase;
-    @Mock
-    private AuthUseCase authUseCase;
+    @Mock private JsonMapper jsonMapper;
+    @Mock private BootstrapResponseMapper bootstrapMapper;
+    @Mock private TodayResponseMapper todayMapper;
+    @Mock private MonthResponseMapper monthMapper;
+    @Mock private MetricsUseCase metricsUseCase;
+    @Mock private AuthUseCase authUseCase;
 
     private MetricsLambdaHandler handler;
 
@@ -55,11 +48,9 @@ class MetricsLambdaHandlerBasicTest {
 
     @BeforeEach
     void setUp() {
-        handler = new MetricsLambdaHandler(
-            jsonMapper, bootstrapMapper, todayMapper, monthMapper, 
-            metricsUseCase, authUseCase
-        );
-        
+        handler = new MetricsLambdaHandler(jsonMapper, bootstrapMapper, todayMapper, monthMapper, metricsUseCase,
+                authUseCase);
+
         setupEventMocks();
         setupAuthMocks();
     }
@@ -68,17 +59,14 @@ class MetricsLambdaHandlerBasicTest {
         event = mock(APIGatewayV2HTTPEvent.class);
         requestContext = mock(APIGatewayV2HTTPEvent.RequestContext.class);
         http = mock(APIGatewayV2HTTPEvent.RequestContext.Http.class);
-        
+
         given(event.getRequestContext()).willReturn(requestContext);
         given(requestContext.getHttp()).willReturn(http);
         given(event.getHeaders()).willReturn(Map.of("Cookie", "session=" + SESSION_TOKEN));
-        given(event.getQueryStringParameters()).willReturn(Map.of(
-            "portfolioId", "test-portfolio",
-            "months", "3"
-        ));
+        given(event.getQueryStringParameters()).willReturn(Map.of("portfolioId", "test-portfolio", "months", "3"));
         given(event.getRawPath()).willReturn("/metrics/bootstrap");
     }
-    
+
     private void setupAuthMocks() {
         UserClaims claims = mock(UserClaims.class);
         given(claims.getSub()).willReturn(USER_ID);
@@ -128,7 +116,7 @@ class MetricsLambdaHandlerBasicTest {
         given(http.getMethod()).willReturn("GET");
         given(event.getRawPath()).willReturn("/metrics/bootstrap");
 
-        // when  
+        // when
         APIGatewayV2HTTPResponse response = handler.handleMetricsRequest(event);
 
         // then - Should attempt to process, not return 404

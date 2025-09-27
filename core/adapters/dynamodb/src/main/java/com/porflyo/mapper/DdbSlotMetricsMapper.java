@@ -82,7 +82,7 @@ public final class DdbSlotMetricsMapper {
             .build();
 
         item.setVersion(heatmap.version());
-        item.setColumns(heatmap.columns());
+        item.setColumns(heatmap.rows());
         item.setHeatMap(blob.bytes());
 
         return item;

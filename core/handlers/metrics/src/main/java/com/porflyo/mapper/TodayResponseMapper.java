@@ -116,8 +116,7 @@ public class TodayResponseMapper {
         
         return new com.porflyo.dto.common.HeatmapDto(
             new com.porflyo.dto.common.HeatmapMetaDto(
-                50, // rows - typical viewport rows
-                heatmap.columns(),
+                heatmap.rows(),
                 cells.size() // k - number of cells
             ),
             cells

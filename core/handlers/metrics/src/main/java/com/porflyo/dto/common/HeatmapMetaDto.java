@@ -10,6 +10,5 @@ import io.micronaut.serde.annotation.Serdeable;
 @Introspected
 public record HeatmapMetaDto(
     Integer rows,
-    Integer columns,
     Integer k
 ) {}

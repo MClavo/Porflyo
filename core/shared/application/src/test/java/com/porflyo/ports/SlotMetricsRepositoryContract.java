@@ -163,7 +163,7 @@ public abstract class SlotMetricsRepositoryContract {
         
         // Verify all heatmap components
         assertEquals(complexHeatmap.version(), saved.version());
-        assertEquals(complexHeatmap.columns(), saved.columns());
+        assertEquals(complexHeatmap.rows(), saved.rows());
         assertEquals(complexHeatmap.Indexes(), saved.Indexes());
         assertEquals(complexHeatmap.Values(), saved.Values());
         assertEquals(complexHeatmap.Counts(), saved.Counts());

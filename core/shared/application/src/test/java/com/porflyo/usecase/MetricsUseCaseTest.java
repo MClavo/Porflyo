@@ -83,7 +83,7 @@ class MetricsUseCaseTest {
 
         PortfolioHeatmap savedHeatmap = heatmapCaptor.getValue();
         assertThat(savedHeatmap.version()).isEqualTo("1.0.0");
-        assertThat(savedHeatmap.columns()).isEqualTo(12);
+        assertThat(savedHeatmap.rows()).isEqualTo(12);
         assertThat(savedHeatmap.Indexes()).isEqualTo(heatmapSnapshot.Indexes());
         assertThat(savedHeatmap.Values()).isEqualTo(heatmapSnapshot.Values());
         // Counts should all be 1 (new visits)
