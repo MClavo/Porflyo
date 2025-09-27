@@ -1,11 +1,12 @@
 import React from 'react';
+import { FiArrowUp, FiArrowDown, FiMinus } from 'react-icons/fi';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 import './KpiCard.css';
 
 export interface KpiCardProps {
   title: string;
-  value: string | number;
+  value: string | number | React.ReactNode;
   subtitle?: string;
   change?: {
     value: number;
@@ -53,22 +54,25 @@ export const KpiCard: React.FC<KpiCardProps> = ({
     );
   }
 
-  const formatValue = (val: string | number) => {
+  const formatValue = (val: string | number | React.ReactNode) => {
     if (typeof val === 'number') {
       return val.toLocaleString();
     }
-    return val;
+    if (typeof val === 'string') {
+      return val;
+    }
+    return val; // ReactNode
   };
 
   const getChangeIcon = () => {
     if (!change) return null;
     
     if (change.type === 'positive') {
-      return <span className="change-icon positive">↗</span>;
+      return <FiArrowUp className="change-icon positive" />;
     } else if (change.type === 'negative') {
-      return <span className="change-icon negative">↘</span>;
+      return <FiArrowDown className="change-icon negative" />;
     }
-    return <span className="change-icon neutral">→</span>;
+    return <FiMinus className="change-icon neutral" />;
   };
 
   const getChangeText = () => {

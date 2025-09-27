@@ -3,7 +3,6 @@
  */
 
 import React, { createContext, useEffect, useState } from 'react';
-import { Skeleton, Stack, Box, Container } from '@chakra-ui/react';
 import { useMetricsStore } from '../state/metrics.store';
 
 /**
@@ -30,57 +29,101 @@ interface MetricsProviderProps {
  */
 function MetricsSkeletonLoader() {
   return (
-    <Container maxW="7xl" py={8}>
-      <Stack gap={8}>
+    <div style={{
+      maxWidth: '1400px',
+      margin: '0 auto',
+      padding: '2rem',
+      background: 'var(--dashboard-bg)',
+      minHeight: '100vh',
+      color: 'var(--text-primary)'
+    }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
         {/* Header skeleton */}
-        <Stack gap={4}>
-          <Skeleton height="40px" width="300px" />
-          <Stack direction="row" gap={4}>
-            <Skeleton height="20px" width="150px" />
-            <Skeleton height="20px" width="120px" />
-            <Skeleton height="20px" width="180px" />
-          </Stack>
-        </Stack>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          <div style={{
+            height: '40px',
+            width: '300px',
+            background: 'linear-gradient(90deg, var(--card-border) 25%, var(--card-border-hover) 50%, var(--card-border) 75%)',
+            backgroundSize: '200% 100%',
+            animation: 'skeleton-loading 1.5s infinite',
+            borderRadius: 'var(--radius-md)'
+          }} />
+          <div style={{ display: 'flex', gap: '1rem' }}>
+            <div style={{
+              height: '20px',
+              width: '150px',
+              background: 'linear-gradient(90deg, var(--card-border) 25%, var(--card-border-hover) 50%, var(--card-border) 75%)',
+              backgroundSize: '200% 100%',
+              animation: 'skeleton-loading 1.5s infinite',
+              borderRadius: 'var(--radius-sm)'
+            }} />
+            <div style={{
+              height: '20px',
+              width: '120px',
+              background: 'linear-gradient(90deg, var(--card-border) 25%, var(--card-border-hover) 50%, var(--card-border) 75%)',
+              backgroundSize: '200% 100%',
+              animation: 'skeleton-loading 1.5s infinite',
+              borderRadius: 'var(--radius-sm)'
+            }} />
+          </div>
+        </div>
         
         {/* Metrics cards grid skeleton */}
-        <Stack gap={6}>
-          <Skeleton height="30px" width="200px" />
-          <Stack direction={{ base: 'column', md: 'row' }} gap={6}>
-            {Array.from({ length: 4 }).map((_, index) => (
-              <Box key={index} flex="1" minW="200px">
-                <Stack gap={3} p={4} border="1px solid" borderColor="gray.200" borderRadius="md">
-                  <Skeleton height="20px" width="80%" />
-                  <Skeleton height="32px" width="60%" />
-                  <Skeleton height="16px" width="90%" />
-                </Stack>
-              </Box>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+          <div style={{
+            height: '30px',
+            width: '200px',
+            background: 'linear-gradient(90deg, var(--card-border) 25%, var(--card-border-hover) 50%, var(--card-border) 75%)',
+            backgroundSize: '200% 100%',
+            animation: 'skeleton-loading 1.5s infinite',
+            borderRadius: 'var(--radius-md)'
+          }} />
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+            gap: '1.5rem'
+          }}>
+            {Array.from({ length: 6 }).map((_, index) => (
+              <div key={index} style={{
+                padding: '1rem',
+                border: '1px solid var(--card-border)',
+                borderRadius: 'var(--radius-lg)',
+                background: 'var(--card-bg)',
+                minHeight: '120px',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '0.75rem'
+              }}>
+                <div style={{
+                  height: '20px',
+                  width: '80%',
+                  background: 'linear-gradient(90deg, var(--card-border) 25%, var(--card-border-hover) 50%, var(--card-border) 75%)',
+                  backgroundSize: '200% 100%',
+                  animation: 'skeleton-loading 1.5s infinite',
+                  borderRadius: 'var(--radius-sm)'
+                }} />
+                <div style={{
+                  height: '32px',
+                  width: '60%',
+                  background: 'linear-gradient(90deg, var(--card-border) 25%, var(--card-border-hover) 50%, var(--card-border) 75%)',  
+                  backgroundSize: '200% 100%',
+                  animation: 'skeleton-loading 1.5s infinite',
+                  borderRadius: 'var(--radius-sm)'
+                }} />
+                <div style={{
+                  height: '16px',
+                  width: '90%',
+                  background: 'linear-gradient(90deg, var(--card-border) 25%, var(--card-border-hover) 50%, var(--card-border) 75%)',
+                  backgroundSize: '200% 100%',
+                  animation: 'skeleton-loading 1.5s infinite',
+                  borderRadius: 'var(--radius-sm)'
+                }} />
+              </div>
             ))}
-          </Stack>
-        </Stack>
-        
-        {/* Chart area skeleton */}
-        <Stack gap={4}>
-          <Skeleton height="30px" width="250px" />
-          <Skeleton height="400px" width="100%" />
-        </Stack>
-        
-        {/* Additional content blocks */}
-        <Stack direction={{ base: 'column', lg: 'row' }} gap={6} align="start">
-          <Stack flex="2" gap={4}>
-            <Skeleton height="25px" width="200px" />
-            <Skeleton height="300px" width="100%" />
-          </Stack>
-          <Stack flex="1" gap={4}>
-            <Skeleton height="25px" width="150px" />
-            <Stack gap={3}>
-              {Array.from({ length: 6 }).map((_, index) => (
-                <Skeleton key={index} height="60px" width="100%" />
-              ))}
-            </Stack>
-          </Stack>
-        </Stack>
-      </Stack>
-    </Container>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -124,16 +167,34 @@ export function MetricsProvider({ children, portfolioId }: MetricsProviderProps)
   // Show error state (you might want to customize this)
   if (error) {
     return (
-      <Container maxW="7xl" py={8}>
-        <Box textAlign="center" py={10}>
-          <Box color="red.500" fontSize="lg" mb={4}>
+      <div style={{
+        maxWidth: '1400px',
+        margin: '0 auto',
+        padding: '2rem',
+        background: 'var(--dashboard-bg)',
+        minHeight: '100vh'
+      }}>
+        <div style={{
+          textAlign: 'center',
+          padding: '2.5rem 0',
+          color: 'var(--text-primary)'
+        }}>
+          <div style={{
+            color: 'var(--status-negative)',
+            fontSize: 'var(--font-lg)',
+            marginBottom: '1rem',
+            fontWeight: '600'
+          }}>
             Failed to load metrics data
-          </Box>
-          <Box color="gray.600" fontSize="sm">
+          </div>
+          <div style={{
+            color: 'var(--text-secondary)',
+            fontSize: 'var(--font-sm)'
+          }}>
             {error}
-          </Box>
-        </Box>
-      </Container>
+          </div>
+        </div>
+      </div>
     );
   }
   

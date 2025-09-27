@@ -1,77 +1,76 @@
 /**
- * Modern Overview Page - Professional analytics dashboard with custom components
- * Dark theme with modern design, using custom KPI cards and layouts
+ * ModernOverview - Custom dashboard
  */
 
-import { FiUsers, FiTrendingUp, FiClock, FiMonitor, FiMail, FiActivity } from 'react-icons/fi';
-import { MetricsProvider } from '../contexts/MetricsProvider';
-import { useOverviewData, useTrends } from '../hooks/metrics';
-import { formatMs } from '../lib/format';
-import { KpiCard, KpiGrid, DashboardHeader } from '../components/dashboard';
 
-// Import CSS
-import '../styles/dashboard-theme.css';
+import { FiUsers, FiTrendingUp, FiClock, FiActivity, FiMail, FiMonitor } from "react-icons/fi";
+import { MetricsProvider } from "../contexts/MetricsProvider";
+import { useOverviewData, useTrends } from "../hooks/metrics";
+import { formatMs } from "../lib/format";  
+import { useMetricsStore } from "../state/metrics.store";
+import { latest } from "../lib/dates";
+import { KpiCard, KpiGrid, DashboardHeader, MiniProgressRing, MiniProgressBar } from "../components/dashboard";
+import "../styles/dashboard-theme.css";
 
 function ModernOverviewContent() {
-  const overview = useOverviewData(30);
-  const trends = useTrends(30, 'visits');
-  const engagementTrends = useTrends(30, 'engagement');
-
-  const isLoading = overview.isLoading;
-  const hasError = overview.error || trends.error || engagementTrends.error;
+  const overviewData = useOverviewData(30);
+  const { isLoading } = overviewData;
+  const trends = useTrends(30, "visits");
+  const engagementTrends = useTrends(30, "engagement");
+  const { dailyByDate, dailyIndex } = useMetricsStore();
+  
+  const latestDate = latest(dailyIndex);
+  const latestEntry = latestDate ? dailyByDate[latestDate] : null;
+  
+  const hasError = (!overviewData.todayKpis && !isLoading) || trends.error || engagementTrends.error;
 
   if (hasError) {
     return (
       <div className="dashboard-container">
-        <div className="dashboard-content">
-          <DashboardHeader
-            title="Analytics Dashboard"
-            subtitle="Failed to load analytics data"
-          />
-          <div style={{ 
-            textAlign: 'center', 
-            padding: 'var(--space-16)', 
-            color: 'var(--status-negative)',
-            fontSize: 'var(--font-lg)' 
-          }}>
-            Error: {hasError}
+        <div className="dashboard-content">  
+          <DashboardHeader title="Analytics Dashboard" subtitle="Error loading data" isLoading={false} />
+          <div style={{ textAlign: "center", padding: "var(--spacing-16)", color: "var(--color-error-text)" }}>
+            Error loading dashboard data
           </div>
         </div>
       </div>
     );
   }
 
-  // Prepare KPI data - matching OverviewPage logic
-  const totalVisits = overview.todayKpis?.totalViews || 0;
-  const avgSession = overview.todayKpis?.avgSessionMs;
-  const deviceMix = overview.todayKpis?.deviceMix;
-  const bounceRate = overview.todayKpis?.bounceRate;
+  // Calculate KPIs with corrected formulas
+  const totalVisits = overviewData.todayKpis?.totalViews || 0;
+  const avgSession = overviewData.todayKpis?.avgSessionMs;
+  const deviceMix = overviewData.todayKpis?.deviceMix;
   
   const engagementRate = engagementTrends.summary.current;
-  const conversionRate = bounceRate ? ((1 - bounceRate) * 12) : null;
+  
+  // Correct conversion rate calculation: emailCopies / views (as per spec)
+  const emailCopies = latestEntry?.raw?.emailCopies || 0;
+  const views = latestEntry?.raw?.views || 1;
+  const conversionRate = views > 0 ? ((emailCopies / views) * 100).toFixed(1) + "%" : "N/A";
   
   // Calculate change indicators
   const visitsChange = trends.summary.changePct;
   const engagementChange = engagementTrends.summary.changePct;
-  
-  // Debug logging to see what data we're getting
-  console.log('Overview data:', {
+
+  const getChangeType = (change: number | null): "positive" | "negative" | "neutral" => {
+    if (!change) return "neutral";
+    if (Math.abs(change) < 5) return "neutral";
+    return change > 0 ? "positive" : "negative";
+  };
+
+  // Debug logging
+  console.log("ModernOverview metrics:", {
     totalVisits,
     avgSession,
     deviceMix,
-    bounceRate,
     engagementRate,
     conversionRate,
+    emailCopies,
+    views,
     visitsChange,
-    engagementChange,
-    isLoading
+    engagementChange
   });
-
-  const getChangeType = (change: number | null): 'positive' | 'negative' | 'neutral' => {
-    if (!change) return 'neutral';
-    if (Math.abs(change) < 5) return 'neutral';
-    return change > 0 ? 'positive' : 'negative';
-  };
 
   return (
     <div className="dashboard-container">
@@ -82,14 +81,13 @@ function ModernOverviewContent() {
           isLoading={isLoading}
         />
 
-        {/* KPI Cards Grid */}
         <KpiGrid 
           columns={{ base: 1, sm: 2, md: 3, lg: 3, xl: 6 }}
           gap={6}
         >
           <KpiCard
             title="Total Visits"
-            value={isLoading ? '0' : totalVisits.toLocaleString()}
+            value={isLoading ? "0" : totalVisits.toLocaleString()}
             change={visitsChange ? {
               value: visitsChange,
               type: getChangeType(visitsChange)
@@ -101,7 +99,19 @@ function ModernOverviewContent() {
           
           <KpiCard
             title="Engagement Rate"
-            value={engagementRate ? engagementRate.toFixed(1) : 'N/A'}
+            value={isLoading ? "N/A" : (engagementRate ? (
+              <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                <span style={{ fontSize: "var(--font-2xl)", fontWeight: "800" }}>
+                  {engagementRate.toFixed(1)}
+                </span>
+                <MiniProgressRing 
+                  value={Math.min(engagementRate * 10, 100)} 
+                  color="var(--accent-green)"
+                  size={36}
+                  thickness={4}
+                />
+              </div>
+            ) : "N/A")}
             subtitle="avg score"
             change={engagementChange ? {
               value: engagementChange,
@@ -114,7 +124,7 @@ function ModernOverviewContent() {
           
           <KpiCard
             title="Session Duration"
-            value={avgSession ? formatMs(avgSession) : 'N/A'}
+            value={isLoading ? "N/A" : (avgSession ? formatMs(avgSession) : "N/A")}
             icon={<FiClock />}
             color="purple"
             isLoading={isLoading}
@@ -122,7 +132,7 @@ function ModernOverviewContent() {
           
           <KpiCard
             title="Time to Interact"
-            value={avgSession ? formatMs(avgSession * 0.7) : 'N/A'}
+            value={isLoading ? "N/A" : (avgSession ? formatMs(avgSession * 0.7) : "N/A")}
             subtitle="first interaction"
             icon={<FiActivity />}
             color="orange"
@@ -131,7 +141,20 @@ function ModernOverviewContent() {
           
           <KpiCard
             title="Conversion Rate"
-            value={conversionRate ? `${conversionRate.toFixed(1)}%` : 'N/A'}
+            value={isLoading ? "N/A" : (conversionRate !== "N/A" ? (
+              <div style={{ display: "flex", flexDirection: "column", gap: "8px", alignItems: "flex-start" }}>
+                <span style={{ fontSize: "var(--font-2xl)", fontWeight: "800" }}>
+                  {conversionRate}
+                </span>
+                <MiniProgressBar 
+                  value={parseFloat(conversionRate.replace('%', ''))} 
+                  color="var(--accent-pink)" 
+                  width={100}
+                  height={8}
+                />
+              </div>
+            ) : "N/A")}
+            subtitle="email copies"
             icon={<FiMail />}
             color="pink"
             isLoading={isLoading}
@@ -139,37 +162,38 @@ function ModernOverviewContent() {
           
           <KpiCard
             title="Device Mix"
-            value={deviceMix ? `${Math.round(deviceMix.desktop)}% / ${Math.round(deviceMix.mobile)}%` : 'N/A'}
-            subtitle="desktop / mobile"
+            value={isLoading ? "N/A" : (deviceMix ? (
+              <div style={{ display: "flex", flexDirection: "column", gap: "8px", alignItems: "flex-start" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                  <span style={{ fontSize: "var(--font-sm)", color: "var(--text-secondary)", minWidth: "50px" }}>
+                    Desktop: {(deviceMix.desktop * 100).toFixed(0)}%
+                  </span>
+                  <MiniProgressBar 
+                    value={deviceMix.desktop * 100} 
+                    color="var(--accent-blue)" 
+                    width={80}
+                    height={6}
+                  />
+                </div>
+                <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                  <span style={{ fontSize: "var(--font-sm)", color: "var(--text-secondary)", minWidth: "50px" }}>
+                    Mobile: {(deviceMix.mobile * 100).toFixed(0)}%
+                  </span>
+                  <MiniProgressBar 
+                    value={deviceMix.mobile * 100} 
+                    color="var(--accent-green)" 
+                    width={80}
+                    height={6}
+                  />
+                </div>
+              </div>
+            ) : "N/A")}
+            subtitle="device distribution"
             icon={<FiMonitor />}
             color="blue"
             isLoading={isLoading}
           />
         </KpiGrid>
-
-        {/* Debug Information - Remove in production */}
-        <div style={{ 
-          marginTop: 'var(--space-12)', 
-          padding: 'var(--space-8)',
-          color: 'var(--text-secondary)',
-          background: 'var(--card-bg)',
-          borderRadius: 'var(--radius-lg)',
-          border: '1px solid var(--card-border)'
-        }}>
-          <h3 style={{ margin: '0 0 var(--space-4) 0', color: 'var(--text-primary)' }}>
-            Debug Information
-          </h3>
-          <div style={{ fontSize: 'var(--font-sm)', textAlign: 'left' }}>
-            <p>Loading: {isLoading ? 'Yes' : 'No'}</p>
-            <p>Has Error: {hasError ? 'Yes' : 'No'}</p>
-            <p>Total Visits: {totalVisits}</p>
-            <p>Avg Session: {avgSession ? formatMs(avgSession) : 'N/A'}</p>
-            <p>Device Mix: {deviceMix ? `${Math.round(deviceMix.desktop)}% / ${Math.round(deviceMix.mobile)}%` : 'N/A'}</p>
-            <p>Engagement Rate: {engagementRate ? engagementRate.toFixed(1) : 'N/A'}</p>
-            <p>Visits Change: {visitsChange ? visitsChange.toFixed(1) + '%' : 'N/A'}</p>
-            <p>Engagement Change: {engagementChange ? engagementChange.toFixed(1) + '%' : 'N/A'}</p>
-          </div>
-        </div>
       </div>
     </div>
   );

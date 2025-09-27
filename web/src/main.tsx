@@ -94,13 +94,7 @@ export function AppWithProviders() {
                     </Layout>
                   </ChakraProvider>
                 } />
-                <Route path="/dashboard/modern" element={
-                  <ChakraProvider value={theme}>
-                    <Layout>
-                      <ModernOverview />
-                    </Layout>
-                  </ChakraProvider>
-                } />
+                <Route path="/dashboard/modern" element={<ModernOverview />} />
                 <Route path="/dashboard/test" element={
                   <ChakraProvider value={theme}>
                     <Layout>
