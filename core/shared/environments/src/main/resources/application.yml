@@ -90,7 +90,10 @@ logger:
 aws:
   region: us-east-1
 
-
+# Metrics Configuration
+metrics:
+  heatmap-cell-count: 400
+  baseline-window-days: 28
 
 # DynamoDB configuration is now only in test profile configurations
 # See application-integration.yml for integration tests

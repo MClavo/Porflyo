@@ -14,18 +14,25 @@ import org.slf4j.LoggerFactory;
 
 import com.porflyo.configuration.MetricsConfig;
 import com.porflyo.dto.DetailSlot;
+import com.porflyo.dto.EnhancedDetailSlot;
+import com.porflyo.dto.EnhancedPortfolioMetrics;
+import com.porflyo.dto.EnhancedPortfolioMetricsBundle;
+import com.porflyo.dto.EnhancedPortfolioMetricsSnapshot;
+import com.porflyo.dto.EnhancedProjectMetricsWithId;
 import com.porflyo.dto.HeatmapSnapshot;
-import com.porflyo.dto.PortfolioMetricsBundle;
-import com.porflyo.dto.PortfolioMetricsSnapshot;
+
 import com.porflyo.model.ids.PortfolioId;
+import com.porflyo.model.metrics.DerivedMetrics;
 import com.porflyo.model.metrics.Engagement;
 import com.porflyo.model.metrics.InteractionMetrics;
 import com.porflyo.model.metrics.PortfolioHeatmap;
 import com.porflyo.model.metrics.PortfolioMetrics;
 import com.porflyo.model.metrics.ProjectMetrics;
 import com.porflyo.model.metrics.ProjectMetricsWithId;
+import com.porflyo.model.metrics.ZScores;
 import com.porflyo.ports.PortfolioMetricsRepository;
 import com.porflyo.ports.SlotMetricsRepository;
+import com.porflyo.utils.DerivedMetricsCalculator;
 import com.porflyo.utils.HeatmapUtils;
 import com.porflyo.utils.PortfolioMetricsUtils;
 
@@ -127,54 +134,107 @@ public class MetricsUseCase {
     // ────────────────────────── Read ──────────────────────────
 
     /**
-     * Returns aggregate PortfolioMetrics for the last {@code monthsBack} months.
-     * Also returns (separately) the detail slots: heatmaps and per-project metrics for each day.
-     * The implementation may return the aggregates and slots in separate arrays or as part of a snapshot.
+     * Returns portfolio metrics with derived metrics and z-scores for the last {@code monthsBack} months.
+     * This method calculates derived metrics and z-scores on-the-fly for each day.
      *
      * @param portfolioId target portfolio
      * @param monthsBack months to go back
-     * @return array of aggregate PortfolioMetrics (most-recent first)
+     * @return list of portfolio metrics with computed analytics
      */
-    public List<PortfolioMetrics> getPortfolioMetrics(PortfolioId portfolioId, int monthsBack){
-        return portfolioMetricsRepository.findPortfolioMetrics(portfolioId, monthsBack);
-    }
-
-
-    /**
-     * Returns aggregates for a specific month (monthsBack = 0 means current month).
-     */
-    public List<PortfolioMetrics> getPortfolioMetricsOneMonth(PortfolioId portfolioId, int monthsBack){
-        return portfolioMetricsRepository.findPortfolioMetricsOneMonth(portfolioId, monthsBack);
+    public List<EnhancedPortfolioMetrics> getPortfolioMetrics(PortfolioId portfolioId, int monthsBack) {
+        List<PortfolioMetrics> rawMetrics = portfolioMetricsRepository.findPortfolioMetrics(portfolioId, monthsBack);
+        return enhanceMetricsWithAnalytics(rawMetrics);
     }
 
     /**
-     * Returns aggregate PortfolioMetrics for the last {@code monthsBack} months.
-     * Also returns (separately) the detail slots: heatmaps and per-project metrics for each day.
-     * The implementation may return the aggregates and slots in separate arrays or as part of a snapshot.
+     * Returns portfolio metrics with derived metrics and z-scores for the last {@code monthsBack} months.
+     * Also returns detail slots (heatmaps and per-project metrics).
      *
      * @param portfolioId target portfolio
      * @param monthsBack months to go back
-     * @return array of {@link PortfolioMetrics}, and list of detail slots {@link DetailSlot}, 
-     * each containing a heatmap and project metrics for that day
+     * @return bundle with computed analytics
      */
-    public PortfolioMetricsBundle getPortfolioMetricsWithSlots(PortfolioId portfolioId, int monthsBack){
-        List<PortfolioMetrics> aggregates = portfolioMetricsRepository.findPortfolioMetrics(portfolioId, monthsBack);
+    public EnhancedPortfolioMetricsBundle getPortfolioMetricsWithSlots(PortfolioId portfolioId, int monthsBack) {
+        List<PortfolioMetrics> rawMetrics = portfolioMetricsRepository.findPortfolioMetrics(portfolioId, monthsBack);
         List<DetailSlot> slots = slotMetricsRepository.getAllMetrics(portfolioId);
-
-        return new PortfolioMetricsBundle(portfolioId, aggregates, slots);
+        
+        List<EnhancedPortfolioMetrics> enhancedMetrics = enhanceMetricsWithAnalytics(rawMetrics);
+        
+        return new EnhancedPortfolioMetricsBundle(portfolioId, enhancedMetrics, slots);
     }
 
     /**
-     * Returns today's aggregate and today's details (heatmap + project metrics for today).
+     * Returns portfolio metrics with derived metrics and z-scores for the last {@code monthsBack} months.
+     * Also returns enhanced detail slots with project-level derived metrics.
      *
      * @param portfolioId target portfolio
-     * @return snapshot containing today's aggregate and today's details
+     * @param monthsBack months to go back
+     * @return bundle with computed analytics including project-level metrics
      */
-    public PortfolioMetricsSnapshot getTodayMetricsWithDetails(PortfolioId portfolioId){
+    public EnhancedPortfolioMetricsBundle getPortfolioMetricsWithEnhancedSlots(PortfolioId portfolioId, int monthsBack) {
+        List<PortfolioMetrics> rawMetrics = portfolioMetricsRepository.findPortfolioMetrics(portfolioId, monthsBack);
+        List<DetailSlot> slots = slotMetricsRepository.getAllMetrics(portfolioId);
+        
+        List<EnhancedPortfolioMetrics> enhancedMetrics = enhanceMetricsWithAnalytics(rawMetrics);
+        List<EnhancedDetailSlot> enhancedSlots = enhanceDetailSlots(slots);
+        
+        // Convert to regular detail slots for the bundle (maintaining interface compatibility)
+        List<DetailSlot> regularSlots = enhancedSlots.stream()
+            .map(es -> new DetailSlot(es.date(), es.heatmap(), 
+                es.projects().stream()
+                    .map(ep -> new ProjectMetricsWithId(ep.id(), ep.viewTime(), ep.exposures(), ep.codeViews(), ep.liveViews()))
+                    .collect(Collectors.toList())))
+            .collect(Collectors.toList());
+        
+        return new EnhancedPortfolioMetricsBundle(portfolioId, enhancedMetrics, regularSlots);
+    }
+
+    /**
+     * Returns portfolio metrics for a specific month with derived metrics and z-scores.
+     *
+     * @param portfolioId target portfolio
+     * @param monthsBack months to go back (0 = current month)
+     * @return list of portfolio metrics with computed analytics for the specified month
+     */
+    public List<EnhancedPortfolioMetrics> getPortfolioMetricsOneMonth(PortfolioId portfolioId, int monthsBack) {
+        List<PortfolioMetrics> rawMetrics = portfolioMetricsRepository.findPortfolioMetricsOneMonth(portfolioId, monthsBack);
+        return enhanceMetricsWithAnalytics(rawMetrics);
+    }
+
+    /**
+     * Returns today's aggregate and today's details with computed derived metrics and z-scores.
+     *
+     * @param portfolioId target portfolio
+     * @return snapshot containing today's aggregate with analytics and today's details
+     */
+    public EnhancedPortfolioMetricsSnapshot getTodayMetricsWithDetails(PortfolioId portfolioId) {
         PortfolioMetrics aggregate = portfolioMetricsRepository.getTodayMetrics(portfolioId).orElse(null);
         DetailSlot details = slotMetricsRepository.getTodayMetrics(portfolioId).orElse(null);
-
-        return new PortfolioMetricsSnapshot(portfolioId, aggregate, details);
+        
+        EnhancedPortfolioMetrics enhancedAggregate = null;
+        if (aggregate != null) {
+            // Get baseline metrics for z-score calculation
+            List<PortfolioMetrics> baselineMetrics = portfolioMetricsRepository.findPortfolioMetrics(
+                portfolioId, 
+                1 // Get current month for baseline calculation
+            );
+            
+            DerivedMetrics derived = DerivedMetricsCalculator.calculateDerivedMetrics(
+                aggregate.engagement(), 
+                aggregate.scroll(), 
+                aggregate.cumProjects()
+            );
+            
+            ZScores zScores = DerivedMetricsCalculator.calculateZScores(
+                aggregate, 
+                baselineMetrics, 
+                metricsConfig.baselineWindowDays()
+            );
+            
+            enhancedAggregate = EnhancedPortfolioMetrics.from(aggregate, derived, zScores);
+        }
+        
+        return new EnhancedPortfolioMetricsSnapshot(portfolioId, enhancedAggregate, details);
     }
 
 
@@ -187,6 +247,73 @@ public class MetricsUseCase {
 
 
     // ────────────────────────── Helpers ──────────────────────────
+
+    /**
+     * Enhances a list of raw portfolio metrics with derived metrics and z-scores.
+     * This method is optimized to calculate analytics efficiently in a single pass.
+     *
+     * @param rawMetrics list of raw portfolio metrics sorted by date (most recent first)
+     * @return list of enhanced portfolio metrics with computed analytics
+     */
+    private List<EnhancedPortfolioMetrics> enhanceMetricsWithAnalytics(List<PortfolioMetrics> rawMetrics) {
+        if (rawMetrics == null || rawMetrics.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        List<EnhancedPortfolioMetrics> enhancedMetrics = new ArrayList<>(rawMetrics.size());
+        
+        // Process each metric and calculate derived metrics and z-scores
+        for (int i = 0; i < rawMetrics.size(); i++) {
+            PortfolioMetrics currentMetric = rawMetrics.get(i);
+            
+            // Calculate derived metrics
+            DerivedMetrics derived = DerivedMetricsCalculator.calculateDerivedMetrics(
+                currentMetric.engagement(),
+                currentMetric.scroll(), 
+                currentMetric.cumProjects()
+            );
+            
+            // Calculate z-scores using a baseline window of previous days
+            // Get baseline from the rest of the list (excluding current index)
+            List<PortfolioMetrics> baselineMetrics = rawMetrics.stream()
+                .skip(i + 1) // Skip current and more recent metrics
+                .limit(metricsConfig.baselineWindowDays())
+                .collect(Collectors.toList());
+                
+            ZScores zScores = DerivedMetricsCalculator.calculateZScores(
+                currentMetric,
+                baselineMetrics,
+                metricsConfig.baselineWindowDays()
+            );
+            
+            enhancedMetrics.add(EnhancedPortfolioMetrics.from(currentMetric, derived, zScores));
+        }
+        
+        log.debug("Enhanced {} portfolio metrics with derived metrics and z-scores", enhancedMetrics.size());
+        return enhancedMetrics;
+    }
+
+    /**
+     * Enhances detail slots by calculating derived metrics for each project.
+     *
+     * @param detailSlots list of raw detail slots
+     * @return list of enhanced detail slots with project-level derived metrics
+     */
+    private List<EnhancedDetailSlot> enhanceDetailSlots(List<DetailSlot> detailSlots) {
+        if (detailSlots == null || detailSlots.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        return detailSlots.stream()
+            .map(slot -> {
+                List<EnhancedProjectMetricsWithId> enhancedProjects = slot.projects().stream()
+                    .map(DerivedMetricsCalculator::enhanceProjectMetrics)
+                    .collect(Collectors.toList());
+                
+                return new EnhancedDetailSlot(slot.date(), slot.heatmap(), enhancedProjects);
+            })
+            .collect(Collectors.toList());
+    }
 
     /**
      * Updates the project metrics list by combining existing and new data.
