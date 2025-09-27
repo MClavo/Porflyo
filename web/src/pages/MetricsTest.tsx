@@ -1,7 +1,7 @@
 import { useRef, useState, useEffect } from 'react';
 import { PortfolioViewer } from '../components/portfolio';
 import { demoInitialPortfolio } from './editor/demoData';
-import useMetrics from '../hooks/metrics/useMetrics';
+import useMetrics from '../hooks/metrics/useGetMetrics';
 import ScrollMetricsDisplay from '../components/analytics/ScrollMetricsDisplay';
 import InteractionMetricsDisplay from '../components/analytics/InteractionMetricsDisplay';
 import '../styles/PublicPortfolio.css';

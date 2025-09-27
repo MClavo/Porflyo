@@ -14,7 +14,7 @@ import {
   useMetricsLoading,
   useMetricsError,
   useHasMetricsData
-} from '../hooks/useMetrics';
+} from '../hooks/metrics/useMetrics';
 
 /**
  * Test component that uses all the metrics hooks
