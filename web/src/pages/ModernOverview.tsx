@@ -48,7 +48,6 @@ function ModernOverviewContent() {
   const emailCopies = latestEntry?.raw?.emailCopies || 0;
   const views = latestEntry?.raw?.views || 1;
   const conversionRate = views > 0 ? ((emailCopies / views) * 100).toFixed(1) + "%" : "N/A";
-  
   // Calculate change indicators
   const visitsChange = trends.summary.changePct;
   const engagementChange = engagementTrends.summary.changePct;
@@ -88,6 +87,7 @@ function ModernOverviewContent() {
           <KpiCard
             title="Total Visits"
             value={isLoading ? "0" : totalVisits.toLocaleString()}
+            subtitle="page views"
             change={visitsChange ? {
               value: visitsChange,
               type: getChangeType(visitsChange)
@@ -113,6 +113,7 @@ function ModernOverviewContent() {
           <KpiCard
             title="Session Duration"
             value={isLoading ? "N/A" : (avgSession ? formatMs(avgSession) : "N/A")}
+            subtitle="avg length"
             icon={<FiClock />}
             color="purple"
             isLoading={isLoading}
