@@ -1,4 +1,25 @@
 /* Dashboard Theme Variables - Dark Modern Professional */
+
+/* Forzar scrollbar siempre visible para evitar layout shift */
+html {
+  overflow-y: scroll;
+}
+
+body {
+  /* Asegurar que no haya movimientos horizontales */
+  overflow-x: hidden;
+  /* Mantener scrollbar reservado (soporte moderno) */
+  scrollbar-gutter: stable;
+}
+
+/* Fallback para navegadores que no soportan scrollbar-gutter */
+@supports not (scrollbar-gutter: stable) {
+  body {
+    /* Forzar scrollbar vertical siempre */
+    overflow-y: scroll;
+  }
+}
+
 :root {
   /* Colors */
   --dashboard-bg: #0a0e16;
@@ -91,6 +112,8 @@ html, body {
   min-height: 100vh;
   color: var(--text-primary);
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+  position: relative;
+  overflow-x: hidden;
 }
 
 .dashboard-content {
