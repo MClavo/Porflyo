@@ -3,7 +3,7 @@
  */
 
 import React from 'react';
-import { FiUsers } from 'react-icons/fi';
+import { FiTrendingDown, FiTrendingUp, FiUsers } from 'react-icons/fi';
 import { PercentageRing } from '../indicators/PercentageRing';
 import './VisitsOverviewCard.css';
 
@@ -36,8 +36,8 @@ export const VisitsOverviewCard: React.FC<VisitsOverviewCardProps> = ({
   isLoading = false
 }) => {
   const getChangeIcon = (type: 'positive' | 'negative' | 'neutral') => {
-    if (type === 'positive') return <span className="change-icon positive">↗</span>;
-    if (type === 'negative') return <span className="change-icon negative">↘</span>;
+    if (type === 'positive') return <span className="change-icon positive"><FiTrendingUp /></span>;
+    if (type === 'negative') return <span className="change-icon negative"><FiTrendingDown /></span>;
     return <span className="change-icon neutral">→</span>;
   };
 
