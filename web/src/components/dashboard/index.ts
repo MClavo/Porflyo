@@ -7,3 +7,4 @@ export { MiniProgressRing, MiniProgressBar } from './indicators/MiniIndicators';
 export { SplitProgressBar } from './indicators/SplitProgressBar';
 export { PercentageRing } from './indicators/PercentageRing';
 export { VisitsOverviewCard } from './cards/VisitsOverviewCard';
+export { default as ModernAreaChart } from './charts/ModernAreaChart';

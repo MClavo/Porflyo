@@ -9,7 +9,7 @@ import { useOverviewData, useTrends } from "../hooks/metrics";
 import { formatMs } from "../lib/format";  
 import { useMetricsStore } from "../state/metrics.store";
 import { latest } from "../lib/dates";
-import { KpiCard, KpiGrid, DashboardHeader, SplitProgressBar, VisitsOverviewCard } from "../components/dashboard";
+import { KpiCard, KpiGrid, DashboardHeader, SplitProgressBar, VisitsOverviewCard, ModernAreaChart } from "../components/dashboard";
 import "../styles/dashboard-theme.css";
 
 function ModernOverviewContent() {
@@ -65,6 +65,28 @@ function ModernOverviewContent() {
     return change > 0 ? "positive" : "negative";
   };
 
+  // Prepare chart data from daily metrics
+  const chartData = dailyIndex
+    .slice(-30) // últimos 30 días
+    .map(date => {
+      const dayData = dailyByDate[date];
+      return {
+        date,
+        views: dayData?.raw?.views || 0,
+        qualityViews: dayData?.raw?.qualityVisits || 0,
+        emailCopies: dayData?.raw?.emailCopies || 0,
+        socialClicks: dayData?.raw?.socialClicksTotal || 0
+      };
+    })
+    .filter(item => item.views > 0); // filtrar días sin datos
+
+  const chartMetrics = [
+    { key: 'views', name: 'Total Views', color: '#3B82F6' },
+    { key: 'qualityViews', name: 'Quality Views', color: '#10B981' },
+    { key: 'emailCopies', name: 'Email Copies', color: '#F59E0B' },
+    { key: 'socialClicks', name: 'Social Clicks', color: '#8B5CF6' }
+  ];
+
   // Debug logging
   console.log("ModernOverview metrics:", {
     totalVisits,
@@ -76,7 +98,8 @@ function ModernOverviewContent() {
     emailCopies,
     views,
     visitsChange,
-    engagementChange
+    engagementChange,
+    chartDataLength: chartData.length
   });
 
   return (
@@ -166,6 +189,15 @@ function ModernOverviewContent() {
             isLoading={isLoading}
           />
         </KpiGrid>
+
+        {/* Modern Area Chart */}
+        <ModernAreaChart 
+          title="Engagement Trends"
+          subtitle="Daily metrics overview showing visits, quality interactions, and conversions"
+          height={400}
+          data={chartData}
+          metrics={chartMetrics}
+        />
       </div>
     </div>
   );
