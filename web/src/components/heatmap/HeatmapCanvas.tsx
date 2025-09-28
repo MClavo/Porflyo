@@ -29,8 +29,8 @@ const HeatmapCanvas: React.FC<HeatmapCanvasProps> = ({
   items,
   columns,
   cellHeight,
-  radius = 40,
-  blur = 0.9,
+  radius = 60,
+  blur = 20,
   maxValue,
   className,
   style
@@ -97,12 +97,15 @@ const HeatmapCanvas: React.FC<HeatmapCanvasProps> = ({
     actx.clearRect(0, 0, acc.width, acc.height);
     actx.globalCompositeOperation = 'lighter';
 
-    const rScaled = radius * dpr;
+  const rScaled = radius * dpr;
 
-    const derivedMax = maxValue ?? Math.max(...items.map(i => Number(i.value) || 0), 1);
+  const derivedMax = maxValue ?? Math.max(...items.map(i => Number(i.value) || 0), 1);
     const cellWidth = width / Math.max(1, columns);
 
-    // draw each item as a radial white brush into accumulation canvas
+  // apply blur filter on accumulation canvas (blur in px)
+  actx.filter = `blur(${blur * dpr}px)`;
+
+  // draw each item as a radial white brush into accumulation canvas
     items.forEach(it => {
       const indexNum = Number(it.index);
       if (!Number.isFinite(indexNum)) return;
@@ -122,6 +125,9 @@ const HeatmapCanvas: React.FC<HeatmapCanvasProps> = ({
       actx.arc(x * dpr, y * dpr, rScaled, 0, Math.PI * 2);
       actx.fill();
     });
+
+    // reset filter
+    actx.filter = 'none';
 
     // colorize
     const src = actx.getImageData(0, 0, acc.width, acc.height);
@@ -147,7 +153,7 @@ const HeatmapCanvas: React.FC<HeatmapCanvasProps> = ({
 
     ctx.clearRect(0, 0, width, height);
     ctx.drawImage(tmp, 0, 0, width, height);
-  }, [items, columns, cellHeight, radius, maxValue, createColorPalette]);
+  }, [items, columns, cellHeight, radius, maxValue, createColorPalette, blur]);
 
   // Resize observer
   useEffect(() => {

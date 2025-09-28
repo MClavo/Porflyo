@@ -70,6 +70,7 @@ function ModernHeatmapContent() {
         <HeatmapCanvas
           items={heatmapPayload.items}
           columns={64}
+          blur={10}
           cellHeight={25}
           radius={40}
           maxValue={heatmapPayload.max}
