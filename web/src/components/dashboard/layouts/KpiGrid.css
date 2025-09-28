@@ -59,4 +59,5 @@
   .kpi-grid--cols-xl-4 { grid-template-columns: repeat(4, 1fr); }
   .kpi-grid--cols-xl-5 { grid-template-columns: repeat(5, 1fr); }
   .kpi-grid--cols-xl-6 { grid-template-columns: repeat(6, 1fr); }
+  .kpi-grid--cols-xl-7 { grid-template-columns: repeat(7, 1fr); }
 }

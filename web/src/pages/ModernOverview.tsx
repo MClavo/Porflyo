@@ -3,7 +3,7 @@
  */
 
 
-import { FiUsers, FiTrendingUp, FiClock, FiActivity, FiMail, FiMonitor } from "react-icons/fi";
+import { FiUsers, FiTrendingUp, FiClock, FiActivity, FiMail, FiMonitor, FiCheckCircle } from "react-icons/fi";
 import { MetricsProvider } from "../contexts/MetricsProvider";
 import { useOverviewData, useTrends } from "../hooks/metrics";
 import { formatMs } from "../lib/format";  
@@ -48,6 +48,10 @@ function ModernOverviewContent() {
   const emailCopies = latestEntry?.raw?.emailCopies || 0;
   const views = latestEntry?.raw?.views || 1;
   const conversionRate = views > 0 ? ((emailCopies / views) * 100).toFixed(1) + "%" : "N/A";
+  
+  // Quality Visit Rate calculation: qualityVisits / views (as per spec)
+  const qualityVisits = latestEntry?.raw?.qualityVisits || 0;
+  const qualityVisitRate = views > 0 ? ((qualityVisits / views) * 100).toFixed(1) + "%" : "N/A";
   // Calculate change indicators
   const visitsChange = trends.summary.changePct;
   const engagementChange = engagementTrends.summary.changePct;
@@ -65,8 +69,10 @@ function ModernOverviewContent() {
     deviceMix,
     engagementRate,
     conversionRate,
+    qualityVisitRate,
     emailCopies,
     views,
+    qualityVisits,
     visitsChange,
     engagementChange
   });
@@ -81,7 +87,7 @@ function ModernOverviewContent() {
         />
 
         <KpiGrid 
-          columns={{ base: 1, sm: 2, md: 3, lg: 3, xl: 6 }}
+          columns={{ base: 1, sm: 2, md: 3, lg: 4, xl: 7 }}
           gap={6}
         >
           <KpiCard
@@ -134,6 +140,15 @@ function ModernOverviewContent() {
             subtitle="email copies"
             icon={<FiMail />}
             color="orange"
+            isLoading={isLoading}
+          />
+          
+          <KpiCard
+            title="Quality Visit Rate"
+            value={isLoading ? "N/A" : qualityVisitRate}
+            subtitle="engaged visitors"
+            icon={<FiCheckCircle />}
+            color="green"
             isLoading={isLoading}
           />
           
