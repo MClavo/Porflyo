@@ -9,6 +9,7 @@ import { useMetricsStore } from "../state/metrics.store";
 import { latest } from "../lib/dates";
 import { demoInitialPortfolio } from "../pages/editor/demoData";
 import "../styles/dashboard-theme.css";
+import "../styles/modern-heatmap.css";
 import HeatmapCanvas from "../components/heatmap/HeatmapCanvas";
 
 function ModernHeatmapContent() {
@@ -56,10 +57,14 @@ function ModernHeatmapContent() {
     setTimeout(() => setIsHeatmapReady(true), 200);
   }, []);
 
+
   // No update effect needed: HeatmapCanvas consumes `heatmapPayload` from props
 
   return (
-    <div className="modern-heatmap-container" style={{ position: "relative" }}>
+    <div
+      className="modern-heatmap-container"
+      style={{ position: "relative", padding: 'var(--space-4) 0', boxSizing: 'border-box' }}
+    >
       {/* Info panel */}
 
       {/* Portfolio con heatmap overlay */}
@@ -72,7 +77,9 @@ function ModernHeatmapContent() {
           overflow: "hidden",
           border: "1px solid var(--card-border)",
           minHeight: "600px", // Altura mínima para debug
-          width: "100%",
+          width: 'auto',
+          maxWidth: 'none',
+          boxSizing: 'border-box'
         }}
         data-project-id="default"
       >
@@ -123,8 +130,11 @@ function ModernHeatmapContent() {
 
 export default function ModernHeatmap() {
   return (
-    <MetricsProvider portfolioId="default">
-      <ModernHeatmapContent />
-    </MetricsProvider>
+    /* Wrap the page in a page-specific class so we can override the global dashboard max-width */
+    <div className="modern-heatmap-page">
+      <MetricsProvider portfolioId="default">
+        <ModernHeatmapContent />
+      </MetricsProvider>
+    </div>
   );
 }

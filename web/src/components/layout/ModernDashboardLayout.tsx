@@ -26,7 +26,7 @@ export function ModernDashboardLayout({ children }: ModernDashboardLayoutProps) 
       />
       
       {/* Contenido de la página actual */}
-      <div className="dashboard-content">
+      <div className={`dashboard-content ${currentPage === 'heatmap' ? 'dashboard-content--no-max' : ''}`}>
         {children}
       </div>
     </div>
