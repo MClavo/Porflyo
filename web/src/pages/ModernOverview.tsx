@@ -4,19 +4,25 @@
 
 
 import { FiTrendingUp, FiClock, FiActivity, FiMonitor } from "react-icons/fi";
+import { useState } from "react";
 import { MetricsProvider } from "../contexts/MetricsProvider";
 import { useOverviewData, useTrends } from "../hooks/metrics";
 import { formatMs } from "../lib/format";  
 import { useMetricsStore } from "../state/metrics.store";
 import { latest } from "../lib/dates";
-import { KpiCard, KpiGrid, DashboardHeader, SplitProgressBar, VisitsOverviewCard, ModernAreaChart } from "../components/dashboard";
+import { KpiCard, KpiGrid, DashboardHeader, SplitProgressBar, VisitsOverviewCard, ModernAreaChart, DashboardNavbar } from "../components/dashboard";
+import type { TimeRangeOption } from "../lib/timeRange";
+import { getTimeRangeDays } from "../lib/timeRange";
 import "../styles/dashboard-theme.css";
 
 function ModernOverviewContent() {
-  const overviewData = useOverviewData(30);
+  const [timeRange, setTimeRange] = useState<TimeRangeOption>('1month');
+  const days = getTimeRangeDays(timeRange);
+  
+  const overviewData = useOverviewData(days);
   const { isLoading } = overviewData;
-  const trends = useTrends(30, "visits");
-  const engagementTrends = useTrends(30, "engagement");
+  const trends = useTrends(days, "visits");
+  const engagementTrends = useTrends(days, "engagement");
   const { dailyByDate, dailyIndex } = useMetricsStore();
   
   const latestDate = latest(dailyIndex);
@@ -67,7 +73,7 @@ function ModernOverviewContent() {
 
   // Prepare chart data from daily metrics
   const chartData = dailyIndex
-    .slice(-30) // últimos 30 días
+    .slice(-days) // usar rango dinámico
     .map(date => {
       const dayData = dailyByDate[date];
       return {
@@ -105,12 +111,15 @@ function ModernOverviewContent() {
 
   return (
     <div className="dashboard-container">
+      {/* Dashboard Navbar with Time Range Toggle */}
+      <DashboardNavbar
+        title="Analytics Dashboard"
+        subtitle="Professional insights and key performance indicators"
+        timeRange={timeRange}
+        onTimeRangeChange={setTimeRange}
+      />
+      
       <div className="dashboard-content">
-        <DashboardHeader
-          title="Analytics Dashboard"
-          subtitle="Professional insights and key performance indicators"
-          isLoading={isLoading}
-        />
 
         <KpiGrid 
           columns={{ base: 1, sm: 2, md: 3, lg: 4, xl: 7 }}

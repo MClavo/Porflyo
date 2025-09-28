@@ -1,0 +1,224 @@
+/* Time Range Toggle - Modern sticky control */
+
+.time-range-toggle {
+  position: fixed;
+  top: var(--space-6);
+  left: var(--space-8);
+  z-index: 1000;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-xl);
+  padding: var(--space-4);
+  box-shadow: var(--shadow-lg);
+  backdrop-filter: blur(12px);
+  transition: all var(--transition-normal);
+}
+
+.time-range-toggle:hover {
+  background: var(--card-bg-hover);
+  border-color: var(--card-border-hover);
+  box-shadow: var(--shadow-xl);
+  transform: translateY(-2px);
+}
+
+.time-range-toggle::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    var(--accent-blue),
+    var(--accent-purple),
+    var(--accent-blue)
+  );
+  background-size: 200% 100%;
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  opacity: 0;
+  animation: shimmer 3s ease-in-out infinite;
+  transition: opacity var(--transition-normal);
+}
+
+.time-range-toggle:hover::before {
+  opacity: 1;
+}
+
+@keyframes shimmer {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+.time-range-toggle__container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  min-width: 280px;
+}
+
+.time-range-toggle__label {
+  font-size: var(--font-sm);
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  text-align: center;
+  margin-bottom: var(--space-1);
+}
+
+.time-range-toggle__options {
+  display: flex;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: var(--radius-lg);
+  padding: var(--space-1);
+  position: relative;
+  overflow: hidden;
+}
+
+.time-range-option {
+  flex: 1;
+  background: none;
+  border: none;
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  font-size: var(--font-sm);
+  font-weight: 500;
+  color: var(--text-secondary);
+  cursor: pointer;
+  position: relative;
+  transition: all var(--transition-fast);
+  overflow: hidden;
+}
+
+.time-range-option:hover {
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.08);
+  transform: translateY(-1px);
+}
+
+.time-range-option--active {
+  color: var(--text-primary);
+  background: var(--accent-blue);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
+
+.time-range-option--active:hover {
+  background: var(--accent-blue-light);
+  transform: translateY(-2px);
+}
+
+.time-range-option__text {
+  position: relative;
+  z-index: 2;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.time-range-option__indicator {
+  position: absolute;
+  bottom: 2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 20px;
+  height: 2px;
+  background: var(--text-primary);
+  border-radius: var(--radius-full);
+  animation: indicator-glow 2s ease-in-out infinite;
+}
+
+@keyframes indicator-glow {
+  0%, 100% {
+    box-shadow: 0 0 4px var(--text-primary);
+    opacity: 1;
+  }
+  50% {
+    box-shadow: 0 0 8px var(--text-primary), 0 0 12px var(--text-primary);
+    opacity: 0.8;
+  }
+}
+
+/* Pulsing effect for active option */
+.time-range-option--active::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    45deg,
+    transparent,
+    rgba(255, 255, 255, 0.1),
+    transparent
+  );
+  animation: pulse-sweep 3s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes pulse-sweep {
+  0% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .time-range-toggle {
+    left: var(--space-4);
+    top: var(--space-4);
+  }
+
+  .time-range-toggle__container {
+    min-width: 260px;
+  }
+
+  .time-range-option {
+    padding: var(--space-2) var(--space-3);
+    font-size: var(--font-xs);
+  }
+}
+
+@media (max-width: 480px) {
+  .time-range-toggle {
+    left: var(--space-2);
+    top: var(--space-2);
+    padding: var(--space-3);
+  }
+
+  .time-range-toggle__container {
+    min-width: 240px;
+  }
+
+  .time-range-toggle__options {
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+
+  .time-range-option {
+    text-align: center;
+  }
+}
+
+/* Focus states for accessibility */
+.time-range-option:focus {
+  outline: 2px solid var(--accent-blue);
+  outline-offset: 2px;
+}
+
+.time-range-option:focus:not(:focus-visible) {
+  outline: none;
+}

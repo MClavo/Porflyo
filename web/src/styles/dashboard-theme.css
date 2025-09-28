@@ -97,6 +97,7 @@ html, body {
   max-width: 1400px;
   margin: 0 auto;
   padding: var(--space-6);
+  padding-top: calc(var(--space-6) + 100px); /* Espacio para el navbar fijo */
 }
 
 @keyframes skeleton-loading {
@@ -111,5 +112,13 @@ html, body {
 @media (max-width: 768px) {
   .dashboard-content {
     padding: var(--space-4);
+    padding-top: calc(var(--space-4) + 120px); /* Más espacio para navbar vertical */
+  }
+}
+
+@media (max-width: 480px) {
+  .dashboard-content {
+    padding: var(--space-3);
+    padding-top: calc(var(--space-3) + 130px); /* Navbar vertical más alto en móvil */
   }
 }
