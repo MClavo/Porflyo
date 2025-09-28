@@ -24,6 +24,7 @@ import './styles/dashboard-theme.css'
 import OverviewPage from './pages/OverviewPage'
 import ModernDashboard from './pages/ModernDashboard'
 import ModernDashboardTest from './pages/ModernDashboardTest'
+import ModernProjects from './pages/ModernProjects'
 import HeatmapPage from './pages/HeatmapPage'
 import ProjectsPage from './pages/ProjectsPage'
 import DailyPage from './pages/DailyPage'
@@ -95,6 +96,7 @@ export function AppWithProviders() {
                   </ChakraProvider>
                 } />
                 <Route path="/dashboard/modern" element={<ModernDashboard />} />
+                <Route path="/dashboard/modern/projects" element={<ModernProjects />} />
                 <Route path='/m-test' element={<MetricsTest />} />
 
                 <Route path="/dashboard/test" element={

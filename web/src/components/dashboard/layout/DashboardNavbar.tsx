@@ -10,11 +10,12 @@ import { type HeatmapMode } from '../../ui/HeatmapModeToggle';
 import ToggleSelector, { type ToggleSelectorOption } from '../../selector/ToggleSelector';
 import './DashboardNavbar.css';
 
-export type PageOption = 'overview' | 'heatmap';
+export type PageOption = 'overview' | 'heatmap' | 'projects';
 
 const PAGE_OPTIONS: ToggleSelectorOption<PageOption>[] = [
   { value: 'overview', label: 'Overview', description: 'Portfolio overview and metrics' },
-  { value: 'heatmap', label: 'Heatmap', description: 'Interactive performance heatmap' }
+  { value: 'heatmap', label: 'Heatmap', description: 'Interactive performance heatmap' },
+  { value: 'projects', label: 'Projects', description: 'Project management and tracking' }
 ];
 
 const TIME_RANGE_OPTIONS: ToggleSelectorOption<TimeRangeOption>[] = RANGE_OPTIONS.map(option => ({

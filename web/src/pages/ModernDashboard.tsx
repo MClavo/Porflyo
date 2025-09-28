@@ -9,6 +9,7 @@ import { useHeatmapSlots } from '../hooks/useHeatmapSlots';
 import ModernDashboardLayout from '../components/layout/ModernDashboardLayout';
 import ModernOverview from './ModernOverview';
 import ModernHeatmap from './ModernHeatmap';
+import ModernProjects from './ModernProjects';
 import './ModernDashboard.css';
 
 function DashboardRouter() {
@@ -21,6 +22,8 @@ function DashboardRouter() {
         return <ModernOverview />;
       case 'heatmap':
         return <ModernHeatmap selectedSlot={selectedSlot} heatmapMode={heatmapMode} />;
+      case 'projects':
+        return <ModernProjects />;
       default:
         return null;
     }

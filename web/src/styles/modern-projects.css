@@ -1,0 +1,51 @@
+/* ModernProjects - Modern projects page styles */
+
+.modern-projects-page {
+  width: 100%;
+  min-height: 100vh;
+  background: var(--dashboard-bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  padding-top: 80px; /* Account for fixed navbar */
+}
+
+.modern-projects-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 var(--space-6);
+}
+
+/* Content and header styles are handled inline for now */
+
+.modern-projects-empty-state {
+  /* Empty state animation */
+  animation: fadeInUp 0.6s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .modern-projects-container {
+    padding: 0 var(--space-4);
+  }
+  
+  .modern-projects-content {
+    padding: var(--space-4) !important;
+  }
+  
+  .modern-projects-empty-state div {
+    font-size: 48px !important;
+  }
+}
+
+/* Future: Add styles for project cards, lists, etc. when needed */
