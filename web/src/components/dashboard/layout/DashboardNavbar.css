@@ -129,6 +129,12 @@
   gap: var(--space-4);
 }
 
+.dashboard-navbar__heatmap-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
 .time-range-selector {
   display: flex;
   flex-direction: column;

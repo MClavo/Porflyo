@@ -6,6 +6,7 @@ import React from 'react';
 import type { TimeRangeOption } from '../../../lib/timeRange';
 import { RANGE_OPTIONS } from '../../../lib/timeRange';
 import SlotSelector, { type SlotOption } from '../../ui/SlotSelector';
+import HeatmapModeToggle, { type HeatmapMode } from '../../ui/HeatmapModeToggle';
 import './DashboardNavbar.css';
 
 export type PageOption = 'overview' | 'heatmap';
@@ -31,6 +32,9 @@ export interface DashboardNavbarProps {
   slotOptions?: SlotOption[];
   selectedSlot?: string;
   onSlotChange?: (slot: string) => void;
+  // Heatmap calculation mode (only used when currentPage === 'heatmap')
+  heatmapMode?: HeatmapMode;
+  onHeatmapModeChange?: (mode: HeatmapMode) => void;
 }
 
 export const DashboardNavbar: React.FC<DashboardNavbarProps> = ({
@@ -42,7 +46,9 @@ export const DashboardNavbar: React.FC<DashboardNavbarProps> = ({
   onTimeRangeChange,
   slotOptions = [],
   selectedSlot = '',
-  onSlotChange = () => {}
+  onSlotChange = () => {},
+  heatmapMode = 'raw',
+  onHeatmapModeChange = () => {}
 }) => {
   const activeTimeIndex = RANGE_OPTIONS.findIndex(option => option.value === timeRange);
   const activePageIndex = PAGE_TABS.findIndex(tab => tab.value === currentPage);
@@ -86,17 +92,24 @@ export const DashboardNavbar: React.FC<DashboardNavbarProps> = ({
           <p className="dashboard-navbar__subtitle">{subtitle}</p>
         </div>
 
-        {/* Right side - Time Range Toggle or Slot Selector */}
+        {/* Right side - Time Range Toggle or Heatmap Controls */}
         <div className="dashboard-navbar__controls">
           {currentPage === 'heatmap' ? (
-            // Slot selector for heatmap page
-            <SlotSelector
-              options={slotOptions}
-              value={selectedSlot}
-              onChange={onSlotChange}
-              placeholder="Select data slot"
-              disabled={slotOptions.length === 0}
-            />
+            // Heatmap controls: mode toggle + slot selector
+            <div className="dashboard-navbar__heatmap-controls">
+              <HeatmapModeToggle
+                mode={heatmapMode}
+                onChange={onHeatmapModeChange}
+                disabled={slotOptions.length === 0}
+              />
+              <SlotSelector
+                options={slotOptions}
+                value={selectedSlot}
+                onChange={onSlotChange}
+                placeholder="Select data slot"
+                disabled={slotOptions.length === 0}
+              />
+            </div>
           ) : (
             // Time range selector for other pages
             <div className="time-range-selector">

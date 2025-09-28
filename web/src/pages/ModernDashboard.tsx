@@ -13,14 +13,14 @@ import './ModernDashboard.css';
 
 function DashboardRouter() {
   const { currentPage } = useDashboard();
-  const { selectedSlot, slotOptions, handleSlotChange } = useHeatmapSlots();
+  const { selectedSlot, slotOptions, handleSlotChange, heatmapMode, handleModeChange } = useHeatmapSlots();
 
   const renderCurrentPage = () => {
     switch (currentPage) {
       case 'overview':
         return <ModernOverview />;
       case 'heatmap':
-        return <ModernHeatmap selectedSlot={selectedSlot} />;
+        return <ModernHeatmap selectedSlot={selectedSlot} heatmapMode={heatmapMode} />;
       default:
         return null;
     }
@@ -31,6 +31,8 @@ function DashboardRouter() {
       slotOptions={currentPage === 'heatmap' ? slotOptions : []}
       selectedSlot={currentPage === 'heatmap' ? selectedSlot : ''}
       onSlotChange={currentPage === 'heatmap' ? handleSlotChange : () => {}}
+      heatmapMode={currentPage === 'heatmap' ? heatmapMode : 'raw'}
+      onHeatmapModeChange={currentPage === 'heatmap' ? handleModeChange : () => {}}
     >
       <div className="modern-dashboard__content">
         {renderCurrentPage()}

@@ -5,6 +5,7 @@
 import { DashboardNavbar } from '../dashboard';
 import { useDashboard } from '../../hooks/useDashboard';
 import type { SlotOption } from '../ui/SlotSelector';
+import type { HeatmapMode } from '../ui/HeatmapModeToggle';
 import '../../styles/dashboard-theme.css';
 
 interface ModernDashboardLayoutProps {
@@ -13,13 +14,18 @@ interface ModernDashboardLayoutProps {
   slotOptions?: SlotOption[];
   selectedSlot?: string;
   onSlotChange?: (slot: string) => void;
+  // Heatmap calculation mode props
+  heatmapMode?: HeatmapMode;
+  onHeatmapModeChange?: (mode: HeatmapMode) => void;
 }
 
 export function ModernDashboardLayout({ 
   children, 
   slotOptions = [], 
   selectedSlot = '', 
-  onSlotChange = () => {} 
+  onSlotChange = () => {},
+  heatmapMode = 'raw',
+  onHeatmapModeChange = () => {}
 }: ModernDashboardLayoutProps) {
   const { currentPage, timeRange, setCurrentPage, setTimeRange } = useDashboard();
 
@@ -36,6 +42,8 @@ export function ModernDashboardLayout({
         slotOptions={slotOptions}
         selectedSlot={selectedSlot}
         onSlotChange={onSlotChange}
+        heatmapMode={heatmapMode}
+        onHeatmapModeChange={onHeatmapModeChange}
       />
       
       {/* Contenido de la página actual */}

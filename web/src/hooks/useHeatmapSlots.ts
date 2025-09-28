@@ -5,6 +5,7 @@
 import { useState, useMemo } from 'react';
 import { useMetricsStore } from '../state/metrics.store';
 import type { SlotOption } from '../components/ui/SlotSelector';
+import type { HeatmapMode } from '../components/ui/HeatmapModeToggle';
 
 // Helper function to format dates for display
 const formatSlotDate = (dateString: string): string => {
@@ -28,6 +29,7 @@ const formatSlotDate = (dateString: string): string => {
 
 export function useHeatmapSlots() {
   const [selectedSlot, setSelectedSlot] = useState<string>('all');
+  const [heatmapMode, setHeatmapMode] = useState<HeatmapMode>('raw');
   const { slotByDate, slotIndex } = useMetricsStore();
 
   // Generate slot options for the dropdown
@@ -59,9 +61,15 @@ export function useHeatmapSlots() {
     setSelectedSlot(slot);
   };
 
+  const handleModeChange = (mode: HeatmapMode) => {
+    setHeatmapMode(mode);
+  };
+
   return {
     selectedSlot,
     slotOptions,
-    handleSlotChange
+    handleSlotChange,
+    heatmapMode,
+    handleModeChange
   };
 }
