@@ -1,0 +1,45 @@
+.btn-dsh {
+  position: relative;
+  color: white;
+  border: none;
+  padding: 8px 20px;
+  transition: 300ms;
+  box-sizing: border-box;
+  background-color: transparent;
+}
+
+.btn-dsh::before {
+  content: "";
+  position: absolute;
+  background-color: white;
+  top: 0;
+  left: 0;
+  width: 0px;
+  height: 100%;
+  transition: 300ms;
+}
+
+.btn-dsh::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0px;
+  height: 100%;
+  transition: 300ms;
+  background-color: white;
+  opacity: 0.2;
+}
+
+.btn-dsh:hover {
+  padding-left: 25px;
+  cursor: pointer;
+}
+
+.btn-dsh:hover::before {
+  width: 5px;
+}
+
+.btn-dsh:hover::after {
+  width: 100%;
+}
