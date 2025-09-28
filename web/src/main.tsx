@@ -22,7 +22,7 @@ import './styles/modern-dashboard.css'
 import './styles/professional-dashboard.css'
 import './styles/dashboard-theme.css'
 import OverviewPage from './pages/OverviewPage'
-import ModernOverview from './pages/ModernOverview'
+import ModernDashboard from './pages/ModernDashboard'
 import ModernDashboardTest from './pages/ModernDashboardTest'
 import HeatmapPage from './pages/HeatmapPage'
 import ProjectsPage from './pages/ProjectsPage'
@@ -94,7 +94,7 @@ export function AppWithProviders() {
                     </Layout>
                   </ChakraProvider>
                 } />
-                <Route path="/dashboard/modern" element={<ModernOverview />} />
+                <Route path="/dashboard/modern" element={<ModernDashboard />} />
                 <Route path="/dashboard/test" element={
                   <ChakraProvider value={theme}>
                     <Layout>
