@@ -185,13 +185,14 @@ function ModernHeatmapContent() {
           )}
 
           {/* Heatmap overlay component */}
+          {/* TODO: Adjust blur and radius for all and selected day if needed */}
           {isHeatmapReady && !isLoading && (
             <HeatmapCanvas
               items={heatmapPayload.items}
               columns={64}
-              blur={10}
+              blur={17}
               cellHeight={25}
-              radius={40}
+              radius={55}
               maxValue={heatmapPayload.max}
               className="heatmap-overlay"
             />
