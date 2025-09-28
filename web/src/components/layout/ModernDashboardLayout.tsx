@@ -4,13 +4,23 @@
 
 import { DashboardNavbar } from '../dashboard';
 import { useDashboard } from '../../hooks/useDashboard';
+import type { SlotOption } from '../ui/SlotSelector';
 import '../../styles/dashboard-theme.css';
 
 interface ModernDashboardLayoutProps {
   children: React.ReactNode;
+  // Heatmap slot selection props
+  slotOptions?: SlotOption[];
+  selectedSlot?: string;
+  onSlotChange?: (slot: string) => void;
 }
 
-export function ModernDashboardLayout({ children }: ModernDashboardLayoutProps) {
+export function ModernDashboardLayout({ 
+  children, 
+  slotOptions = [], 
+  selectedSlot = '', 
+  onSlotChange = () => {} 
+}: ModernDashboardLayoutProps) {
   const { currentPage, timeRange, setCurrentPage, setTimeRange } = useDashboard();
 
   return (
@@ -23,6 +33,9 @@ export function ModernDashboardLayout({ children }: ModernDashboardLayoutProps) 
         onPageChange={setCurrentPage}
         timeRange={timeRange}
         onTimeRangeChange={setTimeRange}
+        slotOptions={slotOptions}
+        selectedSlot={selectedSlot}
+        onSlotChange={onSlotChange}
       />
       
       {/* Contenido de la página actual */}

@@ -5,6 +5,7 @@
 import React from 'react';
 import type { TimeRangeOption } from '../../../lib/timeRange';
 import { RANGE_OPTIONS } from '../../../lib/timeRange';
+import SlotSelector, { type SlotOption } from '../../ui/SlotSelector';
 import './DashboardNavbar.css';
 
 export type PageOption = 'overview' | 'heatmap';
@@ -26,6 +27,10 @@ export interface DashboardNavbarProps {
   onPageChange: (page: PageOption) => void;
   timeRange: TimeRangeOption;
   onTimeRangeChange: (range: TimeRangeOption) => void;
+  // Heatmap slot selection (only used when currentPage === 'heatmap')
+  slotOptions?: SlotOption[];
+  selectedSlot?: string;
+  onSlotChange?: (slot: string) => void;
 }
 
 export const DashboardNavbar: React.FC<DashboardNavbarProps> = ({
@@ -34,7 +39,10 @@ export const DashboardNavbar: React.FC<DashboardNavbarProps> = ({
   currentPage,
   onPageChange,
   timeRange,
-  onTimeRangeChange
+  onTimeRangeChange,
+  slotOptions = [],
+  selectedSlot = '',
+  onSlotChange = () => {}
 }) => {
   const activeTimeIndex = RANGE_OPTIONS.findIndex(option => option.value === timeRange);
   const activePageIndex = PAGE_TABS.findIndex(tab => tab.value === currentPage);
@@ -78,37 +86,49 @@ export const DashboardNavbar: React.FC<DashboardNavbarProps> = ({
           <p className="dashboard-navbar__subtitle">{subtitle}</p>
         </div>
 
-        {/* Right side - Time Range Toggle */}
+        {/* Right side - Time Range Toggle or Slot Selector */}
         <div className="dashboard-navbar__controls">
-          <div className="time-range-selector">
-            <div className="time-range-selector__label">
-              Time Range
+          {currentPage === 'heatmap' ? (
+            // Slot selector for heatmap page
+            <SlotSelector
+              options={slotOptions}
+              value={selectedSlot}
+              onChange={onSlotChange}
+              placeholder="Select data slot"
+              disabled={slotOptions.length === 0}
+            />
+          ) : (
+            // Time range selector for other pages
+            <div className="time-range-selector">
+              <div className="time-range-selector__label">
+                Time Range
+              </div>
+              <div className="time-range-selector__options">
+                {/* Animated background slider */}
+                <div 
+                  className="time-range-selector__slider"
+                  style={{
+                    transform: `translateX(${activeTimeIndex * 100}%)`,
+                  }}
+                ></div>
+                
+                {RANGE_OPTIONS.map((option) => (
+                  <button
+                    key={option.value}
+                    className={`time-range-option ${
+                      timeRange === option.value ? 'time-range-option--active' : ''
+                    }`}
+                    onClick={() => onTimeRangeChange(option.value)}
+                    type="button"
+                  >
+                    <span className="time-range-option__text">
+                      {option.label}
+                    </span>
+                  </button>
+                ))}
+              </div>
             </div>
-            <div className="time-range-selector__options">
-              {/* Animated background slider */}
-              <div 
-                className="time-range-selector__slider"
-                style={{
-                  transform: `translateX(${activeTimeIndex * 100}%)`,
-                }}
-              ></div>
-              
-              {RANGE_OPTIONS.map((option) => (
-                <button
-                  key={option.value}
-                  className={`time-range-option ${
-                    timeRange === option.value ? 'time-range-option--active' : ''
-                  }`}
-                  onClick={() => onTimeRangeChange(option.value)}
-                  type="button"
-                >
-                  <span className="time-range-option__text">
-                    {option.label}
-                  </span>
-                </button>
-              ))}
-            </div>
-          </div>
+          )}
         </div>
       </div>
       

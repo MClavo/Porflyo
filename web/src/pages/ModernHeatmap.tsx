@@ -6,37 +6,128 @@ import { useRef, useEffect, useState, useMemo } from "react";
 import { PortfolioViewer } from "../components/portfolio";
 import { MetricsProvider } from "../contexts/MetricsProvider";
 import { useMetricsStore } from "../state/metrics.store";
-import { latest } from "../lib/dates";
+
 import { demoInitialPortfolio } from "../pages/editor/demoData";
+import { ModernDashboardLayout } from "../components/layout/ModernDashboardLayout";
+import { DashboardProvider } from "../contexts/DashboardContext";
+import HeatmapCanvas from "../components/heatmap/HeatmapCanvas";
+import HeatmapSkeleton from "../components/ui/HeatmapSkeleton";
+import type { SlotOption } from "../components/ui/SlotSelector";
 import "../styles/dashboard-theme.css";
 import "../styles/modern-heatmap.css";
-import HeatmapCanvas from "../components/heatmap/HeatmapCanvas";
+
+// Helper function to format dates for display
+const formatSlotDate = (dateString: string): string => {
+  const date = new Date(dateString);
+  const today = new Date();
+  const yesterday = new Date(today);
+  yesterday.setDate(yesterday.getDate() - 1);
+  
+  // Format as "Day DD" (e.g., "Mon 28")
+  const dayName = date.toLocaleDateString('en', { weekday: 'short' });
+  const dayNumber = date.getDate();
+  
+  if (date.toDateString() === today.toDateString()) {
+    return `Today ${dayNumber}`;
+  } else if (date.toDateString() === yesterday.toDateString()) {
+    return `Yesterday ${dayNumber}`;
+  } else {
+    return `${dayName} ${dayNumber}`;
+  }
+};
 
 function ModernHeatmapContent() {
   const portfolioRef = useRef<HTMLDivElement>(null);
   const [isHeatmapReady, setIsHeatmapReady] = useState(false);
+  const [selectedSlot, setSelectedSlot] = useState<string>('all');
 
   // Obtener datos del backend usando el store como en ModernOverview
   const { slotByDate, slotIndex, isLoading } = useMetricsStore();
 
-  // Prepare items (index,value) and max derived from backend heatmap cells
-  const heatmapPayload = useMemo(() => {
-    if (!slotByDate || slotIndex.length === 0)
-      return { items: [] as { index: number; value: number }[], max: 1 };
+  // Generate slot options for the dropdown
+  const slotOptions = useMemo((): SlotOption[] => {
+    if (!slotByDate || slotIndex.length === 0) {
+      return [{ value: 'all', label: 'All Data' }];
+    }
 
-    const latestDate = latest(slotIndex);
-    if (!latestDate)
-      return { items: [] as { index: number; value: number }[], max: 1 };
+    const options: SlotOption[] = [
+      { value: 'all', label: 'All Data' }
+    ];
 
-    const latestSlot = Object.values(slotByDate).find(
-      (slot) => slot.date === latestDate
-    );
+    // Add individual slot options
+    slotIndex.forEach(date => {
+      const slot = Object.values(slotByDate).find(s => s.date === date);
+      if (slot && slot.heatmap && slot.heatmap.cells) {
+        options.push({
+          value: date,
+          label: formatSlotDate(date),
+          date: date
+        });
+      }
+    });
 
-    if (!latestSlot || !latestSlot.heatmap || !latestSlot.heatmap.cells)
+    return options;
+  }, [slotByDate, slotIndex]);
+
+  // Aggregate heatmap data function
+  const aggregateHeatmapData = useMemo(() => {
+    if (!slotByDate || slotIndex.length === 0) {
       return { items: [] as { index: number; value: number }[], max: 1 };
+    }
 
     type HeatmapCell = { index: number; count: number };
-    const cells = latestSlot.heatmap.cells as HeatmapCell[];
+    const aggregatedCells = new Map<number, number>();
+
+    // Process all slots to aggregate data
+    slotIndex.forEach(date => {
+      const slot = Object.values(slotByDate).find(s => s.date === date);
+      if (slot && slot.heatmap && slot.heatmap.cells) {
+        const cells = slot.heatmap.cells as HeatmapCell[];
+        cells.forEach(cell => {
+          const idx = Number(cell.index);
+          const count = Number(cell.count) || 0;
+          if (Number.isFinite(idx) && count > 0) {
+            const existing = aggregatedCells.get(idx) || 0;
+            aggregatedCells.set(idx, existing + count);
+          }
+        });
+      }
+    });
+
+    // Convert to items array
+    const items: { index: number; value: number }[] = [];
+    let max = 1;
+
+    aggregatedCells.forEach((value, index) => {
+      items.push({ index, value });
+      if (value > max) max = value;
+    });
+
+    return { items, max };
+  }, [slotByDate, slotIndex]);
+
+  // Prepare items (index,value) and max derived from backend heatmap cells
+  const heatmapPayload = useMemo(() => {
+    if (!slotByDate || slotIndex.length === 0) {
+      return { items: [] as { index: number; value: number }[], max: 1 };
+    }
+
+    // Handle 'all' selection - use aggregated data
+    if (selectedSlot === 'all') {
+      return aggregateHeatmapData;
+    }
+
+    // Handle specific slot selection
+    const selectedSlotData = Object.values(slotByDate).find(
+      (slot) => slot.date === selectedSlot
+    );
+
+    if (!selectedSlotData || !selectedSlotData.heatmap || !selectedSlotData.heatmap.cells) {
+      return { items: [] as { index: number; value: number }[], max: 1 };
+    }
+
+    type HeatmapCell = { index: number; count: number };
+    const cells = selectedSlotData.heatmap.cells as HeatmapCell[];
     const items: { index: number; value: number }[] = [];
 
     let max = 1;
@@ -50,91 +141,109 @@ function ModernHeatmapContent() {
     });
 
     return { items, max };
-  }, [slotByDate, slotIndex]);
+  }, [slotByDate, slotIndex, selectedSlot, aggregateHeatmapData]);
 
   // Simple readiness flag (no external library)
   useEffect(() => {
     setTimeout(() => setIsHeatmapReady(true), 200);
   }, []);
 
-
-  // No update effect needed: HeatmapCanvas consumes `heatmapPayload` from props
+  // Handle slot selection change
+  const handleSlotChange = (slot: string) => {
+    setSelectedSlot(slot);
+  };
 
   return (
-    <div
-      className="modern-heatmap-container"
-      style={{ position: "relative", padding: 'var(--space-4) 0', boxSizing: 'border-box' }}
+    <ModernDashboardLayout
+      slotOptions={slotOptions}
+      selectedSlot={selectedSlot}
+      onSlotChange={handleSlotChange}
     >
-      {/* Info panel */}
-
-      {/* Portfolio con heatmap overlay */}
       <div
-        ref={portfolioRef}
-        style={{
-          position: "relative",
-          background: "var(--dashboard-bg-secondary)",
-          borderRadius: "var(--radius-lg)",
-          overflow: "hidden",
-          border: "1px solid var(--card-border)",
-          minHeight: "600px", // Altura mínima para debug
-          width: 'auto',
-          maxWidth: 'none',
-          boxSizing: 'border-box'
-        }}
-        data-project-id="default"
+        className="modern-heatmap-container"
+        style={{ position: "relative", padding: 'var(--space-4) 0', boxSizing: 'border-box' }}
       >
-        {/* Heatmap overlay component */}
-        <HeatmapCanvas
-          items={heatmapPayload.items}
-          columns={64}
-          blur={10}
-          cellHeight={25}
-          radius={40}
-          maxValue={heatmapPayload.max}
-          className="heatmap-overlay"
-        />
-
-        {/* Portfolio viewer */}
-        <PortfolioViewer
-          portfolio={demoInitialPortfolio}
-          className="heatmap-portfolio"
-        />
-      </div>
-
-      {/* Debug info */}
-      {import.meta.env.DEV && (
+        {/* Portfolio con heatmap overlay */}
         <div
+          ref={portfolioRef}
           style={{
-            marginTop: "var(--space-4)",
-            padding: "var(--space-3)",
-            background: "rgba(0,0,0,0.1)",
-            borderRadius: "var(--radius-md)",
-            fontSize: "var(--font-xs)",
-            color: "var(--text-secondary)",
+            position: "relative",
+            background: "var(--dashboard-bg-secondary)",
+            borderRadius: "var(--radius-lg)",
+            overflow: "hidden",
+            border: "1px solid var(--card-border)",
+            minHeight: "600px", // Altura mínima para debug
+            width: 'auto',
+            maxWidth: 'none',
+            boxSizing: 'border-box'
           }}
+          data-project-id="default"
         >
-          <strong>Debug Info:</strong>
-          <br />
-          Heatmap Ready: {isHeatmapReady ? "✅" : "❌"}
-          <br />
-          Data Source: {slotIndex.length > 0 ? "Backend API" : "No Data"}
-          <br />
-          Latest Date: {latest(slotIndex) || "None"}
-          <br />
-          Loading: {isLoading ? "Yes" : "No"}
+          {/* Loading skeleton */}
+          {(isLoading || !isHeatmapReady) && (
+            <HeatmapSkeleton className="heatmap-loading" />
+          )}
+
+          {/* Heatmap overlay component */}
+          {isHeatmapReady && !isLoading && (
+            <HeatmapCanvas
+              items={heatmapPayload.items}
+              columns={64}
+              blur={10}
+              cellHeight={25}
+              radius={40}
+              maxValue={heatmapPayload.max}
+              className="heatmap-overlay"
+            />
+          )}
+
+          {/* Portfolio viewer */}
+          <PortfolioViewer
+            portfolio={demoInitialPortfolio}
+            className="heatmap-portfolio"
+          />
         </div>
-      )}
-    </div>
+
+        {/* Debug info */}
+        {import.meta.env.DEV && (
+          <div
+            style={{
+              marginTop: "var(--space-4)",
+              padding: "var(--space-3)",
+              background: "rgba(0,0,0,0.1)",
+              borderRadius: "var(--radius-md)",
+              fontSize: "var(--font-xs)",
+              color: "var(--text-secondary)",
+            }}
+          >
+            <strong>Debug Info:</strong>
+            <br />
+            Heatmap Ready: {isHeatmapReady ? "✅" : "❌"}
+            <br />
+            Data Source: {slotIndex.length > 0 ? "Backend API" : "No Data"}
+            <br />
+            Selected Slot: {selectedSlot}
+            <br />
+            Available Slots: {slotOptions.length - 1}
+            <br />
+            Items Count: {heatmapPayload.items.length}
+            <br />
+            Loading: {isLoading ? "Yes" : "No"}
+          </div>
+        )}
+      </div>
+    </ModernDashboardLayout>
   );
 }
 
 export default function ModernHeatmap() {
   return (
-    /* Wrap the page in a page-specific class so we can override the global dashboard max-width */
-    <div className="modern-heatmap-page">
-      <MetricsProvider portfolioId="default">
-        <ModernHeatmapContent />
-      </MetricsProvider>
-    </div>
+    <DashboardProvider>
+      <div className="modern-heatmap-page">
+        <MetricsProvider portfolioId="default">
+          <ModernHeatmapContent />
+        </MetricsProvider>
+      </div>
+    </DashboardProvider>
   );
 }
