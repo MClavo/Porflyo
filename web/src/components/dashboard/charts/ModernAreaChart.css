@@ -122,6 +122,12 @@
   width: 100%;
 }
 
+/* Optimización para el tooltip */
+.recharts-tooltip-wrapper {
+  transition: transform 0.05s ease-out !important;
+  will-change: transform !important;
+}
+
 /* Custom Tooltip */
 .modern-tooltip {
   background: rgba(26, 32, 44, 0.95);
@@ -132,6 +138,9 @@
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
   min-width: 200px;
   z-index: 1000;
+  transition: all 0.05s ease-out;
+  will-change: transform;
+  pointer-events: none;
 }
 
 .modern-tooltip__header {

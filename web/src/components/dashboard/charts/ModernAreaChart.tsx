@@ -232,6 +232,10 @@ export const ModernAreaChart: React.FC<ModernAreaChartProps> = ({
                 strokeWidth: 1,
                 strokeDasharray: '4 4'
               }}
+              animationDuration={0}
+              animationEasing="linear"
+              allowEscapeViewBox={{ x: false, y: false }}
+              position={{ x: undefined, y: undefined }}
             />
 
             {metrics.map((metric) => (

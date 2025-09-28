@@ -78,7 +78,8 @@ function ModernOverviewContent() {
         socialClicks: dayData?.raw?.socialClicksTotal || 0
       };
     })
-    .filter(item => item.views > 0); // filtrar días sin datos
+    .filter(item => item.views > 0) // filtrar días sin datos
+    .reverse(); // invertir para mostrar fechas más recientes a la derecha
 
   const chartMetrics = [
     { key: 'views', name: 'Total Views', color: '#3B82F6' },
