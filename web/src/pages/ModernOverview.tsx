@@ -3,13 +3,13 @@
  */
 
 
-import { FiUsers, FiTrendingUp, FiClock, FiActivity, FiMail, FiMonitor, FiCheckCircle } from "react-icons/fi";
+import { FiTrendingUp, FiClock, FiActivity, FiMonitor } from "react-icons/fi";
 import { MetricsProvider } from "../contexts/MetricsProvider";
 import { useOverviewData, useTrends } from "../hooks/metrics";
 import { formatMs } from "../lib/format";  
 import { useMetricsStore } from "../state/metrics.store";
 import { latest } from "../lib/dates";
-import { KpiCard, KpiGrid, DashboardHeader, SplitProgressBar } from "../components/dashboard";
+import { KpiCard, KpiGrid, DashboardHeader, SplitProgressBar, VisitsOverviewCard } from "../components/dashboard";
 import "../styles/dashboard-theme.css";
 
 function ModernOverviewContent() {
@@ -90,19 +90,17 @@ function ModernOverviewContent() {
           columns={{ base: 1, sm: 2, md: 3, lg: 4, xl: 7 }}
           gap={6}
         >
-          <KpiCard
-            title="Total Visits"
-            value={isLoading ? "0" : totalVisits.toLocaleString()}
-            subtitle="page views"
-            change={visitsChange ? {
+          {/* Visits Overview Card - spans 3 columns */}
+          <VisitsOverviewCard
+            totalVisits={totalVisits}
+            conversionRate={conversionRate}
+            qualityVisitRate={qualityVisitRate}
+            visitsChange={visitsChange ? {
               value: visitsChange,
               type: getChangeType(visitsChange)
             } : undefined}
-            icon={<FiUsers />}
-            color="blue"
             isLoading={isLoading}
           />
-          
           <KpiCard
             title="Engagement Rate"
             value={isLoading ? "N/A" : (engagementRate ? engagementRate.toFixed(1) : "N/A")}
@@ -131,24 +129,6 @@ function ModernOverviewContent() {
             subtitle="first interaction"
             icon={<FiActivity />}
             color="orange"
-            isLoading={isLoading}
-          />
-          
-          <KpiCard
-            title="Conversion Rate"
-            value={isLoading ? "N/A" : conversionRate}
-            subtitle="email copies"
-            icon={<FiMail />}
-            color="orange"
-            isLoading={isLoading}
-          />
-          
-          <KpiCard
-            title="Quality Visit Rate"
-            value={isLoading ? "N/A" : qualityVisitRate}
-            subtitle="engaged visitors"
-            icon={<FiCheckCircle />}
-            color="green"
             isLoading={isLoading}
           />
           
