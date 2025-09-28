@@ -8,8 +8,15 @@ export interface DeviceMix {
   mobileTabletPct: number | null;
 }
 
+export interface Zscore {
+  visits: number | null;    // -1 to +1
+  engagement: number | null; // -1 to +1
+  ttfi: number | null;      // -1 to +1
+}
+
 export interface DailyRaw {
   views: number;
+  activeTime: number; // in timeBase units (ds)
   emailCopies: number;
   desktopViews: number;
   mobileTabletViews: number;
@@ -18,27 +25,29 @@ export interface DailyRaw {
   qualityVisits: number;
   projectViewTimeTotal: number; // in timeBase units (ds)
   projectExposuresTotal: number;
+  projectCodeViewsTotal: number;
+  projectLiveViewsTotal: number;
   tffiSumMs: number;
   tffiCount: number;
   socialClicksTotal?: number; // optional
 }
 
 export interface DailyDerived {
+  avgViewTime: number | null; // ds
   deviceMix: DeviceMix;
   engagementAvg: number | null;
   avgScrollTimeMs: number | null; // converted to ms
+  avgSessionTime: number | null; // ds
   avgCardViewTimeMs: number | null; // converted to ms
   tffiMeanMs: number | null; // converted to ms
   emailConversion: number | null; // fraction 0..1
-  qualityVisitRate?: number | null; // optional, fraction 0..1
-  socialCtr?: number | null; // optional, fraction 0..1
 }
 
 export interface DailyEntry {
   date: string; // YYYY-MM-DD format
   raw: DailyRaw;
-  derived?: DailyDerived; // present if backend computes it
-  zScores?: { [metricName: string]: number }; // optional z-scores per metric
+  derived: DailyDerived; 
+  zScores: Zscore; 
 }
 
 export interface WindowAggregation {

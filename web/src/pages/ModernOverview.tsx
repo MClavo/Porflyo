@@ -39,19 +39,22 @@ function ModernOverviewContent() {
 
   // Calculate KPIs with corrected formulas
   const totalVisits = overviewData.todayKpis?.totalViews || 0;
-  const avgSession = overviewData.todayKpis?.avgSessionMs;
-  const deviceMix = overviewData.todayKpis?.deviceMix;
+  // avgSessionMinutes is in minutes
+  const avgSessionMinutes = overviewData.todayKpis?.avgSessionMinutes ?? null;
+  const deviceMix = overviewData.todayKpis?.deviceMix ?? null;
   
   const engagementRate = engagementTrends.summary.current;
   
-  // Correct conversion rate calculation: emailCopies / views (as per spec)
-  const emailCopies = latestEntry?.raw?.emailCopies || 0;
-  const views = latestEntry?.raw?.views || 1;
-  const conversionRate = views > 0 ? ((emailCopies / views) * 100).toFixed(1) + "%" : "N/A";
-  
-  // Quality Visit Rate calculation: qualityVisits / views (as per spec)
-  const qualityVisits = latestEntry?.raw?.qualityVisits || 0;
-  const qualityVisitRate = views > 0 ? ((qualityVisits / views) * 100).toFixed(1) + "%" : "N/A";
+  // Prefer computed todayKpis for conversions/quality; fallback to latestEntry.raw when missing
+  const emailCopies = overviewData.todayKpis?.emailCopies ?? latestEntry?.raw?.emailCopies ?? 0;
+  const views = overviewData.todayKpis?.totalViews ?? latestEntry?.raw?.views ?? 0;
+  const conversionRate = (overviewData.todayKpis?.emailConversionPct != null)
+    ? (overviewData.todayKpis!.emailConversionPct * 100).toFixed(1) + "%"
+    : (views > 0 ? ((emailCopies / views) * 100).toFixed(1) + "%" : "N/A");
+
+  const qualityVisitRate = (overviewData.todayKpis?.qualityVisitRatePct != null)
+    ? (overviewData.todayKpis!.qualityVisitRatePct * 100).toFixed(1) + "%"
+    : (views > 0 ? ((latestEntry?.raw?.qualityVisits || 0) / views * 100).toFixed(1) + "%" : "N/A");
   // Calculate change indicators
   const visitsChange = trends.summary.changePct;
   const engagementChange = engagementTrends.summary.changePct;
@@ -65,14 +68,13 @@ function ModernOverviewContent() {
   // Debug logging
   console.log("ModernOverview metrics:", {
     totalVisits,
-    avgSession,
+    avgSessionMinutes,
     deviceMix,
     engagementRate,
     conversionRate,
     qualityVisitRate,
     emailCopies,
     views,
-    qualityVisits,
     visitsChange,
     engagementChange
   });
@@ -114,23 +116,35 @@ function ModernOverviewContent() {
             isLoading={isLoading}
           />
           
-          <KpiCard
-            title="Session Duration"
-            value={isLoading ? "N/A" : (avgSession ? formatMs(avgSession) : "N/A")}
-            subtitle="avg length"
-            icon={<FiClock />}
-            color="purple"
-            isLoading={isLoading}
-          />
+                  <KpiCard
+                    title="Session Duration"
+                    value={isLoading ? "N/A" : (avgSessionMinutes != null ? `${avgSessionMinutes.toFixed(1)}m` : "N/A")}
+                    subtitle="avg length"
+                    icon={<FiClock />}
+                    color="purple"
+                    isLoading={isLoading}
+                  />
           
-          <KpiCard
-            title="Time to Interact"
-            value={isLoading ? "N/A" : (avgSession ? formatMs(avgSession * 0.7) : "N/A")}
-            subtitle="first interaction"
-            icon={<FiActivity />}
-            color="orange"
-            isLoading={isLoading}
-          />
+                  <KpiCard
+                    title="Time to Interact"
+                    // prefer ttfi from latest engagement series, else heuristic: 0.7 * avgSessionMinutes
+                    value={isLoading ? "N/A" : (() => {
+                      const latestEng = overviewData.engagementSeries.length > 0 ? overviewData.engagementSeries[overviewData.engagementSeries.length - 1] : undefined;
+                      const ttfi = latestEng && (latestEng as { tffiMeanMs?: number }).tffiMeanMs ? (latestEng as { tffiMeanMs?: number }).tffiMeanMs : null;
+                      if (ttfi != null) return formatMs(ttfi);
+                      if (avgSessionMinutes != null) {
+                        // convert minutes to ms
+                        const ms = avgSessionMinutes * 60 * 1000;
+                        return formatMs(ms * 0.7);
+                      }
+                      return "N/A";
+                    })()
+                    }
+                    subtitle="first interaction"
+                    icon={<FiActivity />}
+                    color="orange"
+                    isLoading={isLoading}
+                  />
           
           <KpiCard
             title="Device Mix"
