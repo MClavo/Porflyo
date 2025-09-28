@@ -1,50 +1,44 @@
 /**
  * TimeRangeToggle - Control moderno para seleccionar rango de tiempo
+ * Now uses the unified ToggleSelector component
  */
 
-import React from 'react';
 import type { TimeRangeOption } from '../../../lib/timeRange';
 import { RANGE_OPTIONS } from '../../../lib/timeRange';
-import './TimeRangeToggle.css';
+import ToggleSelector, { type ToggleSelectorOption } from '../../selector/ToggleSelector';
 
 export interface TimeRangeToggleProps {
   value: TimeRangeOption;
   onChange: (range: TimeRangeOption) => void;
   className?: string;
+  size?: 'sm' | 'md' | 'lg';
+  showLabel?: boolean;
 }
+
+// Convert RANGE_OPTIONS to ToggleSelectorOption format
+const TIME_RANGE_OPTIONS: ToggleSelectorOption<TimeRangeOption>[] = RANGE_OPTIONS.map(option => ({
+  value: option.value,
+  label: option.label,
+  description: `View data for ${option.label.toLowerCase()}`
+}));
 
 export const TimeRangeToggle: React.FC<TimeRangeToggleProps> = ({
   value,
   onChange,
-  className = ''
+  className = '',
+  size = 'md',
+  showLabel = true
 }) => {
   return (
-    <div className={`time-range-toggle ${className}`}>
-      <div className="time-range-toggle__container">
-        <div className="time-range-toggle__label">
-          Time Range
-        </div>
-        <div className="time-range-toggle__options">
-          {RANGE_OPTIONS.map((option) => (
-            <button
-              key={option.value}
-              className={`time-range-option ${
-                value === option.value ? 'time-range-option--active' : ''
-              }`}
-              onClick={() => onChange(option.value)}
-              type="button"
-            >
-              <span className="time-range-option__text">
-                {option.label}
-              </span>
-              {value === option.value && (
-                <div className="time-range-option__indicator"></div>
-              )}
-            </button>
-          ))}
-        </div>
-      </div>
-    </div>
+    <ToggleSelector
+      options={TIME_RANGE_OPTIONS}
+      value={value}
+      onChange={onChange}
+      label={showLabel ? "Time Range" : undefined}
+      size={size}
+      className={`time-range-toggle ${className}`}
+      ariaLabel="Select time range"
+    />
   );
 };
 

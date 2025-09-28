@@ -6,19 +6,26 @@ import React from 'react';
 import type { TimeRangeOption } from '../../../lib/timeRange';
 import { RANGE_OPTIONS } from '../../../lib/timeRange';
 import SlotSelector, { type SlotOption } from '../../ui/SlotSelector';
-import HeatmapModeToggle, { type HeatmapMode } from '../../ui/HeatmapModeToggle';
+import { type HeatmapMode } from '../../ui/HeatmapModeToggle';
+import ToggleSelector, { type ToggleSelectorOption } from '../../selector/ToggleSelector';
 import './DashboardNavbar.css';
 
 export type PageOption = 'overview' | 'heatmap';
 
-interface PageTab {
-  value: PageOption;
-  label: string;
-}
+const PAGE_OPTIONS: ToggleSelectorOption<PageOption>[] = [
+  { value: 'overview', label: 'Overview', description: 'Portfolio overview and metrics' },
+  { value: 'heatmap', label: 'Heatmap', description: 'Interactive performance heatmap' }
+];
 
-const PAGE_TABS: PageTab[] = [
-  { value: 'overview', label: 'Overview' },
-  { value: 'heatmap', label: 'Heatmap' }
+const TIME_RANGE_OPTIONS: ToggleSelectorOption<TimeRangeOption>[] = RANGE_OPTIONS.map(option => ({
+  value: option.value,
+  label: option.label,
+  description: `View data for ${option.label.toLowerCase()}`
+}));
+
+const HEATMAP_MODE_OPTIONS: ToggleSelectorOption<HeatmapMode>[] = [
+  { value: 'raw', label: 'Raw Values', description: 'Show cell values as-is' },
+  { value: 'weighted', label: 'Count Weighted', description: 'Values divided by counts' }
 ];
 
 export interface DashboardNavbarProps {
@@ -50,40 +57,19 @@ export const DashboardNavbar: React.FC<DashboardNavbarProps> = ({
   heatmapMode = 'raw',
   onHeatmapModeChange = () => {}
 }) => {
-  const activeTimeIndex = RANGE_OPTIONS.findIndex(option => option.value === timeRange);
-  const activePageIndex = PAGE_TABS.findIndex(tab => tab.value === currentPage);
-
   return (
     <nav className="dashboard-navbar">
       <div className="dashboard-navbar__container">
         {/* Left side - Page Navigation */}
         <div className="dashboard-navbar__pages">
-          <div className="page-selector">
-            <div className="page-selector__options">
-              {/* Animated background slider for pages */}
-              <div 
-                className="page-selector__slider"
-                style={{
-                  transform: `translateX(${activePageIndex * 100}%)`,
-                }}
-              ></div>
-              
-              {PAGE_TABS.map((tab) => (
-                <button
-                  key={tab.value}
-                  className={`page-option ${
-                    currentPage === tab.value ? 'page-option--active' : ''
-                  }`}
-                  onClick={() => onPageChange(tab.value)}
-                  type="button"
-                >
-                  <span className="page-option__text">
-                    {tab.label}
-                  </span>
-                </button>
-              ))}
-            </div>
-          </div>
+          <ToggleSelector
+            options={PAGE_OPTIONS}
+            value={currentPage}
+            onChange={onPageChange}
+            size="lg"
+            ariaLabel="Select dashboard page"
+            className="navbar-page-selector"
+          />
         </div>
 
         {/* Center - Title */}
@@ -97,10 +83,15 @@ export const DashboardNavbar: React.FC<DashboardNavbarProps> = ({
           {currentPage === 'heatmap' ? (
             // Heatmap controls: mode toggle + slot selector
             <div className="dashboard-navbar__heatmap-controls">
-              <HeatmapModeToggle
-                mode={heatmapMode}
+              <ToggleSelector
+                options={HEATMAP_MODE_OPTIONS}
+                value={heatmapMode}
                 onChange={onHeatmapModeChange}
+                label="Calculation Mode"
+                size="md"
                 disabled={slotOptions.length === 0}
+                ariaLabel="Select heatmap calculation mode"
+                className="navbar-mode-selector"
               />
               <SlotSelector
                 options={slotOptions}
@@ -112,35 +103,15 @@ export const DashboardNavbar: React.FC<DashboardNavbarProps> = ({
             </div>
           ) : (
             // Time range selector for other pages
-            <div className="time-range-selector">
-              <div className="time-range-selector__label">
-                Time Range
-              </div>
-              <div className="time-range-selector__options">
-                {/* Animated background slider */}
-                <div 
-                  className="time-range-selector__slider"
-                  style={{
-                    transform: `translateX(${activeTimeIndex * 100}%)`,
-                  }}
-                ></div>
-                
-                {RANGE_OPTIONS.map((option) => (
-                  <button
-                    key={option.value}
-                    className={`time-range-option ${
-                      timeRange === option.value ? 'time-range-option--active' : ''
-                    }`}
-                    onClick={() => onTimeRangeChange(option.value)}
-                    type="button"
-                  >
-                    <span className="time-range-option__text">
-                      {option.label}
-                    </span>
-                  </button>
-                ))}
-              </div>
-            </div>
+            <ToggleSelector
+              options={TIME_RANGE_OPTIONS}
+              value={timeRange}
+              onChange={onTimeRangeChange}
+              label="Time Range"
+              size="md"
+              ariaLabel="Select time range"
+              className="navbar-time-selector"
+            />
           )}
         </div>
       </div>

@@ -366,3 +366,16 @@
   background-size: 200% 100%;
   animation: navbar-shimmer 2s ease-in-out infinite;
 }
+
+/* ToggleSelector integration styles */
+.navbar-page-selector .toggle-selector__label {
+  display: none; /* Hide label for page selector */
+}
+
+/* Additional navbar integration styles can be added here as needed */
+
+.dashboard-navbar__heatmap-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}

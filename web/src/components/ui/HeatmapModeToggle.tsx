@@ -1,9 +1,9 @@
 /**
  * HeatmapModeToggle - Toggle component for selecting heatmap calculation mode
+ * Now uses the unified ToggleSelector component
  */
 
-import React from 'react';
-import './HeatmapModeToggle.css';
+import ToggleSelector, { type ToggleSelectorOption } from '../selector/ToggleSelector';
 
 export type HeatmapMode = 'raw' | 'weighted';
 
@@ -12,57 +12,34 @@ export interface HeatmapModeToggleProps {
   onChange: (mode: HeatmapMode) => void;
   disabled?: boolean;
   className?: string;
+  size?: 'sm' | 'md' | 'lg';
+  showLabel?: boolean;
 }
 
-const HEATMAP_MODES = [
-  { value: 'raw' as const, label: 'Raw Values', description: 'Show cell values as-is' },
-  { value: 'weighted' as const, label: 'Count Weighted', description: 'Values divided by counts' }
+const HEATMAP_MODE_OPTIONS: ToggleSelectorOption<HeatmapMode>[] = [
+  { value: 'raw', label: 'Raw Values', description: 'Show cell values as-is' },
+  { value: 'weighted', label: 'Count Weighted', description: 'Values divided by counts' }
 ];
 
 export const HeatmapModeToggle: React.FC<HeatmapModeToggleProps> = ({
   mode,
   onChange,
   disabled = false,
-  className = ""
+  className = "",
+  size = 'md',
+  showLabel = true
 }) => {
-  const activeIndex = HEATMAP_MODES.findIndex(m => m.value === mode);
-
   return (
-    <div className={`heatmap-mode-toggle ${className}`}>
-      <div className="heatmap-mode-toggle__label">
-        Calculation Mode
-      </div>
-      
-      <div className="heatmap-mode-toggle__container">
-        <div className="heatmap-mode-toggle__options">
-          {/* Animated background slider */}
-          <div 
-            className="heatmap-mode-toggle__slider"
-            style={{
-              transform: `translateX(${activeIndex * 100}%)`,
-            }}
-          />
-          
-          {HEATMAP_MODES.map((modeOption) => (
-            <button
-              key={modeOption.value}
-              className={`heatmap-mode-option ${
-                mode === modeOption.value ? 'heatmap-mode-option--active' : ''
-              }`}
-              onClick={() => !disabled && onChange(modeOption.value)}
-              disabled={disabled}
-              type="button"
-              title={modeOption.description}
-              aria-pressed={mode === modeOption.value}
-            >
-              <span className="heatmap-mode-option__text">
-                {modeOption.label}
-              </span>
-            </button>
-          ))}
-        </div>
-      </div>
-    </div>
+    <ToggleSelector
+      options={HEATMAP_MODE_OPTIONS}
+      value={mode}
+      onChange={onChange}
+      label={showLabel ? "Calculation Mode" : undefined}
+      size={size}
+      disabled={disabled}
+      className={`heatmap-mode-toggle ${className}`}
+      ariaLabel="Select heatmap calculation mode"
+    />
   );
 };
 
