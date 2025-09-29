@@ -30,14 +30,26 @@
   color: var(--text-muted);
 }
 
-/* User Profile Section */
+/* User Profile Section - Modern Style (inspired by ProfilePage) */
 .user-profile-section {
   background: var(--card-bg);
   border: 1px solid var(--card-border);
   border-radius: var(--radius-xl);
-  padding: var(--space-6);
+  padding: var(--space-8);
   box-shadow: var(--shadow-md);
   transition: all var(--transition-normal);
+  position: relative;
+  overflow: hidden;
+}
+
+.user-profile-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple));
 }
 
 .user-profile-section:hover {
@@ -46,69 +58,68 @@
   box-shadow: var(--shadow-lg);
 }
 
-.user-profile-header {
+.user-profile-content {
   display: flex;
   align-items: center;
   gap: var(--space-6);
-  margin-bottom: var(--space-6);
 }
 
-.user-avatar {
-  width: 80px;
-  height: 80px;
+.user-profile-avatar {
+  width: 120px;
+  height: 120px;
   border-radius: 50%;
   object-fit: cover;
-  border: 3px solid var(--accent-blue);
-  box-shadow: var(--shadow-md);
+  border: 4px solid var(--accent-blue);
+  box-shadow: var(--shadow-lg);
 }
 
-.user-info {
+.user-profile-info {
   flex: 1;
 }
 
-.user-name {
-  font-size: var(--font-3xl) !important;
+.user-profile-title {
+  font-size: var(--font-4xl) !important;
   font-weight: 800 !important;
   color: var(--text-primary) !important;
   font-family: var(--font-sans) !important;
   letter-spacing: normal !important;
-  margin: 0 0 var(--space-1) 0;
+  margin: 0 0 var(--space-2) 0;
+  line-height: 1.2;
 }
 
-.user-email {
-  font-size: var(--font-base);
+.user-profile-subtitle {
+  font-size: var(--font-lg);
   color: var(--text-secondary);
   margin: 0 0 var(--space-3) 0;
 }
 
-.user-actions {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-}
-
-.social-links {
+.user-profile-meta {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-3);
-}
-
-.social-link {
-  padding: var(--space-2) var(--space-4);
-  background: rgba(59, 130, 246, 0.1);
-  border: 1px solid rgba(59, 130, 246, 0.2);
-  border-radius: var(--radius-md);
-  color: var(--accent-blue);
-  text-decoration: none;
+  gap: var(--space-4);
   font-size: var(--font-sm);
-  font-weight: 500;
-  transition: all var(--transition-normal);
+  color: var(--text-muted);
 }
 
-.social-link:hover {
-  background: rgba(59, 130, 246, 0.2);
-  border-color: var(--accent-blue);
-  transform: translateY(-1px);
+.user-meta-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.user-meta-link {
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: color var(--transition-normal);
+}
+
+.user-meta-link:hover {
+  color: var(--accent-blue);
+}
+
+.user-profile-actions {
+  display: flex;
+  align-items: center;
 }
 
 /* Portfolios Section */
@@ -220,13 +231,13 @@
     padding: var(--space-6);
   }
 
-  .user-profile-header {
+  .user-profile-content {
     flex-direction: column;
     text-align: center;
     gap: var(--space-4);
   }
 
-  .user-actions {
+  .user-profile-actions {
     justify-content: center;
   }
 
@@ -252,8 +263,13 @@
     padding: var(--space-4);
   }
 
-  .user-name {
-    font-size: var(--font-2xl);
+  .user-profile-title {
+    font-size: var(--font-2xl) !important;
+  }
+
+  .user-profile-avatar {
+    width: 100px;
+    height: 100px;
   }
 
   .portfolios-grid {
