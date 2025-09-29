@@ -6,6 +6,7 @@ import { AuthProvider } from './contexts/AuthContext'
 import { PortfoliosProvider } from './contexts/PortfoliosContext'
 import { RepositoriesProvider } from './contexts/RepositoriesContext'
 import { SavedSectionsProvider } from './contexts/SavedSectionsContext'
+import { NavbarProvider } from './providers/NavbarProvider'
 import EditorTest from './pages/EditorTest.tsx'
 import Home from './pages/Home.tsx'
 import MetricsTest from './pages/MetricsTest.tsx'
@@ -39,44 +40,46 @@ export function AppWithProviders() {
         <SavedSectionsProvider>
           <RepositoriesProvider>
             <SavedCardsProvider>
-              <Routes>
-                <Route path="/" element={<Root />} />
-                <Route path="/auth/callback" element={<OAuthCallback />} />
+              <NavbarProvider>
+                <Routes>
+                  <Route path="/" element={<Root />} />
+                  <Route path="/auth/callback" element={<OAuthCallback />} />
 
-                {/* Public portfolio route - no authentication required */}
-                <Route path="/p/:slug" element={<PublicPortfolio />} />
+                  {/* Public portfolio route - no authentication required */}
+                  <Route path="/p/:slug" element={<PublicPortfolio />} />
 
-                <Route path="/home" element={
-                    <ProtectedRoute fallback={<Root />}>
-                      <Home />
+                  <Route path="/home" element={
+                      <ProtectedRoute fallback={<Root />}>
+                        <Home />
+                      </ProtectedRoute>
+                    } 
+                  />
+                  <Route path="/profile" element={
+                    <ProtectedRoute fallback={<Root />}> 
+                      <ProfilePage />
                     </ProtectedRoute>
-                  } 
-                />
-                <Route path="/profile" element={
-                  <ProtectedRoute fallback={<Root />}> 
-                    <ProfilePage />
-                  </ProtectedRoute>
-                } />
+                  } />
 
-                <Route path='/portfolios/new' element={
-                  <ProtectedRoute fallback={<Root />}>
-                    <PortfolioEditor />
-                  </ProtectedRoute>
-                } />
-                <Route path='/portfolios/:id/edit' element={
-                  <ProtectedRoute fallback={<Root />}>
-                    <PortfolioEditor />
-                  </ProtectedRoute>
-                } />
-                <Route path="/t" element={<Test />} />
-                <Route path="/editor-test" element={<EditorTest />} />
-                
-                {/* Metrics Dashboard Routes */}
-                
-                <Route path="/dashboard/modern" element={<ModernDashboard />} />
-                <Route path="/dashboard/modern/projects" element={<ModernProjects />} />
-                <Route path='/m-test' element={<MetricsTest />} />
-              </Routes>
+                  <Route path='/portfolios/new' element={
+                    <ProtectedRoute fallback={<Root />}>
+                      <PortfolioEditor />
+                    </ProtectedRoute>
+                  } />
+                  <Route path='/portfolios/:id/edit' element={
+                    <ProtectedRoute fallback={<Root />}>
+                      <PortfolioEditor />
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/t" element={<Test />} />
+                  <Route path="/editor-test" element={<EditorTest />} />
+                  
+                  {/* Metrics Dashboard Routes */}
+                  
+                  <Route path="/dashboard/modern" element={<ModernDashboard />} />
+                  <Route path="/dashboard/modern/projects" element={<ModernProjects />} />
+                  <Route path='/m-test' element={<MetricsTest />} />
+                </Routes>
+              </NavbarProvider>
             </SavedCardsProvider>
           </RepositoriesProvider>
         </SavedSectionsProvider>

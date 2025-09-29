@@ -1,19 +1,18 @@
 import React from "react";
-import "../styles/EditorTest.css";
-import { Notification } from "../components/notifications/Notification";
 import { RepositoryDialog } from "../components/dialogs/RepositoryDialog";
-import type { PortfolioState } from "../state/Portfolio.types";
-import TitleAndSave from "../components/editor/TitleAndSave";
-import SlugRow from "../components/editor/SlugRow";
-import DebugInfo from "../components/editor/DebugInfo";
-import PublicationPanel from "../components/editor/PublicationPanel";
 import Controls from "../components/editor/Controls";
 import EditorCanvas from "../components/editor/EditorCanvas";
+import PublicationPanel from "../components/editor/PublicationPanel";
+import SlugRow from "../components/editor/SlugRow";
+import TitleAndSave from "../components/editor/TitleAndSave";
+import { Notification } from "../components/notifications/Notification";
+import SectionCard from "../components/sections/SectionCard";
 import { usePortfolioEditorState } from "../hooks/editor/usePortfolioEditorState";
 import { useRepositoryFlow } from "../hooks/save/repository/useRepositoryFlow";
-import SectionCard from "../components/sections/SectionCard";
-import type { SectionState } from "../state/Sections.types";
 import type { CardType } from "../state/Cards.types";
+import type { PortfolioState } from "../state/Portfolio.types";
+import type { SectionState } from "../state/Sections.types";
+import "../styles/EditorTest.css";
 
 export default function PortfolioEditor({
   onPortfolioChange,
@@ -138,13 +137,6 @@ export default function PortfolioEditor({
 
   {Boolean(state.data.portfolioError === null) && (
           <>
-            <DebugInfo
-              portfolioId={null}
-              slug={state.slug.slug}
-              isPublished={state.publication.isPublished}
-              isSlugAvailable={state.slug.isSlugAvailable}
-              isCheckingSlug={state.slug.isCheckingSlug}
-            />
             <PublicationPanel
               isPublished={state.publication.isPublished}
               setIsPublished={state.publication.setIsPublished}
