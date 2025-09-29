@@ -18,8 +18,25 @@ interface ProjectStackedChartProps {
   height?: number;
 }
 
+// Shared color palette for consistent theming across charts
+const BUBBLE_COLORS = [
+  'var(--chart-1, #3B82F6)', // Blue
+  'var(--chart-2, #10B981)', // Green  
+  'var(--chart-3, #F59E0B)', // Amber
+  'var(--chart-4, #8B5CF6)', // Purple
+  'var(--chart-5, #EF4444)', // Red
+  'var(--chart-6, #06B6D4)', // Cyan
+  'var(--chart-7, #84CC16)', // Lime
+  'var(--chart-8, #F97316)', // Orange
+];
+
 const CODE_COLOR = 'var(--chart-success)'; // emerald from chart theme
 const LIVE_COLOR = 'var(--chart-primary)'; // blue from chart theme
+
+// Function to get project color based on project ID
+const getProjectColor = (projectId: number): string => {
+  return BUBBLE_COLORS[projectId % BUBBLE_COLORS.length];
+};
 
 export const ProjectStackedChart: React.FC<ProjectStackedChartProps> = ({
   data,
@@ -29,14 +46,44 @@ export const ProjectStackedChart: React.FC<ProjectStackedChartProps> = ({
 }) => {
   // Transform and sort data by total interactions (descending)
   const chartData = data
-    .map((project) => ({
+    .map((project, index) => ({
       name: `P${project.projectId}`,
       projectId: project.projectId,
+      originalIndex: index, // Keep track of original order for color consistency
       codeViews: project.totalCodeViews,
       liveViews: project.totalLiveViews,
       total: project.totalInteractions
     }))
     .sort((a, b) => b.total - a.total);
+
+  // Custom tick component for colored project names
+  const CustomTick = (props: { x: number; y: number; payload: { value: string } }) => {
+    const { x, y, payload } = props;
+    const projectIdMatch = payload.value.match(/P(\d+)/);
+    const projectId = projectIdMatch ? parseInt(projectIdMatch[1]) : 0;
+    
+    // Find the project data to get the original index for color consistency
+    const projectData = chartData.find(d => d.projectId === projectId);
+    const colorIndex = projectData?.originalIndex ?? 0;
+    const color = getProjectColor(colorIndex);
+    
+    return (
+      <g transform={`translate(${x},${y})`}>
+        <text 
+          x={0} 
+          y={0} 
+          dy={12} 
+          textAnchor="end" 
+          fill={color} 
+          fontSize="12"
+          fontWeight="600"
+          transform="rotate(-45)"
+        >
+          {payload.value}
+        </text>
+      </g>
+    );
+  };
 
   const CustomTooltip = ({ active, payload, label }: TooltipProps) => {
     if (active && payload && payload.length) {
@@ -45,9 +92,16 @@ export const ProjectStackedChart: React.FC<ProjectStackedChartProps> = ({
       const liveEntry = payload.find((p) => p.name === 'Live Views');
       const codeEntry = payload.find((p) => p.name === 'Code Views');
 
+      // Extract project ID and find original index for color consistency
+      const projectIdMatch = label?.match(/P(\d+)/);
+      const projectId = projectIdMatch ? parseInt(projectIdMatch[1]) : 0;
+      const projectData = chartData.find(d => d.projectId === projectId);
+      const colorIndex = projectData?.originalIndex ?? 0;
+      const projectColor = getProjectColor(colorIndex);
+
       return (
         <div className="project-stacked-tooltip">
-          <div className="modern-tooltip__header">
+          <div className="modern-tooltip__header" style={{ color: projectColor, fontWeight: '600' }}>
             Project {label?.replace('P', '')}
           </div>
           <div className="modern-tooltip__separator"></div>
@@ -151,7 +205,7 @@ export const ProjectStackedChart: React.FC<ProjectStackedChartProps> = ({
             height={60}
             axisLine={false}
             tickLine={false}
-            tick={{ fill: 'var(--text-secondary)', fontSize: 12 }}
+            tick={CustomTick}
           />
           <YAxis 
             stroke="var(--text-secondary)"
