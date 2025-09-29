@@ -23,19 +23,20 @@
 
 .image-cropper-container {
   position: relative;
-  background: var(--background);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow-lg);
+  background: var(--dashboard-bg);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-xl);
   max-width: 90vw;
   max-height: 90vh;
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  border: 1px solid var(--card-border);
 }
 
 .image-cropper-header {
   padding: 1.5rem;
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid var(--card-border);
   text-align: center;
 }
 
@@ -58,6 +59,7 @@
   justify-content: center;
   max-height: 500px;
   overflow: auto;
+  background: var(--dashboard-bg-secondary);
 }
 
 .image-cropper-content .ReactCrop {
@@ -66,8 +68,46 @@
 
 .image-cropper-actions {
   padding: 1.5rem;
-  border-top: 1px solid var(--border);
+  border-top: 1px solid var(--card-border);
   display: flex;
   gap: 1rem;
   justify-content: flex-end;
+  background: var(--dashboard-bg);
+}
+
+/* Make sure buttons use the existing button styles */
+.image-cropper-actions .btn {
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-md);
+  font-weight: 500;
+  transition: var(--transition-normal);
+  cursor: pointer;
+}
+
+.image-cropper-actions .btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .image-cropper-container {
+    margin: 1rem;
+    max-width: calc(100vw - 2rem);
+    max-height: calc(100vh - 2rem);
+  }
+  
+  .image-cropper-header,
+  .image-cropper-content,
+  .image-cropper-actions {
+    padding: 1rem;
+  }
+  
+  .image-cropper-actions {
+    flex-direction: column;
+  }
+  
+  .image-cropper-actions .btn {
+    width: 100%;
+  }
 }
