@@ -8,12 +8,13 @@
 }
 
 .home-content {
-  max-width: 1200px;
+  max-width: 2000px;
+  width: 98%;
   margin: 0 auto;
-  padding: var(--space-8);
+  padding: var(--space-6);
   display: flex;
   flex-direction: column;
-  gap: var(--space-8);
+  gap: var(--space-6);
 }
 
 /* Skeleton Loading Configuration */
@@ -34,7 +35,7 @@
   background: var(--card-bg);
   border: 1px solid var(--card-border);
   border-radius: var(--radius-xl);
-  padding: var(--space-8);
+  padding: var(--space-6);
   box-shadow: var(--shadow-md);
   transition: all var(--transition-normal);
 }
@@ -115,7 +116,7 @@
   background: var(--card-bg);
   border: 1px solid var(--card-border);
   border-radius: var(--radius-xl);
-  padding: var(--space-8);
+  padding: var(--space-6);
   box-shadow: var(--shadow-md);
 }
 
@@ -135,8 +136,8 @@
 
 .portfolios-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-  gap: var(--space-6);
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: var(--space-4);
 }
 
 /* Empty State */
@@ -166,10 +167,52 @@
 }
 
 /* Responsive Design */
+
+/* Very large screens - maximize number of cards per row */
+@media (min-width: 1800px) {
+  .home-content {
+    width: 96%;
+  }
+
+  .portfolios-grid {
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: var(--space-4);
+  }
+}
+
+/* Large screens - take advantage of extra space */
+@media (min-width: 1400px) {
+  .home-content {
+    width: 95%;
+    padding: var(--space-8);
+  }
+
+  .portfolios-grid {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--space-6);
+  }
+
+  .user-profile-section,
+  .portfolios-section {
+    padding: var(--space-8);
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1399px) {
+  .home-content {
+    width: 96%;
+  }
+
+  .portfolios-grid {
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  }
+}
+
 @media (max-width: 768px) {
   .home-content {
     padding: var(--space-6);
     gap: var(--space-6);
+    width: 95%;
   }
 
   .user-profile-section,
