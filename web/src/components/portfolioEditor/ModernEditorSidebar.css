@@ -1,0 +1,227 @@
+/* ModernEditorSidebar - Collapsible sidebar styles */
+
+.modern-editor-sidebar {
+  position: fixed;
+  top: 80px; /* Below navbar */
+  left: 0;
+  height: calc(100vh - 80px);
+  background: var(--card-bg);
+  border-right: 1px solid var(--card-border);
+  box-shadow: var(--shadow-lg);
+  z-index: 100;
+  transition: all var(--transition-normal);
+  backdrop-filter: blur(16px);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.modern-editor-sidebar--expanded {
+  width: 320px;
+  transform: translateX(0);
+}
+
+.modern-editor-sidebar--collapsed {
+  width: 60px;
+  transform: translateX(0);
+}
+
+/* Sidebar Header */
+.modern-editor-sidebar__header {
+  padding: var(--space-4);
+  border-bottom: 1px solid var(--card-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 60px;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.modern-editor-sidebar__title {
+  font-size: var(--font-lg);
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+  opacity: 1;
+  transition: opacity var(--transition-normal);
+  background: linear-gradient(135deg, var(--accent-purple), var(--accent-blue));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.modern-editor-sidebar--collapsed .modern-editor-sidebar__title {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.modern-editor-sidebar__close {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-md);
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  opacity: 1;
+}
+
+.modern-editor-sidebar__close:hover {
+  background: var(--status-negative);
+  color: white;
+  border-color: var(--status-negative);
+  transform: scale(1.05);
+}
+
+.modern-editor-sidebar--collapsed .modern-editor-sidebar__close {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Sidebar Content */
+.modern-editor-sidebar__content {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.modern-editor-sidebar__area {
+  flex: 1;
+  padding: var(--space-4);
+  overflow-y: auto;
+  opacity: 1;
+  transition: opacity var(--transition-normal);
+}
+
+.modern-editor-sidebar--collapsed .modern-editor-sidebar__area {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Custom scrollbar */
+.modern-editor-sidebar__area::-webkit-scrollbar {
+  width: 6px;
+}
+
+.modern-editor-sidebar__area::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: var(--radius-sm);
+}
+
+.modern-editor-sidebar__area::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: var(--radius-sm);
+  transition: background var(--transition-fast);
+}
+
+.modern-editor-sidebar__area::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* Overlay for mobile */
+.modern-editor-sidebar__overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 99;
+  opacity: 0;
+  visibility: hidden;
+  transition: all var(--transition-fast);
+  backdrop-filter: blur(4px);
+}
+
+.modern-editor-sidebar__overlay--visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Hover effects */
+.modern-editor-sidebar:hover {
+  box-shadow: var(--shadow-xl);
+}
+
+.modern-editor-sidebar:hover .modern-editor-sidebar__area::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+/* Collapsed state hover hint */
+.modern-editor-sidebar--collapsed::after {
+  content: 'Saved Cards';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-90deg);
+  color: var(--text-tertiary);
+  font-size: var(--font-xs);
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  opacity: 0.6;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+/* Animation for content visibility */
+@keyframes sidebar-content-fade-in {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.modern-editor-sidebar--expanded .modern-editor-sidebar__area {
+  animation: sidebar-content-fade-in 0.3s ease-out 0.1s both;
+}
+
+.modern-editor-sidebar--expanded .modern-editor-sidebar__title {
+  animation: sidebar-content-fade-in 0.3s ease-out 0.05s both;
+}
+
+.modern-editor-sidebar--expanded .modern-editor-sidebar__close {
+  animation: sidebar-content-fade-in 0.3s ease-out 0.15s both;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .modern-editor-sidebar {
+    top: 70px; /* Smaller navbar on mobile */
+    height: calc(100vh - 70px);
+  }
+
+  .modern-editor-sidebar--expanded {
+    width: 100vw;
+  }
+
+  .modern-editor-sidebar--collapsed {
+    transform: translateX(-100%);
+  }
+
+  .modern-editor-sidebar__overlay--visible {
+    display: block;
+  }
+}
+
+@media (max-width: 480px) {
+  .modern-editor-sidebar__header {
+    padding: var(--space-3);
+  }
+
+  .modern-editor-sidebar__area {
+    padding: var(--space-3);
+  }
+
+  .modern-editor-sidebar__title {
+    font-size: var(--font-base);
+  }
+}

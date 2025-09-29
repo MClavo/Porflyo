@@ -1,0 +1,190 @@
+/* ModernEditorHeader - Modern header component styles */
+
+.modern-editor-header {
+  background: var(--card-bg);
+  border-bottom: 1px solid var(--card-border);
+  box-shadow: var(--shadow-sm);
+  backdrop-filter: blur(8px);
+  position: sticky;
+  /* top: 80px; */ /* Below navbar */
+  z-index: 50;
+}
+
+.modern-editor-header__container {
+  width: 100%;
+  margin: 0 auto;
+  padding: var(--space-4) var(--space-6);
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: var(--space-6);
+}
+
+/* Left Section */
+.modern-editor-header__left {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  justify-self: start;
+}
+
+.modern-editor-header__sidebar-toggle {
+  background: var(--accent-purple);
+  border: none;
+  border-radius: var(--radius-md);
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  box-shadow: 0 2px 8px rgba(139, 92, 246, 0.3);
+}
+
+.modern-editor-header__sidebar-toggle:hover {
+  background: var(--accent-blue);
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+}
+
+.modern-editor-header__sidebar-toggle:focus {
+  outline: 2px solid var(--accent-blue);
+  outline-offset: 2px;
+}
+
+.modern-editor-header__title-section {
+  flex: 1;
+}
+
+.modern-editor-header__title-input {
+  background: none;
+  border: none;
+  font-size: var(--font-2xl);
+  font-weight: 700;
+  color: var(--text-primary);
+  outline: none;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  transition: all var(--transition-fast);
+  font-family: var(--font-sans);
+  min-width: 250px;
+  background: linear-gradient(135deg, var(--accent-purple), var(--accent-blue));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.modern-editor-header__title-input::placeholder {
+  background: linear-gradient(135deg, var(--text-secondary), var(--text-tertiary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.modern-editor-header__title-input:hover {
+  background: rgba(255, 255, 255, 0.05);
+  -webkit-text-fill-color: var(--text-primary);
+}
+
+.modern-editor-header__title-input:focus {
+  background: rgba(255, 255, 255, 0.08);
+  -webkit-text-fill-color: var(--text-primary);
+  box-shadow: 0 0 0 2px var(--accent-blue);
+}
+
+/* Center Section */
+.modern-editor-header__center {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  justify-self: center;
+}
+
+/* Right Section */
+.modern-editor-header__right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  justify-self: end;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .modern-editor-header__container {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto;
+    gap: var(--space-4);
+    text-align: center;
+  }
+
+  .modern-editor-header__left,
+  .modern-editor-header__center,
+  .modern-editor-header__right {
+    justify-self: center;
+  }
+
+  .modern-editor-header__left {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .modern-editor-header__center {
+    justify-content: center;
+  }
+
+  .modern-editor-header__right {
+    justify-content: flex-end;
+    width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .modern-editor-header {
+    top: 70px; /* Smaller navbar on mobile */
+  }
+
+  .modern-editor-header__container {
+    padding: var(--space-3) var(--space-4);
+  }
+
+  .modern-editor-header__title-input {
+    font-size: var(--font-xl);
+    min-width: 200px;
+  }
+
+  .modern-editor-header__center {
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .modern-editor-header__right {
+    flex-direction: column;
+    gap: var(--space-3);
+    align-items: stretch;
+  }
+}
+
+@media (max-width: 480px) {
+  .modern-editor-header__container {
+    padding: var(--space-2) var(--space-3);
+    gap: var(--space-3);
+  }
+
+  .modern-editor-header__title-input {
+    font-size: var(--font-lg);
+    min-width: 150px;
+  }
+
+  .modern-editor-header__sidebar-toggle {
+    width: 32px;
+    height: 32px;
+  }
+
+  .modern-editor-header__left {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-2);
+  }
+}

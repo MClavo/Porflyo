@@ -1,0 +1,45 @@
+/* Saved Cards Placeholder - temporary styling */
+
+.saved-cards-placeholder {
+  padding: var(--space-4);
+  text-align: center;
+  color: var(--text-secondary);
+  background: rgba(255, 255, 255, 0.02);
+  border: 2px dashed rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-lg);
+  margin: var(--space-4) 0;
+}
+
+.saved-cards-placeholder p {
+  margin: 0;
+  font-style: italic;
+  opacity: 0.7;
+}
+
+/* Future saved cards styling can be added here */
+.saved-cards-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.saved-card-item {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-md);
+  padding: var(--space-3);
+  cursor: grab;
+  transition: all var(--transition-fast);
+}
+
+.saved-card-item:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--accent-blue);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.saved-card-item:active {
+  cursor: grabbing;
+  transform: translateY(0);
+}
