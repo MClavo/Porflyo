@@ -33,7 +33,28 @@
   }
 }
 
+/* Chart containers responsive */
+.modern-projects-charts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: var(--space-6);
+  margin-top: var(--space-8);
+}
+
+.modern-projects-bottom-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: var(--space-6);
+  margin-top: var(--space-8);
+}
+
 /* Responsive design */
+@media (max-width: 1200px) {
+  .modern-projects-bottom-row {
+    grid-template-columns: 1fr;
+  }
+}
+
 @media (max-width: 768px) {
   .modern-projects-container {
     padding: 0 var(--space-4);
@@ -46,6 +67,22 @@
   .modern-projects-empty-state div {
     font-size: 48px !important;
   }
+
+  .modern-projects-charts-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+  }
+
+  .modern-projects-bottom-row {
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+  }
 }
 
-/* Future: Add styles for project cards, lists, etc. when needed */
+/* Chart specific responsive improvements */
+@media (max-width: 480px) {
+  .modern-projects-charts-grid {
+    grid-template-columns: 1fr;
+    margin-top: var(--space-6);
+  }
+}
