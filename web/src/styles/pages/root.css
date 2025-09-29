@@ -1,0 +1,67 @@
+@import url('https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700&display=swap');
+
+:root {
+  --space1: #00ADB5;
+}
+
+h1 {
+  
+  font-family: "Syncopate", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 700;
+  font-style: oblique;
+  letter-spacing: 0.5rem;
+  font-size: 5rem;
+  color: var(--space1);
+  text-align: center;
+  margin-top: 1rem;
+  bottom: 0;
+  margin-bottom: 0;
+}
+
+p {
+  padding-top: 0;
+  font-family: "Space Grotesk", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-size: 2rem;
+  color: white;
+  text-align: center;
+  margin-bottom: 12rem;
+}
+
+#root{
+  background: transparent !important;
+}
+
+/* Container that holds content and the background image */
+.root-page {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start; /* align items at the top instead of center */
+  flex-direction: column;
+  padding: 8rem;
+  box-sizing: border-box;
+}
+
+
+body.root-body-bg {
+  background: none !important;
+  background-image: url('../../assets/world2.png') !important;
+  background-repeat: no-repeat !important;
+  background-position: center calc(20vh) !important;
+  background-size: 190% 200% !important; /* wider and twice as tall */
+  background-color: transparent !important;
+  min-height: 100vh;
+}
+
+.root-content {
+  position: relative;
+  z-index: 1; /* put content above the image */
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: center;
+}
