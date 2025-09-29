@@ -1,23 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { FiLink, FiPlus, FiTrash2, FiCheck, FiX } from 'react-icons/fi';
 import type { PublicUserDto } from '../../api/types';
+import { SocialPlatformSelector } from '../ui/SocialPlatformSelector';
 
 interface ModernSocialLinksProps {
   user: PublicUserDto;
   onSocialsUpdate: (updatedSocials: Record<string, string>) => void;
   isLoading?: boolean;
 }
-
-const PLATFORM_OPTIONS = [
-  'linkedin',
-  'twitter',
-  'github',
-  'instagram',
-  'facebook',
-  'youtube',
-  'website',
-  'blog'
-];
 
 export const ModernSocialLinks: React.FC<ModernSocialLinksProps> = ({
   user,
@@ -28,6 +18,7 @@ export const ModernSocialLinks: React.FC<ModernSocialLinksProps> = ({
   const [isSaving, setIsSaving] = useState(false);
   const [saveMessage, setSaveMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [hasChanges, setHasChanges] = useState(false);
+  const [isAddingNew, setIsAddingNew] = useState(false);
 
   useEffect(() => {
     const currentSocials = user.socials || {};
@@ -53,11 +44,28 @@ export const ModernSocialLinks: React.FC<ModernSocialLinksProps> = ({
   };
 
   const handleAddSocial = () => {
-    // Find the first available platform
-    const availablePlatform = PLATFORM_OPTIONS.find(platform => !socials[platform]);
-    if (availablePlatform) {
-      setSocials(prev => ({ ...prev, [availablePlatform]: '' }));
-    }
+    setIsAddingNew(true);
+  };
+
+  const handleSelectPlatform = (platform: string) => {
+    setSocials(prev => ({ ...prev, [platform]: '' }));
+    setIsAddingNew(false);
+  };
+
+  const handleCancelAdd = () => {
+    setIsAddingNew(false);
+  };
+
+  const handlePlatformChange = (oldPlatform: string, newPlatform: string) => {
+    if (oldPlatform === newPlatform) return;
+    
+    setSocials(prev => {
+      const updated = { ...prev };
+      const url = updated[oldPlatform] || '';
+      delete updated[oldPlatform];
+      updated[newPlatform] = url;
+      return updated;
+    });
   };
 
   const handleRemoveSocial = (platform: string) => {
@@ -116,10 +124,6 @@ export const ModernSocialLinks: React.FC<ModernSocialLinksProps> = ({
     setSaveMessage(null);
   };
 
-  const formatPlatformName = (platform: string) => {
-    return platform.charAt(0).toUpperCase() + platform.slice(1);
-  };
-
   const getPlaceholder = (platform: string) => {
     switch (platform) {
       case 'linkedin': return 'https://linkedin.com/in/username';
@@ -134,7 +138,14 @@ export const ModernSocialLinks: React.FC<ModernSocialLinksProps> = ({
     }
   };
 
-  const canAddMore = Object.keys(socials).length < PLATFORM_OPTIONS.length;
+  // List of all available platforms (should match SocialPlatformSelector)
+  const ALL_PLATFORMS = [
+    'blog', 'discord', 'facebook', 'github', 'instagram', 'kaggle', 
+    'leetcode', 'linkedin', 'medium', 'tiktok', 'twitch', 'twitter', 
+    'website', 'youtube'
+  ];
+
+  const canAddMore = Object.keys(socials).length < ALL_PLATFORMS.length;
 
   return (
     <div className="profile-section">
@@ -158,8 +169,13 @@ export const ModernSocialLinks: React.FC<ModernSocialLinksProps> = ({
       <form onSubmit={handleSubmit} className="social-fields">
         {Object.entries(socials).map(([platform, url]) => (
           <div key={platform} className="social-field">
-            <div className="social-platform">
-              {formatPlatformName(platform)}
+            <div className="social-platform-wrapper">
+              <SocialPlatformSelector
+                selectedPlatform={platform}
+                onSelect={(newPlatform) => handlePlatformChange(platform, newPlatform)}
+                excludePlatforms={Object.keys(socials).filter(p => p !== platform)}
+                disabled={isLoading || isSaving}
+              />
             </div>
             <input
               type="url"
@@ -181,7 +197,35 @@ export const ModernSocialLinks: React.FC<ModernSocialLinksProps> = ({
           </div>
         ))}
 
-        {canAddMore && (
+        {isAddingNew && (
+          <div className="social-field adding-new">
+            <div className="social-platform-wrapper">
+              <SocialPlatformSelector
+                onSelect={handleSelectPlatform}
+                excludePlatforms={Object.keys(socials)}
+                disabled={isLoading || isSaving}
+              />
+            </div>
+            <input
+              type="url"
+              value=""
+              className="social-input"
+              placeholder="Enter URL..."
+              disabled
+            />
+            <button
+              type="button"
+              onClick={handleCancelAdd}
+              className="social-cancel"
+              disabled={isLoading || isSaving}
+              title="Cancel adding"
+            >
+              <FiX size={14} />
+            </button>
+          </div>
+        )}
+
+        {canAddMore && !isAddingNew && (
           <button
             type="button"
             onClick={handleAddSocial}
