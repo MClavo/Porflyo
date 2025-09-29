@@ -65,15 +65,16 @@
 
 /* Chart theme variables - will adapt to light/dark themes */
 :root {
-  --chart-primary: #3B82F6;
-  --chart-success: #10B981;
-  --chart-warning: #F59E0B;
-  --chart-danger: #EF4444;
-  --chart-info: #06B6D4;
-  --chart-purple: #8B5CF6;
-  --chart-orange: #F97316;
-  --chart-lime: #84CC16;
-  
+  /* Map to shared color variables declared in styles/variables/colors.css */
+  --chart-primary: var(--chart-1);
+  --chart-success: var(--chart-2);
+  --chart-warning: var(--chart-3);
+  --chart-danger: var(--chart-5);
+  --chart-info: var(--chart-6);
+  --chart-purple: var(--chart-4);
+  --chart-orange: var(--chart-8);
+  --chart-lime: var(--chart-7);
+
   /* Chart specific variables */
   --chart-grid-opacity: 0.2;
   --chart-hover-opacity: 0.1;

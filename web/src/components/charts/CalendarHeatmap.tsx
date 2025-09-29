@@ -44,13 +44,13 @@ export function CalendarHeatmap({
         data={data}
         from={startDate}
         to={endDate}
-        emptyColor="#eeeeee"
-        colors={[ '#61cdbb', '#97e3d5', '#e8c1a0', '#f47560' ]}
+        emptyColor="var(--gray-100)"
+        colors={[ 'var(--nivo-1)', 'var(--nivo-2)', 'var(--nivo-3)', 'var(--nivo-4)' ]}
         margin={{ top: 40, right: 40, bottom: 40, left: 40 }}
         yearSpacing={40}
-        monthBorderColor="#ffffff"
+        monthBorderColor="var(--white)"
         dayBorderWidth={2}
-        dayBorderColor="#ffffff"
+        dayBorderColor="var(--white)"
         legends={[
           {
             anchor: 'bottom-right',
@@ -64,16 +64,16 @@ export function CalendarHeatmap({
           }
         ]}
         tooltip={({ day, value, color }) => (
-          <div
+              <div
             style={{
-              background: 'white',
+              background: 'var(--white)',
               padding: '12px 16px',
-              border: '1px solid #e2e8f0',
+              border: '1px solid var(--muted-border)',
               borderRadius: '8px',
               boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
             }}
           >
-            <strong>{new Date(day).toLocaleDateString('en-US', { 
+              <strong>{new Date(day).toLocaleDateString('en-US', { 
               weekday: 'short',
               month: 'short', 
               day: 'numeric',

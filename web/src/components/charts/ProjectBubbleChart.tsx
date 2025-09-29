@@ -18,9 +18,19 @@ interface ProjectBubbleChartProps {
   height?: number;
 }
 
-// Color palette for bubbles
-const BUBBLE_COLOR = '#3B82F6';
+// Color palette for bubbles - resolve from CSS variables if available
+const DEFAULT_BUBBLE_COLOR = 'var(--chart-1, #3B82F6)';
 const BUBBLE_OPACITY = 0.6;
+
+const resolveBubbleColor = (): string => {
+  try {
+    const root = getComputedStyle(document.documentElement);
+    const v = root.getPropertyValue('--chart-1').trim() || root.getPropertyValue('--accent-blue').trim();
+    return v || DEFAULT_BUBBLE_COLOR;
+  } catch {
+    return DEFAULT_BUBBLE_COLOR;
+  }
+};
 
 export const ProjectBubbleChart: React.FC<ProjectBubbleChartProps> = ({
   data,
@@ -142,9 +152,9 @@ export const ProjectBubbleChart: React.FC<ProjectBubbleChartProps> = ({
           <Scatter
             name="Projects"
             data={chartData}
-            fill={BUBBLE_COLOR}
+            fill={resolveBubbleColor()}
             fillOpacity={BUBBLE_OPACITY}
-            stroke={BUBBLE_COLOR}
+            stroke={resolveBubbleColor()}
             strokeWidth={1}
           />
         </ScatterChart>

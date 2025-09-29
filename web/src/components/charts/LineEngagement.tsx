@@ -24,7 +24,7 @@ export function LineEngagement({
   data, 
   isLoading = false, 
   height = 300,
-  color = "#3182ce",
+  color = "var(--blue-600, #3182ce)",
   label = "Engagement",
   formatValue = (value) => value.toFixed(1)
 }: LineEngagementProps) {

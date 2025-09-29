@@ -20,16 +20,16 @@ interface ProjectDonutChartProps {
   totalInteractions?: number;
 }
 
-// Color palette for projects
-const COLORS = [
-  '#3B82F6', // blue
-  '#10B981', // emerald
-  '#F59E0B', // amber
-  '#8B5CF6', // violet
-  '#EF4444', // red
-  '#06B6D4', // cyan
-  '#84CC16', // lime
-  '#F97316', // orange
+// Palette referencing CSS variables with hex fallbacks to preserve current colors
+const PALETTE = [
+  'var(--chart-1, #3B82F6)',
+  'var(--chart-2, #10B981)',
+  'var(--chart-3, #F59E0B)',
+  'var(--chart-4, #8B5CF6)',
+  'var(--chart-5, #EF4444)',
+  'var(--chart-6, #06B6D4)',
+  'var(--chart-7, #84CC16)',
+  'var(--chart-8, #F97316)'
 ];
 
 const SEPARATOR_COLOR = 'var(--card-border)'; // Clean separator using CSS variable
@@ -42,14 +42,17 @@ export const ProjectDonutChart: React.FC<ProjectDonutChartProps> = ({
   totalInteractions
 }) => {
   // Transform data for chart (memoized)
-  const chartData = useMemo(() => data.map((project, index) => ({
-    name: `Project ${project.projectId}`,
-    value: project.totalInteractions,
-    projectId: project.projectId,
-    codeViews: project.totalCodeViews,
-    liveViews: project.totalLiveViews,
-    fill: COLORS[index % COLORS.length]
-  })), [data]);
+  const chartData = useMemo(() => {
+    const palette = PALETTE;
+    return data.map((project, index) => ({
+      name: `Project ${project.projectId}`,
+      value: project.totalInteractions,
+      projectId: project.projectId,
+      codeViews: project.totalCodeViews,
+      liveViews: project.totalLiveViews,
+      fill: palette[index % palette.length]
+    }));
+  }, [data]);
 
   // Calculate total for percentage (memoized)
   const total = useMemo(() => chartData.reduce((sum, item) => sum + item.value, 0), [chartData]);
