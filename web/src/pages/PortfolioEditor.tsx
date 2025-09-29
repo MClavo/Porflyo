@@ -4,12 +4,15 @@ import { RepositoryDialog } from "../components/dialogs/RepositoryDialog";
 import EditorCanvas from "../components/editor/EditorCanvas";
 import { Notification } from "../components/notifications/Notification";
 import SectionCard from "../components/sections/SectionCard";
+import { SavedCards } from "../components/savedcards/SavedCards";
 import { ModernEditorHeader, ModernEditorSidebar } from "../components/portfolioEditor";
 import { usePortfolioEditorState } from "../hooks/editor/usePortfolioEditorState";
 import { useRepositoryFlow } from "../hooks/save/repository/useRepositoryFlow";
-import type { CardType } from "../state/Cards.types";
+import { useSavedCards } from "../state/SavedCards.hooks";
+import type { CardType, CardPatchByType } from "../state/Cards.types";
 import type { PortfolioState } from "../state/Portfolio.types";
 import type { SectionState } from "../state/Sections.types";
+import type { AnyCard } from "../state/Cards.types";
 import "../styles/pages/PortfolioEditor.css";
 
 export default function PortfolioEditor({
@@ -45,12 +48,84 @@ export default function PortfolioEditor({
     showNotification,
   });
 
+  // Saved cards state and actions
+  const savedCardsContext = useSavedCards();
+
   // Auto-close sidebar when switching to view mode
   React.useEffect(() => {
     if (state.ui.mode === 'view' && isSidebarOpen) {
       setIsSidebarOpen(false);
     }
   }, [state.ui.mode, isSidebarOpen]);
+
+  // Saved cards handlers
+  const handleSaveCard = (card: AnyCard, originSectionId: string, originSectionType: string, name: string) => {
+    savedCardsContext.dispatch({
+      type: "SAVE_CARD",
+      payload: { card, originSectionId, originSectionType, name }
+    });
+    showNotification("Card saved successfully", "success");
+  };
+
+  const handleRenameCard = (savedCardId: string, name: string) => {
+    // Since there's no RENAME action, we need to get the card and save it with new name
+    const savedCard = savedCardsContext.state.savedCards[savedCardId];
+    if (savedCard) {
+      savedCardsContext.dispatch({
+        type: "REMOVE_SAVED_CARD",
+        payload: { savedCardId }
+      });
+      savedCardsContext.dispatch({
+        type: "SAVE_CARD",
+        payload: { 
+          card: savedCard.card, 
+          originSectionId: savedCard.originSectionId, 
+          originSectionType: savedCard.originSectionType, 
+          name 
+        }
+      });
+      showNotification("Card renamed successfully", "success");
+    }
+  };
+
+  const handleRemoveCard = (savedCardId: string) => {
+    savedCardsContext.dispatch({
+      type: "REMOVE_SAVED_CARD",
+      payload: { savedCardId }
+    });
+    showNotification("Card removed successfully", "success");
+  };
+
+  // Helper function to convert saved card to initialData format
+  const convertSavedCardToInitialData = (card: AnyCard): CardPatchByType[CardType] | undefined => {
+    switch (card.type) {
+      case 'text':
+        return card as CardPatchByType['text'];
+      case 'project':
+        return card as CardPatchByType['project'];
+      case 'job':
+        return card as CardPatchByType['job'];
+      default:
+        return undefined;
+    }
+  };
+
+  const handleUseCard = (savedCardId: string, targetSectionId: string) => {
+    const savedCard = savedCardsContext.state.savedCards[savedCardId];
+    if (savedCard) {
+      const initialData = convertSavedCardToInitialData(savedCard.card);
+      // Add the card to the target section
+      state.dispatch({
+        type: "ADD_CARD",
+        payload: {
+          sectionId: targetSectionId,
+          cardType: savedCard.card.type as CardType,
+          initialData
+        }
+      });
+      showNotification("Card added to section", "success");
+    }
+  };
 
   // Build runtime structures similar to previous implementation
   const sectionsMap: Record<string, React.ReactNode> = {};
@@ -140,17 +215,6 @@ export default function PortfolioEditor({
 
   return (
     <div className="portfolio-editor">
-      {/* Sidebar */}
-      <ModernEditorSidebar
-        isOpen={isSidebarOpen}
-        onToggle={() => setIsSidebarOpen(!isSidebarOpen)}
-      >
-        {/* Saved cards content - move this from the old layout */}
-        <div className="saved-cards-placeholder">
-          <p>Saved cards will go here</p>
-        </div>
-      </ModernEditorSidebar>
-
       <div className="portfolio-editor__container">
         {/* Modern Header - FIRST thing in container to be right below navbar */}
         <ModernEditorHeader
@@ -184,12 +248,26 @@ export default function PortfolioEditor({
           isEditMode={isEditMode}
         />
 
-        {/* Main content area */}
-        <main className={`portfolio-editor__main ${
-          isSidebarOpen 
-            ? 'portfolio-editor__main--with-sidebar' 
-            : 'portfolio-editor__main--sidebar-collapsed'
-        }`}>
+        {/* Content area with sidebar and main */}
+        <div className="portfolio-editor__content">
+          {/* Sidebar */}
+          <ModernEditorSidebar
+            isOpen={isSidebarOpen}
+            onToggle={() => setIsSidebarOpen(!isSidebarOpen)}
+          >
+            <SavedCards
+              savedCards={savedCardsContext.state.savedCards}
+              mode={state.ui.mode}
+              onSave={handleSaveCard}
+              onRename={handleRenameCard}
+              onRemove={handleRemoveCard}
+              onUse={handleUseCard}
+              template={state.ui.selectedTemplate}
+            />
+          </ModernEditorSidebar>
+
+          {/* Main content area */}
+          <main className="portfolio-editor__main">
           {/* Canvas */}
           <div className="portfolio-editor__canvas">
             <div className="portfolio-editor__canvas-container">
@@ -200,11 +278,11 @@ export default function PortfolioEditor({
                 mode={state.ui.mode}
                 onDragStart={state.drag.handleDragStart}
                 onDragEnd={state.drag.handleDragEnd}
-                onImageUrlsReplaced={state.actions.handleImageUrlsReplaced}
               />
             </div>
           </div>
         </main>
+        </div>
       </div>
 
       <Notification

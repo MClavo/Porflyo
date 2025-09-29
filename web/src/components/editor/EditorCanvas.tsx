@@ -1,7 +1,6 @@
 // React import not required in modern JSX runtime
 import EditorDndProvider from '../dnd/EditorDndProvider';
 import type { DragStartEvent, DragEndEvent } from '@dnd-kit/core';
-import SavedSidebar from './SavedSidebar';
 import LayoutPreview from '../portfolio/LayoutPreview';
 import type { PortfolioState } from '../../state/Portfolio.types';
 
@@ -12,7 +11,6 @@ export default function EditorCanvas({
   mode,
   onDragStart,
   onDragEnd,
-  onImageUrlsReplaced,
 }: {
   portfolio: PortfolioState;
   sectionsMap: Record<string, React.ReactNode>;
@@ -20,7 +18,6 @@ export default function EditorCanvas({
   mode: 'view' | 'edit';
   onDragStart: (e: DragStartEvent) => void;
   onDragEnd: (e: DragEndEvent) => void;
-  onImageUrlsReplaced: (m: Record<string, string>) => void;
 }) {
   return (
     <main className="test-main">
@@ -34,12 +31,6 @@ export default function EditorCanvas({
         onDragEnd={onDragEnd}
       >
         <div className="main-content">
-          <SavedSidebar
-            mode={mode}
-            template={portfolio.template}
-            onImageUrlsReplaced={onImageUrlsReplaced}
-          />
-
           <div className="layout-preview">
             <LayoutPreview portfolio={portfolio} sectionsMap={sectionsMap as unknown as Record<string, React.ReactNode>} isEditable={mode === 'edit'} />
           </div>

@@ -60,7 +60,7 @@ body {
   position: relative;
   flex: 1;
   min-width: 0; /* Allow flex item to shrink below content size */
-  margin-left: 316px; /* Space for fixed sidebar (300px + 16px gap) */
+  
   transition: margin-left 0.3s ease-in-out;
 }
 

@@ -1,29 +1,26 @@
-/* ModernEditorSidebar - Collapsible sidebar styles */
+/* ModernEditorSidebar - Flex-based sidebar styles */
 
 .modern-editor-sidebar {
-  position: fixed;
-  top: 80px; /* Below navbar */
-  left: 0;
-  height: calc(100vh - 80px);
-  background: var(--card-bg);
-  border-right: 1px solid var(--card-border);
-  box-shadow: var(--shadow-lg);
-  z-index: 100;
-  transition: all var(--transition-normal);
-  backdrop-filter: blur(16px);
-  overflow: hidden;
   display: flex;
   flex-direction: column;
+  background: var(--card-bg);
+  border-right: 1px solid var(--card-border);
+  box-shadow: var(--shadow-md);
+  transition: all var(--transition-normal);
+  overflow: hidden;
+  min-height: 0; /* Allow flex shrinking */
 }
 
 .modern-editor-sidebar--expanded {
   width: 320px;
-  transform: translateX(0);
+  min-width: 320px;
 }
 
 .modern-editor-sidebar--collapsed {
-  width: 60px;
-  transform: translateX(0);
+  width: 0;
+  min-width: 0;
+  border-right: none;
+  box-shadow: none;
 }
 
 /* Sidebar Header */
@@ -35,6 +32,7 @@
   justify-content: space-between;
   min-height: 60px;
   background: rgba(255, 255, 255, 0.02);
+  flex-shrink: 0; /* Don't shrink header */
 }
 
 .modern-editor-sidebar__title {
@@ -48,11 +46,11 @@
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  white-space: nowrap;
 }
 
 .modern-editor-sidebar--collapsed .modern-editor-sidebar__title {
   opacity: 0;
-  pointer-events: none;
 }
 
 .modern-editor-sidebar__close {
@@ -68,6 +66,7 @@
   cursor: pointer;
   transition: all var(--transition-fast);
   opacity: 1;
+  flex-shrink: 0;
 }
 
 .modern-editor-sidebar__close:hover {
@@ -88,6 +87,7 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  min-height: 0;
 }
 
 .modern-editor-sidebar__area {
@@ -96,6 +96,54 @@
   overflow-y: auto;
   opacity: 1;
   transition: opacity var(--transition-normal);
+  min-height: 0;
+}
+
+.modern-editor-sidebar--collapsed .modern-editor-sidebar__area {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Mobile overlay - only show on mobile */
+.modern-editor-sidebar__overlay {
+  display: none;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .modern-editor-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    z-index: 1000;
+    width: 100vw !important;
+    min-width: 100vw !important;
+    transform: translateX(-100%);
+  }
+
+  .modern-editor-sidebar--expanded {
+    transform: translateX(0);
+  }
+
+  .modern-editor-sidebar__overlay {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    opacity: 0;
+    visibility: hidden;
+    transition: all var(--transition-fast);
+  }
+
+  .modern-editor-sidebar__overlay--visible {
+    opacity: 1;
+    visibility: visible;
+  }
 }
 
 .modern-editor-sidebar--collapsed .modern-editor-sidebar__area {

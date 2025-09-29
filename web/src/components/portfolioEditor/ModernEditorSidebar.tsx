@@ -1,11 +1,10 @@
 /**
- * ModernEditorSidebar - Collapsible sidebar for portfolio editor
+ * ModernEditorSidebar - Flex-based sidebar for portfolio editor
  */
 
 import React from 'react';
 import { FiX } from 'react-icons/fi';
 import './ModernEditorSidebar.css';
-import './SavedCards.css';
 
 export interface ModernEditorSidebarProps {
   isOpen: boolean;
