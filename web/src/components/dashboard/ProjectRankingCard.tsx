@@ -137,8 +137,8 @@ export const ProjectRankingCard: React.FC<ProjectRankingCardProps> = ({
                 display: 'flex',
                 justifyContent: 'space-between'
               }}>
-                <span>Rate: {(project.interactionRate * 100).toFixed(1)}%</span>
-                <span>Exposures: {project.totalExposures.toLocaleString()}</span>
+                <span>Social Conv: {(project.interactionRate * 100).toFixed(1)}%</span>
+                <span>Social Reach: {project.totalExposures.toLocaleString()}</span>
               </div>
             </div>
 

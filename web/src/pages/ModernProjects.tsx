@@ -3,7 +3,7 @@
  */
 
 import { useEffect, useState, useMemo } from "react";
-import { FiTarget, FiEye, FiTrendingUp, FiActivity, FiClock } from "react-icons/fi";
+import { FiEye, FiActivity, FiClock, FiShare2, FiCode, FiAward } from "react-icons/fi";
 import { MetricsProvider } from "../contexts/MetricsProvider";
 import { useMetricsStore } from "../state/metrics.store";
 import { useDashboard } from "../hooks/useDashboard";
@@ -19,35 +19,39 @@ import "../styles/modern-projects.css";
 
 interface ProjectMetrics {
   projectId: number;
-  totalExposures: number;
-  totalViewTime: number;
   totalCodeViews: number;
   totalLiveViews: number;
-  avgViewTimePerExposure: number;
   totalInteractions: number;
-  interactionRate: number;
   activeDays: number;
+  avgSocialPlusEmailPerDay: number;
+  avgEngagementOnActiveDays: number;
+  avgActiveTimePerDay: number;
+  codeToLiveRatio: number;
+  socialDrivenInteractionRate: number;
+  consistencyScore: number;
 }
 
 function ModernProjectsContent() {
   const [isReady, setIsReady] = useState(false);
   const { timeRange } = useDashboard();
   const days = getTimeRangeDays(timeRange);
-  const { slotByDate, slotIndex, isLoading } = useMetricsStore();
+  const { slotByDate, slotIndex, dailyByDate, isLoading } = useMetricsStore();
 
   // Simple readiness flag
   useEffect(() => {
     setTimeout(() => setIsReady(true), 200);
   }, []);
 
-  // Calculate project metrics from slots data
+  // Calculate project metrics from slots data with global context
   const projectMetrics = useMemo((): ProjectMetrics[] => {
     const projectMap = new Map<number, {
-      totalExposures: number;
-      totalViewTime: number;
       totalCodeViews: number;
       totalLiveViews: number;
       activeDays: number;
+      dailySocialClicks: number[];
+      dailyEngagement: number[];
+      dailyActiveTime: number[];
+      dailyInteractions: number[];
     }>();
 
     // Process selected time range of slots
@@ -55,62 +59,113 @@ function ModernProjectsContent() {
     
     relevantSlots.forEach(date => {
       const slot = slotByDate[date];
-      if (!slot?.projects) return;
+      const dailyData = dailyByDate[date];
+      if (!slot?.projects || !dailyData) return;
+
+      // Get daily global metrics
+      const dailySocialClicks = dailyData.raw?.socialClicksTotal || 0;
+      const dailyEmailCount = dailyData.raw?.emailCopies || 0;
+      const dailySocialPlusEmail = dailySocialClicks + dailyEmailCount;
+      const dailyEngagement = dailyData.derived?.engagementAvg || 0;
+      const dailyActiveTime = dailyData.raw?.activeTime || 0;
 
       slot.projects.forEach((project: ProjectRaw) => {
+        const projectInteractions = project.codeViews + project.liveViews;
+        const hasActivity = projectInteractions > 0;
+        
         const existing = projectMap.get(project.projectId) || {
-          totalExposures: 0,
-          totalViewTime: 0,
           totalCodeViews: 0,
           totalLiveViews: 0,
-          activeDays: 0
+          activeDays: 0,
+          dailySocialClicks: [],
+          dailyEngagement: [],
+          dailyActiveTime: [],
+          dailyInteractions: []
         };
 
         projectMap.set(project.projectId, {
-          totalExposures: existing.totalExposures + project.exposures,
-          totalViewTime: existing.totalViewTime + project.viewTime,
           totalCodeViews: existing.totalCodeViews + project.codeViews,
           totalLiveViews: existing.totalLiveViews + project.liveViews,
-          activeDays: existing.activeDays + (project.exposures > 0 ? 1 : 0)
+          activeDays: existing.activeDays + (hasActivity ? 1 : 0),
+          dailySocialClicks: hasActivity ? [...existing.dailySocialClicks, dailySocialPlusEmail] : existing.dailySocialClicks,
+          dailyEngagement: hasActivity ? [...existing.dailyEngagement, dailyEngagement] : existing.dailyEngagement,
+          dailyActiveTime: hasActivity ? [...existing.dailyActiveTime, dailyActiveTime] : existing.dailyActiveTime,
+          dailyInteractions: [...existing.dailyInteractions, projectInteractions]
         });
       });
     });
 
     return Array.from(projectMap.entries()).map(([projectId, data]) => {
       const totalInteractions = data.totalCodeViews + data.totalLiveViews;
+      const avgSocialPlusEmailPerDay = data.dailySocialClicks.length > 0 
+        ? data.dailySocialClicks.reduce((a, b) => a + b, 0) / data.dailySocialClicks.length 
+        : 0;
+      const avgEngagementOnActiveDays = data.dailyEngagement.length > 0 
+        ? data.dailyEngagement.reduce((a, b) => a + b, 0) / data.dailyEngagement.length 
+        : 0;
+      const avgActiveTimePerDay = data.dailyActiveTime.length > 0 
+        ? data.dailyActiveTime.reduce((a, b) => a + b, 0) / data.dailyActiveTime.length / 10 // Convert ds to seconds
+        : 0;
+      const codeToLiveRatio = data.totalLiveViews > 0 ? data.totalCodeViews / data.totalLiveViews : data.totalCodeViews;
+      const socialDrivenInteractionRate = avgSocialPlusEmailPerDay > 0 ? totalInteractions / (avgSocialPlusEmailPerDay * data.activeDays) : 0;
+      
+      // Calculate consistency score (inverse of coefficient of variation)
+      const dailyInteractions = data.dailyInteractions.filter(x => x > 0);
+      const consistencyScore = dailyInteractions.length > 1 
+        ? (() => {
+            const mean = dailyInteractions.reduce((a, b) => a + b, 0) / dailyInteractions.length;
+            const variance = dailyInteractions.reduce((sum, x) => sum + Math.pow(x - mean, 2), 0) / dailyInteractions.length;
+            const stdDev = Math.sqrt(variance);
+            return mean > 0 ? Math.max(0, 1 - (stdDev / mean)) : 0;
+          })()
+        : 1;
+      
       return {
         projectId,
-        totalExposures: data.totalExposures,
-        totalViewTime: data.totalViewTime,
         totalCodeViews: data.totalCodeViews,
         totalLiveViews: data.totalLiveViews,
-        avgViewTimePerExposure: data.totalExposures > 0 ? data.totalViewTime / data.totalExposures : 0,
         totalInteractions,
-        interactionRate: data.totalExposures > 0 ? totalInteractions / data.totalExposures : 0,
-        activeDays: data.activeDays
+        activeDays: data.activeDays,
+        avgSocialPlusEmailPerDay,
+        avgEngagementOnActiveDays,
+        avgActiveTimePerDay,
+        codeToLiveRatio,
+        socialDrivenInteractionRate,
+        consistencyScore
       };
     }).sort((a, b) => b.totalInteractions - a.totalInteractions);
-  }, [slotByDate, slotIndex, days]);
+  }, [slotByDate, slotIndex, dailyByDate, days]);
 
   // Aggregate KPIs
   const aggregateKpis = useMemo(() => {
-    const totalProjectExposures = projectMetrics.reduce((sum, p) => sum + p.totalExposures, 0);
     const totalProjectInteractions = projectMetrics.reduce((sum, p) => sum + p.totalInteractions, 0);
-    const totalProjectViewTime = projectMetrics.reduce((sum, p) => sum + p.totalViewTime, 0);
-    const activeProjects = projectMetrics.filter(p => p.totalExposures > 0).length;
-    const avgInteractionRate = projectMetrics.length > 0 
-      ? projectMetrics.reduce((sum, p) => sum + p.interactionRate, 0) / projectMetrics.length 
+    const activeProjects = projectMetrics.filter(p => p.totalInteractions > 0).length;
+    const avgSocialDrivenRate = projectMetrics.length > 0 
+      ? projectMetrics.reduce((sum, p) => sum + p.socialDrivenInteractionRate, 0) / projectMetrics.length 
+      : 0;
+    const avgCodeToLiveRatio = projectMetrics.length > 0 
+      ? projectMetrics.reduce((sum, p) => sum + p.codeToLiveRatio, 0) / projectMetrics.length 
+      : 0;
+    const avgConsistencyScore = projectMetrics.length > 0 
+      ? projectMetrics.reduce((sum, p) => sum + p.consistencyScore, 0) / projectMetrics.length 
+      : 0;
+    const avgEngagementOnActiveDays = projectMetrics.length > 0 
+      ? projectMetrics.reduce((sum, p) => sum + p.avgEngagementOnActiveDays, 0) / projectMetrics.length 
       : 0;
     const topProject = projectMetrics[0];
+    const mostConsistentProject = [...projectMetrics].sort((a, b) => b.consistencyScore - a.consistencyScore)[0];
 
     return {
-      totalProjectExposures,
       totalProjectInteractions,
-      totalProjectViewTime: totalProjectViewTime / 10, // Convert ds to seconds
       activeProjects,
-      avgInteractionRate,
+      avgSocialDrivenRate,
+      avgCodeToLiveRatio,
+      avgConsistencyScore,
+      avgEngagementOnActiveDays,
       topProjectId: topProject?.projectId || 0,
-      topProjectInteractions: topProject?.totalInteractions || 0
+      topProjectInteractions: topProject?.totalInteractions || 0,
+      mostConsistentProjectId: mostConsistentProject?.projectId || 0,
+      mostConsistentScore: mostConsistentProject?.consistencyScore || 0
     };
   }, [projectMetrics]);
 
@@ -168,28 +223,28 @@ function ModernProjectsContent() {
       {/* KPI Grid */}
       <KpiGrid columns={{ base: 1, sm: 2, md: 3, lg: 4, xl: 6 }} gap={6}>
         <KpiCard
-          title="Total Exposures"
-          value={aggregateKpis.totalProjectExposures.toLocaleString()}
-          subtitle="project views"
-          icon={<FiEye />}
+          title="Total Interactions"
+          value={aggregateKpis.totalProjectInteractions.toLocaleString()}
+          subtitle="code + live clicks"
+          icon={<FiActivity />}
           color="blue"
           isLoading={false}
         />
         
         <KpiCard
-          title="Total Interactions"
-          value={aggregateKpis.totalProjectInteractions.toLocaleString()}
-          subtitle="code + live views"
-          icon={<FiActivity />}
+          title="Social+Email Conversion"
+          value={(aggregateKpis.avgSocialDrivenRate * 100).toFixed(1) + "%"}
+          subtitle="social+email to interactions"
+          icon={<FiShare2 />}
           color="green"
           isLoading={false}
         />
         
         <KpiCard
-          title="Avg Interaction Rate"
-          value={(aggregateKpis.avgInteractionRate * 100).toFixed(1) + "%"}
-          subtitle="interactions per exposure"
-          icon={<FiTarget />}
+          title="Code Preference"
+          value={aggregateKpis.avgCodeToLiveRatio.toFixed(1) + "x"}
+          subtitle="code vs live ratio"
+          icon={<FiCode />}
           color="purple"
           isLoading={false}
         />
@@ -197,25 +252,25 @@ function ModernProjectsContent() {
         <KpiCard
           title="Active Projects"
           value={aggregateKpis.activeProjects.toString()}
-          subtitle="with exposures"
-          icon={<FiTrendingUp />}
+          subtitle="with interactions"
+          icon={<FiEye />}
           color="orange"
           isLoading={false}
         />
         
         <KpiCard
-          title="Top Project"
-          value={`Project ${aggregateKpis.topProjectId}`}
-          subtitle={`${aggregateKpis.topProjectInteractions} interactions`}
-          icon={<FiTarget />}
+          title="Most Consistent"
+          value={`Project ${aggregateKpis.mostConsistentProjectId}`}
+          subtitle={`${(aggregateKpis.mostConsistentScore * 100).toFixed(0)}% consistency`}
+          icon={<FiAward />}
           color="green"
           isLoading={false}
         />
         
         <KpiCard
-          title="View Time"
-          value={`${aggregateKpis.totalProjectViewTime.toFixed(1)}s`}
-          subtitle="total across projects"
+          title="Engagement Quality"
+          value={aggregateKpis.avgEngagementOnActiveDays.toFixed(2)}
+          subtitle="avg engagement on active days"
           icon={<FiClock />}
           color="blue"
           isLoading={false}
@@ -245,13 +300,38 @@ function ModernProjectsContent() {
       {/* Bottom Row - Bubble Chart and Rankings */}
       <div className="modern-projects-bottom-row">
         <ProjectBubbleChart 
-          data={projectMetrics.slice(0, 10)}
+          data={projectMetrics.slice(0, 10).map(p => ({
+            id: p.projectId,
+            x: p.avgSocialPlusEmailPerDay, // X-axis: social + email engagement
+            y: p.avgEngagementOnActiveDays, // Y-axis: engagement quality
+            size: p.avgActiveTimePerDay, // Size: time spent (indicates real interest)
+            label: `Project ${p.projectId}`,
+            // Additional data for tooltip
+            projectId: p.projectId,
+            totalCodeViews: p.totalCodeViews,
+            totalLiveViews: p.totalLiveViews,
+            totalInteractions: p.totalInteractions,
+            consistencyScore: p.consistencyScore,
+            socialPlusEmailPerDay: p.avgSocialPlusEmailPerDay,
+            engagementOnActiveDays: p.avgEngagementOnActiveDays,
+            activeTimePerDay: p.avgActiveTimePerDay
+          }))}
           title="Project Performance Matrix"
-          subtitle="Exposures vs Interaction Rate (size = view time)"
+          subtitle="Social+Email reach vs engagement quality (size = active time)"
+          xAxisLabel="Social+Email/Day"
+          yAxisLabel="Engagement Score"
+          sizeLabel="Active Time (sec)"
         />
         
         <ProjectRankingCard 
-          data={projectMetrics.slice(0, 5)}
+          data={projectMetrics.slice(0, 5).map(p => ({
+            projectId: p.projectId,
+            totalInteractions: p.totalInteractions,
+            totalCodeViews: p.totalCodeViews,
+            totalLiveViews: p.totalLiveViews,
+            interactionRate: p.socialDrivenInteractionRate, // Use social-driven rate instead
+            totalExposures: Math.round(p.avgSocialPlusEmailPerDay * p.activeDays) // Approx social+email exposure
+          }))}
           title="Top Performing Projects"
           subtitle="Ranked by total interactions"
         />
@@ -274,6 +354,10 @@ function ModernProjectsContent() {
           Time Range: {days} days
           <br />
           Total Interactions: {aggregateKpis.totalProjectInteractions}
+          <br />
+          Avg Social-Driven Rate: {(aggregateKpis.avgSocialDrivenRate * 100).toFixed(1)}%
+          <br />
+          Avg Consistency: {(aggregateKpis.avgConsistencyScore * 100).toFixed(1)}%
           <br />
           Slots Available: {slotIndex.length}
         </div>
