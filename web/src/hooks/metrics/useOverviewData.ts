@@ -12,9 +12,13 @@ export interface OverviewData {
   todayKpis: {
     totalViews: number;
     avgSessionMinutes: number | null; // in minutes
+    // optional backward-compat aliases (ms/min conversions are handled by hooks)
+    avgSessionMs?: number | null;
     deviceMix: { desktop: number; mobile: number } | null; // fractions 0..1
     qualityVisitRatePct: number | null; // fraction 0..1
     emailConversionPct: number | null; // fraction 0..1
+    // optional legacy bounceRate field used by some pages (fraction 0..1)
+    bounceRate?: number | null;
     emailCopies: number;
     socialClicksTotal: number;
     projectExposuresTotal: number;
@@ -145,6 +149,8 @@ export function useOverviewData(rangeDays: number = 30): OverviewData {
       return {
         totalViews,
         avgSessionMinutes,
+        // backward-compatible fields used elsewhere in the app
+        avgSessionMs: avgSessionMinutes != null ? Math.round(avgSessionMinutes * 60 * 1000) : null,
         deviceMix,
         qualityVisitRatePct,
         emailConversionPct,

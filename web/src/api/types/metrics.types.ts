@@ -41,6 +41,7 @@ export interface DailyDerived {
   avgCardViewTimeMs: number | null; // converted to ms
   tffiMeanMs: number | null; // converted to ms
   emailConversion: number | null; // fraction 0..1
+  qualityVisitRate?: number | null; // optional fraction 0..1
 }
 
 export interface DailyEntry {

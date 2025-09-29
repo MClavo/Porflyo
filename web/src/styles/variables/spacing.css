@@ -11,4 +11,6 @@
   --space-10: 40px;
   --space-12: 48px;
   --space-16: 64px;
+  /* Legacy aliases used in some pages */
+  --spacing-16: var(--space-16);
 }

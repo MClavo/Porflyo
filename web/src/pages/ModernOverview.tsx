@@ -88,10 +88,10 @@ function ModernOverviewContent() {
     .reverse(); // invertir para mostrar fechas más recientes a la derecha
 
   const chartMetrics = [
-    { key: 'views', name: 'Total Views', color: '#3B82F6' },
-    { key: 'qualityViews', name: 'Quality Views', color: '#10B981' },
-    { key: 'emailCopies', name: 'Email Copies', color: '#F59E0B' },
-    { key: 'socialClicks', name: 'Social Clicks', color: '#8B5CF6' }
+    { key: 'views', name: 'Total Views', color: 'var(--chart-1, #3B82F6)' },
+    { key: 'qualityViews', name: 'Quality Views', color: 'var(--chart-2, #10B981)' },
+    { key: 'emailCopies', name: 'Email Copies', color: 'var(--chart-3, #F59E0B)' },
+    { key: 'socialClicks', name: 'Social Clicks', color: 'var(--chart-4, #8B5CF6)' }
   ];
 
   // Debug logging

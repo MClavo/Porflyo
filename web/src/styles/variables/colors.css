@@ -55,4 +55,9 @@
   
   /* Additional blue used in some legacy styles */
   --blue-600: #3182ce;
+
+  /* Page-level utility colors / aliases */
+  --dashboard-bg-primary: var(--dashboard-bg);
+  --overlay-weak: rgba(0,0,0,0.1);
+  --color-error-text: #ff6b6b; /* soft error */
 }
