@@ -4,6 +4,7 @@
 
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
 import type { TooltipProps, LegendProps } from './types';
+import './modern-charts.css';
 
 interface ProjectDonutChartProps {
   data: Array<{
@@ -29,7 +30,7 @@ const COLORS = [
   '#F97316', // orange
 ];
 
-const SEPARATOR_COLOR = 'rgba(0, 0, 0, 0.1)'; // Dark separator for better visibility
+const SEPARATOR_COLOR = 'var(--card-border)'; // Clean separator using CSS variable
 
 export const ProjectDonutChart: React.FC<ProjectDonutChartProps> = ({
   data,
@@ -56,23 +57,43 @@ export const ProjectDonutChart: React.FC<ProjectDonutChartProps> = ({
       const percentage = total > 0 ? ((data.value / total) * 100).toFixed(1) : '0';
       
       return (
-        <div className="recharts-tooltip" style={{
-          backgroundColor: 'var(--card-bg)',
-          border: '1px solid var(--card-border)',
-          borderRadius: 'var(--radius-md)',
-          padding: 'var(--space-3)',
-          boxShadow: 'var(--shadow-lg)',
-          fontSize: 'var(--font-sm)'
-        }}>
-          <p style={{ color: 'var(--text-primary)', margin: 0, fontWeight: 600 }}>
+        <div className="modern-tooltip">
+          <div className="modern-tooltip__header">
             {data.name}
-          </p>
-          <p style={{ color: 'var(--text-secondary)', margin: '4px 0 0 0', fontSize: 'var(--font-xs)' }}>
-            Total: {data.value.toLocaleString()} ({percentage}%)
-          </p>
-          <p style={{ color: 'var(--text-secondary)', margin: '2px 0 0 0', fontSize: 'var(--font-xs)' }}>
-            Code: {data.codeViews} | Live: {data.liveViews}
-          </p>
+          </div>
+          <div className="modern-tooltip__separator"></div>
+          <div className="modern-tooltip__content">
+            <div className="modern-tooltip__item">
+              <div 
+                className="modern-tooltip__color-dot"
+                style={{ backgroundColor: data.fill }}
+              ></div>
+              <span className="modern-tooltip__name">Total Interactions</span>
+              <span className="modern-tooltip__value">
+                {data.value.toLocaleString()} ({percentage}%)
+              </span>
+            </div>
+            <div className="modern-tooltip__item">
+              <div 
+                className="modern-tooltip__color-dot"
+                style={{ backgroundColor: 'var(--chart-success)' }}
+              ></div>
+              <span className="modern-tooltip__name">Code Views</span>
+              <span className="modern-tooltip__value">
+                {data.codeViews.toLocaleString()}
+              </span>
+            </div>
+            <div className="modern-tooltip__item">
+              <div 
+                className="modern-tooltip__color-dot"
+                style={{ backgroundColor: 'var(--chart-primary)' }}
+              ></div>
+              <span className="modern-tooltip__name">Live Views</span>
+              <span className="modern-tooltip__value">
+                {data.liveViews.toLocaleString()}
+              </span>
+            </div>
+          </div>
         </div>
       );
     }
@@ -81,25 +102,10 @@ export const ProjectDonutChart: React.FC<ProjectDonutChartProps> = ({
 
   const CustomLegend = ({ payload }: LegendProps) => {
     return (
-      <div style={{ 
-        display: 'flex', 
-        flexWrap: 'wrap', 
-        justifyContent: 'center', 
-        gap: 'var(--space-2)',
-        marginTop: 'var(--space-3)'
-      }}>
+      <div className="modern-chart-legend" style={{ flexWrap: 'wrap' }}>
         {payload?.map((entry, index: number) => (
-          <div key={index} style={{ 
-            display: 'flex', 
-            alignItems: 'center', 
-            gap: 'var(--space-1)',
-            fontSize: 'var(--font-xs)',
-            color: 'var(--text-secondary)'
-          }}>
-            <div style={{
-              width: '8px',
-              height: '8px',
-              borderRadius: '50%',
+          <div key={index} className="modern-legend-item">
+            <div className="modern-legend-dot" style={{
               backgroundColor: entry.color
             }} />
             {entry.value}
@@ -144,7 +150,8 @@ export const ProjectDonutChart: React.FC<ProjectDonutChartProps> = ({
             cy="50%"
             innerRadius={60}
             outerRadius={100}
-            paddingAngle={2} // Small separator between segments
+            startAngle={90}
+            endAngle={450}
             dataKey="value"
             stroke={SEPARATOR_COLOR}
             strokeWidth={1}

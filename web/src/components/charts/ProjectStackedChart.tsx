@@ -4,6 +4,7 @@
 
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import type { TooltipProps, LegendProps } from './types';
+import './modern-charts.css';
 
 interface ProjectStackedChartProps {
   data: Array<{
@@ -17,8 +18,8 @@ interface ProjectStackedChartProps {
   height?: number;
 }
 
-const CODE_COLOR = '#10B981'; // emerald
-const LIVE_COLOR = '#3B82F6'; // blue
+const CODE_COLOR = 'var(--chart-success)'; // emerald from chart theme
+const LIVE_COLOR = 'var(--chart-primary)'; // blue from chart theme
 
 export const ProjectStackedChart: React.FC<ProjectStackedChartProps> = ({
   data,
@@ -40,41 +41,46 @@ export const ProjectStackedChart: React.FC<ProjectStackedChartProps> = ({
   const CustomTooltip = ({ active, payload, label }: TooltipProps) => {
     if (active && payload && payload.length) {
       const total = payload.reduce((sum, item) => sum + item.value, 0);
-      
+      // find live and code entries explicitly to enforce order
+      const liveEntry = payload.find((p) => p.name === 'Live Views');
+      const codeEntry = payload.find((p) => p.name === 'Code Views');
+
       return (
-        <div style={{
-          backgroundColor: 'var(--card-bg)',
-          border: '1px solid var(--card-border)',
-          borderRadius: 'var(--radius-md)',
-          padding: 'var(--space-3)',
-          boxShadow: 'var(--shadow-lg)',
-          fontSize: 'var(--font-sm)'
-        }}>
-          <p style={{ color: 'var(--text-primary)', margin: 0, fontWeight: 600 }}>
+        <div className="project-stacked-tooltip">
+          <div className="modern-tooltip__header">
             Project {label?.replace('P', '')}
-          </p>
-          <p style={{ color: 'var(--text-secondary)', margin: '4px 0 2px 0', fontSize: 'var(--font-xs)' }}>
-            Total Interactions: {total.toLocaleString()}
-          </p>
-          {payload.map((item, index) => (
-            <p key={index} style={{ 
-              color: item.color, 
-              margin: '2px 0 0 0', 
-              fontSize: 'var(--font-xs)',
-              display: 'flex',
-              alignItems: 'center',
-              gap: 'var(--space-1)'
-            }}>
-              <span style={{
-                width: '8px',
-                height: '8px',
-                backgroundColor: item.color,
-                borderRadius: '2px',
-                display: 'inline-block'
-              }} />
-              {item.name}: {item.value.toLocaleString()} ({total > 0 ? ((item.value / total) * 100).toFixed(1) : '0'}%)
-            </p>
-          ))}
+          </div>
+          <div className="modern-tooltip__separator"></div>
+          <div className="modern-tooltip__content">
+            <div className="modern-tooltip__item">
+              <span className="modern-tooltip__name">Views</span>
+              <span className="modern-tooltip__value">{total.toLocaleString()}</span>
+            </div>
+
+            {liveEntry && (
+              <div className="modern-tooltip__item">
+                <span className="modern-tooltip__name">Live</span>
+                <span
+                  className="modern-tooltip__value"
+                  style={{ color: String(liveEntry.color) }}
+                >
+                  {liveEntry.value.toLocaleString()}
+                </span>
+              </div>
+            )}
+
+            {codeEntry && (
+              <div className="modern-tooltip__item">
+                <span className="modern-tooltip__name">Code</span>
+                <span
+                  className="modern-tooltip__value"
+                  style={{ color: String(codeEntry.color) }}
+                >
+                  {codeEntry.value.toLocaleString()}
+                </span>
+              </div>
+            )}
+          </div>
         </div>
       );
     }
@@ -83,25 +89,11 @@ export const ProjectStackedChart: React.FC<ProjectStackedChartProps> = ({
 
   const CustomLegend = ({ payload }: LegendProps) => {
     return (
-      <div style={{ 
-        display: 'flex', 
-        justifyContent: 'center', 
-        gap: 'var(--space-4)',
-        marginTop: 'var(--space-3)'
-      }}>
+      <div className="modern-chart-legend" style={{ gap: 'var(--space-4)' }}>
         {payload?.map((entry, index) => (
-          <div key={index} style={{ 
-            display: 'flex', 
-            alignItems: 'center', 
-            gap: 'var(--space-1)',
-            fontSize: 'var(--font-xs)',
-            color: 'var(--text-secondary)'
-          }}>
-            <div style={{
-              width: '8px',
-              height: '8px',
-              backgroundColor: entry.color,
-              borderRadius: '2px'
+          <div key={index} className="modern-legend-item">
+            <div className="modern-legend-square" style={{
+              backgroundColor: entry.color
             }} />
             {entry.value}
           </div>
@@ -141,8 +133,15 @@ export const ProjectStackedChart: React.FC<ProjectStackedChartProps> = ({
         <BarChart
           data={chartData}
           margin={{ top: 20, right: 30, left: 20, bottom: 40 }}
+          barCategoryGap="20%"
         >
-          <CartesianGrid strokeDasharray="3 3" stroke="var(--card-border)" />
+          <CartesianGrid 
+            strokeDasharray="3 3" 
+            stroke="var(--card-border)" 
+            strokeOpacity={0.3}
+            horizontal={true}
+            vertical={false}
+          />
           <XAxis 
             dataKey="name" 
             stroke="var(--text-secondary)"
@@ -150,10 +149,21 @@ export const ProjectStackedChart: React.FC<ProjectStackedChartProps> = ({
             angle={-45}
             textAnchor="end"
             height={60}
+            axisLine={false}
+            tickLine={false}
+            tick={{ fill: 'var(--text-secondary)', fontSize: 12 }}
           />
           <YAxis 
             stroke="var(--text-secondary)"
             fontSize={12}
+            axisLine={false}
+            tickLine={false}
+            tick={{ fill: 'var(--text-secondary)', fontSize: 12 }}
+            tickFormatter={(value) => {
+              if (value >= 1000000) return `${(value / 1000000).toFixed(1)}M`;
+              if (value >= 1000) return `${(value / 1000).toFixed(1)}K`;
+              return value.toString();
+            }}
             label={{ 
               value: 'Interactions', 
               angle: -90, 
@@ -161,21 +171,31 @@ export const ProjectStackedChart: React.FC<ProjectStackedChartProps> = ({
               style: { textAnchor: 'middle', fill: 'var(--text-secondary)', fontSize: '12px' }
             }}
           />
-          <Tooltip content={<CustomTooltip />} />
+          <Tooltip
+            content={<CustomTooltip />}
+            cursor={{
+              fill: 'var(--card-bg-hover)',
+              fillOpacity: 0.1,
+              stroke: 'var(--primary-color)',
+              strokeWidth: 1,
+              strokeOpacity: 0.3
+            }}
+            animationDuration={100}
+          />
           <Legend content={<CustomLegend />} />
           <Bar 
             dataKey="codeViews" 
             stackId="interactions"
             fill={CODE_COLOR}
             name="Code Views"
-            radius={[0, 0, 0, 0]}
+            style={{ cursor: 'pointer' }}
           />
           <Bar 
             dataKey="liveViews" 
             stackId="interactions"
             fill={LIVE_COLOR}
             name="Live Views"
-            radius={[4, 4, 0, 0]}
+            style={{ cursor: 'pointer' }}
           />
         </BarChart>
       </ResponsiveContainer>
