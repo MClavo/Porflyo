@@ -61,6 +61,16 @@ export function usePortfolioEditorState({ onPortfolioChange, showNotification }:
     }
   }, [isEditing, existingPortfolio, setSelectedTemplate]);
 
+  // Sync selectedTemplate with portfolio.template
+  useEffect(() => {
+    if (portfolio?.template !== selectedTemplate) {
+      dispatch({
+        type: "SWITCH_TEMPLATE",
+        payload: { template: selectedTemplate },
+      });
+    }
+  }, [selectedTemplate, portfolio?.template]);
+
   useEffect(() => {
     onPortfolioChange?.(portfolio);
   }, [portfolio, onPortfolioChange]);

@@ -10,6 +10,7 @@ import { ModernEditorHeader, ModernEditorSidebar } from "../components/portfolio
 import { usePortfolioEditorState } from "../hooks/editor/usePortfolioEditorState";
 import { useRepositoryFlow } from "../hooks/save/repository/useRepositoryFlow";
 import { useSavedCards } from "../state/SavedCards.hooks";
+import { type TemplateKey } from "../templates/Template.types";
 import type { CardType, CardPatchByType } from "../state/Cards.types";
 import type { PortfolioState } from "../state/Portfolio.types";
 import type { SectionState } from "../state/Sections.types";
@@ -219,13 +220,8 @@ export default function PortfolioEditor({
           mode={state.ui.mode}
           onModeToggle={state.ui.toggleMode}
           selectedTemplate={state.ui.selectedTemplate}
-          onTemplateSelect={(t: string) => {
-            const templateKey = t as "template1" | "template2";
-            state.ui.setSelectedTemplate(templateKey);
-            state.dispatch({
-              type: "SWITCH_TEMPLATE",
-              payload: { template: templateKey },
-            });
+          onTemplateSelect={(t: TemplateKey) => {
+            state.ui.setSelectedTemplate(t);
           }}
           slug={state.slug.slug}
           setSlug={state.slug.setSlug}

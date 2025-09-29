@@ -3,6 +3,7 @@
  */
 
 import React from 'react';
+import { type TemplateKey } from '../../templates/Template.types';
 import { ModernModeToggle } from './ModernModeToggle';
 import { ModernTemplateSelector } from './ModernTemplateSelector';
 import { ModernUrlSection } from './ModernUrlSection';
@@ -20,8 +21,8 @@ export interface ModernEditorHeaderProps {
   // Mode and Template
   mode: 'edit' | 'view';
   onModeToggle: () => void;
-  selectedTemplate: string;
-  onTemplateSelect: (template: string) => void;
+  selectedTemplate: TemplateKey;
+  onTemplateSelect: (template: TemplateKey) => void;
   
   // URL and Publication (only for edit mode)
   slug?: string;

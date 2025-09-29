@@ -4,18 +4,17 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { FiChevronDown, FiLayout } from 'react-icons/fi';
+import { type TemplateKey } from '../../templates/Template.types';
 import './ModernTemplateSelector.css';
 
 export interface ModernTemplateSelectorProps {
-  selectedTemplate: string;
-  onSelect: (template: string) => void;
+  selectedTemplate: TemplateKey;
+  onSelect: (template: TemplateKey) => void;
 }
 
-const TEMPLATE_OPTIONS = [
-  { value: 'default', label: 'Default', description: 'Clean and minimal design' },
-  { value: 'modern', label: 'Modern', description: 'Contemporary layout with animations' },
-  { value: 'classic', label: 'Classic', description: 'Traditional portfolio style' },
-  { value: 'creative', label: 'Creative', description: 'Bold and artistic design' }
+const TEMPLATE_OPTIONS: Array<{ value: TemplateKey; label: string; description: string }> = [
+  { value: 'template1', label: 'Template 1', description: 'Clean layout with projects, text, and experiences' },
+  { value: 'template2', label: 'Template 2', description: 'Modern layout with jobs, text, and projects' }
 ];
 
 export const ModernTemplateSelector: React.FC<ModernTemplateSelectorProps> = ({
@@ -38,7 +37,7 @@ export const ModernTemplateSelector: React.FC<ModernTemplateSelectorProps> = ({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const handleSelect = (template: string) => {
+  const handleSelect = (template: TemplateKey) => {
     onSelect(template);
     setIsOpen(false);
   };
