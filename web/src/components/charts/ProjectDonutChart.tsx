@@ -154,7 +154,8 @@ export const ProjectDonutChart: React.FC<ProjectDonutChartProps> = ({
               endAngle={450}
               dataKey="value"
               stroke={SEPARATOR_COLOR}
-              strokeWidth={1}
+              strokeWidth={2}
+              paddingAngle={0}
             >
               {chartData.map((entry, index) => (
                 <Cell key={`cell-${index}`} fill={entry.fill} />
