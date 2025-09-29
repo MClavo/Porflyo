@@ -6,6 +6,14 @@
 @import './variables/typography.css';
 @import './variables/layout.css';
 
+/* Reset h1 styles for dashboard components to prevent global style interference */
+.dashboard-container h1,
+.dashboard-header h1,
+.home-page h1 {
+  font-family: var(--font-sans) !important;
+  letter-spacing: normal !important;
+}
+
 /* Forzar scrollbar siempre visible para evitar layout shift */
 html {
   overflow-y: scroll;

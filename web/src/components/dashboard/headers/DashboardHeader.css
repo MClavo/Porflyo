@@ -32,9 +32,11 @@
 }
 
 .dashboard-header-title {
-  font-size: var(--font-4xl);
-  font-weight: 800;
-  color: var(--text-primary);
+  font-size: var(--font-4xl) !important;
+  font-weight: 800 !important;
+  color: var(--text-primary) !important;
+  font-family: var(--font-sans) !important;
+  letter-spacing: normal !important;
   margin: 0 0 var(--space-2) 0;
   line-height: 1.2;
   background: linear-gradient(135deg, var(--text-primary), var(--text-secondary));

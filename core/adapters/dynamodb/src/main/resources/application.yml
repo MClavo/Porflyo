@@ -35,7 +35,8 @@ micronaut:
 
 
 dynamodb:
-  table-name: user-test    
+  user-table: user-test    
+  metrics-table: metrics-test
   region: us-east-1
 
 s3:

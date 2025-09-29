@@ -8,7 +8,8 @@ aws:
    
 dynamodb:
   endpoint: http://host.docker.internal:8000
-  table-name: user-test    
+  user-table: user-test    
+  metrics-table: metrics-test
   region: us-east-1
 
 s3:

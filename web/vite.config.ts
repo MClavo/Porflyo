@@ -42,7 +42,7 @@ export default defineConfig({
         secure: false,
       },
       '/metrics': {
-        target: 'http://localhost:8080',
+        target: 'http://localhost:9002',
         changeOrigin: true,
         secure: false,
       },

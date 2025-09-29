@@ -4,8 +4,8 @@
   --space1: #00ADB5;
 }
 
-h1 {
-  
+/* Scope h1 styles to only apply within the root page */
+.root-page h1 {
   font-family: "Syncopate", sans-serif;
   font-optical-sizing: auto;
   font-weight: 700;
