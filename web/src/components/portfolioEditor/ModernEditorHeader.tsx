@@ -3,7 +3,6 @@
  */
 
 import React from 'react';
-import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 import { ModernModeToggle } from './ModernModeToggle';
 import { ModernTemplateSelector } from './ModernTemplateSelector';
 import { ModernUrlSection } from './ModernUrlSection';
@@ -32,14 +31,11 @@ export interface ModernEditorHeaderProps {
   isCheckingSlug?: boolean;
   onSlugAvailabilityChange?: (available: boolean) => void;
   
+  // Publication
   isPublished?: boolean;
   setIsPublished?: (published: boolean) => void;
   onPublish?: () => void;
   isPublishing?: boolean;
-  
-  // Sidebar control
-  isSidebarOpen: boolean;
-  onToggleSidebar: () => void;
   
   // Page context
   isEditMode: boolean; // true if /portfolios/{id}/edit, false if /portfolios/new
@@ -64,23 +60,13 @@ export const ModernEditorHeader: React.FC<ModernEditorHeaderProps> = ({
   setIsPublished,
   onPublish,
   isPublishing,
-  isSidebarOpen,
-  onToggleSidebar,
   isEditMode
 }) => {
   return (
     <header className="modern-editor-header">
       <div className="modern-editor-header__container">
-        {/* Left side - Title and Sidebar Toggle */}
+        {/* Left: Title */}
         <div className="modern-editor-header__left">
-          <button
-            className="modern-editor-header__sidebar-toggle"
-            onClick={onToggleSidebar}
-            aria-label={isSidebarOpen ? 'Close sidebar' : 'Open sidebar'}
-          >
-            {isSidebarOpen ? <FiChevronLeft size={20} /> : <FiChevronRight size={20} />}
-          </button>
-          
           <div className="modern-editor-header__title-section">
             <input
               type="text"
@@ -92,40 +78,45 @@ export const ModernEditorHeader: React.FC<ModernEditorHeaderProps> = ({
           </div>
         </div>
 
-        {/* Center - Mode Toggle and Template Selector */}
+        {/* Center: Controls */}
         <div className="modern-editor-header__center">
+          {/* Mode Toggle */}
           <ModernModeToggle
             mode={mode}
             onToggle={onModeToggle}
-            isSidebarOpen={isSidebarOpen}
           />
-          
-          <ModernTemplateSelector
-            selectedTemplate={selectedTemplate}
-            onSelect={onTemplateSelect}
-          />
+
+          {/* Template Selector - only in edit mode */}
+          {mode === 'edit' && (
+            <ModernTemplateSelector
+              selectedTemplate={selectedTemplate}
+              onSelect={onTemplateSelect}
+            />
+          )}
+
+          {/* URL Section - only in edit mode */}
+          {mode === 'edit' && isEditMode && (
+            <ModernUrlSection
+              slug={slug || ''}
+              setSlug={setSlug || (() => {})}
+              currentSlug={currentSlug}
+              isSlugAvailable={isSlugAvailable}
+              isCheckingSlug={isCheckingSlug}
+              onSlugAvailabilityChange={onSlugAvailabilityChange}
+            />
+          )}
+
+          {/* Public Toggle - only in edit mode */}
+          {mode === 'edit' && isEditMode && (
+            <ModernPublicToggle
+              isPublished={isPublished || false}
+              setIsPublished={setIsPublished || (() => {})}
+            />
+          )}
         </div>
 
-        {/* Right side - URL, Publication, and Actions */}
+        {/* Right: Action Buttons */}
         <div className="modern-editor-header__right">
-          {isEditMode && (
-            <>
-              <ModernUrlSection
-                slug={slug || ''}
-                setSlug={setSlug || (() => {})}
-                currentSlug={currentSlug}
-                isSlugAvailable={isSlugAvailable}
-                isCheckingSlug={isCheckingSlug}
-                onSlugAvailabilityChange={onSlugAvailabilityChange}
-              />
-              
-              <ModernPublicToggle
-                isPublished={isPublished || false}
-                setIsPublished={setIsPublished || (() => {})}
-              />
-            </>
-          )}
-          
           <ModernActionButtons
             onSave={onSave}
             isSaving={isSaving}

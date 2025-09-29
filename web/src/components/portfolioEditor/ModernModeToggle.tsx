@@ -9,25 +9,12 @@ import './ModernModeToggle.css';
 export interface ModernModeToggleProps {
   mode: 'edit' | 'view';
   onToggle: () => void;
-  isSidebarOpen: boolean;
 }
 
 export const ModernModeToggle: React.FC<ModernModeToggleProps> = ({
   mode,
-  onToggle,
-  isSidebarOpen
+  onToggle
 }) => {
-  // Auto-close sidebar when switching to view mode
-  React.useEffect(() => {
-    if (mode === 'view' && isSidebarOpen) {
-      // Small delay to allow mode change to settle
-      setTimeout(() => {
-        // This would need to be handled by parent component
-        // For now, we'll just rely on the parent to handle this
-      }, 100);
-    }
-  }, [mode, isSidebarOpen]);
-
   return (
     <div className="modern-mode-toggle">
       <div className="modern-mode-toggle__container">

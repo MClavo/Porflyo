@@ -10,22 +10,6 @@
   overflow: hidden;
 }
 
-.saved-cards-header {
-  margin-bottom: var(--space-4);
-  padding-bottom: var(--space-3);
-  border-bottom: 1px solid var(--card-border);
-}
-
-.saved-cards-title {
-  margin: 0 0 var(--space-2) 0;
-  font-size: var(--font-md);
-  font-weight: 600;
-  color: var(--text-primary);
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-}
-
 .saved-cards-hint {
   font-size: var(--font-xs);
   color: var(--text-secondary);
@@ -34,6 +18,7 @@
   border-radius: var(--radius-md);
   text-align: center;
   border: 1px solid var(--accent-purple-light);
+  margin-bottom: var(--space-4);
 }
 
 .saved-cards-area {

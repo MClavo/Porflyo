@@ -9,16 +9,19 @@
   transition: all var(--transition-normal);
   overflow: hidden;
   min-height: 0; /* Allow flex shrinking */
+  flex: 0 0 auto; /* Don't grow or shrink, keep fixed width */
 }
 
 .modern-editor-sidebar--expanded {
   width: 320px;
   min-width: 320px;
+  max-width: 320px;
 }
 
 .modern-editor-sidebar--collapsed {
   width: 0;
   min-width: 0;
+  max-width: 0;
   border-right: none;
   box-shadow: none;
 }
@@ -26,13 +29,12 @@
 /* Sidebar Header */
 .modern-editor-sidebar__header {
   padding: var(--space-4);
-  border-bottom: 1px solid var(--card-border);
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  min-height: 60px;
-  background: rgba(255, 255, 255, 0.02);
-  flex-shrink: 0; /* Don't shrink header */
+  justify-content: center;
+  position: relative;
+  min-height: 50px;
+  flex-shrink: 0;
 }
 
 .modern-editor-sidebar__title {
@@ -42,11 +44,7 @@
   margin: 0;
   opacity: 1;
   transition: opacity var(--transition-normal);
-  background: linear-gradient(135deg, var(--accent-purple), var(--accent-blue));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  white-space: nowrap;
+  text-align: center;
 }
 
 .modern-editor-sidebar--collapsed .modern-editor-sidebar__title {
@@ -54,11 +52,14 @@
 }
 
 .modern-editor-sidebar__close {
+  position: absolute;
+  top: var(--space-3);
+  right: var(--space-3);
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: var(--radius-md);
-  width: 32px;
-  height: 32px;
+  width: 28px;
+  height: 28px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -81,6 +82,18 @@
   pointer-events: none;
 }
 
+/* Divider */
+.modern-editor-sidebar__divider {
+  height: 1px;
+  background: var(--card-border);
+  margin: 0 var(--space-4);
+  flex-shrink: 0;
+}
+
+.modern-editor-sidebar--collapsed .modern-editor-sidebar__divider {
+  opacity: 0;
+}
+
 /* Sidebar Content */
 .modern-editor-sidebar__content {
   flex: 1;
@@ -88,18 +101,12 @@
   display: flex;
   flex-direction: column;
   min-height: 0;
-}
-
-.modern-editor-sidebar__area {
-  flex: 1;
   padding: var(--space-4);
-  overflow-y: auto;
   opacity: 1;
   transition: opacity var(--transition-normal);
-  min-height: 0;
 }
 
-.modern-editor-sidebar--collapsed .modern-editor-sidebar__area {
+.modern-editor-sidebar--collapsed .modern-editor-sidebar__content {
   opacity: 0;
   pointer-events: none;
 }

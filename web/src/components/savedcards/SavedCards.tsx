@@ -59,16 +59,11 @@ export function SavedCards({
   return (
     <>
       <div className="saved-cards-container">
-        <div className="saved-cards-header">
-          <h3 className="saved-cards-title">
-            📋 Saved Cards ({savedCardsList.length})
-          </h3>
-          {mode === "edit" && (
-            <div className="saved-cards-hint">
-              Drop cards here to save them
-            </div>
-          )}
-        </div>
+        {mode === "edit" && (
+          <div className="saved-cards-hint">
+            Drop cards here to save them
+          </div>
+        )}
 
         <div
           ref={setNodeRef}
