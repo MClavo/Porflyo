@@ -134,6 +134,7 @@ export const ModernSocialLinks: React.FC<ModernSocialLinksProps> = ({
       case 'youtube': return 'https://youtube.com/c/username';
       case 'website': return 'https://yourwebsite.com';
       case 'blog': return 'https://yourblog.com';
+      case 'discord': return 'https://discord.com/users/userid';
       default: return 'https://...';
     }
   };
