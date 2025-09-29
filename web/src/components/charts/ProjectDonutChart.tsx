@@ -2,8 +2,9 @@
  * ProjectDonutChart - Donut chart showing project interaction distribution
  */
 
-import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
-import type { TooltipProps, LegendProps } from './types';
+import React, { useMemo } from 'react';
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
+import type { TooltipProps } from './types';
 import './modern-charts.css';
 
 interface ProjectDonutChartProps {
@@ -16,6 +17,7 @@ interface ProjectDonutChartProps {
   title: string;
   subtitle: string;
   height?: number;
+  totalInteractions?: number;
 }
 
 // Color palette for projects
@@ -36,25 +38,25 @@ export const ProjectDonutChart: React.FC<ProjectDonutChartProps> = ({
   data,
   title,
   subtitle,
-  height = 300
+  height = 300,
+  totalInteractions
 }) => {
-  // Transform data for chart
-  const chartData = data.map((project, index) => ({
+  // Transform data for chart (memoized)
+  const chartData = useMemo(() => data.map((project, index) => ({
     name: `Project ${project.projectId}`,
     value: project.totalInteractions,
     projectId: project.projectId,
     codeViews: project.totalCodeViews,
     liveViews: project.totalLiveViews,
     fill: COLORS[index % COLORS.length]
-  }));
+  })), [data]);
 
-  // Calculate total for percentage
-  const total = chartData.reduce((sum, item) => sum + item.value, 0);
+  // Calculate total for percentage (memoized)
+  const total = useMemo(() => chartData.reduce((sum, item) => sum + item.value, 0), [chartData]);
 
   const CustomTooltip = ({ active, payload }: TooltipProps) => {
     if (active && payload && payload.length) {
       const data = payload[0].payload as typeof chartData[0];
-      const percentage = total > 0 ? ((data.value / total) * 100).toFixed(1) : '0';
       
       return (
         <div className="modern-tooltip">
@@ -68,29 +70,9 @@ export const ProjectDonutChart: React.FC<ProjectDonutChartProps> = ({
                 className="modern-tooltip__color-dot"
                 style={{ backgroundColor: data.fill }}
               ></div>
-              <span className="modern-tooltip__name">Total Interactions</span>
+              <span className="modern-tooltip__name">Interactions</span>
               <span className="modern-tooltip__value">
-                {data.value.toLocaleString()} ({percentage}%)
-              </span>
-            </div>
-            <div className="modern-tooltip__item">
-              <div 
-                className="modern-tooltip__color-dot"
-                style={{ backgroundColor: 'var(--chart-success)' }}
-              ></div>
-              <span className="modern-tooltip__name">Code Views</span>
-              <span className="modern-tooltip__value">
-                {data.codeViews.toLocaleString()}
-              </span>
-            </div>
-            <div className="modern-tooltip__item">
-              <div 
-                className="modern-tooltip__color-dot"
-                style={{ backgroundColor: 'var(--chart-primary)' }}
-              ></div>
-              <span className="modern-tooltip__name">Live Views</span>
-              <span className="modern-tooltip__value">
-                {data.liveViews.toLocaleString()}
+                {data.value.toLocaleString()}
               </span>
             </div>
           </div>
@@ -100,20 +82,37 @@ export const ProjectDonutChart: React.FC<ProjectDonutChartProps> = ({
     return null;
   };
 
-  const CustomLegend = ({ payload }: LegendProps) => {
-    return (
-      <div className="modern-chart-legend" style={{ flexWrap: 'wrap' }}>
-        {payload?.map((entry, index: number) => (
-          <div key={index} className="modern-legend-item">
-            <div className="modern-legend-dot" style={{
-              backgroundColor: entry.color
-            }} />
-            {entry.value}
-          </div>
-        ))}
+  // Center text component for displaying total
+  const CenterText = () => (
+    <div
+      aria-hidden
+      style={{
+      position: 'absolute',
+      top: '50%',
+      left: '50%',
+      transform: 'translate(-50%, -50%)',
+      textAlign: 'center',
+      pointerEvents: 'none',
+      zIndex: 0 // keep below tooltip which we elevate explicitly
+    }}>
+      <div style={{
+        fontSize: 'var(--font-lg)',
+        fontWeight: 700,
+        color: 'var(--text-primary)',
+        marginBottom: 'var(--space-1)'
+      }}>
+        {totalInteractions?.toLocaleString() || total.toLocaleString()}
       </div>
-    );
-  };
+      <div style={{
+        fontSize: 'var(--font-xs)',
+        color: 'var(--text-secondary)',
+        textTransform: 'uppercase',
+        letterSpacing: '0.5px'
+      }}>
+        Total
+      </div>
+    </div>
+  );
 
   return (
     <div style={{
@@ -142,28 +141,31 @@ export const ProjectDonutChart: React.FC<ProjectDonutChartProps> = ({
         </p>
       </div>
 
-      <ResponsiveContainer width="100%" height={height}>
-        <PieChart>
-          <Pie
-            data={chartData}
-            cx="50%"
-            cy="50%"
-            innerRadius={60}
-            outerRadius={100}
-            startAngle={90}
-            endAngle={450}
-            dataKey="value"
-            stroke={SEPARATOR_COLOR}
-            strokeWidth={1}
-          >
-            {chartData.map((entry, index) => (
-              <Cell key={`cell-${index}`} fill={entry.fill} />
-            ))}
-          </Pie>
-          <Tooltip content={<CustomTooltip />} />
-          <Legend content={<CustomLegend />} />
-        </PieChart>
-      </ResponsiveContainer>
+      <div style={{ position: 'relative' }}>
+        <ResponsiveContainer width="100%" height={height}>
+          <PieChart>
+            <Pie
+              data={chartData}
+              cx="50%"
+              cy="50%"
+              innerRadius={60}
+              outerRadius={100}
+              startAngle={90}
+              endAngle={450}
+              dataKey="value"
+              stroke={SEPARATOR_COLOR}
+              strokeWidth={1}
+            >
+              {chartData.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={entry.fill} />
+              ))}
+            </Pie>
+              {/* Ensure tooltip is rendered above center text and chart */}
+              <Tooltip content={<CustomTooltip />} wrapperStyle={{ zIndex: 2001 }} />
+          </PieChart>
+        </ResponsiveContainer>
+        <CenterText />
+      </div>
     </div>
   );
 };

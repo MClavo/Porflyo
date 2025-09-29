@@ -222,29 +222,32 @@ function ModernProjectsContent() {
         />
       </KpiGrid>
 
-      {/* Charts Grid */}
-      <div className="modern-projects-charts-grid">
-        {/* Project Distribution Donut */}
-        <ProjectDonutChart 
-          data={projectMetrics.slice(0, 8)} // Top 8 projects
-          title="Project Interaction Distribution"
-          subtitle="Share of total interactions by project"
-        />
+      {/* Main Charts Section - Stacked Chart + Donut */}
+      <div className="modern-projects-main-section">
+        <div className="modern-projects-stacked-container">
+          <ProjectStackedChart 
+            data={projectMetrics.slice(0, 8)}
+            title="Code vs Live View Distribution"
+            subtitle="Breakdown of interaction types by project"
+          />
+        </div>
         
-        {/* Project Performance Bubble Chart */}
+        <div className="modern-projects-donut-container">
+          <ProjectDonutChart 
+            data={projectMetrics.slice(0, 8)} // Top 8 projects
+            title="Project Distribution"
+            subtitle="Total interactions by project"
+            totalInteractions={aggregateKpis.totalProjectInteractions}
+          />
+        </div>
+      </div>
+
+      {/* Bottom Row - Bubble Chart and Rankings */}
+      <div className="modern-projects-bottom-row">
         <ProjectBubbleChart 
           data={projectMetrics.slice(0, 10)}
           title="Project Performance Matrix"
           subtitle="Exposures vs Interaction Rate (size = view time)"
-        />
-      </div>
-
-      {/* Bottom Row - Stacked Chart and Rankings */}
-      <div className="modern-projects-bottom-row">
-        <ProjectStackedChart 
-          data={projectMetrics.slice(0, 8)}
-          title="Code vs Live View Distribution"
-          subtitle="Breakdown of interaction types by project"
         />
         
         <ProjectRankingCard 

@@ -33,12 +33,17 @@
   }
 }
 
-/* Chart containers responsive */
-.modern-projects-charts-grid {
+/* Main section with stacked chart and donut */
+.modern-projects-main-section {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  grid-template-columns: 2fr 1fr;
   gap: var(--space-6);
   margin-top: var(--space-8);
+}
+
+.modern-projects-donut-container {
+  /* Donut chart container with reduced width */
+  max-width: 450px;
 }
 
 .modern-projects-bottom-row {

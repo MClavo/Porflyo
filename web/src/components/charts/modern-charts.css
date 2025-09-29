@@ -157,9 +157,17 @@
 }
 
 /* Hover effects para sectores del donut */
-.recharts-pie-sector:hover {
-  filter: brightness(1.05);
+.recharts-pie-sector {
+  transition: all 0.2s ease-out;
+  transform-origin: center;
   cursor: pointer;
+}
+
+.recharts-pie-sector:hover {
+  filter: brightness(1.15);
+  transform: scale(1.08);
+  stroke: rgba(255, 255, 255, 0.2);
+  stroke-width: 2;
 }
 
 /* Animaciones suaves para charts */
