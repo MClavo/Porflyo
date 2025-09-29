@@ -1,4 +1,4 @@
-.public-portfolio-container {
+/* .public-portfolio-container {
   min-height: 100vh;
   background-color: #ffffff;
 }
@@ -56,15 +56,14 @@
   border-bottom: 1px solid #e5e7eb;
 }
 
-/* .portfolio-title {
+.portfolio-title {
   font-size: 2.5rem;
   font-weight: bold;
   color: #1f2937;
   margin: 0;
   line-height: 1.2;
-} */
+}
 
-/* Template-specific layouts */
 .template-layout {
   max-width: 1200px;
   margin: 0 auto;
@@ -90,7 +89,6 @@
   overflow: hidden;
 }
 
-/* Responsive design */
 @media (max-width: 768px) {
   .portfolio-title {
     font-size: 2rem;
@@ -105,7 +103,6 @@
   }
 }
 
-/* Remove editor-specific UI elements for public view */
 .public-portfolio-container .test-header {
   display: none;
 }
@@ -116,4 +113,4 @@
 
 .public-portfolio-container .portfolio-sidebar {
   display: none;
-}
+} */

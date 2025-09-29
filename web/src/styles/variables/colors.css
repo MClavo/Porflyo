@@ -1,7 +1,7 @@
 /* Colors - grouped variables for the dashboard theme */
 :root {
   /* Backgrounds */
-  --dashboard-bg: #0a0e16;
+  --dashboard-bg: #0a0e16;      /* 212939 */
   --dashboard-bg-secondary: #111827;
   --dashboard-obsidian: #1a202c;
 
