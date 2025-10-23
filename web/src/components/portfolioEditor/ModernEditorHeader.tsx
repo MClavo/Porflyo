@@ -87,16 +87,14 @@ export const ModernEditorHeader: React.FC<ModernEditorHeaderProps> = ({
             onToggle={onModeToggle}
           />
 
-          {/* Template Selector - only in edit mode */}
-          {mode === 'edit' && (
-            <ModernTemplateSelector
-              selectedTemplate={selectedTemplate}
-              onSelect={onTemplateSelect}
-            />
-          )}
+          {/* Template Selector - always visible */}
+          <ModernTemplateSelector
+            selectedTemplate={selectedTemplate}
+            onSelect={onTemplateSelect}
+          />
 
-          {/* URL Section - only in edit mode */}
-          {mode === 'edit' && isEditMode && (
+          {/* URL Section - always visible when isEditMode */}
+          {isEditMode && (
             <ModernUrlSection
               slug={slug || ''}
               setSlug={setSlug || (() => {})}
@@ -107,8 +105,8 @@ export const ModernEditorHeader: React.FC<ModernEditorHeaderProps> = ({
             />
           )}
 
-          {/* Public Toggle - only in edit mode */}
-          {mode === 'edit' && isEditMode && (
+          {/* Public Toggle - always visible when isEditMode */}
+          {isEditMode && (
             <ModernPublicToggle
               isPublished={isPublished || false}
               setIsPublished={setIsPublished || (() => {})}
