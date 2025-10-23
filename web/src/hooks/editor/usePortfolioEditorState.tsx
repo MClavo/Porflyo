@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useReducer } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useLocation } from 'react-router-dom';
 import { mapPublicPortfolioDtoToPortfolioState } from '../../api/mappers/portfolio.mappers';
 // mode type previously used when this hook owned UI state
 import type { AnyCard } from '../../state/Cards.types';
@@ -26,9 +26,12 @@ export function usePortfolioEditorState({ onPortfolioChange, showNotification }:
   showNotification: (msg: string, type?: 'success'|'error'|'info') => void;
 }) {
   const { id: portfolioId } = useParams<{ id: string }>();
+  const location = useLocation();
   const isEditing = Boolean(portfolioId);
+  const isCreatingNew = location.pathname.includes('/portfolios/new');
+  const shouldStartInEditMode = isEditing || isCreatingNew;
 
-  const { mode, toggleMode, selectedTemplate, setSelectedTemplate } = useEditorMode();
+  const { mode, toggleMode, selectedTemplate, setSelectedTemplate } = useEditorMode(shouldStartInEditMode ? 'edit' : 'view');
 
   const [portfolio, dispatch] = useReducer(portfolioReducer, {
     template: selectedTemplate,
