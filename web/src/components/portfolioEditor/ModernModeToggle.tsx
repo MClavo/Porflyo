@@ -17,31 +17,25 @@ export const ModernModeToggle: React.FC<ModernModeToggleProps> = ({
 }) => {
   return (
     <div className="modern-mode-toggle">
-      <div className="modern-mode-toggle__container">
+      <button 
+        className="modern-mode-toggle__container"
+        onClick={onToggle}
+        aria-label={`Switch to ${mode === 'edit' ? 'view' : 'edit'} mode`}
+      >
         <div 
           className={`modern-mode-toggle__slider ${mode === 'view' ? 'modern-mode-toggle__slider--view' : ''}`}
         />
         
-        <button
-          className={`modern-mode-toggle__option ${mode === 'edit' ? 'modern-mode-toggle__option--active' : ''}`}
-          onClick={() => mode !== 'edit' && onToggle()}
-          disabled={mode === 'edit'}
-          aria-label="Switch to edit mode"
-        >
+        <div className={`modern-mode-toggle__option ${mode === 'edit' ? 'modern-mode-toggle__option--active' : ''}`}>
           <FiEdit3 size={16} />
           <span>Edit</span>
-        </button>
+        </div>
         
-        <button
-          className={`modern-mode-toggle__option ${mode === 'view' ? 'modern-mode-toggle__option--active' : ''}`}
-          onClick={() => mode !== 'view' && onToggle()}
-          disabled={mode === 'view'}
-          aria-label="Switch to view mode"
-        >
+        <div className={`modern-mode-toggle__option ${mode === 'view' ? 'modern-mode-toggle__option--active' : ''}`}>
           <FiEye size={16} />
           <span>View</span>
-        </button>
-      </div>
+        </div>
+      </button>
     </div>
   );
 };
