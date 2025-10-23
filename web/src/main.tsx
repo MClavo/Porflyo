@@ -6,6 +6,7 @@ import { AuthProvider } from './contexts/AuthContext'
 import { PortfoliosProvider } from './contexts/PortfoliosContext'
 import { RepositoriesProvider } from './contexts/RepositoriesContext'
 import { SavedSectionsProvider } from './contexts/SavedSectionsContext'
+import { ThemeProvider } from './contexts/theme'
 import { NavbarProvider } from './providers/NavbarProvider'
 import EditorTest from './pages/EditorTest.tsx'
 import Home from './pages/Home.tsx'
@@ -21,6 +22,7 @@ import { SavedCardsProvider } from './state/SavedCards.context'
 import './styles/dashboard-theme.css'
 import './styles/modern-dashboard.css'
 import './styles/professional-dashboard.css'
+import './styles/theme.css'
 // analytics initialization intentionally removed from global startup.
 // When running MetricsTest we will initialize analytics locally there.
 
@@ -35,12 +37,13 @@ createRoot(document.getElementById('root')!).render(
 
 export function AppWithProviders() {
   return (
-    <AuthProvider>
-      <PortfoliosProvider>
-        <SavedSectionsProvider>
-          <RepositoriesProvider>
-            <SavedCardsProvider>
-              <NavbarProvider>
+    <ThemeProvider>
+      <AuthProvider>
+        <PortfoliosProvider>
+          <SavedSectionsProvider>
+            <RepositoriesProvider>
+              <SavedCardsProvider>
+                <NavbarProvider>
                 <Routes>
                   <Route path="/" element={<Root />} />
                   <Route path="/auth/callback" element={<OAuthCallback />} />
@@ -85,5 +88,6 @@ export function AppWithProviders() {
         </SavedSectionsProvider>
       </PortfoliosProvider>
     </AuthProvider>
+    </ThemeProvider>
   )
 }

@@ -1,5 +1,6 @@
 /* Colors - grouped variables for the dashboard theme */
 :root {
+  /* Dark Theme (default) */
   /* Backgrounds */
   --dashboard-bg: #0a0e16;      /* 212939 */
   --dashboard-bg-secondary: #111827;
@@ -61,3 +62,38 @@
   --overlay-weak: rgba(0,0,0,0.1);
   --color-error-text: #ff6b6b; /* soft error */
 }
+
+/* Light Theme */
+body.light-theme {
+  /* Backgrounds */
+  --dashboard-bg: #f8fafc;
+  --dashboard-bg-secondary: #ffffff;
+  --dashboard-obsidian: #f1f5f9;
+
+  /* Card Colors */
+  --card-bg: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  --card-bg-hover: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+  --card-border: #e2e8f0;
+  --card-border-hover: #cbd5e1;
+
+  /* Text Colors */
+  --text-primary: #1a202c;
+  --text-secondary: #4a5568;
+  --text-muted: #718096;
+
+  /* Value Colors */
+  --value-primary: #1a202c;
+  --value-secondary: #2d3748;
+
+  /* Status Colors remain the same for good contrast */
+  --status-positive: #10b981;
+  --status-negative: #ef4444;
+  --status-neutral: #6b7280;
+
+  /* Page-level utility colors / aliases */
+  --dashboard-bg-primary: var(--dashboard-bg);
+  --overlay-weak: rgba(0,0,0,0.05);
+  --color-error-text: #e53e3e;
+}
+
+/* Dark Theme explicit class - uses root defaults */

@@ -23,6 +23,9 @@ export { ProjectsDayTable } from './tables/ProjectsDayTable';
 // Dashboard Components
 export * from './dashboard';
 
+// Theme Components
+export { ThemeToggle } from './theme';
+
 
 // Types
 export type { StatCardProps } from './stats/StatCard';

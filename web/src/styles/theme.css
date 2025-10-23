@@ -1,0 +1,11 @@
+/* Global Theme Styles */
+body {
+  background-color: var(--dashboard-bg);
+  color: var(--text-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Ensure all components inherit theme transitions */
+* {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}

@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FiLogOut } from 'react-icons/fi';
 import { useAuthContext } from '../hooks/ui/useAuthContext';
+import { ThemeToggle } from './theme';
 import '../styles/navbar/Navbar.css';
 
 export const Navbar: React.FC = () => {
@@ -33,13 +34,16 @@ export const Navbar: React.FC = () => {
           poRflyo
         </button>
         
-        <button 
-          className="navbar-logout"
-          onClick={handleLogout}
-        >
-          <FiLogOut size={18} />
-          <span>Logout</span>
-        </button>
+        <div className="navbar-actions">
+          <ThemeToggle />
+          <button 
+            className="navbar-logout"
+            onClick={handleLogout}
+          >
+            <FiLogOut size={18} />
+            <span>Logout</span>
+          </button>
+        </div>
       </div>
     </nav>
   );

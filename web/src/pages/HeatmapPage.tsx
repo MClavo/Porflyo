@@ -37,8 +37,8 @@ function HeatmapContent() {
   
   const heatmapData = useHeatmapData(selectedDate || undefined);
   
-  const bgColor = 'white';
-  const borderColor = 'gray.200';
+  const bgColor = 'var(--dashboard-bg-secondary)';
+  const borderColor = 'var(--card-border)';
 
   // Transform heatmap cells into hotspot rows
   const hotspots: HotspotRow[] = useMemo(() => {
@@ -78,7 +78,7 @@ function HeatmapContent() {
             <Skeleton height="500px" borderRadius="lg" />
           </GridItem>
           <GridItem>
-            <Box bg={bgColor} p={6} borderRadius="lg" border="1px solid" borderColor={borderColor}>
+            <Box style={{ backgroundColor: bgColor, borderColor }} p={6} borderRadius="lg" border="1px solid">
               <Skeleton height="24px" width="150px" mb={4} />
               <VStack gap={4}>
                 {Array.from({ length: 3 }).map((_, i) => (
@@ -116,15 +116,14 @@ function HeatmapContent() {
       
       {/* Header with Date Picker */}
       <HStack justify="space-between">
-        <Heading size="lg" color="gray.800">Heatmap</Heading>
+        <Heading size="lg" style={{ color: 'var(--text-primary)' }}>Heatmap</Heading>
         <Input
           type="date"
           value={selectedDate}
           onChange={(e) => setSelectedDate(e.target.value)}
           width="200px"
-          bg={bgColor}
+          style={{ backgroundColor: bgColor, borderColor }}
           border="1px solid"
-          borderColor={borderColor}
         />
       </HStack>
 
@@ -134,9 +133,8 @@ function HeatmapContent() {
         {/* Column 1: Portfolio Heatmap */}
         <GridItem>
           <Box 
-            bg={bgColor}
+            style={{ backgroundColor: bgColor, borderColor }}
             border="1px solid"
-            borderColor={borderColor}
             borderRadius="lg"
             p={4}
             height="500px"
@@ -157,7 +155,7 @@ function HeatmapContent() {
           <VStack gap={4} align="stretch">
             
             {/* KPIs Box */}
-            <Box bg={bgColor} p={6} borderRadius="lg" border="1px solid" borderColor={borderColor}>
+            <Box style={{ backgroundColor: bgColor, borderColor }} p={6} borderRadius="lg" border="1px solid">
               <Heading size="md" mb={4}>Heatmap Metrics</Heading>
               <VStack gap={4} align="stretch">
                 
@@ -188,7 +186,7 @@ function HeatmapContent() {
             </Box>
 
             {/* Top 10 Hotspots List */}
-            <Box bg={bgColor} p={6} borderRadius="lg" border="1px solid" borderColor={borderColor}>
+            <Box style={{ backgroundColor: bgColor, borderColor }} p={6} borderRadius="lg" border="1px solid">
               <Heading size="sm" mb={4}>Top 10 Hotspots</Heading>
               {hotspots.length > 0 ? (
                 <VStack gap={2} align="stretch" maxHeight="300px" overflowY="auto">
