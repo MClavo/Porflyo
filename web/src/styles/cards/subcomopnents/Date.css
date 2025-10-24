@@ -1,143 +1,97 @@
-:root{
-	--month-item-height: 36px;
+/* Date Component Styles */
+
+/* View mode */
+.date-view {
+  font-size: 0.875rem;
+  color: #374151;
+  font-weight: 500;
 }
 
-/* Simple floating month picker */
-.month-button {
-	border: 1px solid #ccc;
-	padding: 6px 10px;
-	border-radius: 4px;
-	cursor: pointer;
+/* Edit mode container */
+.date-edit {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
 }
 
-.month-picker-popup {
-	position: absolute;
-	top: calc(100% + 6px);
-	left: 0;
-	z-index: 100;
-	background: #fff;
-	border: 1px solid rgba(0,0,0,0.12);
-	box-shadow: 0 6px 18px rgba(0,0,0,0.12);
-	padding: 6px;
-	border-radius: 6px;
-	max-height: 240px;
-	overflow: auto;
-	min-width: 160px;
+/* Month dropdown */
+.date-month-select {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.375rem;
+  background-color: #ffffff;
+  font-size: 0.875rem;
+  color: #374151;
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+  min-width: 120px;
 }
 
-.month-picker-popup .month-option {
-	display: block;
-	width: 100%;
-	text-align: left;
-	padding: 8px 10px;
-	background: transparent;
-	border: none;
-	border-radius: 4px;
-	cursor: pointer;
+.date-month-select:hover {
+  border-color: #9ca3af;
 }
 
-.month-picker-popup .month-option:hover,
-.month-picker-popup .month-option.selected {
-	background: rgba(0,0,0,0.06);
+.date-month-select:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
-/* month wheel styles */
-.month-wheel {
-	position: absolute;
-	left: 0;
-	top: calc(100% + 6px);
-	z-index: 100;
-	background: #fff;
-	border: 1px solid rgba(0,0,0,0.12);
-	box-shadow: 0 6px 18px rgba(0,0,0,0.12);
-	border-radius: 6px;
-	min-width: 160px;
-	display: flex;
-	flex-direction: column;
-	align-items: stretch;
-	overflow: hidden;
+/* Year input container */
+.date-year-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
 }
 
-.month-wheel.collapsed {
-	height: 40px; /* show only the centered item */
-	justify-content: center;
+/* Year input */
+.date-year-input {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.375rem;
+  background-color: #ffffff;
+  font-size: 0.875rem;
+  color: #374151;
+  transition: all 0.15s ease-in-out;
+  width: 80px;
 }
 
-.month-wheel.expanded {
-	max-height: 240px;
-	overflow: auto;
-	padding: 6px 0;
+.date-year-input:hover {
+  border-color: #9ca3af;
 }
 
-.month-item {
-	background: transparent;
-	border: none;
-	text-align: left;
-	padding: 8px 12px;
-	cursor: pointer;
-	width: 100%;
+.date-year-input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
-.month-item.selected {
-	background: rgba(0,0,0,0.06);
-	font-weight: 600;
+.date-year-input.error {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
 }
 
-/* Minimal display + list */
-.month-display {
-	padding: 6px 10px;
-	border: 1px solid #ccc;
-	border-radius: 4px;
-	background: #fff;
-	cursor: pointer;
-	display: inline-block;
+.date-year-input.error:focus {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
 }
 
-.month-list {
-	/* --month-item-height: 36px; */
-	position: absolute;
-	top: calc(100% + 6px);
-	left: 0;
-		/* z-index: */
-	background: #fff;
-	border: 1px solid rgba(0,0,0,0.12);
-	box-shadow: 0 6px 18px rgba(0,0,0,0.12);
-	border-radius: 6px;
-	padding: 6px 0;
-	min-width: 160px;
-	/* always the maximum: height to contain all months, no scrollbar */
-	height: calc(var(--month-item-height) * 12);
-	max-height: none;
-	overflow: visible; /* allow transform to show items outside without scroll */
-	transition: transform 220ms cubic-bezier(.2,.9,.2,1);
-  
-  overflow: hidden;
-	translate: 0 -42px;
+/* Error message */
+.date-error {
+  font-size: 0.75rem;
+  color: #ef4444;
+  margin-top: 0.25rem;
 }
 
-
-
-.month-list .month-item {
-	padding: 8px 12px;
-	cursor: pointer;
-	height: var(--month-item-height); /* fixed height for predictable centering */
-	box-sizing: border-box;
+/* Remove number input arrows on webkit browsers */
+.date-year-input::-webkit-outer-spin-button,
+.date-year-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
 
-.month-list .month-item:hover {
-	background: rgba(0,0,0,0.04);
-}
-
-.date-input-container{
-  height: var(--month-item-height);
-  width: 160px;
-  background: rgba(0, 0, 0, 0.426);
-	border-radius: 6px;
-  overflow: hidden;
-	z-index: 100;
-}
-
-.date-input-container::focus {
-	overflow: visible;
-	z-index: 9900;
+/* Remove number input arrows on Firefox */
+.date-year-input[type=number] {
+  appearance: textfield;
+  -moz-appearance: textfield;
 }
