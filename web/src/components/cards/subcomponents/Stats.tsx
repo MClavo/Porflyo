@@ -1,11 +1,11 @@
 import React from "react";
 import type { Mode } from "./index";
+import "../../../styles/cards/subcomopnents/Stats.css";
 
 interface StatsProps {
   mode?: Mode;
   stars?: number;
   forks?: number;
-  onPatch?: (patch: { stars?: number; forks?: number }) => void;
   className?: string;
 }
 
@@ -13,7 +13,6 @@ export const Stats: React.FC<StatsProps> = ({
   mode = "view",
   stars,
   forks,
-  onPatch,
   className = "",
 }) => {
   if (mode === "view") {
@@ -39,7 +38,7 @@ export const Stats: React.FC<StatsProps> = ({
     );
   }
 
-  // In edit mode, show inputs for stars and forks
+  // In edit mode, show read-only display for stars and forks
   return (
     <div className={`stats ${className}`.trim()} data-mode={mode}>
       <div className="stat-input-group">
@@ -50,11 +49,9 @@ export const Stats: React.FC<StatsProps> = ({
             min="0"
             placeholder="Stars"
             value={stars || ""}
-            onChange={(e) => {
-              const value = e.target.value ? parseInt(e.target.value, 10) : undefined;
-              onPatch?.({ stars: value });
-            }}
-            className="stat-input"
+            readOnly
+            className="stat-input stat-input-readonly"
+            title="Stars are automatically fetched and cannot be edited manually"
           />
         </label>
       </div>
@@ -66,11 +63,9 @@ export const Stats: React.FC<StatsProps> = ({
             min="0"
             placeholder="Forks"
             value={forks || ""}
-            onChange={(e) => {
-              const value = e.target.value ? parseInt(e.target.value, 10) : undefined;
-              onPatch?.({ forks: value });
-            }}
-            className="stat-input"
+            readOnly
+            className="stat-input stat-input-readonly"
+            title="Forks are automatically fetched and cannot be edited manually"
           />
         </label>
       </div>
