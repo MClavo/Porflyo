@@ -51,6 +51,9 @@ export function mapPortfolioSectionToSectionState(section: PortfolioSection, id:
     case 'text':
       defaultAllowedTypes = ['text'];
       break;
+    case 'about':
+      defaultAllowedTypes = ['about'];
+      break;
     default:
       defaultAllowedTypes = ['text'];
   }

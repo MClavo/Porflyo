@@ -5,7 +5,7 @@ import type {
   JobCardSaved,
   ProjectCardSaved,
   TextCardSaved,
-
+  AboutCardSaved,
 } from "./Cards.types";
 
 export const cardFactoriesFromDto = {
@@ -56,5 +56,15 @@ export const cardFactories: Record<CardType, () => AnyCard> = {
       title: "",
       description: "",
     } satisfies TextCardSaved,
+  }),
+  about: () => ({
+    type: "about",
+    data: {
+      name: "",
+      description: "",
+      profileImage: undefined,
+      email: undefined,
+      socials: undefined,
+    } satisfies AboutCardSaved,
   }),
 };

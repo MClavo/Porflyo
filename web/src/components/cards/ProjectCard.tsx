@@ -135,7 +135,6 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
           mode={mode}
           stars={stars}
           forks={forks}
-          onPatch={(patch) => onPatch?.({ stars: patch.stars, forks: patch.forks })}
           className="top-border"
         />
       )}

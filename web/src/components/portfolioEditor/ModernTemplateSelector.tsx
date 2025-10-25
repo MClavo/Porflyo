@@ -4,7 +4,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { FiChevronDown, FiLayout } from 'react-icons/fi';
-import { type TemplateKey } from '../../templates/Template.types';
+import { type TemplateKey, templateList } from '../../templates/Template.types';
 import './ModernTemplateSelector.css';
 
 export interface ModernTemplateSelectorProps {
@@ -12,10 +12,37 @@ export interface ModernTemplateSelectorProps {
   onSelect: (template: TemplateKey) => void;
 }
 
-const TEMPLATE_OPTIONS: Array<{ value: TemplateKey; label: string; description: string }> = [
-  { value: 'template1', label: 'Template 1', description: 'Clean layout with projects, text, and experiences' },
-  { value: 'template2', label: 'Template 2', description: 'Modern layout with jobs, text, and projects' }
-];
+// Template descriptions for better user experience
+const TEMPLATE_DESCRIPTIONS: Record<TemplateKey, { label: string; description: string }> = {
+  template1: { 
+    label: 'Template 1', 
+    description: 'Clean layout with projects, text, and experiences' 
+  },
+  template2: { 
+    label: 'Template 2', 
+    description: 'Modern layout with jobs, text, and projects' 
+  },
+  glass: { 
+    label: 'Glass', 
+    description: 'Professional glassmorphism design with animated backgrounds' 
+  }
+};
+
+// Create template options dynamically from the template list
+const getTemplateOptions = (): Array<{ value: TemplateKey; label: string; description: string }> => {
+  return templateList.map(templateKey => {
+    const key = templateKey as TemplateKey;
+    const info = TEMPLATE_DESCRIPTIONS[key];
+    
+    return {
+      value: key,
+      label: info?.label || key.charAt(0).toUpperCase() + key.slice(1),
+      description: info?.description || `${key.charAt(0).toUpperCase() + key.slice(1)} template layout`
+    };
+  });
+};
+
+const TEMPLATE_OPTIONS = getTemplateOptions();
 
 export const ModernTemplateSelector: React.FC<ModernTemplateSelectorProps> = ({
   selectedTemplate,

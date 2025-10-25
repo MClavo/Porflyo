@@ -1,7 +1,7 @@
 import type { MonthYearValue } from "../components/cards/subcomponents/index";
 
 
-export type CardType = "project" | "job" | "text";
+export type CardType = "project" | "job" | "text" | "about";
 
 
 export type ProjectCardSaved = {
@@ -32,6 +32,14 @@ export type TextCardSaved = {
   description: string;
 };
 
+export type AboutCardSaved = {
+  name: string;
+  description: string;
+  profileImage?: string;
+  email?: string;
+  socials?: Record<string, string>;
+};
+
 
 export type BaseCard = {
   type: CardType;
@@ -40,16 +48,19 @@ export type BaseCard = {
 export type ProjectCard = BaseCard & {type: "project"; data: ProjectCardSaved};
 export type JobCard = BaseCard & {type: "job"; data: JobCardSaved};
 export type TextCard = BaseCard & {type: "text"; data: TextCardSaved};
+export type AboutCard = BaseCard & {type: "about"; data: AboutCardSaved};
 
-export type AnyCard = ProjectCard | JobCard | TextCard;
+export type AnyCard = ProjectCard | JobCard | TextCard | AboutCard;
 
 export type CardPatchByType = {
   project: Partial<ProjectCardSaved>;
   job: Partial<JobCardSaved>;
   text: Partial<TextCardSaved>;
+  about: Partial<AboutCardSaved>;
 }
 
 export type CardDto = 
   | {type: "project"; data: ProjectCardSaved}
   | {type: "job"; data: JobCardSaved}
-  | {type: "text"; data: TextCardSaved};
+  | {type: "text"; data: TextCardSaved}
+  | {type: "about"; data: AboutCardSaved};

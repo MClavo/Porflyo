@@ -6,6 +6,7 @@ export type CardId = string;
 export type SectionType = 
   | 'savedItems'
   | 'user' 
+  | 'about'
   | 'experiences' 
   | 'projects' 
   | 'education' 
