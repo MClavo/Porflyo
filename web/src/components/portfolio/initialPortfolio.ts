@@ -1,4 +1,5 @@
 import type { PortfolioState } from "../../state/Portfolio.types";
+import { createDefaultAboutData } from "../sections/AboutSection.types";
 
 /**
  * Creates a fresh initial empty portfolio state for creating new portfolios from scratch.
@@ -13,10 +14,11 @@ export function createInitialEmptyPortfolio(): PortfolioState {
         id: "about",
         type: "about",
         title: "About Me",
-        allowedTypes: ["about"],
-        maxCards: 1,
+        allowedTypes: [],
+        maxCards: 0,
         cardsById: {},
         cardsOrder: [],
+        parsedContent: createDefaultAboutData(),
       },
       projects: {
         id: "projects",

@@ -1,6 +1,7 @@
 import { produce } from "immer";
 import type { PortfolioState } from "./Portfolio.types";
 import type { Action } from "./Portfolio.actions";
+import type { AboutSectionData } from "../components/sections/AboutSection.types";
 //import { cardFactories } from "../Templates"; // factories per card type
 import { createCard } from "./Cards.registry";
 // import type { CardPatchByType } from "./Cards.types";
@@ -107,6 +108,20 @@ export const portfolioReducer = (state: PortfolioState, action: Action): Portfol
             }
           });
         });
+        return;
+      }
+
+      case "PATCH_SECTION_CONTENT": {
+        const { sectionId, data } = action.payload;
+        const s = draft.sections[sectionId];
+        if (!s) return;
+        
+        // Merge partial data into existing parsedContent
+        if (s.parsedContent && typeof s.parsedContent === 'object') {
+          s.parsedContent = { ...s.parsedContent, ...data } as AboutSectionData;
+        } else {
+          s.parsedContent = data as AboutSectionData;
+        }
         return;
       }
     }

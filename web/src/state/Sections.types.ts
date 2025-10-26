@@ -1,4 +1,5 @@
 import type { AnyCard, CardType, CardDto } from "./Cards.types";
+import type { AboutSectionData } from "../components/sections/AboutSection.types";
 
 export type SectionId = string;
 export type CardId = string;
@@ -26,6 +27,10 @@ export type SectionState = {
   allowedTypes: CardType[];
   cardsById: Record<CardId, AnyCard>;
   cardsOrder: CardId[];
+  
+  // Special field for sections without cards (e.g., 'about')
+  // Contains parsed structured data instead of card list
+  parsedContent?: AboutSectionData | unknown;
 }
 
 /* Compute max items for a section as rows * columns. */

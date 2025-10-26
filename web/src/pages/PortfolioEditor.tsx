@@ -5,6 +5,8 @@ import EditorDndProvider from "../components/dnd/EditorDndProvider";
 import LayoutPreview from "../components/portfolio/LayoutPreview";
 import { Notification } from "../components/notifications/Notification";
 import SectionCard from "../components/sections/SectionCard";
+import { AboutSection } from "../components/sections/AboutSection";
+import type { AboutSectionData } from "../components/sections/AboutSection.types";
 import { SavedCards } from "../components/savedcards/SavedCards";
 import { ModernEditorHeader, ModernEditorSidebar } from "../components/portfolioEditor";
 import { usePortfolioEditorState } from "../hooks/editor/usePortfolioEditorState";
@@ -134,6 +136,33 @@ export default function PortfolioEditor({
     for (const [sid, section] of Object.entries(state.data.portfolio.sections)) {
       const s = section as unknown as SectionState;
 
+      // Special handling for 'about' section - render AboutSection component instead of SectionCard
+      if (s.type === 'about') {
+        const aboutData = (s.parsedContent as AboutSectionData) || {
+          name: '',
+          email: '',
+          description: '',
+          profileImage: null,
+          socials: {},
+        };
+
+        sectionsMap[sid] = (
+          <AboutSection
+            key={sid}
+            mode={state.ui.mode}
+            data={aboutData}
+            onPatch={(patch) => {
+              state.dispatch({
+                type: 'PATCH_SECTION_CONTENT',
+                payload: { sectionId: sid, data: patch }
+              });
+            }}
+          />
+        );
+        continue; // Skip regular SectionCard rendering
+      }
+
+      // Regular sections with cards
       sectionsMap[sid] = (
         <SectionCard
           key={sid}

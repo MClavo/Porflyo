@@ -7,12 +7,32 @@ import type { SectionState, SectionType } from '../../state/Sections.types';
 import type { CardType, AnyCard } from '../../state/Cards.types';
 import type { TemplateKey } from '../../templates/Template.types';
 import type { PublicPortfolioDto, PortfolioCreateDto, PortfolioPatchDto, PortfolioSection, PublicPortfolioView } from '../types/dto';
+import { parseAboutSectionData, serializeAboutSectionData } from '../../components/sections/AboutSection.types';
+import type { AboutSectionData } from '../../components/sections/AboutSection.types';
 
 /**
  * Convert backend PortfolioSection to frontend SectionState
  */
 export function mapPortfolioSectionToSectionState(section: PortfolioSection, id: string): SectionState {
-  // Parse content JSON to get cards
+  const sectionType = (section.sectionType as SectionType) || 'text';
+  
+  // Special handling for 'about' section - parse as structured data instead of cards
+  if (sectionType === 'about') {
+    const aboutData = parseAboutSectionData(section.content || '');
+    
+    return {
+      id,
+      type: sectionType,
+      title: (section.title as string) || 'About Me',
+      maxCards: 0, // About section doesn't use cards
+      allowedTypes: [], // About section doesn't use cards
+      cardsById: {},
+      cardsOrder: [],
+      parsedContent: aboutData,
+    } as SectionState;
+  }
+  
+  // Regular sections with cards
   const cardsById: Record<string, AnyCard> = {};
   const cardsOrder: string[] = [];
   
@@ -36,9 +56,6 @@ export function mapPortfolioSectionToSectionState(section: PortfolioSection, id:
     }
   }
   
-  // Provide safe defaults for required SectionState fields
-  const sectionType = (section.sectionType as SectionType) || 'text';
-  
   // Set default allowedTypes based on section type
   let defaultAllowedTypes: CardType[] = [];
   switch (sectionType) {
@@ -50,9 +67,6 @@ export function mapPortfolioSectionToSectionState(section: PortfolioSection, id:
       break;
     case 'text':
       defaultAllowedTypes = ['text'];
-      break;
-    case 'about':
-      defaultAllowedTypes = ['about'];
       break;
     default:
       defaultAllowedTypes = ['text'];
@@ -74,6 +88,18 @@ export function mapPortfolioSectionToSectionState(section: PortfolioSection, id:
  * This maps our current editor state to the backend format similar to OLDPortfolioEditorPage
  */
 export function mapSectionStateToPortfolioSection(section: SectionState): PortfolioSection {
+  // Special handling for 'about' section - serialize structured data
+  if (section.type === 'about' && section.parsedContent) {
+    const aboutData = section.parsedContent as AboutSectionData;
+    return {
+      sectionType: section.id,
+      title: section.title,
+      content: serializeAboutSectionData(aboutData),
+      media: []
+    } as PortfolioSection;
+  }
+  
+  // Regular sections with cards
   // Convert cards to a simpler format for backend
   const items = section.cardsOrder.map(cardId => {
     const card = section.cardsById[cardId];

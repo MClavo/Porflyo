@@ -1,12 +1,12 @@
 import { Title, Text } from '../cards/subcomponents';
 import type { Mode } from '../cards/subcomponents/Fields.types';
-import type { AboutCardSaved } from '../../state/Cards.types';
+import type { AboutSectionData } from './AboutSection.types';
 import './AboutSection.css';
 
 export interface AboutSectionProps {
   mode: Mode;
-  data: AboutCardSaved;
-  onPatch?: (patch: Partial<AboutCardSaved>) => void;
+  data: AboutSectionData;
+  onPatch?: (patch: Partial<AboutSectionData>) => void;
   className?: string;
 }
 
