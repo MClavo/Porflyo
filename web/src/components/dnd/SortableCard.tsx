@@ -4,6 +4,7 @@ import { CSS } from "@dnd-kit/utilities";
 import type { AnyCard } from "../../state/Cards.types";
 import type { CardId } from "../../state/Sections.types";
 import DeleteCardButton from "../buttons/DeleteCardButton";
+import DragHandle from "./DragHandle";
 import { renderCard } from "../cards/RenderCard";
 
 export type Mode = "view" | "edit";
@@ -57,9 +58,10 @@ const SortableCard: React.FC<SortableCardProps> = ({
         style={style}
         className={cardClassName}
         data-sortable-id={id}
+        data-mode={mode}
       >
-        {/* overlay that captures drag events; placed under form fields via z-index */}
-        <div className="drag-capture" {...attributes} {...listeners} aria-hidden="true" />
+        {/* Drag handle visible only in edit mode */}
+        <DragHandle listeners={listeners} attributes={attributes} />
 
         {React.cloneElement(
           cardEl,
@@ -74,7 +76,7 @@ const SortableCard: React.FC<SortableCardProps> = ({
   }
 
   return (
-    <div ref={setNodeRef} style={style}>
+    <div ref={setNodeRef} style={style} data-mode={mode}>
       {cardEl}
     </div>
   );

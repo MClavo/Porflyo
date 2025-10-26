@@ -21,13 +21,13 @@
   transition: background-color 0.2s ease;
 }
 
-/* Card drag hover effects */
+/* Card drag hover effects - removed cursor styles since drag handle manages this now */
 .sortable-card {
   width: fit-content;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-/* Ensure wrapper is positioned so the absolute overlay can cover it */
+/* Ensure wrapper is positioned so the drag handle can be absolutely positioned */
 .sortable-card {
   position: relative;
 }
@@ -35,48 +35,6 @@
 .sortable-card:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-/* .sortable-card.dragging {
-  transform: rotate(5deg);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
-  z-index: 1000;
-} */
-
-/* Drag overlay styles */
-/* .drag-overlay {
-  pointer-events: none;
-  transform: rotate(5deg);
-  opacity: 0.8;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
-  z-index: 1001;
-} */
-
-/* Ensure smooth animations */
-/* * {
-  box-sizing: border-box;
-} */
-
-/* Grab cursor for draggable items in edit mode */
-[data-sortable-id] {
-  cursor: grab;
-}
-
-[data-sortable-id]:active {
-  cursor: grabbing;
-}
-
-/* Invisible overlay that captures drag pointer events. Keep z-index below interactive fields */
-.sortable-card .drag-capture {
-  position: absolute;
-  inset: 0;
-  z-index: 2; /* fields (text inputs) should be above, e.g., z-index:10 */
-  background: transparent;
-  cursor: grab;
-}
-
-.sortable-card.dragging .drag-capture {
-  cursor: grabbing;
 }
 
 /* Drop zone indicators */

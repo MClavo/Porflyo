@@ -6,7 +6,7 @@ import type { PortfolioState } from "../../state/Portfolio.types";
  */
 export function createInitialEmptyPortfolio(): PortfolioState {
   return {
-    template: "template1",
+    template: "glass",
     title: "",
     sections: {
       about: {

@@ -11,6 +11,7 @@ import {
   type UniqueIdentifier,
 } from "@dnd-kit/core";
 import { renderCard } from "../cards/RenderCard";
+import DragHandle from "./DragHandle";
 import type { AnyCard } from "../../state/Cards.types";
 import type { CardId } from "../../state/Sections.types";
 import type { TemplateKey } from "../../templates/Template.types";
@@ -54,11 +55,13 @@ const EditorDndProvider: React.FC<EditorDndProviderProps> = ({
 
   const handleDragStart = (event: DragStartEvent) => {
     setActiveId(event.active.id);
+    document.body.classList.add('dragging');
     onDragStart?.(event);
   };
 
   const handleDragEnd = (event: DragEndEvent) => {
     setActiveId(null);
+    document.body.classList.remove('dragging');
     onDragEnd?.(event);
   };
 
@@ -120,7 +123,9 @@ const EditorDndProvider: React.FC<EditorDndProviderProps> = ({
       
       <DragOverlay>
         {activeCard && sectionId ? (
-          <div className={`drag-overlay ${template}`} data-mode={mode}>
+          <div className={`drag-overlay ${template} sortable-card`} data-mode={mode}>
+            {/* Show drag handle in edit mode */}
+            {mode === "edit" && <DragHandle />}
             <div id={sectionId}>
               {renderCard(activeCard, mode, activeId as CardId, () => {})}
             </div>

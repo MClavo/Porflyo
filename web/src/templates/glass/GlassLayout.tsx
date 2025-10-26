@@ -1,6 +1,7 @@
 import "./glass.css";
 import type { ReactNode } from "react";
 import type { TemplateLayoutComponentProps } from "../Template.types";
+import { AboutSection } from "../../components/sections";
 
 interface GlassLayoutProps extends TemplateLayoutComponentProps {
   sectionsMap?: Record<string, ReactNode>;
@@ -40,8 +41,19 @@ export default function GlassLayout({ sectionsMap, isEditable }: GlassLayoutProp
         </div>
       </div>
 
-      {/* AboutSection Component - Uses real data from sectionsMap */}
-      {sectionsMap?.about ?? null}
+      {/* AboutSection Component - Exact replica of user-header using subcomponents */}
+      <AboutSection
+        mode={isEditable ? "edit" : "view"}
+        data={{
+          name: "TEST",
+          description: "asdasdasdasdasdasddasdasd",
+          email: "test@gmail.com",
+          socials: {
+            twitter: "https://twitter.com/test",
+            linkedin: "https://linkedin.com/in/test"
+          }
+        }}
+      />
 
       {/* Portfolio Sections */}
       <div className="portfolio-content">

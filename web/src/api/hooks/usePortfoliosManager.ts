@@ -17,7 +17,6 @@ interface PortfoliosResult {
 
 /**
  * Hook to manage portfolios with intelligent caching
- * Exactly like useAuth pattern - handles all portfolios logic
  * 
  * Flow:
  * 1. Initializes state from localStorage on first load
@@ -65,15 +64,17 @@ export function usePortfoliosManager(user: PublicUserDto | null, authIsLoading =
     }
   }, [portfolios, user]);
 
-  // Clear portfolios when user logs out (like useAuth clears user)
+  // Clear portfolios when user logs out
   useEffect(() => {
     if (!user) {
       setPortfolios([]);
       setError(null);
+
       // reset fetch trackers when user logs out
       fetchInProgressRef.current = false;
       startedDuringAuthLoadRef.current = false;
       fetchedForUserRef.current = null;
+
       // Clear localStorage for all users
       const keys = Object.keys(localStorage);
       keys.forEach(key => {
@@ -92,22 +93,25 @@ export function usePortfoliosManager(user: PublicUserDto | null, authIsLoading =
       setError(null);
       const data = await listPortfolios();
       setPortfolios(data);
+
       // mark that we've fetched for this user
       try {
         fetchedForUserRef.current = user.email;
       } catch (err) {
         console.warn('Failed to set fetchedForUserRef:', err);
       }
+
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to fetch portfolios';
       setError(errorMessage);
       console.error('Failed to fetch portfolios:', err);
+
     } finally {
       setIsLoading(false);
     }
   }, [user]);
 
-  // EXACT same logic as useAuth - only fetch when specific conditions are met
+  // only fetch when specific conditions are met
   useEffect(() => {
     // If there's no user, bail out early
     if (!user) {
@@ -151,10 +155,7 @@ export function usePortfoliosManager(user: PublicUserDto | null, authIsLoading =
   const shouldFetch = (!hasCachedPortfolios || pageRefresh) && !alreadyFetchedForUser;
     
     if (shouldFetch) {
-      // If a fetch is already in progress, don't start another
       if (fetchInProgressRef.current) return;
-
-      // If auth is loading, only allow one fetch to start during that phase
       if (authIsLoading && startedDuringAuthLoadRef.current) return;
 
       fetchInProgressRef.current = true;

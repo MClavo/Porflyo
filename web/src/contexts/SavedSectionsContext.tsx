@@ -8,7 +8,7 @@ interface SavedSectionsProviderProps {
 }
 
 /**
- * SavedSectionsProvider component that provides saved sections context to the app
+ * Provides saved sections context to the app
  * Uses the same caching pattern as AuthContext
  */
 export function SavedSectionsProvider({ children }: SavedSectionsProviderProps) {
