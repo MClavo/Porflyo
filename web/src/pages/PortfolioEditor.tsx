@@ -291,6 +291,7 @@ export default function PortfolioEditor({
               {/* Sidebar - automatically controlled by mode */}
               <ModernEditorSidebar
                 isOpen={isSidebarOpen}
+                mode={state.ui.mode}
               >
                 <SavedCards
                   savedCards={savedCardsContext.state.savedCards}

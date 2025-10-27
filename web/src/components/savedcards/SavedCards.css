@@ -8,22 +8,6 @@
   overflow: hidden;
 }
 
-.saved-cards-hint {
-  font-size: var(--font-sm);
-  color: var(--text-secondary);
-  background: rgba(139, 92, 246, 0.1);
-  padding: var(--space-3) var(--space-4);
-  border-radius: var(--radius-md);
-  text-align: center;
-  border: 1px solid rgba(139, 92, 246, 0.2);
-  margin-bottom: var(--space-3);
-  font-weight: 500;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-2);
-}
-
 .saved-cards-area {
   flex: 1;
   min-height: 200px;

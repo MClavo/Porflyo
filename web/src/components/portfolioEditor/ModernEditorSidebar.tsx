@@ -3,16 +3,19 @@
  */
 
 import React from 'react';
+import { HiOutlineInboxArrowDown } from 'react-icons/hi2';
 import './ModernEditorSidebar.css';
 
 export interface ModernEditorSidebarProps {
   isOpen: boolean;
   children: React.ReactNode;
+  mode?: 'view' | 'edit';
 }
 
 export const ModernEditorSidebar: React.FC<ModernEditorSidebarProps> = ({
   isOpen,
-  children
+  children,
+  mode = 'view'
 }) => {
   return (
     <>
@@ -25,6 +28,12 @@ export const ModernEditorSidebar: React.FC<ModernEditorSidebarProps> = ({
       <aside className={`modern-editor-sidebar ${isOpen ? 'modern-editor-sidebar--expanded' : 'modern-editor-sidebar--collapsed'}`}>
         <div className="modern-editor-sidebar__header">
           <h3 className="modern-editor-sidebar__title">Saved</h3>
+          {mode === 'edit' && (
+            <div className="saved-cards-hint">
+              <HiOutlineInboxArrowDown />
+              Hover for preview • Drag to use
+            </div>
+          )}
         </div>
         
         <div className="modern-editor-sidebar__divider"></div>

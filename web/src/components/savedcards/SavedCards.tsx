@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useDroppable } from "@dnd-kit/core";
 import { MdDeleteSweep } from "react-icons/md";
 import { BiPackage } from "react-icons/bi";
-import { HiOutlineInboxArrowDown } from "react-icons/hi2";
 import type { SavedCard } from "../../state/SavedCards.types";
 import type { AnyCard } from "../../state/Cards.types";
 import { SavedCardComponent } from "./SavedCard";
@@ -60,13 +59,6 @@ export function SavedCards({
   return (
     <>
       <div className="saved-cards-container">
-        {mode === "edit" && (
-          <div className="saved-cards-hint">
-            <HiOutlineInboxArrowDown />
-            Hover for preview • Drag to use
-          </div>
-        )}
-
         <div
           ref={setNodeRef}
           className={`saved-cards-area ${isOver ? "drop-over" : ""} ${
