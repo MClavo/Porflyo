@@ -147,14 +147,26 @@
   font-weight: 600;
 }
 
+.save-card-dialog-divider {
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--card-border) 20%,
+    var(--card-border) 80%,
+    transparent
+  );
+  margin: var(--space-5) 0;
+}
+
 .save-card-dialog-actions {
   display: flex;
   gap: var(--space-3);
-  justify-content: flex-end;
+  justify-content: center;
 }
 
 .save-card-dialog-btn {
-  padding: var(--space-3) var(--space-6);
+  padding: var(--space-3) var(--space-5);
   border: 1px solid transparent;
   border-radius: var(--radius-md);
   font-size: var(--font-sm);
@@ -166,30 +178,99 @@
   align-items: center;
   justify-content: center;
   gap: var(--space-2);
+  min-width: 120px;
 }
 
 .save-card-dialog-btn-cancel {
-  background: rgba(255, 255, 255, 0.05);
-  color: var(--text-secondary);
-  border-color: var(--card-border);
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  color: var(--status-negative);
+  box-shadow: 0 2px 4px rgba(239, 68, 68, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.save-card-dialog-btn-cancel::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(239, 68, 68, 0.1),
+    transparent
+  );
+  transition: left 0.3s ease;
 }
 
 .save-card-dialog-btn-cancel:hover {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: var(--card-border-hover);
-  color: var(--text-primary);
+  background: var(--status-negative);
+  color: white;
+  transform: translateY(-1px);
+  box-shadow: 
+    0 4px 12px rgba(239, 68, 68, 0.3),
+    0 0 0 1px rgba(255, 255, 255, 0.1);
+  border-color: var(--status-negative);
+}
+
+.save-card-dialog-btn-cancel:hover::before {
+  left: 100%;
+}
+
+.save-card-dialog-btn-cancel:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.2);
 }
 
 .save-card-dialog-btn-save {
-  background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+  background: linear-gradient(135deg, var(--accent-purple), var(--accent-blue));
   color: white;
   border: none;
-  box-shadow: var(--shadow-sm);
+  box-shadow: 
+    0 2px 8px rgba(139, 92, 246, 0.3),
+    0 0 0 1px rgba(255, 255, 255, 0.1);
+  position: relative;
+  overflow: hidden;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.save-card-dialog-btn-save::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  transition: left 0.5s ease;
+  pointer-events: none;
 }
 
 .save-card-dialog-btn-save:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 4px 12px rgba(139, 92, 246, 0.4),
+    0 0 0 1px rgba(255, 255, 255, 0.15),
+    0 0 20px rgba(139, 92, 246, 0.2);
+}
+
+.save-card-dialog-btn-save:hover:not(:disabled)::before {
+  left: 100%;
+}
+
+.save-card-dialog-btn-save:active:not(:disabled) {
   transform: translateY(-1px);
-  box-shadow: var(--shadow-md);
+  box-shadow: 
+    0 2px 8px rgba(139, 92, 246, 0.3),
+    0 0 0 1px rgba(255, 255, 255, 0.1);
 }
 
 .save-card-dialog-btn-save:disabled {
