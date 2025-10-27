@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useDroppable } from "@dnd-kit/core";
-import { MdDeleteSweep } from "react-icons/md";
 import { BiPackage } from "react-icons/bi";
 import type { SavedCard } from "../../state/SavedCards.types";
 import type { AnyCard } from "../../state/Cards.types";
@@ -95,25 +94,6 @@ export function SavedCards({
             </div>
           )}
         </div>
-
-        {mode === "edit" && savedCardsList.length > 0 && (
-          <div className="saved-cards-actions">
-            <button
-              type="button"
-              onClick={() => {
-                if (confirm("Are you sure you want to clear all saved cards?")) {
-                  savedCardsList.forEach((savedCard) => {
-                    onRemove(savedCard.id);
-                  });
-                }
-              }}
-              className="saved-cards-clear-btn"
-            >
-              <MdDeleteSweep />
-              Clear All
-            </button>
-          </div>
-        )}
       </div>
 
       <SaveCardDialog
