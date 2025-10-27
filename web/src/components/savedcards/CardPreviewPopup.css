@@ -5,10 +5,11 @@
   border: 1px solid var(--card-border);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-xl);
-  min-width: 300px;
-  max-width: 450px;
-  /* Allow height to adjust to content, but cap at 80% of viewport */
-  max-height: 80vh;
+  min-width: 350px;
+  max-width: 600px;
+  width: max-content;
+  /* Allow height to adjust to content, but cap at 85% of viewport */
+  max-height: 85vh;
   overflow: hidden;
   animation: popupSlideIn 0.2s ease-out;
   pointer-events: none; /* Prevent popup from interfering with mouse events */
@@ -55,8 +56,9 @@
   padding: var(--space-4);
   background: var(--dashboard-bg-secondary);
   /* Allow scrolling only if content exceeds popup max-height */
-  max-height: calc(80vh - 100px); /* Account for header height */
+  max-height: calc(85vh - 100px); /* Account for header height */
   overflow-y: auto;
+  overflow-x: hidden;
 }
 
 /* Ensure the card inside the popup renders properly */
@@ -64,6 +66,7 @@
   margin: 0 !important;
   max-width: 100%;
   box-sizing: border-box;
+  width: 100%;
 }
 
 /* Disable interactions in preview */
@@ -81,6 +84,8 @@
   box-shadow: none !important;
   background: transparent !important;
   padding: 0 !important;
+  width: 100% !important;
+  max-width: none !important;
 }
 
 .card-preview-popup-content .card-title {
@@ -97,13 +102,16 @@
 }
 
 .card-preview-popup-content .card-images {
-  max-height: 180px !important;
-  overflow: hidden !important;
+  max-height: none !important;
+  overflow: visible !important;
   border-radius: var(--radius-md) !important;
+  width: 100% !important;
 }
 
 .card-preview-popup-content .card-image {
-  max-height: 180px !important;
+  max-height: none !important;
+  width: 100% !important;
+  height: auto !important;
   object-fit: cover !important;
   border-radius: var(--radius-md) !important;
 }
@@ -147,19 +155,20 @@
 @keyframes popupSlideIn {
   from {
     opacity: 0;
-    transform: translateX(-10px) scale(0.96);
+    /* Preserve vertical centering during the animation */
+    transform: translateY(-50%) translateX(-10px) scale(0.96);
   }
   to {
     opacity: 1;
-    transform: translateX(0) scale(1);
+    transform: translateY(-50%) translateX(0) scale(1);
   }
 }
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .card-preview-popup {
-    max-width: 320px;
-    min-width: 280px;
+    max-width: 90vw;
+    min-width: 300px;
   }
   
   .card-preview-popup-header {
@@ -168,13 +177,5 @@
   
   .card-preview-popup-content {
     padding: var(--space-3);
-  }
-  
-  .card-preview-popup-content .card-images {
-    max-height: 150px !important;
-  }
-  
-  .card-preview-popup-content .card-image {
-    max-height: 150px !important;
   }
 }
