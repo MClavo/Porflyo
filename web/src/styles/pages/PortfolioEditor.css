@@ -17,37 +17,73 @@
   overflow: hidden;
 }
 
-/* Content area below header - now uses flex layout */
+/* Content area below header - now uses flex layout with margin for fixed sidebar */
 .portfolio-editor__content {
   display: flex;
   flex: 1;
-  min-height: 0; /* Allow flex items to shrink */
+  min-height: 0;
+  margin-top: calc(var(--navbar-height) + var(--editor-header-height, 72px));
 }
 
-/* EditorDndProvider wrapper */
+/* EditorDndProvider wrapper - takes full width */
 .portfolio-editor__content > div:first-child {
   display: flex;
   flex: 1;
   min-height: 0;
+  width: 100%;
 }
 
-/* test-main inside EditorDndProvider */
+/* test-main inside EditorDndProvider - accounts for sidebar */
 .portfolio-editor__content .test-main {
   display: flex;
   flex-direction: row;
   align-items: stretch;
-  gap: 0; /* Remove gap, border handles spacing */
+  gap: 0;
   width: 100%;
   min-width: 0;
   flex: 1;
+  margin-left: 0;
+  transition: margin-left var(--transition-normal);
 }
 
-/* main-content area */
+/* When sidebar is open, add margin for the fixed sidebar */
+.portfolio-editor__content .test-main--sidebar-open {
+  margin-left: 320px;
+}
+
+/* When sidebar is closed, no margin */
+.portfolio-editor__content .test-main--sidebar-closed {
+  margin-left: 0;
+}
+
+/* main-content area - scrollable portfolio */
 .portfolio-editor__content .main-content {
   flex: 1;
   min-width: 0;
   display: flex;
   flex-direction: column;
+  overflow-y: auto;
+  overflow-x: hidden;
+  height: calc(100vh - var(--navbar-height) - var(--editor-header-height, 72px));
+}
+
+/* Custom scrollbar for main content */
+.portfolio-editor__content .main-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.portfolio-editor__content .main-content::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.portfolio-editor__content .main-content::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: var(--radius-sm);
+  transition: background var(--transition-fast);
+}
+
+.portfolio-editor__content .main-content::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
 }
 
 /* layout-preview */
@@ -125,18 +161,26 @@
 
 /* Responsive Design */
 @media (max-width: 1024px) {
-  .portfolio-editor__content .test-main {
-    flex-direction: column;
-  }
-  
-  .modern-editor-sidebar--expanded {
-    width: 100%;
-    min-width: 100%;
-    max-width: 100%;
+  .portfolio-editor__content .test-main,
+  .portfolio-editor__content .test-main--sidebar-open,
+  .portfolio-editor__content .test-main--sidebar-closed {
+    margin-left: 0;
   }
 }
 
 @media (max-width: 768px) {
+  .portfolio-editor__content {
+    margin-top: calc(70px + var(--editor-header-height, 72px));
+  }
+
+  .portfolio-editor__content .main-content {
+    height: calc(100vh - 70px - var(--editor-header-height, 72px));
+  }
+
+  .portfolio-editor__content .test-main {
+    margin-left: 0;
+  }
+
   .portfolio-editor__content .layout-preview {
     padding: var(--space-3);
   }

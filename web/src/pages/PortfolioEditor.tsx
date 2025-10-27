@@ -287,7 +287,7 @@ export default function PortfolioEditor({
             onDragStart={state.drag.handleDragStart}
             onDragEnd={state.drag.handleDragEnd}
           >
-            <div className="test-main">
+            <div className={`test-main ${isSidebarOpen ? 'test-main--sidebar-open' : 'test-main--sidebar-closed'}`}>
               {/* Sidebar - automatically controlled by mode */}
               <ModernEditorSidebar
                 isOpen={isSidebarOpen}

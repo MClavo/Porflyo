@@ -64,8 +64,34 @@ export const ModernEditorHeader: React.FC<ModernEditorHeaderProps> = ({
   isPublishing,
   isEditMode
 }) => {
+  const headerRef = React.useRef<HTMLElement>(null);
+
+  // Update CSS custom property for header height dynamically
+  React.useEffect(() => {
+    const updateHeaderHeight = () => {
+      if (headerRef.current) {
+        const height = headerRef.current.offsetHeight;
+        document.documentElement.style.setProperty('--editor-header-height', `${height}px`);
+      }
+    };
+
+    // Initial update
+    updateHeaderHeight();
+
+    // Update on resize
+    const resizeObserver = new ResizeObserver(updateHeaderHeight);
+    if (headerRef.current) {
+      resizeObserver.observe(headerRef.current);
+    }
+
+    // Cleanup
+    return () => {
+      resizeObserver.disconnect();
+    };
+  }, []);
+
   return (
-    <header className="modern-editor-header">
+    <header ref={headerRef} className="modern-editor-header">
       <div className="modern-editor-header__container">
         {/* Left Group: Title + Template + Mode + Save */}
         <div className="modern-editor-header__left-group">

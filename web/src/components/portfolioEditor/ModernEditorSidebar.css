@@ -1,6 +1,10 @@
-/* ModernEditorSidebar - Flex-based sidebar styles */
+/* ModernEditorSidebar - Fixed sidebar that doesn't overlap content */
 
 .modern-editor-sidebar {
+  position: fixed;
+  top: calc(var(--navbar-height) + var(--editor-header-height, 72px));
+  left: 0;
+  bottom: 0;
   display: flex;
   flex-direction: column;
   background: var(--card-bg);
@@ -8,8 +12,8 @@
   box-shadow: var(--shadow-md);
   transition: all var(--transition-normal);
   overflow: hidden;
-  min-height: 0; /* Allow flex shrinking */
-  flex: 0 0 auto; /* Don't grow or shrink, keep fixed width */
+  z-index: 50;
+  height: auto;
 }
 
 .modern-editor-sidebar--expanded {
@@ -94,10 +98,11 @@
   opacity: 0;
 }
 
-/* Sidebar Content */
+/* Sidebar Content - scrollable area */
 .modern-editor-sidebar__content {
   flex: 1;
-  overflow: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
   display: flex;
   flex-direction: column;
   min-height: 0;
@@ -111,6 +116,31 @@
   pointer-events: none;
 }
 
+/* Remove old area references and use content */
+.modern-editor-sidebar__area {
+  display: none;
+}
+
+/* Custom scrollbar for sidebar content */
+.modern-editor-sidebar__content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.modern-editor-sidebar__content::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: var(--radius-sm);
+}
+
+.modern-editor-sidebar__content::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: var(--radius-sm);
+  transition: background var(--transition-fast);
+}
+
+.modern-editor-sidebar__content::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
 /* Mobile overlay - only show on mobile */
 .modern-editor-sidebar__overlay {
   display: none;
@@ -122,14 +152,19 @@
     position: fixed;
     top: 0;
     left: 0;
+    bottom: 0;
     height: 100vh;
     z-index: 1000;
     width: 100vw !important;
     min-width: 100vw !important;
+    max-width: 100vw !important;
     transform: translateX(-100%);
   }
 
   .modern-editor-sidebar--expanded {
+    width: 100vw !important;
+    min-width: 100vw !important;
+    max-width: 100vw !important;
     transform: translateX(0);
   }
 
@@ -145,6 +180,7 @@
     opacity: 0;
     visibility: hidden;
     transition: all var(--transition-fast);
+    backdrop-filter: blur(4px);
   }
 
   .modern-editor-sidebar__overlay--visible {
@@ -153,58 +189,13 @@
   }
 }
 
-.modern-editor-sidebar--collapsed .modern-editor-sidebar__area {
-  opacity: 0;
-  pointer-events: none;
-}
-
-/* Custom scrollbar */
-.modern-editor-sidebar__area::-webkit-scrollbar {
-  width: 6px;
-}
-
-.modern-editor-sidebar__area::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: var(--radius-sm);
-}
-
-.modern-editor-sidebar__area::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: var(--radius-sm);
-  transition: background var(--transition-fast);
-}
-
-.modern-editor-sidebar__area::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.3);
-}
-
-/* Overlay for mobile */
-.modern-editor-sidebar__overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  z-index: 99;
-  opacity: 0;
-  visibility: hidden;
-  transition: all var(--transition-fast);
-  backdrop-filter: blur(4px);
-}
-
-.modern-editor-sidebar__overlay--visible {
-  opacity: 1;
-  visibility: visible;
-}
-
 /* Hover effects */
 .modern-editor-sidebar:hover {
   box-shadow: var(--shadow-xl);
 }
 
-.modern-editor-sidebar:hover .modern-editor-sidebar__area::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.25);
+.modern-editor-sidebar:hover .modern-editor-sidebar__content::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
 }
 
 /* Collapsed state hover hint */
@@ -235,7 +226,7 @@
   }
 }
 
-.modern-editor-sidebar--expanded .modern-editor-sidebar__area {
+.modern-editor-sidebar--expanded .modern-editor-sidebar__content {
   animation: sidebar-content-fade-in 0.3s ease-out 0.1s both;
 }
 
@@ -247,32 +238,13 @@
   animation: sidebar-content-fade-in 0.3s ease-out 0.15s both;
 }
 
-/* Responsive Design */
-@media (max-width: 768px) {
-  .modern-editor-sidebar {
-    top: 70px; /* Smaller navbar on mobile */
-    height: calc(100vh - 70px);
-  }
-
-  .modern-editor-sidebar--expanded {
-    width: 100vw;
-  }
-
-  .modern-editor-sidebar--collapsed {
-    transform: translateX(-100%);
-  }
-
-  .modern-editor-sidebar__overlay--visible {
-    display: block;
-  }
-}
-
+/* Responsive Design - Remove duplicate mobile styles */
 @media (max-width: 480px) {
   .modern-editor-sidebar__header {
     padding: var(--space-3);
   }
 
-  .modern-editor-sidebar__area {
+  .modern-editor-sidebar__content {
     padding: var(--space-3);
   }
 
