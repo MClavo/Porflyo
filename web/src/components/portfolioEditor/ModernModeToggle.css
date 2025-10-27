@@ -10,7 +10,7 @@
   display: flex;
   background: rgba(255, 255, 255, 0.05);
   border-radius: var(--radius-lg);
-  padding: var(--space-1);
+  padding: 0;
   border: 1px solid rgba(255, 255, 255, 0.1);
   overflow: hidden;
   backdrop-filter: blur(8px);
@@ -19,14 +19,15 @@
     inset 0 1px 0 rgba(255, 255, 255, 0.1);
   cursor: pointer;
   transition: all 0.2s ease;
+  height: auto;
 }
 
 .modern-mode-toggle__slider {
   position: absolute;
-  top: var(--space-1);
-  bottom: var(--space-1);
-  left: var(--space-1);
-  width: calc(50% - 2px);
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 50%;
   background: linear-gradient(
     135deg,
     #8b5cf6 0%,
@@ -39,10 +40,11 @@
     0 0 0 1px rgba(255, 255, 255, 0.1),
     0 0 20px rgba(139, 92, 246, 0.2);
   z-index: 1;
+  margin: 2px;
 }
 
 .modern-mode-toggle__slider--view {
-  transform: translateX(100%);
+  transform: translateX(calc(100% - 4px));
   background: linear-gradient(
     135deg,
     #3b82f6 0%,
@@ -72,6 +74,7 @@
   justify-content: center;
   white-space: nowrap;
   pointer-events: none;
+  height: 100%;
 }
 
 .modern-mode-toggle__option--active {

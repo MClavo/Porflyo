@@ -23,20 +23,15 @@ export const ModernPublicToggle: React.FC<ModernPublicToggleProps> = ({
         }`}
         onClick={() => setIsPublished(!isPublished)}
         aria-label={isPublished ? 'Make portfolio private' : 'Make portfolio public'}
-        title={isPublished ? 'Portfolio is public' : 'Portfolio is private'}
+        title={isPublished ? 'Portfolio is public - Visible to everyone' : 'Portfolio is private - Only visible to you'}
       >
         <div className="modern-public-toggle__icon">
           {isPublished ? <FiEye size={16} /> : <FiEyeOff size={16} />}
         </div>
         
-        <div className="modern-public-toggle__content">
-          <span className="modern-public-toggle__status">
-            {isPublished ? 'Public' : 'Private'}
-          </span>
-          <span className="modern-public-toggle__description">
-            {isPublished ? 'Visible to everyone' : 'Only visible to you'}
-          </span>
-        </div>
+        <span className="modern-public-toggle__status">
+          {isPublished ? 'Public' : 'Private'}
+        </span>
       </button>
     </div>
   );
