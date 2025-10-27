@@ -1,43 +1,46 @@
-/* Modern SavedCards - Updated for sidebar integration */
+/* Modern SavedCards Container - Dark Theme */
 
 .saved-cards-container {
   display: flex;
   flex-direction: column;
   height: 100%;
   background: transparent;
-  border: none;
-  border-radius: 0;
   overflow: hidden;
 }
 
 .saved-cards-hint {
-  font-size: var(--font-xs);
+  font-size: var(--font-sm);
   color: var(--text-secondary);
-  background: var(--accent-purple-alpha);
-  padding: var(--space-2) var(--space-3);
+  background: rgba(139, 92, 246, 0.1);
+  padding: var(--space-3) var(--space-4);
   border-radius: var(--radius-md);
   text-align: center;
-  border: 1px solid var(--accent-purple-light);
-  margin-bottom: var(--space-4);
+  border: 1px solid rgba(139, 92, 246, 0.2);
+  margin-bottom: var(--space-3);
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
 }
 
 .saved-cards-area {
   flex: 1;
   min-height: 200px;
   border: 2px dashed var(--card-border);
-  border-radius: var(--radius-md);
-  background: var(--bg-surface);
+  border-radius: var(--radius-lg);
+  background: rgba(31, 41, 55, 0.3);
   padding: var(--space-3);
   overflow-y: auto;
-  transition: all var(--transition-fast);
+  transition: all var(--transition-normal);
   position: relative;
 }
 
 .saved-cards-area.drop-over {
   border-color: var(--accent-purple);
-  background-color: var(--accent-purple-alpha);
-  box-shadow: inset 0 0 12px rgba(139, 92, 246, 0.1);
-  transform: scale(1.02);
+  background: rgba(139, 92, 246, 0.15);
+  box-shadow: inset 0 0 16px rgba(139, 92, 246, 0.2), var(--shadow-md);
+  transform: scale(1.01);
 }
 
 .saved-cards-area.empty {
@@ -49,34 +52,34 @@
 
 .saved-cards-empty {
   text-align: center;
-  padding: var(--space-6) var(--space-4);
+  padding: var(--space-8) var(--space-4);
   color: var(--text-secondary);
 }
 
 .saved-cards-empty-icon {
-  font-size: 3rem;
-  margin-bottom: var(--space-3);
-  opacity: 0.6;
-  color: var(--text-tertiary);
+  font-size: 4rem;
+  margin-bottom: var(--space-4);
+  opacity: 0.5;
+  color: var(--text-muted);
 }
 
 .saved-cards-empty-text {
-  font-size: var(--font-md);
-  font-weight: 500;
+  font-size: var(--font-lg);
+  font-weight: 600;
   margin-bottom: var(--space-2);
   color: var(--text-secondary);
 }
 
 .saved-cards-empty-hint {
-  font-size: var(--font-xs);
-  color: var(--text-tertiary);
+  font-size: var(--font-sm);
+  color: var(--text-muted);
   font-style: italic;
 }
 
 .saved-cards-list {
   display: flex;
   flex-direction: column;
-  gap: var(--space-2);
+  gap: var(--space-3);
 }
 
 .saved-cards-actions {
@@ -87,44 +90,52 @@
 
 .saved-cards-clear-btn {
   width: 100%;
-  padding: var(--space-2) var(--space-4);
-  background: var(--status-negative);
-  color: white;
-  border: none;
+  padding: var(--space-3) var(--space-4);
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--status-negative);
+  border: 1px solid rgba(239, 68, 68, 0.3);
   border-radius: var(--radius-md);
-  font-size: var(--font-xs);
+  font-size: var(--font-sm);
   font-weight: 600;
   cursor: pointer;
-  transition: all var(--transition-fast);
+  transition: all var(--transition-normal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
 }
 
 .saved-cards-clear-btn:hover {
-  background: var(--status-negative-hover);
+  background: var(--status-negative);
+  color: white;
+  border-color: var(--status-negative);
   transform: translateY(-1px);
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-md);
 }
 
 .saved-cards-clear-btn:active {
   transform: translateY(0);
+  box-shadow: var(--shadow-sm);
 }
 
 /* Scrollbar styling for saved cards area */
 .saved-cards-area::-webkit-scrollbar {
-  width: 6px;
+  width: 8px;
 }
 
 .saved-cards-area::-webkit-scrollbar-track {
-  background: var(--bg-surface);
-  border-radius: 3px;
+  background: rgba(31, 41, 55, 0.3);
+  border-radius: var(--radius-sm);
 }
 
 .saved-cards-area::-webkit-scrollbar-thumb {
-  background: var(--text-tertiary);
-  border-radius: 3px;
+  background: var(--card-border);
+  border-radius: var(--radius-sm);
+  transition: background var(--transition-fast);
 }
 
 .saved-cards-area::-webkit-scrollbar-thumb:hover {
-  background: var(--text-secondary);
+  background: var(--card-border-hover);
 }
 
 /* Animation for new saved cards */
@@ -141,4 +152,28 @@
 
 .saved-cards-list > *:first-child {
   animation: slideInFromTop 0.3s ease-out;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .saved-cards-hint {
+    font-size: var(--font-xs);
+    padding: var(--space-2) var(--space-3);
+  }
+
+  .saved-cards-empty {
+    padding: var(--space-6) var(--space-3);
+  }
+
+  .saved-cards-empty-icon {
+    font-size: 3rem;
+  }
+
+  .saved-cards-empty-text {
+    font-size: var(--font-base);
+  }
+
+  .saved-cards-list {
+    gap: var(--space-2);
+  }
 }

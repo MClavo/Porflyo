@@ -1,5 +1,8 @@
 import { useState } from "react";
 import { useDroppable } from "@dnd-kit/core";
+import { MdDeleteSweep } from "react-icons/md";
+import { BiPackage } from "react-icons/bi";
+import { HiOutlineInboxArrowDown } from "react-icons/hi2";
 import type { SavedCard } from "../../state/SavedCards.types";
 import type { AnyCard } from "../../state/Cards.types";
 import { SavedCardComponent } from "./SavedCard";
@@ -59,7 +62,8 @@ export function SavedCards({
       <div className="saved-cards-container">
         {mode === "edit" && (
           <div className="saved-cards-hint">
-            Drop cards here to save them
+            <HiOutlineInboxArrowDown />
+            Hover for preview • Drag to use
           </div>
         )}
 
@@ -71,7 +75,9 @@ export function SavedCards({
         >
           {savedCardsList.length === 0 ? (
             <div className="saved-cards-empty">
-              <div className="saved-cards-empty-icon">📦</div>
+              <div className="saved-cards-empty-icon">
+                <BiPackage />
+              </div>
               <div className="saved-cards-empty-text">
                 No saved cards yet
               </div>
@@ -111,6 +117,7 @@ export function SavedCards({
               }}
               className="saved-cards-clear-btn"
             >
+              <MdDeleteSweep />
               Clear All
             </button>
           </div>

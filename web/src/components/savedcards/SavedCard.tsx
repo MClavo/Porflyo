@@ -1,4 +1,7 @@
 import { useDraggable } from "@dnd-kit/core";
+import { FaTrash } from "react-icons/fa";
+import { BiCalendar } from "react-icons/bi";
+import { IoMdArrowRoundForward } from "react-icons/io";
 import type { SavedCard } from "../../state/SavedCards.types";
 import { CardPreviewPopup } from "./CardPreviewPopup";
 import "./SavedCard.css";
@@ -42,10 +45,7 @@ export function SavedCardComponent({ savedCard, onRemove, mode, template = "temp
         {...(mode === "edit" ? listeners : {})}
       >
         <div className="saved-card-header">
-          <h4 
-            className="saved-card-name"
-            title={savedCard.name}
-          >
+          <h4 className="saved-card-name" title={savedCard.name}>
             {savedCard.name}
           </h4>
           
@@ -57,31 +57,22 @@ export function SavedCardComponent({ savedCard, onRemove, mode, template = "temp
                 className="saved-card-btn saved-card-remove-btn"
                 title="Remove"
               >
-                🗑️
+                <FaTrash />
               </button>
             </div>
           )}
         </div>
 
         <div className="saved-card-info">
-          <div className="saved-card-meta">
-            <span className="saved-card-type-badge">
-              {savedCard.card.type}
-            </span>
-            <span className="saved-card-section">
-              From: {savedCard.originSectionType}
-            </span>
-          </div>
-          <div className="saved-card-date">
-            Saved: {formatDate(savedCard.createdAt)}
-          </div>
+          <span className="saved-card-section">
+            <IoMdArrowRoundForward />
+            {savedCard.originSectionType}
+          </span>
+          <span className="saved-card-date">
+            <BiCalendar />
+            {formatDate(savedCard.createdAt)}
+          </span>
         </div>
-
-        {mode === "edit" && (
-          <div className="saved-card-hint">
-            💡 Hover for preview • Drag to use
-          </div>
-        )}
       </div>
     </CardPreviewPopup>
   );

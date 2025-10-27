@@ -1,4 +1,7 @@
 import React, { useState, useEffect } from "react";
+import { IoClose } from "react-icons/io5";
+import { BiSave } from "react-icons/bi";
+import { MdCancel } from "react-icons/md";
 import type { AnyCard } from "../../state/Cards.types";
 import "./SaveCardDialog.css";
 
@@ -75,7 +78,7 @@ export function SaveCardDialog({
             className="save-card-dialog-close"
             onClick={onCancel}
           >
-            ✕
+            <IoClose />
           </button>
         </div>
 
@@ -113,6 +116,7 @@ export function SaveCardDialog({
                 className="save-card-dialog-btn save-card-dialog-btn-cancel"
                 onClick={onCancel}
               >
+                <MdCancel />
                 Cancel
               </button>
               <button 
@@ -120,6 +124,7 @@ export function SaveCardDialog({
                 className="save-card-dialog-btn save-card-dialog-btn-save"
                 disabled={!name.trim()}
               >
+                <BiSave />
                 Save Card
               </button>
             </div>
