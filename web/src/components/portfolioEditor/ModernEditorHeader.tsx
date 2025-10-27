@@ -8,7 +8,8 @@ import { ModernModeToggle } from './ModernModeToggle';
 import { ModernTemplateSelector } from './ModernTemplateSelector';
 import { ModernUrlSection } from './ModernUrlSection';
 import { ModernPublicToggle } from './ModernPublicToggle';
-import { ModernActionButtons } from './ModernActionButtons';
+import { ModernSaveButton } from './ModernSaveButton';
+import { ModernPublishButton } from './ModernPublishButton';
 import './ModernEditorHeader.css';
 
 export interface ModernEditorHeaderProps {
@@ -109,15 +110,20 @@ export const ModernEditorHeader: React.FC<ModernEditorHeaderProps> = ({
             </>
           )}
 
-          <ModernActionButtons
+          <ModernSaveButton
             onSave={onSave}
             isSaving={isSaving}
-            onPublish={onPublish}
-            isPublishing={isPublishing || false}
-            isEditMode={isEditMode}
-            isPublished={isPublished || false}
-            isSlugAvailable={isSlugAvailable || false}
           />
+
+          {isEditMode && onPublish && (
+            <ModernPublishButton
+              onPublish={onPublish}
+              isPublishing={isPublishing || false}
+              isPublished={isPublished || false}
+              isSlugAvailable={isSlugAvailable || false}
+              isSaving={isSaving}
+            />
+          )}
         </div>
       </div>
     </header>

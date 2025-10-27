@@ -1,16 +1,9 @@
-/* ModernActionButtons - Save and publish button styles */
+/* ModernPublishButton - Publish/Update button styles */
 
-.modern-action-buttons {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-}
-
-.modern-action-buttons__save,
-.modern-action-buttons__publish {
+.modern-publish-button {
   background: linear-gradient(
     135deg,
-    var(--accent-purple) 0%,
+    var(--accent-teal) 0%,
     var(--accent-blue) 100%
   );
   border: none;
@@ -25,7 +18,7 @@
   align-items: center;
   gap: var(--space-2);
   box-shadow: 
-    0 2px 8px rgba(139, 92, 246, 0.3),
+    0 2px 8px rgba(20, 184, 166, 0.3),
     0 0 0 1px rgba(255, 255, 255, 0.1);
   position: relative;
   overflow: hidden;
@@ -34,45 +27,23 @@
   justify-content: center;
 }
 
-.modern-action-buttons__save:hover:not(:disabled),
-.modern-action-buttons__publish:hover:not(:disabled) {
+.modern-publish-button:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 
-    0 4px 12px rgba(139, 92, 246, 0.4),
-    0 0 0 1px rgba(255, 255, 255, 0.15),
-    0 0 20px rgba(139, 92, 246, 0.2);
-}
-
-.modern-action-buttons__save:active:not(:disabled),
-.modern-action-buttons__publish:active:not(:disabled) {
-  transform: translateY(-1px);
-  box-shadow: 
-    0 2px 8px rgba(139, 92, 246, 0.3),
-    0 0 0 1px rgba(255, 255, 255, 0.1);
-}
-
-/* Publish button specific styling */
-.modern-action-buttons__publish {
-  background: linear-gradient(
-    135deg,
-    var(--accent-teal) 0%,
-    var(--accent-blue) 100%
-  );
-  box-shadow: 
-    0 2px 8px rgba(20, 184, 166, 0.3),
-    0 0 0 1px rgba(255, 255, 255, 0.1);
-}
-
-.modern-action-buttons__publish:hover:not(:disabled) {
   box-shadow: 
     0 4px 12px rgba(20, 184, 166, 0.4),
     0 0 0 1px rgba(255, 255, 255, 0.15),
     0 0 20px rgba(20, 184, 166, 0.2);
 }
 
+.modern-publish-button:active:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 
+    0 2px 8px rgba(20, 184, 166, 0.3),
+    0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
 /* Disabled state */
-.modern-action-buttons__save:disabled,
-.modern-action-buttons__publish:disabled {
+.modern-publish-button:disabled {
   background: rgba(156, 163, 175, 0.3);
   color: var(--text-tertiary);
   cursor: not-allowed;
@@ -81,17 +52,17 @@
   text-shadow: none;
 }
 
-.modern-action-buttons__icon {
+.modern-publish-button__icon {
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.modern-action-buttons__spinner {
-  animation: spin 1s linear infinite;
+.modern-publish-button__spinner {
+  animation: publish-spin 1s linear infinite;
 }
 
-@keyframes spin {
+@keyframes publish-spin {
   from {
     transform: rotate(0deg);
   }
@@ -100,14 +71,13 @@
   }
 }
 
-.modern-action-buttons__text {
+.modern-publish-button__text {
   font-family: var(--font-sans);
   letter-spacing: 0.02em;
 }
 
 /* Shimmer effect on hover */
-.modern-action-buttons__save::before,
-.modern-action-buttons__publish::before {
+.modern-publish-button::before {
   content: '';
   position: absolute;
   top: 0;
@@ -124,25 +94,22 @@
   pointer-events: none;
 }
 
-.modern-action-buttons__save:hover:not(:disabled)::before,
-.modern-action-buttons__publish:hover:not(:disabled)::before {
+.modern-publish-button:hover:not(:disabled)::before {
   left: 100%;
 }
 
 /* Focus states */
-.modern-action-buttons__save:focus,
-.modern-action-buttons__publish:focus {
+.modern-publish-button:focus {
   outline: 2px solid rgba(255, 255, 255, 0.5);
   outline-offset: 2px;
 }
 
-.modern-action-buttons__save:focus:not(:focus-visible),
-.modern-action-buttons__publish:focus:not(:focus-visible) {
+.modern-publish-button:focus:not(:focus-visible) {
   outline: none;
 }
 
 /* Success state animation */
-@keyframes success-pulse {
+@keyframes publish-success-pulse {
   0% {
     transform: scale(1);
     box-shadow: 
@@ -164,41 +131,29 @@
   }
 }
 
-.modern-action-buttons__save--success,
-.modern-action-buttons__publish--success {
+.modern-publish-button--success {
   background: linear-gradient(
     135deg,
     var(--status-positive) 0%,
     #10b981 100%
   );
-  animation: success-pulse 0.6s ease;
+  animation: publish-success-pulse 0.6s ease;
 }
 
 /* Mobile responsive */
 @media (max-width: 768px) {
-  .modern-action-buttons {
-    gap: var(--space-2);
-  }
-
-  .modern-action-buttons__save,
-  .modern-action-buttons__publish {
+  .modern-publish-button {
     padding: var(--space-2) var(--space-4);
     min-width: 80px;
   }
 
-  .modern-action-buttons__text {
+  .modern-publish-button__text {
     font-size: var(--font-xs);
   }
 }
 
 @media (max-width: 480px) {
-  .modern-action-buttons {
-    flex-direction: column;
-    width: 100%;
-  }
-
-  .modern-action-buttons__save,
-  .modern-action-buttons__publish {
+  .modern-publish-button {
     width: 100%;
     justify-content: center;
   }
