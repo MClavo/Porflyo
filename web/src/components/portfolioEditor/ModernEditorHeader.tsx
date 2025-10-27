@@ -66,9 +66,9 @@ export const ModernEditorHeader: React.FC<ModernEditorHeaderProps> = ({
   return (
     <header className="modern-editor-header">
       <div className="modern-editor-header__container">
-        {/* Left: Title */}
+        {/* Left: Title + quick save */}
         <div className="modern-editor-header__left">
-          <div className="modern-editor-header__title-section">
+          <div className="modern-editor-header__title-area">
             <input
               type="text"
               value={portfolioTitle}
@@ -76,46 +76,48 @@ export const ModernEditorHeader: React.FC<ModernEditorHeaderProps> = ({
               className="modern-editor-header__title-input"
               placeholder="Portfolio Title"
             />
+            <button
+              className="modern-editor-header__quick-save"
+              onClick={onSave}
+              disabled={isSaving}
+              aria-label="Quick save portfolio"
+              title="Save portfolio"
+            >
+              {isSaving ? 'Saving...' : 'Save'}
+            </button>
           </div>
         </div>
 
-        {/* Center: Controls */}
+        {/* Center: primary controls (centered) */}
         <div className="modern-editor-header__center">
-          {/* Mode Toggle */}
-          <ModernModeToggle
-            mode={mode}
-            onToggle={onModeToggle}
-          />
-
-          {/* Template Selector - always visible */}
-          <ModernTemplateSelector
-            selectedTemplate={selectedTemplate}
-            onSelect={onTemplateSelect}
-          />
-
-          {/* URL Section - always visible when isEditMode */}
-          {isEditMode && (
-            <ModernUrlSection
-              slug={slug || ''}
-              setSlug={setSlug || (() => {})}
-              currentSlug={currentSlug}
-              isSlugAvailable={isSlugAvailable}
-              isCheckingSlug={isCheckingSlug}
-              onSlugAvailabilityChange={onSlugAvailabilityChange}
+          <div className="modern-editor-header__primary-controls">
+            <ModernModeToggle mode={mode} onToggle={onModeToggle} />
+            <ModernTemplateSelector
+              selectedTemplate={selectedTemplate}
+              onSelect={onTemplateSelect}
             />
-          )}
-
-          {/* Public Toggle - always visible when isEditMode */}
-          {isEditMode && (
-            <ModernPublicToggle
-              isPublished={isPublished || false}
-              setIsPublished={setIsPublished || (() => {})}
-            />
-          )}
+          </div>
         </div>
 
-        {/* Right: Action Buttons */}
+        {/* Right: URL / Public / Action buttons */}
         <div className="modern-editor-header__right">
+          {isEditMode && (
+            <>
+              <ModernUrlSection
+                slug={slug || ''}
+                setSlug={setSlug || (() => {})}
+                currentSlug={currentSlug}
+                isSlugAvailable={isSlugAvailable}
+                isCheckingSlug={isCheckingSlug}
+                onSlugAvailabilityChange={onSlugAvailabilityChange}
+              />
+              <ModernPublicToggle
+                isPublished={isPublished || false}
+                setIsPublished={setIsPublished || (() => {})}
+              />
+            </>
+          )}
+
           <ModernActionButtons
             onSave={onSave}
             isSaving={isSaving}

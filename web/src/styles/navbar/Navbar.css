@@ -21,16 +21,18 @@
 .navbar-content {
   max-width: 1400px;
   margin: 0 auto;
-  padding: var(--space-4) var(--space-6);
+  padding: var(--space-3) var(--space-6);
   display: flex;
   align-items: center;
   justify-content: space-between;
   position: relative;
+  height: var(--navbar-height);
+  box-sizing: border-box;
 }
 
 /* Content spacing when navbar is present */
 .content-with-navbar {
-  padding-top: 80px; /* Space for fixed navbar */
+  padding-top: calc(var(--navbar-height) + 20px); /* Space for fixed navbar + margin */
 }
 
 /* Separator - Modern gradient line */
@@ -87,7 +89,7 @@
   font-weight: 700;
   font-style: oblique;
   letter-spacing: 0.3rem;
-  font-size: var(--font-2xl);
+  font-size: var(--font-xl);
   color: var(--space1, #00ADB5);
   transition: all var(--transition-normal);
   text-decoration: none;
@@ -141,7 +143,7 @@
   background: rgba(239, 68, 68, 0.08);
   border: 1px solid rgba(239, 68, 68, 0.2);
   border-radius: var(--radius-lg);
-  padding: var(--space-3) var(--space-5);
+  padding: var(--space-2) var(--space-4);
   color: var(--status-negative);
   font-size: var(--font-sm);
   font-weight: 600;
@@ -154,6 +156,7 @@
   position: relative;
   overflow: hidden;
   box-shadow: 0 2px 4px rgba(239, 68, 68, 0.1);
+  height: 36px;
 }
 
 .navbar-logout::before {
@@ -204,16 +207,17 @@
 /* Responsive Design */
 @media (max-width: 768px) {
   .navbar-content {
-    padding: var(--space-3) var(--space-4);
+    padding: var(--space-2) var(--space-4);
     max-width: 100%;
+    height: 56px;
   }
 
   .content-with-navbar {
-    padding-top: 70px; /* Smaller navbar on mobile */
+    padding-top: calc(56px + 20px); /* Smaller navbar on mobile */
   }
 
   .navbar-logo {
-    font-size: var(--font-xl);
+    font-size: var(--font-lg);
     letter-spacing: 0.2rem;
     padding: var(--space-2);
   }
@@ -221,16 +225,18 @@
   .navbar-logout {
     padding: var(--space-2) var(--space-3);
     font-size: var(--font-xs);
+    height: 32px;
   }
 }
 
 @media (max-width: 480px) {
   .navbar-content {
     padding: var(--space-2) var(--space-3);
+    height: 52px;
   }
 
   .content-with-navbar {
-    padding-top: 60px; /* Even smaller on very small screens */
+    padding-top: calc(52px + 16px); /* Even smaller on very small screens */
   }
 
   .navbar-logo {

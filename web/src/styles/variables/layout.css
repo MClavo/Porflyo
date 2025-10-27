@@ -1,5 +1,8 @@
 /* Layout - radii, shadows and transitions */
 :root {
+  /* Navbar height */
+  --navbar-height: 60px;
+
   /* Border Radius */
   --radius-sm: 4px;
   --radius-md: 8px;
