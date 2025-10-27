@@ -76,26 +76,17 @@ export const ModernEditorHeader: React.FC<ModernEditorHeaderProps> = ({
               className="modern-editor-header__title-input"
               placeholder="Portfolio Title"
             />
-            <button
-              className="modern-editor-header__quick-save"
-              onClick={onSave}
-              disabled={isSaving}
-              aria-label="Quick save portfolio"
-              title="Save portfolio"
-            >
-              {isSaving ? 'Saving...' : 'Save'}
-            </button>
           </div>
         </div>
 
         {/* Center: primary controls (centered) */}
         <div className="modern-editor-header__center">
           <div className="modern-editor-header__primary-controls">
-            <ModernModeToggle mode={mode} onToggle={onModeToggle} />
             <ModernTemplateSelector
               selectedTemplate={selectedTemplate}
               onSelect={onTemplateSelect}
             />
+            <ModernModeToggle mode={mode} onToggle={onModeToggle} />
           </div>
         </div>
 
