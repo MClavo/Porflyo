@@ -35,6 +35,27 @@ const ProfilePage: React.FC = () => {
       // Refresh user data to get the updated profile image URL from the server
       await refetch();
       
+      // Force cache-bust on the profile image URL to make the browser reload it
+      try {
+        const saved = localStorage.getItem('auth_user');
+        if (saved) {
+          const parsedUser: PublicUserDto = JSON.parse(saved);
+          if (parsedUser.profileImage) {
+            // Strip existing query params and append cache-buster timestamp
+            const baseUrl = parsedUser.profileImage.split('?')[0];
+            const updatedUser = {
+              ...parsedUser,
+              profileImage: `${baseUrl}?cb=${Date.now()}`
+            };
+            // Update both context and localStorage so the image reloads everywhere
+            setAuthenticatedUser(updatedUser);
+            localStorage.setItem('auth_user', JSON.stringify(updatedUser));
+          }
+        }
+      } catch (cacheBustError) {
+        console.warn('Failed to apply cache-bust to profile image:', cacheBustError);
+      }
+      
       setAvatarUploadMessage({ type: 'success', text: 'Profile picture updated successfully' });
 
       // Clear the message after 3 seconds
