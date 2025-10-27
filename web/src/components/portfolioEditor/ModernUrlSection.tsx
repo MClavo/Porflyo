@@ -38,6 +38,7 @@ export const ModernUrlSection: React.FC<ModernUrlSectionProps> = ({
     return null;
   };
 
+  /*
   const getStatusText = () => {
     if (isCheckingSlug) {
       return 'Checking availability...';
@@ -57,6 +58,7 @@ export const ModernUrlSection: React.FC<ModernUrlSectionProps> = ({
     
     return 'Enter URL';
   };
+  */
 
   const getStatusClass = () => {
     if (isCheckingSlug) return 'modern-url-section--checking';
@@ -89,11 +91,13 @@ export const ModernUrlSection: React.FC<ModernUrlSectionProps> = ({
         </div>
       </div>
       
+      {/*
       <div className="modern-url-section__status-text">
         <span className={`modern-url-section__status-label ${getStatusClass()}`}>
           {getStatusText()}
         </span>
       </div>
+      */}
     </div>
   );
 };
