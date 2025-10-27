@@ -26,9 +26,7 @@ export function SavedCardComponent({ savedCard, onRemove, mode, template = "temp
   });
 
   // Don't apply transform to keep the card in place - only used for DragOverlay
-  const style = {
-    opacity: isDragging ? 0.5 : 1, // Just make it semi-transparent when dragging
-  };
+  const style = {};
 
   const formatDate = (timestamp: number) => {
     return new Date(timestamp).toLocaleDateString();
