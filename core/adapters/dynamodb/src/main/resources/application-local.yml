@@ -17,7 +17,7 @@ s3:
   secret-key: test
   expiration: 5
   region: us-east-1
-  bucket-name: media-test
+  bucket-name: porflyo-media-test
   endpoint: http://host.docker.internal:8000
 
 quota:

@@ -19,7 +19,7 @@ class DockerLocalUrlExtractionTest {
         S3Config localConfig = new S3Config(
             5, 
             "us-east-1", 
-            "media-test", 
+            "porflyo-media-test", 
             "http://host.docker.internal:8000"
         );
         
@@ -27,9 +27,9 @@ class DockerLocalUrlExtractionTest {
         
         // Simular URLs que se generan en entorno local
         String[] testUrls = {
-            "http://host.docker.internal:8000/media-test/portfolio/123/image.png",
-            "http://host.docker.internal:8000/media-test/uploads/file.pdf",
-            "http://host.docker.internal:8000/media-test/docs/readme.txt"
+            "http://host.docker.internal:8000/porflyo-media-test/portfolio/123/image.png",
+            "http://host.docker.internal:8000/porflyo-media-test/uploads/file.pdf",
+            "http://host.docker.internal:8000/porflyo-media-test/docs/readme.txt"
         };
         
         String[] expectedKeys = {
@@ -72,7 +72,7 @@ class DockerLocalUrlExtractionTest {
         S3Config localConfig = new S3Config(
             5, 
             "us-east-1", 
-            "media-test", 
+            "porflyo-media-test", 
             "http://host.docker.internal:8000"
         );
         

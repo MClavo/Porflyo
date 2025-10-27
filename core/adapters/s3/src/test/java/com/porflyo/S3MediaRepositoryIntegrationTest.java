@@ -39,7 +39,7 @@ class S3MediaRepositoryIntegrationTest
     @Named("lowS3Client")
     S3Client s3client;
 
-    private static final String BUCKET = "media-test";
+    private static final String BUCKET = "porflyo-media-test";
     private static final String KEY = "uploads/test.txt";
     private static final File TEST_FILE = new File("src/test/resources/S3Test.txt");
 

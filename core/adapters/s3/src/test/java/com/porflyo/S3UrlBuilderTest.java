@@ -16,7 +16,7 @@ class S3UrlBuilderTest {
         localConfig = new S3Config(
             5, 
             "us-east-1", 
-            "media-test", 
+            "porflyo-media-test", 
             "http://host.docker.internal:8000"
         );
         
@@ -33,7 +33,7 @@ class S3UrlBuilderTest {
     void extractKeyFromUrl_localEnvironment() {
         s3UrlBuilder = new S3UrlBuilder(localConfig);
         
-        String url = "http://host.docker.internal:8000/media-test/portfolio/image.png";
+        String url = "http://host.docker.internal:8000/porflyo-media-test/portfolio/image.png";
         String key = s3UrlBuilder.extractKeyFromUrl(url);
         
         assertEquals("portfolio/image.png", key);
@@ -74,7 +74,7 @@ class S3UrlBuilderTest {
         
         String url = s3UrlBuilder.buildPublicUrl("portfolio/image.png");
         
-        assertEquals("http://host.docker.internal:8000/media-test/portfolio/image.png", url);
+        assertEquals("http://host.docker.internal:8000/porflyo-media-test/portfolio/image.png", url);
     }
 
     @Test
