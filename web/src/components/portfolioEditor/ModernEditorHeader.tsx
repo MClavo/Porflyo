@@ -67,8 +67,8 @@ export const ModernEditorHeader: React.FC<ModernEditorHeaderProps> = ({
   return (
     <header className="modern-editor-header">
       <div className="modern-editor-header__container">
-        {/* Left: Title + quick save */}
-        <div className="modern-editor-header__left">
+        {/* Left Group: Title + Template + Mode + Save */}
+        <div className="modern-editor-header__left-group">
           <div className="modern-editor-header__title-area">
             <input
               type="text"
@@ -78,53 +78,48 @@ export const ModernEditorHeader: React.FC<ModernEditorHeaderProps> = ({
               placeholder="Portfolio Title"
             />
           </div>
-        </div>
-
-        {/* Center: primary controls (centered) */}
-        <div className="modern-editor-header__center">
-          <div className="modern-editor-header__primary-controls">
-            <ModernTemplateSelector
-              selectedTemplate={selectedTemplate}
-              onSelect={onTemplateSelect}
-            />
-            <ModernModeToggle mode={mode} onToggle={onModeToggle} />
-          </div>
-        </div>
-
-        {/* Right: URL / Public / Action buttons */}
-        <div className="modern-editor-header__right">
-          {isEditMode && (
-            <>
-              <ModernUrlSection
-                slug={slug || ''}
-                setSlug={setSlug || (() => {})}
-                currentSlug={currentSlug}
-                isSlugAvailable={isSlugAvailable}
-                isCheckingSlug={isCheckingSlug}
-                onSlugAvailabilityChange={onSlugAvailabilityChange}
-              />
-              <ModernPublicToggle
-                isPublished={isPublished || false}
-                setIsPublished={setIsPublished || (() => {})}
-              />
-            </>
-          )}
-
+          
+          <ModernTemplateSelector
+            selectedTemplate={selectedTemplate}
+            onSelect={onTemplateSelect}
+          />
+          
+          <ModernModeToggle mode={mode} onToggle={onModeToggle} />
+          
           <ModernSaveButton
             onSave={onSave}
             isSaving={isSaving}
           />
-
-          {isEditMode && onPublish && (
-            <ModernPublishButton
-              onPublish={onPublish}
-              isPublishing={isPublishing || false}
-              isPublished={isPublished || false}
-              isSlugAvailable={isSlugAvailable || false}
-              isSaving={isSaving}
-            />
-          )}
         </div>
+
+        {/* Right Group: URL + Public + Publish */}
+        {isEditMode && (
+          <div className="modern-editor-header__right-group">
+            <ModernUrlSection
+              slug={slug || ''}
+              setSlug={setSlug || (() => {})}
+              currentSlug={currentSlug}
+              isSlugAvailable={isSlugAvailable}
+              isCheckingSlug={isCheckingSlug}
+              onSlugAvailabilityChange={onSlugAvailabilityChange}
+            />
+            
+            <ModernPublicToggle
+              isPublished={isPublished || false}
+              setIsPublished={setIsPublished || (() => {})}
+            />
+            
+            {onPublish && (
+              <ModernPublishButton
+                onPublish={onPublish}
+                isPublishing={isPublishing || false}
+                isPublished={isPublished || false}
+                isSlugAvailable={isSlugAvailable || false}
+                isSaving={isSaving}
+              />
+            )}
+          </div>
+        )}
       </div>
     </header>
   );
