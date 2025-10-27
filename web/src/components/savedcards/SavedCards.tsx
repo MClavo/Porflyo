@@ -9,9 +9,8 @@ import "./SavedCards.css";
 export type SavedCardsProps = {
   savedCards: Record<string, SavedCard>;
   mode: "view" | "edit";
-  onSave: (card: AnyCard, originSectionId: string, originSectionType: string, name: string) => void;
-  onRename: (savedCardId: string, name: string) => void;
-  onRemove: (savedCardId: string) => void;
+  onSave: (card: AnyCard, originSectionId: string, originSectionType: string, name: string) => void | Promise<void>;
+  onRemove: (savedCardId: string) => void | Promise<void>;
   onUse: (savedCardId: string, targetSectionId: string) => void;
   template?: string; // Add template prop
 };
@@ -20,7 +19,6 @@ export function SavedCards({
   savedCards, 
   mode, 
   onSave,
-  onRename, 
   onRemove,
   template = "template1"
 }: SavedCardsProps) {
@@ -91,7 +89,6 @@ export function SavedCards({
                   <SavedCardComponent
                     key={savedCard.id}
                     savedCard={savedCard}
-                    onRename={onRename}
                     onRemove={onRemove}
                     mode={mode}
                     template={template}

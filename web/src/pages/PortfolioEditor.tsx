@@ -12,6 +12,7 @@ import { ModernEditorHeader, ModernEditorSidebar } from "../components/portfolio
 import { usePortfolioEditorState } from "../hooks/editor/usePortfolioEditorState";
 import { useRepositoryFlow } from "../hooks/save/repository/useRepositoryFlow";
 import { useSavedCards } from "../state/SavedCards.hooks";
+import { useSavedSectionsContext } from "../hooks/ui/useSavedSectionsContext";
 import { type TemplateKey } from "../templates/Template.types";
 import type { CardType, CardPatchByType } from "../state/Cards.types";
 import type { PortfolioState } from "../state/Portfolio.types";
@@ -54,43 +55,53 @@ export default function PortfolioEditor({
 
   // Saved cards state and actions
   const savedCardsContext = useSavedCards();
+  
+  // Saved sections from API
+  const savedSectionsContext = useSavedSectionsContext();
+
+  // Track if we've loaded saved sections to avoid reloading
+  const hasLoadedSavedSections = React.useRef(false);
+
+  // Sync saved sections from API to saved cards when they load for the first time
+  React.useEffect(() => {
+    if (
+      savedSectionsContext.sections.length > 0 && 
+      !savedSectionsContext.isLoading && 
+      !hasLoadedSavedSections.current
+    ) {
+      savedCardsContext.loadFromSavedSections(savedSectionsContext.sections);
+      hasLoadedSavedSections.current = true;
+    }
+  }, [savedSectionsContext.sections, savedSectionsContext.isLoading, savedCardsContext]);
 
   // Saved cards handlers
-  const handleSaveCard = (card: AnyCard, originSectionId: string, originSectionType: string, name: string) => {
-    savedCardsContext.dispatch({
-      type: "SAVE_CARD",
-      payload: { card, originSectionId, originSectionType, name }
-    });
-    showNotification("Card saved successfully", "success");
-  };
-
-  const handleRenameCard = (savedCardId: string, name: string) => {
-    // Since there's no RENAME action, we need to get the card and save it with new name
-    const savedCard = savedCardsContext.state.savedCards[savedCardId];
-    if (savedCard) {
-      savedCardsContext.dispatch({
-        type: "REMOVE_SAVED_CARD",
-        payload: { savedCardId }
-      });
-      savedCardsContext.dispatch({
-        type: "SAVE_CARD",
-        payload: { 
-          card: savedCard.card, 
-          originSectionId: savedCard.originSectionId, 
-          originSectionType: savedCard.originSectionType, 
-          name 
-        }
-      });
-      showNotification("Card renamed successfully", "success");
+  const handleSaveCard = async (card: AnyCard, originSectionId: string, originSectionType: string, name: string) => {
+    try {
+      const savedSection = await savedCardsContext.saveCard(card, originSectionId, originSectionType, name);
+      
+      // Also add to saved sections context
+      savedSectionsContext.addSection(savedSection);
+      
+      showNotification("Card saved successfully", "success");
+    } catch {
+      showNotification("Failed to save card", "error");
     }
   };
 
-  const handleRemoveCard = (savedCardId: string) => {
-    savedCardsContext.dispatch({
-      type: "REMOVE_SAVED_CARD",
-      payload: { savedCardId }
-    });
-    showNotification("Card removed successfully", "success");
+  const handleRemoveCard = async (savedCardId: string) => {
+    try {
+      const savedCard = savedCardsContext.state.savedCards[savedCardId];
+      await savedCardsContext.removeCard(savedCardId);
+      
+      // Also remove from saved sections context if it has an apiId
+      if (savedCard?.apiId) {
+        savedSectionsContext.removeSection(savedCard.apiId);
+      }
+      
+      showNotification("Card removed successfully", "success");
+    } catch {
+      showNotification("Failed to remove card", "error");
+    }
   };
 
   // Helper function to convert saved card to initialData format
@@ -285,7 +296,6 @@ export default function PortfolioEditor({
                   savedCards={savedCardsContext.state.savedCards}
                   mode={state.ui.mode}
                   onSave={handleSaveCard}
-                  onRename={handleRenameCard}
                   onRemove={handleRemoveCard}
                   onUse={handleUseCard}
                   template={state.ui.selectedTemplate}
