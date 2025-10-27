@@ -1,11 +1,26 @@
 import type { PortfolioState } from "../../state/Portfolio.types";
+import type { AboutSectionData } from "../sections/AboutSection.types";
 import { createDefaultAboutData } from "../sections/AboutSection.types";
+import type { PublicUserDto } from "../../api/types/dto";
 
 /**
- * Creates a fresh initial empty portfolio state for creating new portfolios from scratch.
+ * Creates a fresh initial portfolio state for creating new portfolios from scratch.
  * Contains all standard sections but no cards. Always returns a new object.
+ * 
+ * @param user - Optional user data to pre-populate the About section
  */
-export function createInitialEmptyPortfolio(): PortfolioState {
+export function createInitialEmptyPortfolio(user?: PublicUserDto | null): PortfolioState {
+  // Create about section data from user if available, otherwise use defaults
+  const aboutData: AboutSectionData = user ? {
+    name: user.name || '',
+    description: user.description || '',
+    profileImage: user.profileImage || user.providerAvatarUrl || null,
+    profileImageKey: user.profileImageKey || '',
+    email: user.email || '',
+    socials: user.socials || {},
+    templateConfig: {},
+  } : createDefaultAboutData();
+
   return {
     template: "glass",
     title: "",
@@ -18,7 +33,7 @@ export function createInitialEmptyPortfolio(): PortfolioState {
         maxCards: 0,
         cardsById: {},
         cardsOrder: [],
-        parsedContent: createDefaultAboutData(),
+        parsedContent: aboutData,
       },
       projects: {
         id: "projects",

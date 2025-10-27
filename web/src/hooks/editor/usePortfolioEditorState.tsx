@@ -7,7 +7,6 @@ import type { AnyCard } from '../../state/Cards.types';
 import { portfolioReducer } from '../../state/Portfolio.reducer';
 import type { PortfolioState } from '../../state/Portfolio.types';
 import { createInitialEmptyPortfolio } from '../../components/portfolio/initialPortfolio';
-import { createPortfolioWithUserData } from '../../components/portfolio/createPortfolioWithUserData';
 import { usePortfolioSave } from '../save/usePortfolioSave';
 
 import { usePortfolioLoader } from './usePortfolioLoader';
@@ -61,10 +60,8 @@ export function usePortfolioEditorState({ onPortfolioChange, showNotification }:
       setSelectedTemplate(mappedPortfolio.template);
     } else if (isCreatingNew) {
       // Create new portfolio - always reset to clean state
-
-      const initialPortfolio = user 
-        ? createPortfolioWithUserData(user)
-        : createInitialEmptyPortfolio();
+      // Pass user data to pre-populate about section if available
+      const initialPortfolio = createInitialEmptyPortfolio(user);
       dispatch({ type: 'LOAD_PORTFOLIO', payload: initialPortfolio });
       setSelectedTemplate(initialPortfolio.template);
     } else if (!isEditing && !isCreatingNew) {
