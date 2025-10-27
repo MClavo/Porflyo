@@ -5,7 +5,8 @@
   flex-direction: column;
   height: 100%;
   background: transparent;
-  overflow: hidden;
+  overflow: visible;
+  padding: 2px; /* Add padding to prevent border clipping */
 }
 
 .saved-cards-area {
@@ -18,6 +19,7 @@
   overflow-y: auto;
   transition: all var(--transition-normal);
   position: relative;
+  will-change: transform, border-color, background;
 }
 
 .saved-cards-area.drop-over {
@@ -25,6 +27,7 @@
   background: rgba(139, 92, 246, 0.15);
   box-shadow: inset 0 0 16px rgba(139, 92, 246, 0.2), var(--shadow-md);
   transform: scale(1.01);
+  border-width: 2px; /* Ensure border stays visible */
 }
 
 .saved-cards-area.empty {
