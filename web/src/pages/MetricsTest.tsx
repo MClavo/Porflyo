@@ -57,6 +57,29 @@ export default function MetricsTest() {
   const [topCellsCount, setTopCellsCount] = useState<number>(200);
   const [showingTopCells, setShowingTopCells] = useState<boolean>(false);
   const [currentView, setCurrentView] = useState<'backend' | 'raw' | 'topCells'>('backend');
+  const [isPaused, setIsPaused] = useState<boolean>(false);
+
+  // Send metrics to backend when window/tab closes
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      const backendData = getBackendMetrics();
+      
+      // Use fetch with keepalive - without Content-Type to avoid OPTIONS preflight
+      fetch('http://localhost:9002/testMessageOnClose', {
+        method: 'POST',
+        body: JSON.stringify(backendData),
+        keepalive: true, // Ensures request completes even if page is closing
+      }).catch(err => {
+        console.error('Failed to send metrics on close:', err);
+      });
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [getBackendMetrics]);
 
   const refresh = () => {
     let data;
@@ -105,6 +128,8 @@ export default function MetricsTest() {
 
   // Auto-refresh every second to show live updates
   useEffect(() => {
+    if (isPaused) return; // No actualizar si está pausado
+    
     // Initial load - show backend metrics by default
     const updateData = () => {
       let data;
@@ -123,7 +148,7 @@ export default function MetricsTest() {
     const interval = setInterval(updateData, 1000);
     
     return () => clearInterval(interval);
-  }, [metricsCollector, currentView, topCellsCount, getBackendMetrics]);
+  }, [metricsCollector, currentView, topCellsCount, getBackendMetrics, isPaused]);
 
   return (
     <div className="public-portfolio-container metrics-test-container">
@@ -269,6 +294,15 @@ export default function MetricsTest() {
           <div style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
             <button onClick={refresh}>Actualizar</button>
             <button onClick={clear}>Limpiar</button>
+            <button 
+              onClick={() => setIsPaused(!isPaused)}
+              style={{ 
+                backgroundColor: isPaused ? '#dc2626' : '#16a34a', 
+                color: 'white' 
+              }}
+            >
+              {isPaused ? '▶️ Reanudar' : '⏸️ Pausar'}
+            </button>
             <button onClick={showBackendMetrics} style={{ backgroundColor: '#2563eb', color: 'white' }}>
               📤 Backend
             </button>
@@ -291,7 +325,7 @@ export default function MetricsTest() {
             }
           </div>
           
-          <pre style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>{metricsJson}</pre>
+          <pre style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }} className='json'>{metricsJson}</pre>
         </aside>
       </div>
     </div>
