@@ -30,6 +30,15 @@ public final class HeatmapUtils {
         }
     }
 
+    /**
+     * Update an existing heatmap with new snapshot data, combining cell values and counts,
+     * and selecting the most relevant cells up to maxCells.
+     *
+     * @param existingHeatmap The existing heatmap to update.
+     * @param newHeatmap The new heatmap snapshot to incorporate.
+     * @param maxCells The maximum number of cells to retain in the updated heatmap.
+     * @return The updated PortfolioHeatmap.
+     */
     public static PortfolioHeatmap updateHeatmap(PortfolioHeatmap existingHeatmap, HeatmapSnapshot newHeatmap, int maxCells) {
         // Use new metadata (date, version, columns)
         String version = newHeatmap.version();
