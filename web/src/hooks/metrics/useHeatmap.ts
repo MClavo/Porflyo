@@ -16,6 +16,7 @@ export function useHeatmap(containerRef: React.RefObject<HTMLElement | null>, op
   // Store current mouse position for continuous counting
   const currentMousePosRef = useRef<{ x: number; y: number } | null>(null);
   const lastHeatAddRef = useRef<number>(0);
+  const isMouseDownRef = useRef<boolean>(false); // Track if mouse button is pressed
   
   // Store current options in refs to avoid re-initialization
   const currentOptionsRef = useRef<HeatmapOptions>({});
@@ -133,18 +134,29 @@ export function useHeatmap(containerRef: React.RefObject<HTMLElement | null>, op
       currentMousePosRef.current = { x, y };
 
       // Add heat immediately on movement
-      gridRef.current.addHeat(x, y);
+      gridRef.current.addHeat(x, y, isMouseDownRef.current);
       lastHeatAddRef.current = Date.now();
+    };
+
+    const onPointerDown = () => {
+      isMouseDownRef.current = true;
+    };
+
+    const onPointerUp = () => {
+      isMouseDownRef.current = false;
     };
 
     const onPointerLeave = () => {
       // Clear current position when mouse leaves
       currentMousePosRef.current = null;
       recordingRef.current = false;
+      isMouseDownRef.current = false;
     };
 
     window.addEventListener('resize', resizeAndInitGrid);
     container.addEventListener('pointermove', onPointerMove);
+    container.addEventListener('pointerdown', onPointerDown);
+    container.addEventListener('pointerup', onPointerUp);
     container.addEventListener('pointerleave', onPointerLeave);
 
     // draw loop
@@ -162,7 +174,7 @@ export function useHeatmap(containerRef: React.RefObject<HTMLElement | null>, op
       if (recordingRef.current && currentMousePosRef.current && gridRef.current) {
         // Add heat every 150ms while mouse is stationary (less frequent than draw interval)
         if (now - lastHeatAddRef.current >= 150) {
-          gridRef.current.addHeat(currentMousePosRef.current.x, currentMousePosRef.current.y);
+          gridRef.current.addHeat(currentMousePosRef.current.x, currentMousePosRef.current.y, isMouseDownRef.current);
           lastHeatAddRef.current = now;
         }
       }
@@ -192,6 +204,8 @@ export function useHeatmap(containerRef: React.RefObject<HTMLElement | null>, op
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
       window.removeEventListener('resize', resizeAndInitGrid);
       container.removeEventListener('pointermove', onPointerMove);
+      container.removeEventListener('pointerdown', onPointerDown);
+      container.removeEventListener('pointerup', onPointerUp);
       container.removeEventListener('pointerleave', onPointerLeave);
       if (canvas && canvas.parentElement === container) container.removeChild(canvas);
       canvasRef.current = null;
@@ -200,6 +214,7 @@ export function useHeatmap(containerRef: React.RefObject<HTMLElement | null>, op
       isInitializedRef.current = false;
       currentMousePosRef.current = null;
       lastHeatAddRef.current = 0;
+      isMouseDownRef.current = false;
     };
   }, [containerRef]); // Only depend on container ref
 
@@ -260,6 +275,7 @@ export function useHeatmap(containerRef: React.RefObject<HTMLElement | null>, op
     recordingRef.current = false;
     currentMousePosRef.current = null;
     lastHeatAddRef.current = 0;
+    isMouseDownRef.current = false;
   };
 
   return { getHeatmapData, getTopCells, getTopCellsMetrics, showTopCellsOnly, reset };

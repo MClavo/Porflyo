@@ -31,6 +31,7 @@
     "heatmap.js": "^2.0.5",
     "immer": "^10.1.3",
     "react": "^19.1.1",
+    "react-device-detect": "^2.2.3",
     "react-dom": "^19.1.1",
     "react-hook-form": "^7.62.0",
     "react-icons": "^5.5.0",

@@ -24,13 +24,13 @@ export default function MetricsTest() {
           track: (eventName: string, payload?: unknown) => {
             try {
               analytics.track(eventName, payload);
-            } catch (err) {
-              console.warn('analytics.track failed', err);
+            } catch {
+              // Analytics tracking failed - continue silently
             }
           }
         });
-      } catch (err) {
-        console.info('analytics not available in MetricsTest', err);
+      } catch {
+        // Analytics module not available - continue without it
       }
     })();
     return () => {
@@ -64,13 +64,19 @@ export default function MetricsTest() {
     const handleBeforeUnload = () => {
       const backendData = getBackendMetrics();
       
+      // Only send if user has been active for at least 10 seconds
+      const activeTimeSeconds = (backendData.activeTimeMs || 0) / 1000;
+      if (activeTimeSeconds < 10) {
+        return;
+      }
+      
       // Use fetch with keepalive - without Content-Type to avoid OPTIONS preflight
       fetch('http://localhost:9002/testMessageOnClose', {
         method: 'POST',
         body: JSON.stringify(backendData),
         keepalive: true, // Ensures request completes even if page is closing
-      }).catch(err => {
-        console.error('Failed to send metrics on close:', err);
+      }).catch(() => {
+        // Silently handle errors during page unload
       });
     };
 
@@ -115,7 +121,6 @@ export default function MetricsTest() {
     setMetricsJson(JSON.stringify(backendData, null, 2));
     setShowingTopCells(false);
     setCurrentView('backend');
-    console.log('🚀 Backend Metrics:', backendData);
   };
 
   const showRawMetrics = () => {
@@ -123,7 +128,6 @@ export default function MetricsTest() {
     setMetricsJson(JSON.stringify(rawData, null, 2));
     setShowingTopCells(false);
     setCurrentView('raw');
-    console.log('📊 Raw Metrics:', rawData);
   };
 
   // Auto-refresh every second to show live updates
@@ -164,9 +168,46 @@ export default function MetricsTest() {
                 Los clicks en los proyectos de arriba se agrupan por repoId automáticamente.<br/>
                 Mueve el cursor por toda la pantalla para generar datos del heatmap.
               </p>
+              
+              {/* Social media buttons */}
+              <div style={{ display: 'flex', gap: '10px', marginBottom: '15px', flexWrap: 'wrap' }}>
+                <button 
+                  onClick={() => metricsCollector.recordSocialClick('github')}
+                  style={{ background: '#24292e', color: 'white', border: 'none', padding: '8px 16px', borderRadius: '4px', cursor: 'pointer' }}
+                >
+                  🐙 GitHub
+                </button>
+                <button 
+                  onClick={() => metricsCollector.recordSocialClick('linkedin')}
+                  style={{ background: '#0077b5', color: 'white', border: 'none', padding: '8px 16px', borderRadius: '4px', cursor: 'pointer' }}
+                >
+                  💼 LinkedIn
+                </button>
+                <button 
+                  onClick={() => metricsCollector.recordSocialClick('twitter')}
+                  style={{ background: '#1da1f2', color: 'white', border: 'none', padding: '8px 16px', borderRadius: '4px', cursor: 'pointer' }}
+                >
+                  🐦 Twitter
+                </button>
+              </div>
+              
               <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
                 <button id="general-contact-btn">Contacto General</button>
                 <button id="general-info-btn">Más Información</button>
+                <button 
+                  onClick={() => {
+                    const email = 'test@example.com';
+                    navigator.clipboard.writeText(email).then(() => {
+                      metricsCollector.recordEmailCopied();
+                      alert(`📧 Email copiado al portapapeles: ${email}`);
+                    }).catch(() => {
+                      alert('❌ No se pudo copiar el email');
+                    });
+                  }}
+                  style={{ background: '#f59e0b', color: 'white', border: 'none', padding: '8px 16px', borderRadius: '4px' }}
+                >
+                  📧 Copiar Email
+                </button>
                 <button 
                   onClick={() => {
                     // Auto-scroll test
@@ -188,9 +229,7 @@ export default function MetricsTest() {
                     // Debug scroll tracking
                     import('../lib/analytics/scrollTracker').then(({ scrollTracker }) => {
                       const status = scrollTracker.getTrackingStatus();
-                      console.log('🔍 Scroll Tracking Status:', status);
                       const metrics = scrollTracker.getMetrics();
-                      console.log('📊 Current Metrics:', metrics);
                       alert(`Tracking: ${status.isTracking}\nElement: ${status.targetElement}\nEvents: ${status.totalEvents}\nDistance: ${metrics.totalScrollDistance}px`);
                     });
                   }}
@@ -203,7 +242,6 @@ export default function MetricsTest() {
                     // Debug interaction tracking
                     import('../lib/analytics/interactionTracker').then(({ interactionTracker }) => {
                       const metrics = interactionTracker.getMetrics();
-                      console.log('🔍 Interaction Tracking Status:', metrics);
                       alert(`Views: ${metrics.totalViews}\nInteractions: ${metrics.totalInteractions}\nTTFI: ${metrics.timeToFirstInteractionMs}ms\nProjects: ${Object.keys(metrics.projectMetrics).length}`);
                     });
                   }}

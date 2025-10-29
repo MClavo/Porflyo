@@ -5,6 +5,10 @@ import { track } from './index';
 import { scrollTracker, type ScrollMetrics } from './scrollTracker';
 import { interactionTracker, type InteractionMetrics } from './interactionTracker';
 import { produce } from 'immer';
+import { isMobile as detectIsMobile } from 'react-device-detect';
+
+// Configuration: Number of top heatmap cells to send to backend
+export const HEATMAP_TOP_CELLS_COUNT = 200;
 
 export type ProjectMetrics = {
   activeTimeMs: number;
@@ -30,6 +34,9 @@ export type ProjectMetrics = {
 // Optimized metrics for backend submission
 export type BackendMetrics = {
   activeTimeMs: number;
+  isMobile: boolean;
+  emailCopied: boolean;
+  socialClicks: number;
   projectMetrics: Array<{
     id: string;
     timeInViewMs: number;
@@ -63,6 +70,8 @@ class MetricsCollector {
   private heatmapDataProvider: (() => ProjectMetrics['heatmapData']) | null = null;
   private topCellsProvider: ((topN: number) => TopCellData[]) | null = null;
   private scrollElement: HTMLElement | null = null;
+  private emailCopied: boolean = false; // Track if email was copied to clipboard
+  private socialClicks: number = 0; // Track social media clicks
 
   // Method to set the element to track for scroll
   setScrollElement(element: HTMLElement | null) {
@@ -70,7 +79,6 @@ class MetricsCollector {
     
     // If we're currently tracking, restart with the new element
     if (this.sessionStart && element) {
-      console.log('🔄 Restarting scroll tracking with new element');
       scrollTracker.stopTracking();
       scrollTracker.startTracking(element);
       // Also restart interaction tracking
@@ -99,12 +107,10 @@ class MetricsCollector {
       
       // Start scroll tracking when session begins, using specific element if available
       if (this.scrollElement) {
-        console.log('🚀 Starting scroll tracking with element:', this.scrollElement);
         scrollTracker.startTracking(this.scrollElement);
         // Also start interaction tracking
         interactionTracker.startTracking(this.scrollElement);
       } else {
-        console.log('⚠️ Starting session but no scroll element set yet');
         // Fallback to window scroll tracking temporarily
         scrollTracker.startTracking(null);
       }
@@ -143,11 +149,26 @@ class MetricsCollector {
 
   // Record a button click for a specific project
   recordProjectButtonClick(projectId: string, payload: { id?: string; label?: string }) {
-    // Filtrar botones de control de la UI
+    // Filtrar botones de control de la UI y botones de prueba
     const key = payload.id ?? payload.label ?? '';
-    if (key.toLowerCase().includes('actualizar') || key.toLowerCase().includes('limpiar') || 
-        key.toLowerCase().includes('refresh') || key.toLowerCase().includes('clear')) {
-      return; // No trackear estos botones
+    const lowerKey = key.toLowerCase();
+    
+    // Lista de palabras clave que indican botones que NO son de proyectos
+    const excludedKeywords = [
+      'actualizar', 'limpiar', 'refresh', 'clear', 'pausar', 'reanudar',
+      'backend', 'raw', 'top', 'debug', 'test', 'copiar email', 'email',
+      'github', 'linkedin', 'twitter', 'facebook', 'instagram',
+      'contacto general', 'más información', 'auto-scroll'
+    ];
+    
+    // Si el botón contiene alguna palabra clave excluida, no lo trackeamos
+    if (excludedKeywords.some(keyword => lowerKey.includes(keyword))) {
+      return;
+    }
+    
+    // Si el projectId es 'unknown-project', también lo ignoramos
+    if (projectId === 'unknown-project') {
+      return;
     }
 
     this.projectInteractions = produce(this.projectInteractions, draft => {
@@ -185,6 +206,28 @@ class MetricsCollector {
       projectId, 
       link: href, 
       totalClicks: this.projectInteractions[projectId].linkClicks 
+    });
+  }
+
+  // Record when email is copied to clipboard
+  recordEmailCopied() {
+    this.emailCopied = true;
+    
+    // Send to analytics if available
+    track('email_copied', { 
+      timestamp: Date.now() 
+    });
+  }
+
+  // Record social media click
+  recordSocialClick(platform: string) {
+    this.socialClicks++;
+    
+    // Send to analytics if available
+    track('social_click', { 
+      platform,
+      totalClicks: this.socialClicks,
+      timestamp: Date.now() 
     });
   }
 
@@ -277,15 +320,24 @@ class MetricsCollector {
       scrollTimeMs: scrollMetrics?.timeSpentScrolling || 0,
     };
 
-    // Prepare heatmap data (top 200 cells)
-    const topCells = this.getTopCells(200);
-    const backendHeatmapData = {
+    // Prepare heatmap data (top N cells) - only if not mobile
+    const backendHeatmapData = detectIsMobile ? {
+      cols: 0,
+      rows: 0,
+      topCells: {
+        indices: [],
+        values: [],
+      },
+    } : {
       cols: heatmapData?.cols || 0,
       rows: heatmapData?.rows || 0,
-      topCells: {
-        indices: topCells.map(cell => cell.index),
-        values: topCells.map(cell => cell.value),
-      },
+      topCells: (() => {
+        const topCells = this.getTopCells(HEATMAP_TOP_CELLS_COUNT);
+        return {
+          indices: topCells.map(cell => cell.index),
+          values: topCells.map(cell => cell.value),
+        };
+      })(),
     };
 
     // Convert map -> array with id field
@@ -299,6 +351,9 @@ class MetricsCollector {
 
     return {
       activeTimeMs: rawMetrics.activeTimeMs,
+      isMobile: detectIsMobile,
+      emailCopied: this.emailCopied,
+      socialClicks: this.socialClicks,
       projectMetrics: backendProjectMetricsArray,
       scrollMetrics: backendScrollMetrics,
       heatmapData: backendHeatmapData,
@@ -311,6 +366,8 @@ class MetricsCollector {
     this.totalActiveMs = 0;
     this.projectInteractions = produce(this.projectInteractions, () => ({}));
     this.heatmapDataProvider = null;
+    this.emailCopied = false;
+    this.socialClicks = 0;
     // Clear scroll metrics
     scrollTracker.clear();
     // Clear interaction metrics

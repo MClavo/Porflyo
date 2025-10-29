@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { metricsCollector } from '../../lib/analytics/collector';
 import useHeatmap from './useHeatmap';
+import { isMobile } from 'react-device-detect';
 
 // Simplified hook for metrics collection
 type UseMetricsOptions = {
@@ -25,22 +26,25 @@ export function useMetrics(
   const { trackClicks = true, trackLinks = true, enableHeatmap = false, heatmapOptions } = options ?? {};
   const isAttached = useRef(false);
 
-  // Initialize heatmap (always call hook, but only use it if enabled)
+  // Disable heatmap on mobile devices for better performance
+  const shouldEnableHeatmap = enableHeatmap && !isMobile;
+
+  // Initialize heatmap (always call hook, but only use it if enabled and not mobile)
   const heatmap = useHeatmap(containerRef, { 
     ...heatmapOptions, 
-    disabled: !enableHeatmap 
+    disabled: !shouldEnableHeatmap 
   });
 
   useEffect(() => {
-    // Set heatmap data provider in collector if enabled
-    if (enableHeatmap && heatmap) {
+    // Set heatmap data provider in collector if enabled and not mobile
+    if (shouldEnableHeatmap && heatmap) {
       metricsCollector.setHeatmapDataProvider(() => heatmap.getHeatmapData() || undefined);
       metricsCollector.setTopCellsProvider((topN: number) => heatmap.getTopCells(topN));
     } else {
       metricsCollector.setHeatmapDataProvider(null);
       metricsCollector.setTopCellsProvider(null);
     }
-  }, [enableHeatmap, heatmap]);
+  }, [shouldEnableHeatmap, heatmap]);
 
   // Separate effect for scroll element configuration
   useEffect(() => {
