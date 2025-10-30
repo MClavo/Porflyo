@@ -2,6 +2,7 @@ import { useRef, useState, useEffect } from 'react';
 import { PortfolioViewer } from '../components/portfolio';
 import { demoInitialPortfolio } from './editor/demoData';
 import useMetrics from '../hooks/metrics/useGetMetrics';
+import { useSendMetrics, sendMetricsOnUnload } from '../api/hooks/useMetrics';
 import ScrollMetricsDisplay from '../components/analytics/ScrollMetricsDisplay';
 import InteractionMetricsDisplay from '../components/analytics/InteractionMetricsDisplay';
 import '../styles/PublicPortfolio.css';
@@ -59,25 +60,25 @@ export default function MetricsTest() {
   const [currentView, setCurrentView] = useState<'backend' | 'raw' | 'topCells'>('backend');
   const [isPaused, setIsPaused] = useState<boolean>(false);
 
-  // Send metrics to backend when window/tab closes
+  const { sendMetrics } = useSendMetrics({
+    url: 'http://localhost:9002/testMessageOnClose',
+    portfolioId: 'test-portfolio-id',
+  });
+
   useEffect(() => {
     const handleBeforeUnload = () => {
       const backendData = getBackendMetrics();
       
-      // Only send if user has been active for at least 10 seconds
       const activeTimeSeconds = (backendData.activeTimeMs || 0) / 1000;
       if (activeTimeSeconds < 10) {
         return;
       }
       
-      // Use fetch with keepalive - without Content-Type to avoid OPTIONS preflight
-      fetch('http://localhost:9002/testMessageOnClose', {
-        method: 'POST',
-        body: JSON.stringify(backendData),
-        keepalive: true, // Ensures request completes even if page is closing
-      }).catch(() => {
-        // Silently handle errors during page unload
-      });
+      sendMetricsOnUnload(
+        'http://localhost:9002/testMessageOnClose',
+        'test-portfolio-id',
+        backendData
+      );
     };
 
     window.addEventListener('beforeunload', handleBeforeUnload);
@@ -207,6 +208,15 @@ export default function MetricsTest() {
                   style={{ background: '#f59e0b', color: 'white', border: 'none', padding: '8px 16px', borderRadius: '4px' }}
                 >
                   📧 Copiar Email
+                </button>
+                <button 
+                  onClick={() => {
+                    const backendData = getBackendMetrics();
+                    sendMetrics(backendData);
+                  }}
+                  style={{ background: '#10b981', color: 'white', border: 'none', padding: '8px 16px', borderRadius: '4px', cursor: 'pointer' }}
+                >
+                  📤 Enviar Métricas Ahora
                 </button>
                 <button 
                   onClick={() => {

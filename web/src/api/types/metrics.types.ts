@@ -71,3 +71,32 @@ export interface ProjectWindowAggregation {
   liveCtr: number | null;
   deltaPct?: number | null; // optional delta vs previous period
 }
+
+/**
+ * Session Metrics Payload - Sent to backend during session end or periodic updates
+ */
+export interface SessionMetricsPayload {
+  activeTimeMs: number;
+  isMobile: boolean;
+  emailCopied: boolean;
+  socialClicks: number;
+  scrollMetrics: {
+    score: number;
+    scrollTimeMs: number;
+  };
+  projectMetrics: Array<{
+    id: string;
+    viewTime: number;
+    exposures: number; // Number of times the project was shown on screen
+    codeViews: number; // button clicks (viewing code)
+    liveViews: number; // external link clicks (viewing live demo)
+  }>;
+  heatmapData: {
+    cols: number;
+    rows: number;
+    topCells: {
+      indices: number[];
+      values: number[];
+    };
+  };
+}

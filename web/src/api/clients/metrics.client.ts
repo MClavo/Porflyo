@@ -1,9 +1,9 @@
 /**
- * Metrics API client for fetching analytics data
+ * Metrics API client for fetching and submitting analytics data
  */
 
 import { httpClient } from './http';
-import type { BootstrapResponse } from '../types';
+import type { BootstrapResponse, SessionMetricsPayload } from '../types';
 
 /**
  * Runtime validation for BootstrapResponse
@@ -78,4 +78,33 @@ export async function getMetrics({ portfolioId }: GetMetricsParams): Promise<Boo
     // Re-throw other errors (network, HTTP status, etc.)
     throw error;
   }
+}
+
+export interface SendSessionMetricsParams {
+  url: string;
+  portfolioId: string;
+  metrics: SessionMetricsPayload;
+}
+
+/**
+ * Send session metrics to backend via POST request
+ * Uses text/plain content-type to avoid CORS preflight OPTIONS request
+ */
+export async function sendSessionMetrics({
+  url,
+  portfolioId,
+  metrics,
+}: SendSessionMetricsParams): Promise<void> {
+  const payload = {
+    portfolioId,
+    ...metrics,
+  };
+
+  await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'text/plain',
+    },
+    body: JSON.stringify(payload),
+  });
 }
