@@ -3,6 +3,8 @@ import type { PortfolioState } from '../../state/Portfolio.types';
 import type { AnyCard } from '../../state/Cards.types';
 import type { SectionState } from '../../state/Sections.types';
 import SectionCard from '../sections/SectionCard';
+import { AboutSection } from '../sections/AboutSection';
+import type { AboutSectionData } from '../sections/AboutSection.types';
 import LayoutPreview from './LayoutPreview';
 import './PortfolioViewer.css';
 
@@ -29,6 +31,27 @@ export function PortfolioViewer({
 
     for (const [sid, section] of Object.entries(portfolio.sections)) {
       const s = section as SectionState;
+      
+      // Special handling for 'about' section - render AboutSection component instead of SectionCard
+      if (s.type === 'about') {
+        const aboutData = (s.parsedContent as AboutSectionData) || {
+          name: '',
+          email: '',
+          description: '',
+          profileImage: null,
+          socials: {},
+        };
+
+        sectionsMap[sid] = (
+          <AboutSection
+            key={sid}
+            mode="view" // Always in view mode
+            data={aboutData}
+            onPatch={() => {}} // No editing allowed
+          />
+        );
+        continue; // Skip regular SectionCard rendering
+      }
       
       sectionsMap[sid] = (
         <SectionCard
