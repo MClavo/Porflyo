@@ -13,7 +13,7 @@ export default function GlassLayout({ sectionsMap, isEditable }: GlassLayoutProp
       {sectionsMap?.about ?? null}
 
       {/* Portfolio Sections */}
-      <div className="portfolio-content">
+      <div className="glass-sections">
         {/* Experience Section */}
         <div className="portfolio-section experience-section" id="experiences">
           <h2 className="section-title">Experience</h2>

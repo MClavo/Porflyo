@@ -30,11 +30,6 @@
   box-sizing: border-box;
 }
 
-/* Content spacing when navbar is present */
-.content-with-navbar {
-  padding-top: calc(var(--navbar-height) + 20px); /* Space for fixed navbar + margin */
-}
-
 /* Separator - Modern gradient line */
 .navbar::after {
   content: '';
@@ -212,10 +207,6 @@
     height: 56px;
   }
 
-  .content-with-navbar {
-    padding-top: calc(56px + 20px); /* Smaller navbar on mobile */
-  }
-
   .navbar-logo {
     font-size: var(--font-lg);
     letter-spacing: 0.2rem;
@@ -233,10 +224,6 @@
   .navbar-content {
     padding: var(--space-2) var(--space-3);
     height: 52px;
-  }
-
-  .content-with-navbar {
-    padding-top: calc(52px + 16px); /* Even smaller on very small screens */
   }
 
   .navbar-logo {

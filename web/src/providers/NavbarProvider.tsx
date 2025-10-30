@@ -24,9 +24,7 @@ export const NavbarProvider: React.FC<NavbarProviderProps> = ({ children }) => {
   return (
     <>
       {showNavbar && <Navbar />}
-      <div className={showNavbar ? 'content-with-navbar' : ''}>
-        {children}
-      </div>
+      {children}
     </>
   );
 };

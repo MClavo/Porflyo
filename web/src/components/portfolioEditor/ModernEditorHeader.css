@@ -1,7 +1,6 @@
-/* ModernEditorHeader - Modern header component styles */
+/* EditorHeader - Fixed header component */
 
-/* Make header fixed, slimmer and always visible under navbar */
-.modern-editor-header {
+.editor-header {
   position: fixed;
   top: var(--navbar-height);
   left: 0;
@@ -18,8 +17,8 @@
   padding: var(--space-2) 0;
 }
 
-/* Container becomes a two-column flex layout with wrap */
-.modern-editor-header__container {
+/* Container with two groups */
+.editor-header__container {
   width: 100%;
   max-width: 1600px;
   margin: 0 auto;
@@ -33,7 +32,7 @@
 }
 
 /* Left Group: Title + Template + Mode + Save */
-.modern-editor-header__left-group {
+.editor-header__left {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -42,7 +41,7 @@
   min-width: 0;
 }
 
-.modern-editor-header__title-area {
+.editor-header__title-area {
   display: flex;
   align-items: center;
   gap: var(--space-2);
@@ -50,7 +49,7 @@
   flex: 0 1 auto;
 }
 
-.modern-editor-header__title-input {
+.editor-header__title-input {
   background: none;
   border: none;
   font-size: var(--font-lg);
@@ -75,7 +74,7 @@
 }
 
 /* Right Group: URL + Public + Publish */
-.modern-editor-header__right-group {
+.editor-header__right {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -84,83 +83,57 @@
   min-width: 0;
 }
 
-.modern-editor-header__title-input::placeholder {
+.editor-header__title-input::placeholder {
   background: linear-gradient(135deg, var(--text-secondary), var(--text-tertiary));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
-.modern-editor-header__title-input:hover {
+.editor-header__title-input:hover {
   background: rgba(255, 255, 255, 0.05);
   -webkit-text-fill-color: var(--text-primary);
 }
 
-.modern-editor-header__title-input:focus {
+.editor-header__title-input:focus {
   background: rgba(255, 255, 255, 0.08);
   -webkit-text-fill-color: var(--text-primary);
   box-shadow: 0 0 0 2px var(--accent-blue);
 }
 
-/* Remove unused quick save and center/right sections */
-.modern-editor-header__center,
-.modern-editor-header__left,
-.modern-editor-header__right {
-  display: none;
-}
-
-/* UNIFICAR ALTURA DE TODOS LOS BOTONES */
-.modern-mode-toggle__container,
-.modern-template-selector__trigger,
-.modern-public-toggle__button {
-  height: 44px !important;
-  padding: 0 var(--space-4) !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  gap: var(--space-2) !important;
-  border-radius: var(--radius-lg) !important;
-  box-sizing: border-box !important;
-}
-
-.modern-mode-toggle__option {
-  padding: 0 var(--space-4) !important;
-  height: 100% !important;
-}
-
 /* Responsive Design */
 @media (max-width: 1200px) {
-  .modern-editor-header__container {
+  .editor-header__container {
     gap: var(--space-2);
   }
 
-  .modern-editor-header__left-group {
+  .editor-header__left {
     gap: var(--space-1-5);
   }
 
-  .modern-editor-header__right-group {
+  .editor-header__right {
     gap: var(--space-1-5);
   }
 }
 
 @media (max-width: 1024px) {
-  /* When it doesn't fit, wrap to two rows - header grows automatically */
-  .modern-editor-header {
+  .editor-header {
     min-height: auto;
   }
 
-  .modern-editor-header__container {
+  .editor-header__container {
     padding: var(--space-2) var(--space-3);
     gap: var(--space-3);
     min-height: auto;
   }
 
-  .modern-editor-header__left-group {
+  .editor-header__left {
     flex: 1 1 100%;
     order: 1;
     justify-content: center;
   }
 
-  .modern-editor-header__right-group {
+  .editor-header__right {
     flex: 1 1 100%;
     order: 2;
     justify-content: center;
@@ -169,84 +142,67 @@
 }
 
 @media (max-width: 900px) {
-  .modern-editor-header__title-input {
+  .editor-header__title-input {
     min-width: 120px;
     max-width: 200px;
     font-size: var(--font-base);
   }
 
-  .modern-editor-header__left-group,
-  .modern-editor-header__right-group {
+  .editor-header__left,
+  .editor-header__right {
     gap: var(--space-1-5);
   }
 }
 
 @media (max-width: 768px) {
-  .modern-editor-header {
-    top: 56px; /* Smaller navbar on mobile */
+  .editor-header {
+    top: 56px;
   }
 
-  .modern-editor-header__title-input {
+  .editor-header__title-input {
     font-size: var(--font-sm);
     min-width: 100px;
     max-width: 150px;
   }
 
-  .modern-template-selector__label {
-    display: none;
-  }
-
-  .modern-public-toggle__button {
-    min-width: 100px;
-  }
-
-  .modern-editor-header__left-group,
-  .modern-editor-header__right-group {
+  .editor-header__left,
+  .editor-header__right {
     flex-wrap: wrap;
   }
 }
 
 @media (max-width: 600px) {
-  .modern-editor-header__container {
+  .editor-header__container {
     flex-direction: column;
     gap: var(--space-2);
     align-items: stretch;
   }
 
-  .modern-editor-header__left-group,
-  .modern-editor-header__right-group {
+  .editor-header__left,
+  .editor-header__right {
     width: 100%;
     justify-content: center;
     flex-wrap: wrap;
   }
 
-  .modern-editor-header__right-group {
+  .editor-header__right {
     padding-top: 0;
   }
 }
 
 @media (max-width: 480px) {
-  .modern-editor-header {
-    top: 52px; /* Even smaller navbar on very small screens */
+  .editor-header {
+    top: 52px;
   }
 
-  .modern-editor-header__title-input {
+  .editor-header__title-input {
     font-size: var(--font-xs);
     min-width: 80px;
     max-width: 120px;
   }
 
-  .modern-mode-toggle__option span,
-  .modern-template-selector__value {
-    font-size: var(--font-xs);
-  }
-
-  .modern-public-toggle__status {
-    display: none;
-  }
-
-  .modern-editor-header__left-group,
-  .modern-editor-header__right-group {
+  .editor-header__left,
+  .editor-header__right {
     gap: var(--space-1);
   }
 }

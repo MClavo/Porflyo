@@ -18,31 +18,23 @@ export const ModernEditorSidebar: React.FC<ModernEditorSidebarProps> = ({
   mode = 'view'
 }) => {
   return (
-    <>
-      {/* Mobile overlay - only show on mobile when open */}
-      <div 
-        className={`modern-editor-sidebar__overlay ${isOpen ? 'modern-editor-sidebar__overlay--visible' : ''}`}
-      />
+    <aside className={`editor-sidebar ${isOpen ? 'editor-sidebar--open' : 'editor-sidebar--closed'}`}>
+      <div className="editor-sidebar__header">
+        <h3 className="editor-sidebar__title">Saved</h3>
+        {mode === 'edit' && (
+          <div className="saved-cards-hint">
+            <HiOutlineInboxArrowDown />
+            Hover for preview • Drag to use
+          </div>
+        )}
+      </div>
       
-      {/* Sidebar */}
-      <aside className={`modern-editor-sidebar ${isOpen ? 'modern-editor-sidebar--expanded' : 'modern-editor-sidebar--collapsed'}`}>
-        <div className="modern-editor-sidebar__header">
-          <h3 className="modern-editor-sidebar__title">Saved</h3>
-          {mode === 'edit' && (
-            <div className="saved-cards-hint">
-              <HiOutlineInboxArrowDown />
-              Hover for preview • Drag to use
-            </div>
-          )}
-        </div>
-        
-        <div className="modern-editor-sidebar__divider"></div>
-        
-        <div className="modern-editor-sidebar__content">
-          {children}
-        </div>
-      </aside>
-    </>
+      <div className="editor-sidebar__divider"></div>
+      
+      <div className="editor-sidebar__content">
+        {children}
+      </div>
+    </aside>
   );
 };
 

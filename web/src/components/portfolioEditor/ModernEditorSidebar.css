@@ -1,6 +1,6 @@
-/* ModernEditorSidebar - Fixed sidebar that doesn't overlap content */
+/* EditorSidebar - Fixed sidebar */
 
-.modern-editor-sidebar {
+.editor-sidebar {
   position: fixed;
   top: calc(var(--navbar-height) + var(--editor-header-height, 72px));
   left: 0;
@@ -16,13 +16,13 @@
   height: auto;
 }
 
-.modern-editor-sidebar--expanded {
+.editor-sidebar--open {
   width: 320px;
   min-width: 320px;
   max-width: 320px;
 }
 
-.modern-editor-sidebar--collapsed {
+.editor-sidebar--closed {
   width: 0;
   min-width: 0;
   max-width: 0;
@@ -31,7 +31,7 @@
 }
 
 /* Sidebar Header */
-.modern-editor-sidebar__header {
+.editor-sidebar__header {
   padding: var(--space-4);
   display: flex;
   flex-direction: column;
@@ -43,7 +43,7 @@
   gap: var(--space-3);
 }
 
-.modern-editor-sidebar__title {
+.editor-sidebar__title {
   font-size: var(--font-lg);
   font-weight: 600;
   color: var(--text-primary);
@@ -53,12 +53,12 @@
   text-align: center;
 }
 
-.modern-editor-sidebar--collapsed .modern-editor-sidebar__title {
+.editor-sidebar--closed .editor-sidebar__title {
   opacity: 0;
 }
 
-/* Saved Cards Hint - Moved from SavedCards.css */
-.modern-editor-sidebar .saved-cards-hint {
+/* Saved Cards Hint */
+.editor-sidebar .saved-cards-hint {
   font-size: var(--font-sm);
   color: var(--text-secondary);
   background: rgba(139, 92, 246, 0.1);
@@ -77,58 +77,27 @@
   transition: opacity var(--transition-normal);
 }
 
-.modern-editor-sidebar--collapsed .saved-cards-hint {
+.editor-sidebar--closed .saved-cards-hint {
   opacity: 0;
-}
-
-.modern-editor-sidebar__close {
-  position: absolute;
-  top: var(--space-3);
-  right: var(--space-3);
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: var(--radius-md);
-  width: 28px;
-  height: 28px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--text-secondary);
-  cursor: pointer;
-  transition: all var(--transition-fast);
-  opacity: 1;
-  flex-shrink: 0;
-}
-
-.modern-editor-sidebar__close:hover {
-  background: var(--status-negative);
-  color: white;
-  border-color: var(--status-negative);
-  transform: scale(1.05);
-}
-
-.modern-editor-sidebar--collapsed .modern-editor-sidebar__close {
-  opacity: 0;
-  pointer-events: none;
 }
 
 /* Divider */
-.modern-editor-sidebar__divider {
+.editor-sidebar__divider {
   height: 1px;
   background: var(--card-border);
   margin: 0 var(--space-4);
   flex-shrink: 0;
 }
 
-.modern-editor-sidebar--collapsed .modern-editor-sidebar__divider {
+.editor-sidebar--closed .editor-sidebar__divider {
   opacity: 0;
 }
 
 /* Sidebar Content - scrollable area */
-.modern-editor-sidebar__content {
+.editor-sidebar__content {
   flex: 1;
   overflow-y: auto;
-  overflow-x: visible; /* Allow horizontal overflow for animations */
+  overflow-x: visible;
   display: flex;
   flex-direction: column;
   min-height: 0;
@@ -137,44 +106,34 @@
   transition: opacity var(--transition-normal);
 }
 
-.modern-editor-sidebar--collapsed .modern-editor-sidebar__content {
+.editor-sidebar--closed .editor-sidebar__content {
   opacity: 0;
   pointer-events: none;
 }
 
-/* Remove old area references and use content */
-.modern-editor-sidebar__area {
-  display: none;
-}
-
 /* Custom scrollbar for sidebar content */
-.modern-editor-sidebar__content::-webkit-scrollbar {
+.editor-sidebar__content::-webkit-scrollbar {
   width: 6px;
 }
 
-.modern-editor-sidebar__content::-webkit-scrollbar-track {
+.editor-sidebar__content::-webkit-scrollbar-track {
   background: rgba(255, 255, 255, 0.05);
   border-radius: var(--radius-sm);
 }
 
-.modern-editor-sidebar__content::-webkit-scrollbar-thumb {
+.editor-sidebar__content::-webkit-scrollbar-thumb {
   background: rgba(255, 255, 255, 0.2);
   border-radius: var(--radius-sm);
   transition: background var(--transition-fast);
 }
 
-.modern-editor-sidebar__content::-webkit-scrollbar-thumb:hover {
+.editor-sidebar__content::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.3);
-}
-
-/* Mobile overlay - only show on mobile */
-.modern-editor-sidebar__overlay {
-  display: none;
 }
 
 /* Mobile responsiveness */
 @media (max-width: 768px) {
-  .modern-editor-sidebar {
+  .editor-sidebar {
     position: fixed;
     top: 0;
     left: 0;
@@ -187,61 +146,25 @@
     transform: translateX(-100%);
   }
 
-  .modern-editor-sidebar--expanded {
+  .editor-sidebar--open {
     width: 100vw !important;
     min-width: 100vw !important;
     max-width: 100vw !important;
     transform: translateX(0);
   }
-
-  .modern-editor-sidebar__overlay {
-    display: block;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 999;
-    opacity: 0;
-    visibility: hidden;
-    transition: all var(--transition-fast);
-    backdrop-filter: blur(4px);
-  }
-
-  .modern-editor-sidebar__overlay--visible {
-    opacity: 1;
-    visibility: visible;
-  }
 }
 
 /* Hover effects */
-.modern-editor-sidebar:hover {
+.editor-sidebar:hover {
   box-shadow: var(--shadow-xl);
 }
 
-.modern-editor-sidebar:hover .modern-editor-sidebar__content::-webkit-scrollbar-thumb {
+.editor-sidebar:hover .editor-sidebar__content::-webkit-scrollbar-thumb {
   background: rgba(255, 255, 255, 0.3);
 }
 
-/* Collapsed state hover hint */
-.modern-editor-sidebar--collapsed::after {
-  content: 'Saved Cards';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%) rotate(-90deg);
-  color: var(--text-tertiary);
-  font-size: var(--font-xs);
-  font-weight: 500;
-  letter-spacing: 0.1em;
-  opacity: 0.6;
-  pointer-events: none;
-  white-space: nowrap;
-}
-
 /* Animation for content visibility */
-@keyframes sidebar-content-fade-in {
+@keyframes sidebar-fade-in {
   from {
     opacity: 0;
     transform: translateX(-10px);
@@ -252,29 +175,25 @@
   }
 }
 
-.modern-editor-sidebar--expanded .modern-editor-sidebar__content {
-  animation: sidebar-content-fade-in 0.3s ease-out 0.1s both;
+.editor-sidebar--open .editor-sidebar__content {
+  animation: sidebar-fade-in 0.3s ease-out 0.1s both;
 }
 
-.modern-editor-sidebar--expanded .modern-editor-sidebar__title {
-  animation: sidebar-content-fade-in 0.3s ease-out 0.05s both;
+.editor-sidebar--open .editor-sidebar__title {
+  animation: sidebar-fade-in 0.3s ease-out 0.05s both;
 }
 
-.modern-editor-sidebar--expanded .modern-editor-sidebar__close {
-  animation: sidebar-content-fade-in 0.3s ease-out 0.15s both;
-}
-
-/* Responsive Design - Remove duplicate mobile styles */
+/* Small screen adjustments */
 @media (max-width: 480px) {
-  .modern-editor-sidebar__header {
+  .editor-sidebar__header {
     padding: var(--space-3);
   }
 
-  .modern-editor-sidebar__content {
+  .editor-sidebar__content {
     padding: var(--space-3);
   }
 
-  .modern-editor-sidebar__title {
+  .editor-sidebar__title {
     font-size: var(--font-base);
   }
 }

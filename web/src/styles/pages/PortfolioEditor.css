@@ -1,9 +1,8 @@
-/* PortfolioEditor - Modern page layout */
+/* PortfolioEditor - Simplified page layout */
 
 .portfolio-editor {
   display: flex;
   flex-direction: column;
-  height: 100vh;
   background: var(--dashboard-bg);
   color: var(--text-primary);
   overflow: hidden;
@@ -12,108 +11,72 @@
   left: 0;
   right: 0;
   bottom: 0;
+  padding-top: calc(var(--navbar-height) + var(--editor-header-height, 72px));
 }
 
-.portfolio-editor__container {
+/* EditorDndProvider wrapper - manages sidebar and content layout */
+.portfolio-editor > div {
   display: flex;
-  flex-direction: column;
   flex: 1;
+  min-height: 0;
   width: 100%;
   max-width: none;
-  overflow: hidden;
-  height: 100%;
-}
-
-/* Content area below header - now uses flex layout with margin for fixed sidebar */
-.portfolio-editor__content {
-  display: flex;
-  flex: 1;
-  min-height: 0;
-  height: calc(100vh - var(--navbar-height) - var(--editor-header-height, 72px));
-  margin-top: calc(var(--navbar-height) + var(--editor-header-height, 72px));
-  overflow: hidden;
-}
-
-/* EditorDndProvider wrapper - takes full width */
-.portfolio-editor__content > div:first-child {
-  display: flex;
-  flex: 1;
-  min-height: 0;
-  width: 100%;
   height: 100%;
   overflow: hidden;
+  position: relative;
+  transition: padding-left var(--transition-normal);
 }
 
-/* test-main inside EditorDndProvider - accounts for sidebar */
-.portfolio-editor__content .test-main {
-  display: flex;
-  flex-direction: row;
-  align-items: stretch;
-  gap: 0;
-  width: 100%;
+/* Portfolio content area - scrollable, adjusts width when sidebar is open */
+.portfolio-content {
+  flex: 1;
   min-width: 0;
-  flex: 1;
-  height: 100%;
-  margin-left: 0;
-  transition: margin-left var(--transition-normal);
-  overflow: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
+  transition: all var(--transition-normal);
+  /* Allow content to determine height naturally */
+  min-height: 100%;
+  display: block;
+  /* Start with full width */
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
-/* When sidebar is open, add margin for the fixed sidebar */
-.portfolio-editor__content .test-main--sidebar-open {
+/* When sidebar is open, reduce width instead of shifting */
+.editor-sidebar--open ~ .portfolio-content {
+  width: calc(100% - 320px);
+  max-width: calc(100% - 320px);
   margin-left: 320px;
 }
 
-/* When sidebar is closed, no margin */
-.portfolio-editor__content .test-main--sidebar-closed {
-  margin-left: 0;
-}
-
-/* main-content area - scrollable portfolio */
-.portfolio-editor__content .main-content {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  overflow-y: auto;
-  overflow-x: hidden;
-  height: 100%;
-}
-
-/* Custom scrollbar for main content */
-.portfolio-editor__content .main-content::-webkit-scrollbar {
+/* Custom scrollbar for portfolio content */
+.portfolio-content::-webkit-scrollbar {
   width: 8px;
 }
 
-.portfolio-editor__content .main-content::-webkit-scrollbar-track {
+.portfolio-content::-webkit-scrollbar-track {
   background: rgba(255, 255, 255, 0.05);
 }
 
-.portfolio-editor__content .main-content::-webkit-scrollbar-thumb {
+.portfolio-content::-webkit-scrollbar-thumb {
   background: rgba(255, 255, 255, 0.2);
   border-radius: var(--radius-sm);
   transition: background var(--transition-fast);
 }
 
-.portfolio-editor__content .main-content::-webkit-scrollbar-thumb:hover {
+.portfolio-content::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.3);
-}
-
-/* layout-preview */
-.portfolio-editor__content .layout-preview {
-  flex: 1;
-  min-width: 0;
 }
 
 /* Canvas Area */
 .portfolio-editor__canvas {
   padding: var(--space-4);
   min-height: calc(100vh - 200px);
-  overflow-x: auto; /* Allow horizontal scroll if portfolio is very wide */
+  overflow-x: auto;
 }
 
 .portfolio-editor__canvas-container {
-  /* Full width container without any restrictions */
   width: 100%;
   max-width: none;
   margin: 0;
@@ -174,33 +137,21 @@
 
 /* Responsive Design */
 @media (max-width: 1024px) {
-  .portfolio-editor__content .test-main,
-  .portfolio-editor__content .test-main--sidebar-open,
-  .portfolio-editor__content .test-main--sidebar-closed {
+  .editor-sidebar--open ~ .portfolio-content {
+    width: 100%;
+    max-width: 100%;
     margin-left: 0;
   }
 }
 
 @media (max-width: 768px) {
-  .portfolio-editor__content {
-    margin-top: calc(70px + var(--editor-header-height, 72px));
+  .portfolio-editor {
+    padding-top: calc(70px + var(--editor-header-height, 72px));
   }
 
-  .portfolio-editor__content .main-content {
+  .portfolio-content {
     height: calc(100vh - 70px - var(--editor-header-height, 72px));
-  }
-
-  .portfolio-editor__content .test-main {
-    margin-left: 0;
-  }
-
-  .portfolio-editor__content .layout-preview {
-    padding: var(--space-3);
-  }
-}
-
-@media (max-width: 480px) {
-  .portfolio-editor__content .layout-preview {
-    padding: var(--space-2);
+    width: 100%;
+    max-width: 100%;
   }
 }

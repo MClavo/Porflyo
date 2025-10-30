@@ -91,16 +91,16 @@ export const ModernEditorHeader: React.FC<ModernEditorHeaderProps> = ({
   }, []);
 
   return (
-    <header ref={headerRef} className="modern-editor-header">
-      <div className="modern-editor-header__container">
+    <header ref={headerRef} className="editor-header">
+      <div className="editor-header__container">
         {/* Left Group: Title + Template + Mode + Save */}
-        <div className="modern-editor-header__left-group">
-          <div className="modern-editor-header__title-area">
+        <div className="editor-header__left">
+          <div className="editor-header__title-area">
             <input
               type="text"
               value={portfolioTitle}
               onChange={(e) => onTitleChange(e.target.value)}
-              className="modern-editor-header__title-input"
+              className="editor-header__title-input"
               placeholder="Portfolio Title"
             />
           </div>
@@ -120,7 +120,7 @@ export const ModernEditorHeader: React.FC<ModernEditorHeaderProps> = ({
 
         {/* Right Group: URL + Public + Publish */}
         {isEditMode && (
-          <div className="modern-editor-header__right-group">
+          <div className="editor-header__right">
             <ModernUrlSection
               slug={slug || ''}
               setSlug={setSlug || (() => {})}

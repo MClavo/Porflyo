@@ -8,7 +8,7 @@ import SectionCard from "../components/sections/SectionCard";
 import { AboutSection } from "../components/sections/AboutSection";
 import type { AboutSectionData } from "../components/sections/AboutSection.types";
 import { SavedCards } from "../components/savedcards/SavedCards";
-import { ModernEditorHeader, ModernEditorSidebar } from "../components/portfolioEditor";
+import { ModernEditorHeader as EditorHeader, ModernEditorSidebar as EditorSidebar } from "../components/portfolioEditor";
 import { usePortfolioEditorState } from "../hooks/editor/usePortfolioEditorState";
 import { useRepositoryFlow } from "../hooks/save/repository/useRepositoryFlow";
 import { useSavedCards } from "../state/SavedCards.hooks";
@@ -250,73 +250,61 @@ export default function PortfolioEditor({
 
   return (
     <div className="portfolio-editor">
-      <div className="portfolio-editor__container">
-        {/* Modern Header - FIRST thing in container to be right below navbar */}
-        <ModernEditorHeader
-          portfolioTitle={state.data.portfolio.title}
-          onTitleChange={state.actions.handleTitleChange}
-          onSave={state.actions.handleSavePortfolio}
-          isSaving={state.actions.isSaving}
+      <EditorHeader
+        portfolioTitle={state.data.portfolio.title}
+        onTitleChange={state.actions.handleTitleChange}
+        onSave={state.actions.handleSavePortfolio}
+        isSaving={state.actions.isSaving}
+        mode={state.ui.mode}
+        onModeToggle={state.ui.toggleMode}
+        selectedTemplate={state.ui.selectedTemplate}
+        onTemplateSelect={(t: TemplateKey) => {
+          state.ui.setSelectedTemplate(t);
+        }}
+        slug={state.slug.slug}
+        setSlug={state.slug.setSlug}
+        currentSlug={state.data.currentSlug}
+        isSlugAvailable={state.slug.isSlugAvailable}
+        isCheckingSlug={state.slug.isCheckingSlug}
+        onSlugAvailabilityChange={(available: boolean) => state.slug.handleSlugAvailabilityChange(available, false)}
+        isPublished={state.publication.isPublished}
+        setIsPublished={state.publication.setIsPublished}
+        onPublish={state.publication.handlePublishClick}
+        isPublishing={state.publication.isPublishing}
+        isEditMode={isEditMode}
+      />
+
+      <EditorDndProvider
+        template={state.data.portfolio.template}
+        mode={state.ui.mode}
+        // @ts-expect-error - runtime shape matches expected AnyCard; narrow types later if needed
+        cardsById={allCardsById as Record<string, unknown>}
+        sectionsById={state.data.portfolio.sections}
+        onDragStart={state.drag.handleDragStart}
+        onDragEnd={state.drag.handleDragEnd}
+      >
+        <EditorSidebar
+          isOpen={isSidebarOpen}
           mode={state.ui.mode}
-          onModeToggle={state.ui.toggleMode}
-          selectedTemplate={state.ui.selectedTemplate}
-          onTemplateSelect={(t: TemplateKey) => {
-            state.ui.setSelectedTemplate(t);
-          }}
-          slug={state.slug.slug}
-          setSlug={state.slug.setSlug}
-          currentSlug={state.data.currentSlug}
-          isSlugAvailable={state.slug.isSlugAvailable}
-          isCheckingSlug={state.slug.isCheckingSlug}
-          onSlugAvailabilityChange={(available: boolean) => state.slug.handleSlugAvailabilityChange(available, false)}
-          isPublished={state.publication.isPublished}
-          setIsPublished={state.publication.setIsPublished}
-          onPublish={state.publication.handlePublishClick}
-          isPublishing={state.publication.isPublishing}
-          isEditMode={isEditMode}
-        />
-
-        {/* Content area with sidebar and main */}
-        <div className="portfolio-editor__content">
-          <EditorDndProvider
-            template={state.data.portfolio.template}
+        >
+          <SavedCards
+            savedCards={savedCardsContext.state.savedCards}
             mode={state.ui.mode}
-            // @ts-expect-error - runtime shape matches expected AnyCard; narrow types later if needed
-            cardsById={allCardsById as Record<string, unknown>}
-            sectionsById={state.data.portfolio.sections}
-            onDragStart={state.drag.handleDragStart}
-            onDragEnd={state.drag.handleDragEnd}
-          >
-            <div className={`test-main ${isSidebarOpen ? 'test-main--sidebar-open' : 'test-main--sidebar-closed'}`}>
-              {/* Sidebar - automatically controlled by mode */}
-              <ModernEditorSidebar
-                isOpen={isSidebarOpen}
-                mode={state.ui.mode}
-              >
-                <SavedCards
-                  savedCards={savedCardsContext.state.savedCards}
-                  mode={state.ui.mode}
-                  onSave={handleSaveCard}
-                  onRemove={handleRemoveCard}
-                  onUse={handleUseCard}
-                  template={state.ui.selectedTemplate}
-                />
-              </ModernEditorSidebar>
+            onSave={handleSaveCard}
+            onRemove={handleRemoveCard}
+            onUse={handleUseCard}
+            template={state.ui.selectedTemplate}
+          />
+        </EditorSidebar>
 
-              {/* Main content area */}
-              <div className="main-content">
-                <div className="layout-preview">
-                  <LayoutPreview 
-                    portfolio={state.data.portfolio} 
-                    sectionsMap={sectionsMap as unknown as Record<string, React.ReactNode>} 
-                    isEditable={state.ui.mode === 'edit'} 
-                  />
-                </div>
-              </div>
-            </div>
-          </EditorDndProvider>
-        </div>
-      </div>
+        <main className="portfolio-content">
+          <LayoutPreview 
+            portfolio={state.data.portfolio} 
+            sectionsMap={sectionsMap as unknown as Record<string, React.ReactNode>} 
+            isEditable={state.ui.mode === 'edit'} 
+          />
+        </main>
+      </EditorDndProvider>
 
       <Notification
         message={notification.message}
