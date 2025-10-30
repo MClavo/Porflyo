@@ -167,21 +167,21 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
 
       <div className="footer top-border">
         {liveUrl ? (
-          <a href={liveUrl} target="_blank" rel="noopener noreferrer" className="btn primary">
-            Live Demo
+          <a href={liveUrl} target="_blank" rel="noopener noreferrer" className="btn live">
+            Live
           </a>
         ) : (
-          <button className="btn primary" type="button" disabled={mode === "view"}>
-            {mode === "edit" ? "No Live URL" : "Live Demo"}
+          <button className="btn live" type="button" disabled={mode === "view"}>
+            {mode === "edit" ? "No Live URL" : "Live"}
           </button>
         )}
         
         {repoUrl ? (
-          <a href={repoUrl} target="_blank" rel="noopener noreferrer" className="btn secondary">
+          <a href={repoUrl} target="_blank" rel="noopener noreferrer" className="btn code">
             Source Code
           </a>
         ) : (
-          <button className="btn secondary" type="button" disabled={mode === "view"}>
+          <button className="btn code" type="button" disabled={mode === "view"}>
             {mode === "edit" ? "No Repo URL" : "Source Code"}
           </button>
         )}
