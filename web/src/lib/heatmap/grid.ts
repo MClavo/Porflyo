@@ -3,7 +3,7 @@ import { produce } from 'immer';
 
 // Heatmap configuration: Controls update frequency to prevent values from growing too fast
 // Only 1 out of every HEATMAP_UPDATE_RATE mouse move events will be recorded
-export const HEATMAP_UPDATE_RATE = 4; // Update every N events (1=every event, 2=every 2nd event, 3=every 3rd, etc.)
+export const HEATMAP_UPDATE_RATE = 3; // Update every N events (1=every event, 2=every 2nd event, 3=every 3rd, etc.)
 export const HEATMAP_CLICK_MULTIPLIER = 3; // Multiplier when mouse button is pressed (e.g., 3 = 3x more heat)
 
 export class HeatmapGrid {
