@@ -17,9 +17,9 @@ export type InteractionMetrics = {
 export type ProjectInteractionData = {
   projectId: string;
   viewStartMs: number | null;
-  timeInViewMs: number;
+  viewTime: number;
   firstInteractionMs: number | null;
-  timeToFirstInteractionMs: number | null;
+  exposures: number; // Number of times the project has been shown on screen
   totalInteractions: number;
   interactionRatePerMinute: number;
   externalClicks: number;
@@ -125,9 +125,9 @@ class InteractionTracker {
       data = {
         projectId,
         viewStartMs: now,
-        timeInViewMs: 0,
+        viewTime: 0,
         firstInteractionMs: null,
-        timeToFirstInteractionMs: null,
+        exposures: 1, // First exposure
         totalInteractions: 0,
         interactionRatePerMinute: 0,
         externalClicks: 0,
@@ -140,9 +140,10 @@ class InteractionTracker {
       data.viewStartMs = now;
       data.isCurrentlyInView = true;
       data.lastSeenMs = now;
+      data.exposures++; // Increment exposures on each new view
     }
 
-    console.log(`👁️ View started for project: ${projectId}`);
+    console.log(`👁️ View started for project: ${projectId} (exposure #${data.exposures})`);
   }
 
   // Record when a project goes out of view
@@ -153,13 +154,13 @@ class InteractionTracker {
     const now = Date.now();
     const sessionDuration = data.viewStartMs ? now - data.viewStartMs : 0;
     
-    data.timeInViewMs += sessionDuration;
+    data.viewTime += sessionDuration;
     data.isCurrentlyInView = false;
     data.lastSeenMs = now;
 
     // Recalculate interaction rate
-    if (data.timeInViewMs > 0) {
-      const timeInMinutes = data.timeInViewMs / 60000;
+    if (data.viewTime > 0) {
+      const timeInMinutes = data.viewTime / 60000;
       data.interactionRatePerMinute = data.totalInteractions / timeInMinutes;
     }
 
@@ -195,9 +196,9 @@ class InteractionTracker {
       data = {
         projectId,
         viewStartMs: null,
-        timeInViewMs: 0,
+        viewTime: 0,
         firstInteractionMs: null,
-        timeToFirstInteractionMs: null,
+        exposures: 0, // No exposures yet if interacting without view
         totalInteractions: 0,
         interactionRatePerMinute: 0,
         externalClicks: 0,
@@ -213,12 +214,10 @@ class InteractionTracker {
       console.log(`🎯 FIRST INTERACTION recorded at ${this.firstInteractionActiveTimeMs}ms active time`);
     }
 
-    // Record first interaction for this specific project using activeTime (only once per project)
-    if (!data.firstInteractionMs && this.activeTimeProvider) {
-      const currentActiveTime = this.activeTimeProvider();
+    // Record first interaction for this specific project (only once per project)
+    if (!data.firstInteractionMs) {
       data.firstInteractionMs = now;
-      data.timeToFirstInteractionMs = currentActiveTime;
-      console.log(`🎯 First interaction for project ${projectId}: ${currentActiveTime}ms active time`);
+      console.log(`🎯 First interaction for project ${projectId}`);
     }
 
     // Update counters
@@ -226,8 +225,8 @@ class InteractionTracker {
     this.totalInteractions++;
 
     // Recalculate interaction rate
-    if (data.timeInViewMs > 0) {
-      const timeInMinutes = data.timeInViewMs / 60000;
+    if (data.viewTime > 0) {
+      const timeInMinutes = data.viewTime / 60000;
       data.interactionRatePerMinute = data.totalInteractions / timeInMinutes;
     }
 
@@ -252,7 +251,7 @@ class InteractionTracker {
     this.projectData.forEach((data) => {
       if (data.isCurrentlyInView && data.viewStartMs) {
         const currentSessionDuration = now - data.viewStartMs;
-        const totalTimeInView = data.timeInViewMs + currentSessionDuration;
+        const totalTimeInView = data.viewTime + currentSessionDuration;
         
         if (totalTimeInView > 0) {
           const timeInMinutes = totalTimeInView / 60000;

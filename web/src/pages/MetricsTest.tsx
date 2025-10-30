@@ -242,7 +242,9 @@ export default function MetricsTest() {
                     // Debug interaction tracking
                     import('../lib/analytics/interactionTracker').then(({ interactionTracker }) => {
                       const metrics = interactionTracker.getMetrics();
-                      alert(`Views: ${metrics.totalViews}\nInteractions: ${metrics.totalInteractions}\nTTFI: ${metrics.timeToFirstInteractionMs}ms\nProjects: ${Object.keys(metrics.projectMetrics).length}`);
+                      const projectsCount = Object.keys(metrics.projectMetrics).length;
+                      const totalExposures = Object.values(metrics.projectMetrics).reduce((sum, p) => sum + p.exposures, 0);
+                      alert(`Views: ${metrics.totalViews}\nInteractions: ${metrics.totalInteractions}\nProjects: ${projectsCount}\nTotal Exposures: ${totalExposures}`);
                     });
                   }}
                   style={{ background: '#6f42c1', color: 'white', border: 'none', padding: '8px 16px', borderRadius: '4px' }}

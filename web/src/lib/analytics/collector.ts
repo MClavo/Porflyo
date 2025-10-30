@@ -39,8 +39,8 @@ export type BackendMetrics = {
   socialClicks: number;
   projectMetrics: Array<{
     id: string;
-    timeInViewMs: number;
-    timeToFirstInteractionMs: number | null;
+    viewTime: number;
+    exposures: number; // Number of times the project was shown on screen
     codeViews: number; // button clicks (viewing code)
     liveViews: number; // external link clicks (viewing live demo)
   }>;
@@ -281,8 +281,8 @@ class MetricsCollector {
 
     // Prepare project metrics for backend
     const backendProjectMetricsMap: Record<string, {
-      timeInViewMs: number;
-      timeToFirstInteractionMs: number | null;
+      viewTime: number;
+      exposures: number;
       codeViews: number;
       liveViews: number;
     }> = {};
@@ -294,8 +294,8 @@ class MetricsCollector {
         const projectInteraction = rawMetrics.projectInteractions[projectId];
         
         backendProjectMetricsMap[projectId] = {
-          timeInViewMs: data.timeInViewMs,
-          timeToFirstInteractionMs: data.timeToFirstInteractionMs,
+          viewTime: data.viewTime,
+          exposures: data.exposures, // Number of times shown on screen
           codeViews: projectInteraction?.buttonClicks || 0, // button clicks = code views
           liveViews: projectInteraction?.linkClicks || 0,   // link clicks = live demo views
         };
@@ -306,8 +306,8 @@ class MetricsCollector {
     Object.entries(rawMetrics.projectInteractions).forEach(([projectId, interaction]) => {
       if (!backendProjectMetricsMap[projectId]) {
         backendProjectMetricsMap[projectId] = {
-          timeInViewMs: 0,
-          timeToFirstInteractionMs: null,
+          viewTime: 0,
+          exposures: 0, // No exposures if never viewed
           codeViews: interaction.buttonClicks,
           liveViews: interaction.linkClicks,
         };
@@ -343,8 +343,8 @@ class MetricsCollector {
     // Convert map -> array with id field
     const backendProjectMetricsArray = Object.entries(backendProjectMetricsMap).map(([id, v]) => ({
       id,
-      timeInViewMs: v.timeInViewMs,
-      timeToFirstInteractionMs: v.timeToFirstInteractionMs,
+      viewTime: v.viewTime,
+      exposures: v.exposures,
       codeViews: v.codeViews,
       liveViews: v.liveViews,
     }));

@@ -65,16 +65,12 @@ export function InteractionMetricsDisplay({
 
       <div className="global-metrics">
         <div className="metric-card">
-          <div className="metric-label">Time to First Interaction</div>
+          <div className="metric-label">Total Views</div>
           <div className="metric-value ttfi">
-            {formatTime(metrics.timeToFirstInteractionMs)}
+            {metrics.totalViews}
           </div>
           <div className="metric-description">
-            {metrics.timeToFirstInteractionMs === null 
-              ? 'No interactions yet' 
-              : metrics.timeToFirstInteractionMs < 5000 
-                ? 'Fast engagement' 
-                : 'Slower to engage'}
+            Projects viewed during session
           </div>
         </div>
 
@@ -113,8 +109,8 @@ export function InteractionMetricsDisplay({
                 </div>
                 <div className="project-metrics">
                   <div className="project-metric">
-                    <span>TTFI:</span>
-                    <strong>{formatTime(data.timeToFirstInteractionMs)}</strong>
+                    <span>Exposures:</span>
+                    <strong>{data.exposures}</strong>
                   </div>
                   <div className="project-metric">
                     <span>Rate:</span>
@@ -126,7 +122,7 @@ export function InteractionMetricsDisplay({
                   </div>
                   <div className="project-metric">
                     <span>Time in View:</span>
-                    <strong>{formatTime(data.timeInViewMs)}</strong>
+                    <strong>{formatTime(data.viewTime)}</strong>
                   </div>
                   <div className="project-metric">
                     <span>External Clicks:</span>
