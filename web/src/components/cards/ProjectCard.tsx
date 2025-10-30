@@ -52,11 +52,6 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   // current card width so styles can use it (e.g. to size images).
   const cardRef = React.useRef<HTMLDivElement | null>(null);
 
-  // Debug: Log repoId to verify it's being passed correctly
-  React.useEffect(() => {
-    console.log(`🏷️ ProjectCard "${title}" mounted with repoId:`, repoId);
-  }, [repoId, title]);
-
   React.useEffect(() => {
     const el = cardRef.current;
     if (!el) return;
@@ -80,7 +75,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
       ref={cardRef} 
       className="project-card" 
       data-mode={mode}
-      data-project-id={repoId ? String(repoId) : 'unknown-project'}
+      project-id={repoId ? String(repoId) : 'unknown-project'}
     >
       {/* render injected children (e.g. delete button) */}
       {children}

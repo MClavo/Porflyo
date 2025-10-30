@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { HeatmapOptions, HeatmapData, TopCell } from '../../lib/heatmap';
 import { HeatmapRenderer, HeatmapGrid } from '../../lib/heatmap';
 import { produce } from 'immer';
@@ -20,6 +20,38 @@ export function useHeatmap(containerRef: React.RefObject<HTMLElement | null>, op
   
   // Store current options in refs to avoid re-initialization
   const currentOptionsRef = useRef<HeatmapOptions>({});
+  
+  // Use state to trigger re-render when container becomes available
+  const [containerReady, setContainerReady] = useState(false);
+  const checkIntervalRef = useRef<number | null>(null);
+
+  // Monitor when container becomes available with interval check
+  useEffect(() => {
+    if (containerRef.current && !containerReady) {
+      setContainerReady(true);
+      if (checkIntervalRef.current) {
+        clearInterval(checkIntervalRef.current);
+        checkIntervalRef.current = null;
+      }
+      return;
+    }
+    
+    // If container not ready, start checking periodically
+    if (!containerReady && !checkIntervalRef.current) {
+      checkIntervalRef.current = window.setInterval(() => {
+        if (containerRef.current) {
+          setContainerReady(true);
+        }
+      }, 100);
+    }
+    
+    return () => {
+      if (checkIntervalRef.current) {
+        clearInterval(checkIntervalRef.current);
+        checkIntervalRef.current = null;
+      }
+    };
+  }, [containerRef, containerReady]);
 
   // Update options ref when opts change
   useEffect(() => {
@@ -47,10 +79,15 @@ export function useHeatmap(containerRef: React.RefObject<HTMLElement | null>, op
   // Initialize heatmap system once
   useEffect(() => {
     const container = containerRef.current;
-    if (!container || isInitializedRef.current) return;
     
     const options = currentOptionsRef.current;
     if (options.disabled) return;
+    
+    // If container not available yet, wait for containerReady to change
+    if (!container) return;
+    
+    if (isInitializedRef.current) return;
+
 
     // ensure container positioned for overlay
     const prevPosition = container.style.position || '';
@@ -67,6 +104,7 @@ export function useHeatmap(containerRef: React.RefObject<HTMLElement | null>, op
     canvas.style.width = '100%';
     canvas.style.height = '100%';
     canvas.style.zIndex = '999';
+    canvas.style.opacity = '0'; // Invisible for users
     canvasRef.current = canvas;
     container.appendChild(canvas);
 
@@ -108,7 +146,10 @@ export function useHeatmap(containerRef: React.RefObject<HTMLElement | null>, op
 
     // pointer tracking
     const onPointerMove = (ev: PointerEvent) => {
-      if (!gridRef.current) return;
+      if (!gridRef.current) {
+        console.warn('[Heatmap] gridRef not available in onPointerMove');
+        return;
+      }
 
       const rect = container.getBoundingClientRect();
       
@@ -216,7 +257,7 @@ export function useHeatmap(containerRef: React.RefObject<HTMLElement | null>, op
       lastHeatAddRef.current = 0;
       isMouseDownRef.current = false;
     };
-  }, [containerRef]); // Only depend on container ref
+  }, [containerRef, containerReady]); // Depend on containerReady to trigger re-initialization
 
   // API para obtener los datos del heatmap
   const getHeatmapData = (): HeatmapData | null => {

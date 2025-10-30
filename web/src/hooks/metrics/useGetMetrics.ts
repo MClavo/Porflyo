@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useCallback } from 'react';
 import { metricsCollector } from '../../lib/analytics/collector';
 import useHeatmap from './useHeatmap';
 import { isMobile } from 'react-device-detect';
@@ -143,10 +143,15 @@ export function useMetrics(
     };
   }, [containerRef, trackClicks, trackLinks]);
 
+  // Memoize getBackendMetrics to avoid creating new function references on every render
+  const getBackendMetrics = useCallback(() => {
+    return metricsCollector.getBackendMetrics();
+  }, []);
+
   return {
     metricsCollector,
     heatmap, // Exponemos el objeto heatmap completo para acceder a getTopCells y showTopCellsOnly
-    getBackendMetrics: () => metricsCollector.getBackendMetrics(), // Métricas optimizadas para backend
+    getBackendMetrics, // Métricas optimizadas para backend (memoized)
   };
 }
 
