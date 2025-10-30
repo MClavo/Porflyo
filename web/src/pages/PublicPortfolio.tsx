@@ -119,7 +119,7 @@ export default function PublicPortfolio() {
 
   if (loadingState.isLoading) {
     return (
-      <div className="public-portfolio-container">
+      <div className="public-portfolio">
         <div className="loading-container">
           <div className="loading-spinner"></div>
           <p>Loading portfolio...</p>
@@ -130,7 +130,7 @@ export default function PublicPortfolio() {
 
   if (loadingState.error || !portfolio) {
     return (
-      <div className="public-portfolio-container">
+      <div className="public-portfolio">
         <div className="error-container">
           <h1>Portfolio Not Found</h1>
           <p>{loadingState.error || 'The requested portfolio could not be found.'}</p>
@@ -143,11 +143,8 @@ export default function PublicPortfolio() {
   }
 
   return (
-    <div className="public-portfolio-container" ref={containerRef}>
-      <PortfolioViewer 
-        portfolio={portfolio} 
-        className="public-portfolio"
-      />
+    <div className="public-portfolio" ref={containerRef}>
+      <PortfolioViewer portfolio={portfolio} />
     </div>
   );
 }

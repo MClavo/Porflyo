@@ -13,12 +13,10 @@ import '../../templates/template2/template2.css';
 
 interface PortfolioViewerProps {
   portfolio: PortfolioState;
-  className?: string;
 }
 
 export function PortfolioViewer({ 
-  portfolio, 
-  className = ''
+  portfolio
 }: PortfolioViewerProps) {
   // Build runtime structures - exact same as PortfolioEditor
   const sectionsMap: Record<string, React.ReactNode> = {};
@@ -74,21 +72,10 @@ export function PortfolioViewer({
   }
 
   return (
-    <div className={`portfolio-viewer ${className}`}>
-      {/* Use exact same structure as PortfolioEditor */}
-      <div className="test-layout" data-mode="view">
-        <main className="test-main">
-          <div className="main-content">
-            <div className="layout-preview">
-              <LayoutPreview
-                portfolio={portfolio}
-                sectionsMap={sectionsMap}
-                isEditable={false} // Never editable
-              />
-            </div>
-          </div>
-        </main>
-      </div>
-    </div>
+    <LayoutPreview
+      portfolio={portfolio}
+      sectionsMap={sectionsMap}
+      isEditable={false} // Never editable
+    />
   );
 }
