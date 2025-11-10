@@ -10,7 +10,7 @@ import { useOverviewData, useTrends } from "../hooks/metrics";
 import { formatMs } from "../lib/format";  
 import { useMetricsStore } from "../state/metrics.store";
 import { latest } from "../lib/dates";
-import { KpiCard, KpiGrid, DashboardHeader, SplitProgressBar, VisitsOverviewCard, ModernAreaChart } from "../components/dashboard";
+import { KpiCard, KpiGrid, DashboardHeader, SplitProgressBar, VisitsOverviewCard, ModernAreaChart, NoDataMessage } from "../components/dashboard";
 import { getTimeRangeDays } from "../lib/timeRange";
 import "../styles/dashboard-theme.css";
 
@@ -27,7 +27,15 @@ function ModernOverviewContent() {
   const latestDate = latest(dailyIndex);
   const latestEntry = latestDate ? dailyByDate[latestDate] : null;
   
-  const hasError = (!overviewData.todayKpis && !isLoading) || trends.error || engagementTrends.error;
+  // Check if data is empty (no dailyAgg)
+  const hasNoData = dailyIndex.length === 0;
+  
+  const hasError = (!overviewData.todayKpis && !isLoading && !hasNoData) || trends.error || engagementTrends.error;
+
+  // Show no data message if there's no data
+  if (hasNoData && !isLoading) {
+    return <NoDataMessage />;
+  }
 
   if (hasError) {
     return (

@@ -79,7 +79,7 @@ export const PortfoliosSection: React.FC<PortfoliosSectionProps> = ({
     <div className="portfolios-section">
       <div className="portfolios-header">
         <h2 className="portfolios-title">Your Portfolios</h2>
-        {portfolios && portfolios.length > 0 && (
+        {portfolios && portfolios.length > 0 && portfolios.length < 3 && (
           <button 
             className="btn btn-primary"
             onClick={handleCreatePortfolio}

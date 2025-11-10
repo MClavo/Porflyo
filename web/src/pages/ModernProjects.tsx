@@ -7,7 +7,7 @@ import { FiEye, FiActivity, FiClock, FiShare2, FiCode, FiAward } from "react-ico
 import { useMetricsStore } from "../state/metrics.store";
 import { useDashboard } from "../hooks/useDashboard";
 import { getTimeRangeDays } from "../lib/timeRange";
-import { KpiCard, KpiGrid, DashboardHeader } from "../components/dashboard";
+import { KpiCard, KpiGrid, DashboardHeader, NoDataMessage } from "../components/dashboard";
 import { ProjectDonutChart } from "../components/charts/ProjectDonutChart";
 import { ProjectBubbleChart } from "../components/charts/ProjectBubbleChart";
 import { ProjectStackedChart } from "../components/charts/ProjectStackedChart";
@@ -172,7 +172,7 @@ function ModernProjectsContent() {
   
   if (isLoading || !isReady) {
     return (
-      <div className="modern-projects-container" style={{ position: "relative", padding: 'var(--space-4) 0' }}>
+      <div className="modern-projects-container">
         <DashboardHeader 
           title="Projects Analytics"
           subtitle="Project performance and interaction insights"
@@ -182,9 +182,16 @@ function ModernProjectsContent() {
     );
   }
 
+  // Check if data is empty (no dailyAgg or slots)
+  const hasNoData = slotIndex.length === 0 && projectMetrics.length === 0;
+  
+  if (hasNoData) {
+    return <NoDataMessage title="No projects data available" />;
+  }
+
   if (projectMetrics.length === 0) {
     return (
-      <div className="modern-projects-container" style={{ position: "relative", padding: 'var(--space-4) 0' }}>
+      <div className="modern-projects-container">
         <DashboardHeader 
           title="Projects Analytics"
           subtitle="No project data available for the selected time range"
@@ -212,7 +219,7 @@ function ModernProjectsContent() {
   }
 
   return (
-    <div className="modern-projects-container" style={{ position: "relative", padding: 'var(--space-4) 0' }}>
+    <div className="modern-projects-container">
       <DashboardHeader 
         title="Projects Analytics"
         subtitle={`Performance insights across ${projectMetrics.length} projects`}

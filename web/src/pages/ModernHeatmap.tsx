@@ -10,6 +10,7 @@ import { usePortfoliosContext } from "../hooks/ui/usePortfoliosContext";
 import { mapPublicPortfolioDtoToPortfolioState } from "../api/mappers/portfolio.mappers";
 import HeatmapCanvas from "../components/heatmap/HeatmapCanvas";
 import HeatmapSkeleton from "../components/ui/HeatmapSkeleton";
+import { NoDataMessage } from "../components/dashboard";
 import type { HeatmapMode } from "../components/ui/HeatmapModeToggle";
 import "../styles/dashboard-theme.css";
 import "../styles/modern-heatmap.css";
@@ -43,6 +44,9 @@ function ModernHeatmapContent({ selectedSlot, heatmapMode }: ModernHeatmapConten
 
   // Obtener datos del backend usando el store como en ModernOverview
   const { slotByDate, slotIndex, isLoading } = useMetricsStore();
+
+  // Check if data is empty (no slots)
+  const hasNoData = slotIndex.length === 0;
 
   // All heatmap calculation logic is now inlined in heatmapPayload for better dependency management
 
@@ -143,11 +147,13 @@ function ModernHeatmapContent({ selectedSlot, heatmapMode }: ModernHeatmapConten
     setTimeout(() => setIsHeatmapReady(true), 200);
   }, []);
 
+  // Show no data message if there's no data
+  if (hasNoData && !isLoading) {
+    return <NoDataMessage title="No heatmap data available" />;
+  }
+
   return (
-    <div
-      className="modern-heatmap-container"
-      style={{ position: "relative", padding: 'var(--space-4) 0', boxSizing: 'border-box' }}
-    >
+    <div className="modern-heatmap-container">
       {/* Portfolio con heatmap overlay */}
       <div
         ref={portfolioRef}

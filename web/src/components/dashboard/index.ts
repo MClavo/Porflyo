@@ -10,3 +10,4 @@ export { VisitsOverviewCard } from './cards/VisitsOverviewCard';
 export { default as ModernAreaChart } from './charts/ModernAreaChart';
 export { default as TimeRangeToggle } from './controls/TimeRangeToggle';
 export { default as DashboardNavbar } from './layout/DashboardNavbar';
+export { NoDataMessage } from './NoDataMessage';

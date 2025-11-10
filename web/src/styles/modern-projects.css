@@ -6,13 +6,6 @@
   background: var(--dashboard-bg-primary);
   color: var(--text-primary);
   font-family: var(--font-sans);
-  padding-top: 80px; /* Account for fixed navbar */
-}
-
-.modern-projects-container {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 0 var(--space-6);
 }
 
 /* Content and header styles are handled inline for now */
@@ -61,10 +54,6 @@
 }
 
 @media (max-width: 768px) {
-  .modern-projects-container {
-    padding: 0 var(--space-4);
-  }
-  
   .modern-projects-content {
     padding: var(--space-4) !important;
   }
