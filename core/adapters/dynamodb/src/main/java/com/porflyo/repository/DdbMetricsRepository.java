@@ -73,9 +73,13 @@ public class DdbMetricsRepository implements PortfolioMetricsRepository {
         YearMonth oldestMonth = YearMonth.now().minusMonths(monthsBack - 1);
         String oldestSkPrefix = METRICS_SK_PREFIX + oldestMonth.format(DateTimeFormatter.ofPattern("yyyy-MM"));
         
-        // Use range query: SK >= "M#oldest-yyyy-MM" to get all months from oldest to current
+        // Use sortBetween to limit range: SK >= "M#oldest-yyyy-MM" AND SK < "N" (next letter after M)
+        // This avoids reading Slot items (S#...) which would be charged but filtered out
+        String maxSk = "N"; // Next letter after M, ensures we only get M# items
         QueryEnhancedRequest req = QueryEnhancedRequest.builder()
-            .queryConditional(QueryConditional.sortGreaterThanOrEqualTo(k -> k.partitionValue(pk).sortValue(oldestSkPrefix)))
+            .queryConditional(QueryConditional.sortBetween(
+                k -> k.partitionValue(pk).sortValue(oldestSkPrefix),
+                k -> k.partitionValue(pk).sortValue(maxSk)))
             .build();
 
         List<PortfolioMetrics> out = table.query(req)

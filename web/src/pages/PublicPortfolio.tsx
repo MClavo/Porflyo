@@ -104,7 +104,6 @@ export default function PublicPortfolio() {
       // Only send if user was active for at least 10 seconds
       if (metrics.activeTimeMs >= 10000) {
         sendMetricsOnUnload(
-          '/metrics/session',
           portfolioId,
           metrics
         );

@@ -42,41 +42,12 @@ public class MetricsLambdaEntrypoint extends MicronautRequestHandler<APIGatewayV
             }
             
 
-            return processRequest(input, path);
+            return metricsLambdaHandler.handleMetricsRequest(input);
 
         } catch (Exception e){
             log.error("Error processing request for path: {}, error: {}", input.getRawPath(), e.getMessage(), e);
             return LambdaExceptionTranslator.toResponse(e, input);
         }
         
-    }
-
-
-    // ────────────────────────── Gateway ──────────────────────────
-
-    private APIGatewayV2HTTPResponse processRequest(APIGatewayV2HTTPEvent input, String path) {
-        String method = LambdaHttpUtils.getMethod(input);
-        
-        // Route the request to the appropriate handlers based on path
-        switch (method) {
-            case "get":
-                if (path.contains("/metrics")) {
-                    return metricsLambdaHandler.handleMetricsRequest(input);
-                }
-                break;
-            
-            case "post":
-                if (path.contains("/metrics")) {
-                    return metricsLambdaHandler.handleMetricsRequest(input);
-                }
-                break;
-                
-            default:
-                log.warn("Unsupported method: {} for path: {}", method, path);
-                return LambdaHttpUtils.createErrorResponse(405, "Method Not Allowed");
-        }
-        
-        log.warn("No handler found for path: {}", path);
-        return LambdaHttpUtils.createErrorResponse(404, "Not Found");
     }
 }

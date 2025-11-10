@@ -1,13 +1,10 @@
-package com.porflyo.dto.common;
+package com.porflyo.dto.response;
 
 import java.util.List;
 
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.serde.annotation.Serdeable;
 
-/**
- * Decoded heatmap data.
- */
 @Serdeable
 @Introspected
 public record HeatmapDto(

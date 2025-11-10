@@ -48,22 +48,19 @@ function validateBootstrapResponse(data: unknown): asserts data is BootstrapResp
  */
 export interface GetMetricsParams {
   portfolioId: string;
+  months?: number; // Number of months back to fetch (default: 3)
 }
 
 /**
  * Fetch bootstrap metrics data for a portfolio
  * 
- * @param params - Parameters containing portfolioId
+ * @param params - Parameters containing portfolioId and optional months
  * @returns Promise resolving to typed BootstrapResponse
  * @throws Error if response validation fails or network error occurs
  */
-export async function getMetrics({ portfolioId }: GetMetricsParams): Promise<BootstrapResponse> {
+export async function getMetrics({ portfolioId, months = 3 }: GetMetricsParams): Promise<BootstrapResponse> {
   try {
-    const response = await httpClient.get('/metrics', {
-      params: {
-        portfolioId,
-      },
-    });
+    const response = await httpClient.get(`/metrics/${portfolioId}/${months}`);
 
     // Runtime validation
     validateBootstrapResponse(response.data);

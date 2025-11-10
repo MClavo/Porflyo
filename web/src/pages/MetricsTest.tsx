@@ -61,7 +61,6 @@ export default function MetricsTest() {
   const [isPaused, setIsPaused] = useState<boolean>(false);
 
   const { sendMetrics } = useSendMetrics({
-    url: 'http://localhost:9002/testMessageOnClose',
     portfolioId: 'test-portfolio-id',
   });
 
@@ -75,7 +74,6 @@ export default function MetricsTest() {
       }
       
       sendMetricsOnUnload(
-        'http://localhost:9002/testMessageOnClose',
         'test-portfolio-id',
         backendData
       );

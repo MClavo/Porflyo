@@ -23,7 +23,7 @@ interface MetricsState {
   error?: string;
   
   // Actions
-  loadBootstrap: (portfolioId: string) => Promise<void>;
+  loadBootstrap: (portfolioId: string, months?: number) => Promise<void>;
   clearError: () => void;
   reset: () => void;
 }
@@ -94,7 +94,7 @@ export const useMetricsStore = create<MetricsState>()(
     /**
      * Load bootstrap data for a portfolio
      */
-    loadBootstrap: async (portfolioId: string) => {
+    loadBootstrap: async (portfolioId: string, months: number = 3) => {
       // Prevent concurrent loads
       if (get().isLoading) {
         return;
@@ -106,7 +106,7 @@ export const useMetricsStore = create<MetricsState>()(
       });
       
       try {
-        const response = await getMetrics({ portfolioId });
+        const response = await getMetrics({ portfolioId, months });
         
         // Normalize data
         const { dailyByDate, dailyIndex } = normalizeDailyData(response.dailyAgg);

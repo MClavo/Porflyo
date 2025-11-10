@@ -367,9 +367,11 @@ function ModernProjectsContent() {
 }
 
 export default function ModernProjects() {
+  const { portfolioId } = useDashboard();
+  
   return (
     <div className="modern-projects-page">
-      <MetricsProvider portfolioId="default">
+      <MetricsProvider portfolioId={portfolioId}>
         <ModernProjectsContent />
       </MetricsProvider>
     </div>

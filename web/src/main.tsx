@@ -78,8 +78,8 @@ export function AppWithProviders() {
                   
                   {/* Metrics Dashboard Routes */}
                   
-                  <Route path="/dashboard/modern" element={<ModernDashboard />} />
-                  <Route path="/dashboard/modern/projects" element={<ModernProjects />} />
+                  <Route path="/dashboard/:portfolioId" element={<ModernDashboard />} />
+                  <Route path="/dashboard/:portfolioId/projects" element={<ModernProjects />} />
                   <Route path='/m-test' element={<MetricsTest />} />
                 </Routes>
               </NavbarProvider>

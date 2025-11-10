@@ -1,11 +1,8 @@
-package com.porflyo.dto.common;
+package com.porflyo.dto.response;
 
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.serde.annotation.Serdeable;
 
-/**
- * Heatmap metadata.
- */
 @Serdeable
 @Introspected
 public record HeatmapMetaDto(

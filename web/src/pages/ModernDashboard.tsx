@@ -2,7 +2,7 @@
  * ModernDashboard - Router para páginas del dashboard moderno
  */
 
-
+import { useParams } from 'react-router-dom';
 import { DashboardProvider } from '../contexts/DashboardContext';
 import { useDashboard } from '../hooks/useDashboard';
 import { useHeatmapSlots } from '../hooks/useHeatmapSlots';
@@ -45,8 +45,14 @@ function DashboardRouter() {
 }
 
 export default function ModernDashboard() {
+  const { portfolioId } = useParams<{ portfolioId: string }>();
+  
+  if (!portfolioId) {
+    return <div>Error: Portfolio ID is required</div>;
+  }
+
   return (
-    <DashboardProvider>
+    <DashboardProvider portfolioId={portfolioId}>
       <DashboardRouter />
     </DashboardProvider>
   );

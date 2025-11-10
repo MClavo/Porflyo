@@ -3,16 +3,16 @@ import { sendSessionMetrics } from '../clients/metrics.client';
 import type { SessionMetricsPayload } from '../types';
 
 export interface UseSendMetricsParams {
-  url: string;
   portfolioId: string;
 }
 
-export function useSendMetrics({ url, portfolioId }: UseSendMetricsParams) {
+export function useSendMetrics({ portfolioId }: UseSendMetricsParams) {
   const sendMetrics = useCallback(
     async (metrics: SessionMetricsPayload) => {
+      const url = `/metrics/${portfolioId}`;
       await sendSessionMetrics({ url, portfolioId, metrics });
     },
-    [url, portfolioId]
+    [portfolioId]
   );
 
   return { sendMetrics };
@@ -23,10 +23,10 @@ export function useSendMetrics({ url, portfolioId }: UseSendMetricsParams) {
  * Uses text/plain to avoid CORS preflight
  */
 export function sendMetricsOnUnload(
-  url: string,
   portfolioId: string,
   metrics: SessionMetricsPayload
 ): void {
+  const url = `/metrics/${portfolioId}`;
   const payload = JSON.stringify({
     portfolioId,
     ...metrics,

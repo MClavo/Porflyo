@@ -56,7 +56,7 @@ export const PortfolioCard: React.FC<PortfolioCardProps> = ({
   };
 
   const handleViewMetrics = () => {
-    navigate(`/dashboard/modern?portfolio=${portfolio.id}`);
+    navigate(`/dashboard/${portfolio.id}`);
   };
 
   const handleVisit = () => {

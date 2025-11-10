@@ -1,17 +1,15 @@
-package com.porflyo.dto.common;
+package com.porflyo.dto.response;
 
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.serde.annotation.Serdeable;
 
-/**
- * Derived daily metrics data.
- */
 @Serdeable
 @Introspected
-public record DailyDerivedDto(
+public record DerivedMetricsDto(
     DeviceMixDto deviceMix,
     Double engagementAvg,
     Double avgScrollTimeMs,
+    Double avgSessionTime,
     Double avgCardViewTimeMs,
     Double tffiMeanMs,
     Double emailConversion

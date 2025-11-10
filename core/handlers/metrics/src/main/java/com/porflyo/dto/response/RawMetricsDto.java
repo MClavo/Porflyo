@@ -1,15 +1,13 @@
-package com.porflyo.dto.common;
+package com.porflyo.dto.response;
 
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.serde.annotation.Serdeable;
 
-/**
- * Raw daily metrics data.
- */
 @Serdeable
 @Introspected
-public record DailyRawDto(
+public record RawMetricsDto(
     Integer views,
+    Integer activeTime,
     Integer emailCopies,
     Integer desktopViews,
     Integer mobileTabletViews,
@@ -18,6 +16,8 @@ public record DailyRawDto(
     Integer qualityVisits,
     Integer projectViewTimeTotal,
     Integer projectExposuresTotal,
+    Integer projectCodeViewsTotal,
+    Integer projectLiveViewsTotal,
     Integer tffiSumMs,
     Integer tffiCount,
     Integer socialClicksTotal

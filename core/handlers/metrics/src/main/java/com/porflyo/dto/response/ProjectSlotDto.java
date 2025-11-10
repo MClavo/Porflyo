@@ -1,17 +1,14 @@
-package com.porflyo.dto.common;
+package com.porflyo.dto.response;
 
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.serde.annotation.Serdeable;
 
-/**
- * Project raw metrics.
- */
 @Serdeable
 @Introspected
-public record ProjectRawDto(
+public record ProjectSlotDto(
     Integer projectId,
     Integer exposures,
-    Integer viewTime,     // in deciseconds if timeBase=ds
+    Integer viewTime,
     Integer codeViews,
     Integer liveViews
 ) {}
