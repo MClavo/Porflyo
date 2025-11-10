@@ -5,6 +5,8 @@
   min-height: 100vh;
   /* Permitir scroll pero mantener estabilidad */
   overflow-x: hidden;
+  /* Add padding-top to account for fixed navbar */
+  padding-top: var(--navbar-height);
 }
 
 .modern-dashboard__content {

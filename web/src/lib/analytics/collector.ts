@@ -8,7 +8,7 @@ import { produce } from 'immer';
 import { isMobile as detectIsMobile } from 'react-device-detect';
 
 // Configuration: Number of top heatmap cells to send to backend
-export const HEATMAP_TOP_CELLS_COUNT = 200;
+export const HEATMAP_TOP_CELLS_COUNT = 400;
 
 export type ProjectMetrics = {
   activeTimeMs: number;
@@ -76,7 +76,7 @@ class MetricsCollector {
   // Method to set the element to track for scroll
   setScrollElement(element: HTMLElement | null) {
     this.scrollElement = element;
-    
+
     // If we're currently tracking, restart with the new element
     if (this.sessionStart && element) {
       scrollTracker.stopTracking();
@@ -101,7 +101,7 @@ class MetricsCollector {
   startSession() {
     if (!this.sessionStart) {
       this.sessionStart = Date.now();
-      
+            
       // Set up activeTime provider for interaction tracker
       interactionTracker.setActiveTimeProvider(() => this.getCurrentActiveTime());
       
@@ -149,24 +149,6 @@ class MetricsCollector {
 
   // Record a button click for a specific project
   recordProjectButtonClick(projectId: string, payload: { id?: string; label?: string }) {
-    // Filtrar botones de control de la UI y botones de prueba
-    const key = payload.id ?? payload.label ?? '';
-    const lowerKey = key.toLowerCase();
-    
-    // Lista de palabras clave que indican botones que NO son de proyectos
-    const excludedKeywords = [
-      'actualizar', 'limpiar', 'refresh', 'clear', 'pausar', 'reanudar',
-      'backend', 'raw', 'top', 'debug', 'test', 'copiar email', 'email',
-      'github', 'linkedin', 'twitter', 'facebook', 'instagram',
-      'contacto general', 'más información', 'auto-scroll'
-    ];
-    
-    // Si el botón contiene alguna palabra clave excluida, no lo trackeamos
-    if (excludedKeywords.some(keyword => lowerKey.includes(keyword))) {
-      return;
-    }
-    
-    // Si el projectId es 'unknown-project', también lo ignoramos
     if (projectId === 'unknown-project') {
       return;
     }
@@ -182,6 +164,7 @@ class MetricsCollector {
     interactionTracker.recordButtonClick(projectId);
     
     // Send to analytics if available
+    const key = payload.id ?? payload.label ?? '';
     track('project_button_click', { 
       projectId, 
       button: key, 

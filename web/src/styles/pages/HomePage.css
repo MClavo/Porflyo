@@ -5,11 +5,13 @@
   min-height: 100vh;
   color: var(--text-primary);
   font-family: var(--font-sans);
+  /* Add padding-top to account for fixed navbar */
+  padding-top: var(--navbar-height);
 }
 
 .home-content {
-  max-width: 2000px;
-  width: 98%;
+  max-width: 1400px;
+  width: 95%;
   margin: 0 auto;
   padding: var(--space-6);
   display: flex;
@@ -179,22 +181,10 @@
 
 /* Responsive Design */
 
-/* Very large screens - maximize number of cards per row */
-@media (min-width: 1800px) {
-  .home-content {
-    width: 96%;
-  }
-
-  .portfolios-grid {
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: var(--space-4);
-  }
-}
-
 /* Large screens - take advantage of extra space */
-@media (min-width: 1400px) {
+@media (min-width: 1200px) {
   .home-content {
-    width: 95%;
+    width: 90%;
     padding: var(--space-8);
   }
 
@@ -209,9 +199,9 @@
   }
 }
 
-@media (min-width: 769px) and (max-width: 1399px) {
+@media (min-width: 769px) and (max-width: 1199px) {
   .home-content {
-    width: 96%;
+    width: 92%;
   }
 
   .portfolios-grid {

@@ -13,8 +13,6 @@
   backdrop-filter: blur(16px);
   border-bottom: 1px solid var(--card-border);
   box-shadow: var(--shadow-lg);
-  /* Evitar que el scrollbar afecte al navbar */
-  width: 100vw;
   box-sizing: border-box;
 }
 

@@ -18,6 +18,33 @@ export function AboutSection({ mode, data, onPatch, className }: AboutSectionPro
     return value.startsWith('http') ? value : `https://${value}`;
   };
 
+  const handleEmailClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    const email = data.email;
+    if (email) {
+      navigator.clipboard.writeText(email).then(() => {
+        const feedback = document.createElement('div');
+        feedback.className = 'email-copy-feedback';
+        feedback.textContent = 'Email copied to clipboard!';
+        document.body.appendChild(feedback);
+        
+        setTimeout(() => {
+          feedback.style.opacity = '0';
+          feedback.style.transition = 'opacity 0.3s ease-out';
+          setTimeout(() => feedback.remove(), 300);
+        }, 3000);
+      }).catch((err) => {
+        console.error('Failed to copy email:', err);
+        
+        const errorFeedback = document.createElement('div');
+        errorFeedback.className = 'email-copy-feedback error';
+        errorFeedback.textContent = 'Failed to copy email';
+        document.body.appendChild(errorFeedback);
+        setTimeout(() => errorFeedback.remove(), 3000);
+      });
+    }
+  };
+
   return (
     <div className={`about-section-container ${className || ''}`}>
       <div className="about-section-info">
@@ -47,7 +74,11 @@ export function AboutSection({ mode, data, onPatch, className }: AboutSectionPro
             
             <div className="about-section-contact">
               {data.email && (
-                <a href={`mailto:${data.email}`} className="about-contact-link">
+                <a 
+                  href={`mailto:${data.email}`} 
+                  className="about-contact-link"
+                  onClick={handleEmailClick}
+                >
                   {data.email}
                 </a>
               )}

@@ -59,11 +59,9 @@ class InteractionTracker {
 
     this.sessionStartMs = Date.now();
     this.containerElement = containerElement;
-    
+        
     // Set up intersection observer to track project views
     this.setupIntersectionObserver(containerElement);
-    
-    console.log('🎯 Interaction tracking started for container');
   }
 
   // Stop tracking and cleanup
@@ -79,8 +77,6 @@ class InteractionTracker {
         this.recordViewEnd(projectId);
       }
     });
-
-    console.log('🛑 Interaction tracking stopped');
   }
 
   // Setup intersection observer for project view tracking
@@ -89,7 +85,7 @@ class InteractionTracker {
       (entries) => {
         entries.forEach((entry) => {
           const projectElement = entry.target as HTMLElement;
-          const projectId = projectElement.dataset.projectId;
+          const projectId = projectElement.getAttribute('project-id');
           
           if (!projectId) return;
 
@@ -101,19 +97,18 @@ class InteractionTracker {
         });
       },
       {
-        root: container,
-        threshold: 0.3, // Consider "in view" when 30% visible
+        root: null,
+        threshold: 0.5,
         rootMargin: '0px'
       }
     );
 
-    // Observe all elements with data-project-id
-    const projectElements = container.querySelectorAll('[data-project-id]');
+    // Observe all elements with project-id attribute
+    const projectElements = container.querySelectorAll('[project-id]');
     projectElements.forEach((element) => {
       this.intersectionObserver?.observe(element);
     });
 
-    console.log(`👀 Observing ${projectElements.length} project elements`);
   }
 
   // Record when a project comes into view
@@ -121,13 +116,14 @@ class InteractionTracker {
     const now = Date.now();
     let data = this.projectData.get(projectId);
 
+
     if (!data) {
       data = {
         projectId,
         viewStartMs: now,
         viewTime: 0,
         firstInteractionMs: null,
-        exposures: 1, // First exposure
+        exposures: 1,
         totalInteractions: 0,
         interactionRatePerMinute: 0,
         externalClicks: 0,
@@ -140,10 +136,9 @@ class InteractionTracker {
       data.viewStartMs = now;
       data.isCurrentlyInView = true;
       data.lastSeenMs = now;
-      data.exposures++; // Increment exposures on each new view
+      data.exposures++;
     }
 
-    console.log(`👁️ View started for project: ${projectId} (exposure #${data.exposures})`);
   }
 
   // Record when a project goes out of view
@@ -164,7 +159,6 @@ class InteractionTracker {
       data.interactionRatePerMinute = data.totalInteractions / timeInMinutes;
     }
 
-    console.log(`👁️ View ended for project: ${projectId}, session duration: ${sessionDuration}ms`);
   }
 
   // Record a button click interaction
@@ -187,9 +181,11 @@ class InteractionTracker {
   }
 
   // Record any interaction
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   private recordInteraction(projectId: string, type: InteractionEvent['type']) {
     const now = Date.now();
     let data = this.projectData.get(projectId);
+
 
     // Ensure project data exists
     if (!data) {
@@ -198,7 +194,7 @@ class InteractionTracker {
         viewStartMs: null,
         viewTime: 0,
         firstInteractionMs: null,
-        exposures: 0, // No exposures yet if interacting without view
+        exposures: 0,
         totalInteractions: 0,
         interactionRatePerMinute: 0,
         externalClicks: 0,
@@ -211,13 +207,11 @@ class InteractionTracker {
     // Record GLOBAL first interaction timing using activeTime (only once per session)
     if (this.firstInteractionActiveTimeMs === null && this.activeTimeProvider) {
       this.firstInteractionActiveTimeMs = this.activeTimeProvider();
-      console.log(`🎯 FIRST INTERACTION recorded at ${this.firstInteractionActiveTimeMs}ms active time`);
     }
 
     // Record first interaction for this specific project (only once per project)
     if (!data.firstInteractionMs) {
       data.firstInteractionMs = now;
-      console.log(`🎯 First interaction for project ${projectId}`);
     }
 
     // Update counters
@@ -229,8 +223,6 @@ class InteractionTracker {
       const timeInMinutes = data.viewTime / 60000;
       data.interactionRatePerMinute = data.totalInteractions / timeInMinutes;
     }
-
-    console.log(`🔄 ${type} recorded for project: ${projectId} (total interactions: ${data.totalInteractions})`);
   }
 
   // Check if a link is external

@@ -40,6 +40,7 @@ export default function PublicPortfolio() {
       idleMs: 2000,
       drawIntervalMs: 100,
     },
+    isContentReady: !loadingState.isLoading && portfolio !== null,
   });
 
   useEffect(() => {

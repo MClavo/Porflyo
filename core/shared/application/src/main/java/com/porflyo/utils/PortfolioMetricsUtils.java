@@ -14,26 +14,6 @@ public final class PortfolioMetricsUtils {
 
     private static Integer safeInt(Integer v) { return v == null ? 0 : v; }
 
-    /**
-     * Apply exponential moving average between a previous aggregated value and a new sample.
-     * <ul>
-     * <li> If both are < 1 returns previous.
-     * <li> If previous is < 1 returns sample (initialization).
-     * <li> If sample is < 1 returns previous (no update).
-     * </ul>
-     * The result is rounded to the nearest integer for storage.
-     */
-    public static Integer applyEma(Integer previous, Integer sample, double alpha) {
-        if (sample < 1) return previous;
-        if (previous < 1) return sample;
-
-        double prev = previous.doubleValue();
-        double samp = sample.doubleValue();
-        double updated = prev + alpha * (samp - prev);
-
-        return Integer.valueOf((int) Math.round(updated));
-    }
-
     public static PortfolioMetrics updatePortfolioMetrics(
             PortfolioMetrics previous,
             Engagement incomingEngagement,

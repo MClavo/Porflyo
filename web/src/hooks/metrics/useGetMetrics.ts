@@ -17,14 +17,16 @@ type UseMetricsOptions = {
     idleMs?: number;
     drawIntervalMs?: number;
   };
+  isContentReady?: boolean;
 };
 
 export function useMetrics(
   containerRef: React.RefObject<HTMLElement | null>, 
   options?: UseMetricsOptions
 ) {
-  const { trackClicks = true, trackLinks = true, enableHeatmap = false, heatmapOptions } = options ?? {};
+  const { trackClicks = true, trackLinks = true, enableHeatmap = false, heatmapOptions, isContentReady = true } = options ?? {};
   const isAttached = useRef(false);
+  const hasInitializedProjects = useRef(false);
 
   // Disable heatmap on mobile devices for better performance
   const shouldEnableHeatmap = enableHeatmap && !isMobile;
@@ -48,10 +50,14 @@ export function useMetrics(
 
   // Separate effect for scroll element configuration
   useEffect(() => {
+    if (!isContentReady) {
+      return;
+    }
+
     const setupScrollElement = () => {
       if (containerRef.current) {
-        console.log('🎯 Setting scroll element:', containerRef.current);
         metricsCollector.setScrollElement(containerRef.current);
+        
         return true;
       }
       return false;
@@ -61,26 +67,25 @@ export function useMetrics(
     if (!setupScrollElement()) {
       // If not available, try again after a short delay
       const retryTimeout = setTimeout(() => {
-        if (!setupScrollElement()) {
-          console.warn('⚠️ Scroll element still not available after retry');
-        }
-      }, 100);
+        setupScrollElement();
+      }, 200);
 
       return () => clearTimeout(retryTimeout);
     }
-  }, [containerRef]);
+  }, [containerRef, isContentReady]);
 
   useEffect(() => {
-    // Start session when component mounts
+    if (!isContentReady) {
+      return;
+    }
+
     metricsCollector.startSession();
 
     // Handle page visibility for accurate active time tracking
     const handleVisibilityChange = () => {
       if (document.visibilityState === 'visible') {
         metricsCollector.startSession();
-        // Ensure scroll tracking is properly restarted when page becomes visible
         if (containerRef.current) {
-          console.log('👁️ Page visible - ensuring scroll tracking is active');
           metricsCollector.setScrollElement(containerRef.current);
         }
       } else {
@@ -93,32 +98,43 @@ export function useMetrics(
       const target = e.target as HTMLElement | null;
       if (!target) return;
 
+      // Check for email link clicks (just track the metric)
+      const emailLink = target.closest('.about-contact-link') as HTMLAnchorElement | null;
+      if (emailLink) {
+        metricsCollector.recordEmailCopied();
+        return;
+      }
+
+      // Check for social media link clicks
+      const socialLink = target.closest('.about-social-link') as HTMLAnchorElement | null;
+      if (socialLink && trackLinks) {
+        const classList = Array.from(socialLink.classList);
+        const platform = classList.find(c => c !== 'about-social-link') || 'unknown';
+        console.log('Social link click detected:', { platform, href: socialLink.href });
+        metricsCollector.recordSocialClick(platform);
+        return;
+      }
+
       // Find the nearest project context
-      const projectCard = target.closest('[data-project-id]') as HTMLElement | null;
-      const projectId = projectCard?.dataset.projectId || 'unknown-project';
+      const projectCard = target.closest('[project-id]') as HTMLElement | null;
+      const projectId = projectCard?.getAttribute('project-id') || 'unknown-project';
+  
+
+      // Check for button or link clicks
+      const button = target.closest('button');
+      const link = target.closest('a');
+      const clickedElement = button || link;
       
-      // Debug: Log project detection for troubleshooting
-      if (projectCard?.dataset.projectId) {
-        console.log('🎯 Click detected in project:', projectCard.dataset.projectId);
-      } else {
-        console.log('⚠️ Click outside project context, using unknown-project');
-      }
+      if (clickedElement) {
+        const classList = clickedElement.classList;
+        const isLiveButton = classList.contains('live');
+        const isCodeButton = classList.contains('code');
 
-      // Track button clicks
-      if (trackClicks) {
-        const button = target.closest('button');
-        if (button) {
-          const id = button.id || undefined;
-          const label = button.textContent?.trim() || undefined;
-          metricsCollector.recordProjectButtonClick(projectId, { id, label });
-        }
-      }
-
-      // Track link clicks
-      if (trackLinks) {
-        const link = target.closest('a');
-        if (link && link.href) {
-          metricsCollector.recordProjectLinkClick(projectId, link.href);
+        if (isLiveButton && trackLinks) {
+          metricsCollector.recordProjectLinkClick(projectId, (link as HTMLAnchorElement)?.href || 'live');
+        } else if (isCodeButton && trackClicks) {
+          const label = clickedElement.textContent?.trim() || undefined;
+          metricsCollector.recordProjectButtonClick(projectId, { label });
         }
       }
     };
@@ -130,6 +146,29 @@ export function useMetrics(
     if (container && !isAttached.current) {
       container.addEventListener('click', handleClick);
       isAttached.current = true;
+      
+      // Wait for DOM to be fully ready before initializing project observers
+      if (!hasInitializedProjects.current) {
+        const initializeProjects = () => {
+          const projectElements = container.querySelectorAll('[project-id]');
+          
+          if (projectElements.length > 0) {
+            hasInitializedProjects.current = true;
+          }
+        };
+
+        // Try immediately
+        initializeProjects();
+        
+        // If no projects found, try again after a short delay
+        if (!hasInitializedProjects.current) {
+          const retryTimeout = setTimeout(() => {
+            initializeProjects();
+          }, 500);
+          
+          return () => clearTimeout(retryTimeout);
+        }
+      }
     }
 
     return () => {
@@ -141,7 +180,7 @@ export function useMetrics(
       }
       metricsCollector.stopSession();
     };
-  }, [containerRef, trackClicks, trackLinks]);
+  }, [containerRef, trackClicks, trackLinks, isContentReady]);
 
   // Memoize getBackendMetrics to avoid creating new function references on every render
   const getBackendMetrics = useCallback(() => {

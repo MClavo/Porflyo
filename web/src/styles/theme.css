@@ -3,6 +3,8 @@ body {
   background-color: var(--dashboard-bg);
   color: var(--text-primary);
   transition: background-color 0.3s ease, color 0.3s ease;
+  margin: 0;
+  padding: 0;
 }
 
 /* Ensure all components inherit theme transitions */

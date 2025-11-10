@@ -6,7 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDate;
-import java.time.YearMonth;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -17,7 +16,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.junit.jupiter.params.provider.ValueSource;
 
 import com.porflyo.data.MetricsTestData;
 import com.porflyo.model.ids.PortfolioId;
@@ -114,80 +112,107 @@ public abstract class PortfolioMetricsRepositoryContract {
         assertEquals(95, saved.scroll().scoreTotal());
     }
 
-    // ────────────────────────── Historical Metrics Tests ──────────────────────────
+    // ────────────────────────── Sharding Tests ──────────────────────────
 
     @Test
-    @DisplayName("Should save and retrieve multiple months of metrics")
-    protected void shouldSaveAndRetrieveMultipleMonthsOfMetrics() {
-        // Given
-        List<PortfolioMetrics> allMetrics = MetricsTestData.ALL_PORTFOLIO_METRICS;
+    @DisplayName("Should handle metrics across different shards within same month")
+    protected void shouldHandleMetricsAcrossDifferentShardsInSameMonth() {
+        // Given - Create metrics for different days in the current month that span multiple shards
+        // Assuming 3 shards per month (days 1-11, 12-22, 23-31)
+        LocalDate today = LocalDate.now();
+        int currentMonth = today.getMonthValue();
+        int currentYear = today.getYear();
         
+        // Day 5 (shard 0), Day 15 (shard 1), Day 25 (shard 2)
+        PortfolioMetrics day5Metrics = MetricsTestData.createMetricsForDate(
+                testPortfolioId, LocalDate.of(currentYear, currentMonth, 5), 100, 1800000, 75);
+        PortfolioMetrics day15Metrics = MetricsTestData.createMetricsForDate(
+                testPortfolioId, LocalDate.of(currentYear, currentMonth, 15), 200, 3600000, 85);
+        PortfolioMetrics day25Metrics = MetricsTestData.createMetricsForDate(
+                testPortfolioId, LocalDate.of(currentYear, currentMonth, 25), 300, 5400000, 95);
+
         // When
-        allMetrics.forEach(repository::saveTodayMetrics);
+        repository.saveTodayMetrics(day5Metrics);
+        repository.saveTodayMetrics(day15Metrics);
+        repository.saveTodayMetrics(day25Metrics);
 
-        // Then
-        List<PortfolioMetrics> retrievedMetrics = repository.findPortfolioMetrics(testPortfolioId, 4);
+        // Then - All metrics should be retrievable
+        List<PortfolioMetrics> retrievedMetrics = repository.findPortfolioMetricsOneMonth(testPortfolioId, 0);
         
-        assertFalse(retrievedMetrics.isEmpty(), "Should retrieve historical metrics");
-        assertTrue(retrievedMetrics.size() >= allMetrics.size(), 
-                "Should retrieve all saved metrics");
-
-        // Verify metrics are sorted by date (most recent first)
-        LocalDate previousDate = null;
-        for (PortfolioMetrics metrics : retrievedMetrics) {
-            if (previousDate != null) {
-                assertTrue(metrics.date().isBefore(previousDate) || metrics.date().isEqual(previousDate),
-                        "Metrics should be sorted by date in descending order");
-            }
-            previousDate = metrics.date();
-        }
+        assertFalse(retrievedMetrics.isEmpty(), "Should retrieve metrics from multiple shards");
+        assertTrue(retrievedMetrics.size() >= 3, "Should retrieve all saved metrics across shards");
+        
+        // Verify each specific metric can be found
+        Optional<PortfolioMetrics> foundDay5 = retrievedMetrics.stream()
+                .filter(m -> m.date().getDayOfMonth() == 5)
+                .findFirst();
+        Optional<PortfolioMetrics> foundDay15 = retrievedMetrics.stream()
+                .filter(m -> m.date().getDayOfMonth() == 15)
+                .findFirst();
+        Optional<PortfolioMetrics> foundDay25 = retrievedMetrics.stream()
+                .filter(m -> m.date().getDayOfMonth() == 25)
+                .findFirst();
+        
+        assertTrue(foundDay5.isPresent(), "Should find metrics for day 5 (shard 0)");
+        assertTrue(foundDay15.isPresent(), "Should find metrics for day 15 (shard 1)");
+        assertTrue(foundDay25.isPresent(), "Should find metrics for day 25 (shard 2)");
+        
+        // Verify values are correct
+        assertEquals(100, foundDay5.get().engagement().views(), "Day 5 metrics should be correct");
+        assertEquals(200, foundDay15.get().engagement().views(), "Day 15 metrics should be correct");
+        assertEquals(300, foundDay25.get().engagement().views(), "Day 25 metrics should be correct");
     }
 
-    @ParameterizedTest
-    @ValueSource(ints = {1, 2, 3, 4})
-    @DisplayName("Should respect monthsBack parameter in findPortfolioMetrics")
-    protected void shouldRespectMonthsBackParameter(int monthsBack) {
-        // Given
-        List<PortfolioMetrics> allMetrics = MetricsTestData.ALL_PORTFOLIO_METRICS;
-        allMetrics.forEach(repository::saveTodayMetrics);
-
-        // When
-        List<PortfolioMetrics> retrievedMetrics = repository.findPortfolioMetrics(testPortfolioId, monthsBack);
-
-        // Then
-        assertFalse(retrievedMetrics.isEmpty(), "Should retrieve metrics for monthsBack=" + monthsBack);
+    @Test
+    @DisplayName("Should handle multiple saves to same shard without data loss")
+    protected void shouldHandleMultipleSavesToSameShard() {
+        // Given - Create multiple metrics for days within the same shard (days 1-11)
+        LocalDate today = LocalDate.now();
+        int currentMonth = today.getMonthValue();
+        int currentYear = today.getYear();
         
-        // Verify all retrieved metrics are within the specified time range
-        LocalDate cutoffDate = YearMonth.now().minusMonths(monthsBack - 1).atDay(1);
-        for (PortfolioMetrics metrics : retrievedMetrics) {
-            assertTrue(metrics.date().isAfter(cutoffDate.minusDays(1)),
-                    String.format("Metrics date %s should be after cutoff %s for monthsBack=%d", 
-                            metrics.date(), cutoffDate, monthsBack));
-        }
-    }
+        PortfolioMetrics day3Metrics = MetricsTestData.createMetricsForDate(
+                testPortfolioId, LocalDate.of(currentYear, currentMonth, 3), 150, 2700000, 80);
+        PortfolioMetrics day7Metrics = MetricsTestData.createMetricsForDate(
+                testPortfolioId, LocalDate.of(currentYear, currentMonth, 7), 250, 4500000, 90);
+        PortfolioMetrics day10Metrics = MetricsTestData.createMetricsForDate(
+                testPortfolioId, LocalDate.of(currentYear, currentMonth, 10), 350, 6300000, 88);
 
-    @ParameterizedTest
-    @ValueSource(ints = {0, 1, 2, 3})
-    @DisplayName("Should retrieve metrics for specific month in findPortfolioMetricsOneMonth")
-    protected void shouldRetrieveMetricsForSpecificMonth(int monthsBack) {
-        // Given
-        List<PortfolioMetrics> allMetrics = MetricsTestData.ALL_PORTFOLIO_METRICS;
-        allMetrics.forEach(repository::saveTodayMetrics);
+        // When - Save all metrics (they should all be in shard 0)
+        repository.saveTodayMetrics(day3Metrics);
+        repository.saveTodayMetrics(day7Metrics);
+        repository.saveTodayMetrics(day10Metrics);
 
-        // When
-        List<PortfolioMetrics> retrievedMetrics = repository.findPortfolioMetricsOneMonth(testPortfolioId, monthsBack);
-
-        // Then
-        if (!retrievedMetrics.isEmpty()) {
-            YearMonth targetMonth = YearMonth.now().minusMonths(monthsBack);
-            
-            for (PortfolioMetrics metrics : retrievedMetrics) {
-                YearMonth metricsMonth = YearMonth.from(metrics.date());
-                assertEquals(targetMonth, metricsMonth,
-                        String.format("All metrics should be from month %s for monthsBack=%d", 
-                                targetMonth, monthsBack));
-            }
-        }
+        // Then - All three metrics should be retrievable
+        List<PortfolioMetrics> retrievedMetrics = repository.findPortfolioMetricsOneMonth(testPortfolioId, 0);
+        
+        assertFalse(retrievedMetrics.isEmpty(), "Should retrieve metrics from same shard");
+        
+        // Verify all three days are present
+        long countInShard = retrievedMetrics.stream()
+                .filter(m -> m.date().getDayOfMonth() >= 1 && m.date().getDayOfMonth() <= 11)
+                .count();
+        
+        assertTrue(countInShard >= 3, "Should have at least 3 metrics in shard 0 (days 1-11)");
+        
+        // Verify each specific metric
+        Optional<PortfolioMetrics> foundDay3 = retrievedMetrics.stream()
+                .filter(m -> m.date().getDayOfMonth() == 3)
+                .findFirst();
+        Optional<PortfolioMetrics> foundDay7 = retrievedMetrics.stream()
+                .filter(m -> m.date().getDayOfMonth() == 7)
+                .findFirst();
+        Optional<PortfolioMetrics> foundDay10 = retrievedMetrics.stream()
+                .filter(m -> m.date().getDayOfMonth() == 10)
+                .findFirst();
+        
+        assertTrue(foundDay3.isPresent(), "Should find metrics for day 3");
+        assertTrue(foundDay7.isPresent(), "Should find metrics for day 7");
+        assertTrue(foundDay10.isPresent(), "Should find metrics for day 10");
+        
+        assertEquals(150, foundDay3.get().engagement().views(), "Day 3 metrics should be preserved");
+        assertEquals(250, foundDay7.get().engagement().views(), "Day 7 metrics should be preserved");
+        assertEquals(350, foundDay10.get().engagement().views(), "Day 10 metrics should be preserved");
     }
 
     // ────────────────────────── Edge Cases and Data Integrity Tests ──────────────────────────

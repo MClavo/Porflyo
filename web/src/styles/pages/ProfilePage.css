@@ -5,6 +5,8 @@
   min-height: 100vh;
   color: var(--text-primary);
   font-family: var(--font-sans);
+  /* Add padding-top to account for fixed navbar */
+  padding-top: var(--navbar-height);
 }
 
 .profile-content {
