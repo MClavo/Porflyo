@@ -33,7 +33,7 @@ interface ProjectMetrics {
 
 function ModernProjectsContent() {
   const [isReady, setIsReady] = useState(false);
-  const { timeRange } = useDashboard();
+  const { timeRange, getProjectName } = useDashboard();
   const days = getTimeRangeDays(timeRange);
   const { slotByDate, slotIndex, dailyByDate, isLoading } = useMetricsStore();
 
@@ -260,7 +260,7 @@ function ModernProjectsContent() {
         
         <KpiCard
           title="Most Consistent"
-          value={`Project ${aggregateKpis.mostConsistentProjectId}`}
+          value={getProjectName(aggregateKpis.mostConsistentProjectId)}
           subtitle={`${(aggregateKpis.mostConsistentScore * 100).toFixed(0)}% consistency`}
           icon={<FiAward />}
           color="green"
@@ -281,7 +281,10 @@ function ModernProjectsContent() {
       <div className="modern-projects-main-section">
         <div className="modern-projects-stacked-container">
           <ProjectStackedChart 
-            data={projectMetrics.slice(0, 8)}
+            data={projectMetrics.slice(0, 8).map(p => ({
+              ...p,
+              projectName: getProjectName(p.projectId)
+            }))}
             title="Code vs Live View Distribution"
             subtitle="Breakdown of interaction types by project"
           />
@@ -289,7 +292,10 @@ function ModernProjectsContent() {
         
         <div className="modern-projects-donut-container">
           <ProjectDonutChart 
-            data={projectMetrics.slice(0, 8)} // Top 8 projects
+            data={projectMetrics.slice(0, 8).map(p => ({
+              ...p,
+              projectName: getProjectName(p.projectId)
+            }))}
             title="Project Distribution"
             subtitle="Total interactions by project"
             totalInteractions={aggregateKpis.totalProjectInteractions}
@@ -305,7 +311,7 @@ function ModernProjectsContent() {
             x: p.avgSocialPlusEmailPerDay, // X-axis: social + email engagement
             y: p.avgEngagementOnActiveDays, // Y-axis: engagement quality
             size: p.avgActiveTimePerDay, // Size: time spent (indicates real interest)
-            label: `Project ${p.projectId}`,
+            label: getProjectName(p.projectId),
             // Additional data for tooltip
             projectId: p.projectId,
             totalCodeViews: p.totalCodeViews,
@@ -326,6 +332,7 @@ function ModernProjectsContent() {
         <ProjectRankingCard 
           data={projectMetrics.slice(0, 5).map(p => ({
             projectId: p.projectId,
+            projectName: getProjectName(p.projectId),
             totalInteractions: p.totalInteractions,
             totalCodeViews: p.totalCodeViews,
             totalLiveViews: p.totalLiveViews,
@@ -336,32 +343,6 @@ function ModernProjectsContent() {
           subtitle="Ranked by total interactions"
         />
       </div>
-
-      {/* Debug info - only in development */}
-      {import.meta.env.DEV && (
-        <div style={{
-          marginTop: "var(--space-6)",
-          padding: "var(--space-3)",
-          background: "rgba(0,0,0,0.1)",
-          borderRadius: "var(--radius-md)",
-          fontSize: "var(--font-xs)",
-          color: "var(--text-secondary)",
-        }}>
-          <strong>Debug Info:</strong>
-          <br />
-          Projects Found: {projectMetrics.length}
-          <br />
-          Time Range: {days} days
-          <br />
-          Total Interactions: {aggregateKpis.totalProjectInteractions}
-          <br />
-          Avg Social-Driven Rate: {(aggregateKpis.avgSocialDrivenRate * 100).toFixed(1)}%
-          <br />
-          Avg Consistency: {(aggregateKpis.avgConsistencyScore * 100).toFixed(1)}%
-          <br />
-          Slots Available: {slotIndex.length}
-        </div>
-      )}
     </div>
   );
 }

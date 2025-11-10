@@ -9,6 +9,7 @@ import './modern-charts.css';
 interface ProjectStackedChartProps {
   data: Array<{
     projectId: number;
+    projectName?: string;
     totalCodeViews: number;
     totalLiveViews: number;
     totalInteractions: number;
@@ -47,7 +48,8 @@ export const ProjectStackedChart: React.FC<ProjectStackedChartProps> = ({
   // Transform and sort data by total interactions (descending)
   const chartData = data
     .map((project, index) => ({
-      name: `P${project.projectId}`,
+      name: project.projectName || `Project ${project.projectId}`,
+      shortName: `P${project.projectId}`,
       projectId: project.projectId,
       originalIndex: index, // Keep track of original order for color consistency
       codeViews: project.totalCodeViews,
@@ -59,13 +61,14 @@ export const ProjectStackedChart: React.FC<ProjectStackedChartProps> = ({
   // Custom tick component for colored project names
   const CustomTick = (props: { x: number; y: number; payload: { value: string } }) => {
     const { x, y, payload } = props;
-    const projectIdMatch = payload.value.match(/P(\d+)/);
-    const projectId = projectIdMatch ? parseInt(projectIdMatch[1]) : 0;
     
-    // Find the project data to get the original index for color consistency
-    const projectData = chartData.find(d => d.projectId === projectId);
+    // Find the project data by name
+    const projectData = chartData.find(d => d.name === payload.value);
     const colorIndex = projectData?.originalIndex ?? 0;
     const color = getProjectColor(colorIndex);
+    
+    // Truncate long names for display
+    const displayName = payload.value.length > 15 ? payload.value.substring(0, 12) + '...' : payload.value;
     
     return (
       <g transform={`translate(${x},${y})`}>
@@ -79,7 +82,7 @@ export const ProjectStackedChart: React.FC<ProjectStackedChartProps> = ({
           fontWeight="600"
           transform="rotate(-45)"
         >
-          {payload.value}
+          {displayName}
         </text>
       </g>
     );
@@ -92,17 +95,15 @@ export const ProjectStackedChart: React.FC<ProjectStackedChartProps> = ({
       const liveEntry = payload.find((p) => p.name === 'Live Views');
       const codeEntry = payload.find((p) => p.name === 'Code Views');
 
-      // Extract project ID and find original index for color consistency
-      const projectIdMatch = label?.match(/P(\d+)/);
-      const projectId = projectIdMatch ? parseInt(projectIdMatch[1]) : 0;
-      const projectData = chartData.find(d => d.projectId === projectId);
+      // Find project data by name
+      const projectData = chartData.find(d => d.name === label);
       const colorIndex = projectData?.originalIndex ?? 0;
       const projectColor = getProjectColor(colorIndex);
 
       return (
         <div className="project-stacked-tooltip">
           <div className="modern-tooltip__header" style={{ color: projectColor, fontWeight: '600' }}>
-            Project {label?.replace('P', '')}
+            {label}
           </div>
           <div className="modern-tooltip__separator"></div>
           <div className="modern-tooltip__content">

@@ -7,7 +7,8 @@ import { PortfolioViewer } from "../components/portfolio";
 import { MetricsProvider } from "../contexts/MetricsProvider";
 import { useMetricsStore } from "../state/metrics.store";
 import { useDashboard } from "../hooks/useDashboard";
-import { demoInitialPortfolio } from "../pages/editor/demoData";
+import { usePortfoliosContext } from "../hooks/ui/usePortfoliosContext";
+import { mapPublicPortfolioDtoToPortfolioState } from "../api/mappers/portfolio.mappers";
 import HeatmapCanvas from "../components/heatmap/HeatmapCanvas";
 import HeatmapSkeleton from "../components/ui/HeatmapSkeleton";
 import type { HeatmapMode } from "../components/ui/HeatmapModeToggle";
@@ -27,6 +28,19 @@ interface ModernHeatmapContentProps {
 function ModernHeatmapContent({ selectedSlot, heatmapMode }: ModernHeatmapContentProps) {
   const portfolioRef = useRef<HTMLDivElement>(null);
   const [isHeatmapReady, setIsHeatmapReady] = useState(false);
+
+  // Get portfolioId from dashboard context
+  const { portfolioId } = useDashboard();
+
+  // Get portfolios from cache
+  const { portfolios } = usePortfoliosContext();
+
+  // Find the specific portfolio from cache
+  const currentPortfolio = useMemo(() => {
+    const portfolioDto = portfolios.find((p) => p.id === portfolioId);
+    if (!portfolioDto) return null;
+    return mapPublicPortfolioDtoToPortfolioState(portfolioDto);
+  }, [portfolios, portfolioId]);
 
   // Obtener datos del backend usando el store como en ModernOverview
   const { slotByDate, slotIndex, isLoading } = useMetricsStore();
@@ -171,41 +185,18 @@ function ModernHeatmapContent({ selectedSlot, heatmapMode }: ModernHeatmapConten
         )}
 
         {/* Portfolio viewer */}
-        <PortfolioViewer
-          portfolio={demoInitialPortfolio}
-          className="heatmap-portfolio"
-        />
+        {currentPortfolio ? (
+          <PortfolioViewer portfolio={currentPortfolio} />
+        ) : (
+          <div style={{ 
+            padding: "var(--space-8)", 
+            textAlign: "center", 
+            color: "var(--text-secondary)" 
+          }}>
+            {portfolios.length === 0 ? "Loading portfolio..." : "Portfolio not found"}
+          </div>
+        )}
       </div>
-
-      {/* Debug info */}
-      {import.meta.env.DEV && (
-        <div
-          style={{
-            marginTop: "var(--space-4)",
-            padding: "var(--space-3)",
-            background: "rgba(0,0,0,0.1)",
-            borderRadius: "var(--radius-md)",
-            fontSize: "var(--font-xs)",
-            color: "var(--text-secondary)",
-          }}
-        >
-          <strong>Debug Info:</strong>
-          <br />
-          Heatmap Ready: {isHeatmapReady ? "✅" : "❌"}
-          <br />
-          Data Source: {slotIndex.length > 0 ? "Backend API" : "No Data"}
-          <br />
-          Selected Slot: {selectedSlot}
-          <br />
-          Heatmap Mode: {heatmapMode}
-          <br />
-          Items Count: {heatmapPayload.items.length}
-          <br />
-          Max Value: {heatmapPayload.max}
-          <br />
-          Loading: {isLoading ? "Yes" : "No"}
-        </div>
-      )}
     </div>
   );
 }

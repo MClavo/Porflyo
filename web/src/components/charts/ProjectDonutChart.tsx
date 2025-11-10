@@ -10,6 +10,7 @@ import './modern-charts.css';
 interface ProjectDonutChartProps {
   data: Array<{
     projectId: number;
+    projectName?: string;
     totalInteractions: number;
     totalCodeViews: number;
     totalLiveViews: number;
@@ -45,7 +46,7 @@ export const ProjectDonutChart: React.FC<ProjectDonutChartProps> = ({
   const chartData = useMemo(() => {
     const palette = PALETTE;
     return data.map((project, index) => ({
-      name: `Project ${project.projectId}`,
+      name: project.projectName || `Project ${project.projectId}`,
       value: project.totalInteractions,
       projectId: project.projectId,
       codeViews: project.totalCodeViews,

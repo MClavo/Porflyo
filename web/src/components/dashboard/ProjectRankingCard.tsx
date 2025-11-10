@@ -7,6 +7,7 @@ import { FiTrendingUp, FiCode, FiExternalLink } from 'react-icons/fi';
 interface ProjectRankingCardProps {
   data: Array<{
     projectId: number;
+    projectName?: string;
     totalInteractions: number;
     totalCodeViews: number;
     totalLiveViews: number;
@@ -103,7 +104,7 @@ export const ProjectRankingCard: React.FC<ProjectRankingCardProps> = ({
                   fontWeight: 600,
                   fontSize: 'var(--font-sm)'
                 }}>
-                  Project {project.projectId}
+                  {project.projectName || `Project ${project.projectId}`}
                 </span>
                 <FiTrendingUp size={14} color="var(--accent-green)" />
               </div>
