@@ -4,7 +4,6 @@
 
 import { useEffect, useState, useMemo } from "react";
 import { FiEye, FiActivity, FiClock, FiShare2, FiCode, FiAward } from "react-icons/fi";
-import { MetricsProvider } from "../contexts/MetricsProvider";
 import { useMetricsStore } from "../state/metrics.store";
 import { useDashboard } from "../hooks/useDashboard";
 import { getTimeRangeDays } from "../lib/timeRange";
@@ -348,13 +347,9 @@ function ModernProjectsContent() {
 }
 
 export default function ModernProjects() {
-  const { portfolioId } = useDashboard();
-  
   return (
     <div className="modern-projects-page">
-      <MetricsProvider portfolioId={portfolioId}>
-        <ModernProjectsContent />
-      </MetricsProvider>
+      <ModernProjectsContent />
     </div>
   );
 }

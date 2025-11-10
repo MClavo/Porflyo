@@ -32,14 +32,22 @@ function validateBootstrapResponse(data: unknown): asserts data is BootstrapResp
     throw new Error('Invalid response: meta.units.timeBase must be "ds" or "ms"');
   }
 
-  // Validate dailyAgg array
-  if (!Array.isArray(response.dailyAgg)) {
+  // Validate dailyAgg array (can be empty)
+  if (response.dailyAgg !== undefined && !Array.isArray(response.dailyAgg)) {
     throw new Error('Invalid response: dailyAgg must be an array');
   }
 
-  // Validate slots array
-  if (!Array.isArray(response.slots)) {
+  // Validate slots array (can be empty)
+  if (response.slots !== undefined && !Array.isArray(response.slots)) {
     throw new Error('Invalid response: slots must be an array');
+  }
+  
+  // Set empty arrays if missing
+  if (!response.dailyAgg) {
+    (response as Record<string, unknown>).dailyAgg = [];
+  }
+  if (!response.slots) {
+    (response as Record<string, unknown>).slots = [];
   }
 }
 

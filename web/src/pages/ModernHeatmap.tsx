@@ -4,7 +4,6 @@
 
 import { useRef, useEffect, useState, useMemo } from "react";
 import { PortfolioViewer } from "../components/portfolio";
-import { MetricsProvider } from "../contexts/MetricsProvider";
 import { useMetricsStore } from "../state/metrics.store";
 import { useDashboard } from "../hooks/useDashboard";
 import { usePortfoliosContext } from "../hooks/ui/usePortfoliosContext";
@@ -202,13 +201,9 @@ function ModernHeatmapContent({ selectedSlot, heatmapMode }: ModernHeatmapConten
 }
 
 export default function ModernHeatmap({ selectedSlot = 'all', heatmapMode = 'raw' }: ModernHeatmapProps) {
-  const { portfolioId } = useDashboard();
-  
   return (
     <div className="modern-heatmap-page">
-      <MetricsProvider portfolioId={portfolioId}>
-        <ModernHeatmapContent selectedSlot={selectedSlot} heatmapMode={heatmapMode} />
-      </MetricsProvider>
+      <ModernHeatmapContent selectedSlot={selectedSlot} heatmapMode={heatmapMode} />
     </div>
   );
 }

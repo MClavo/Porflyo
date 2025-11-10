@@ -6,7 +6,6 @@
 import { FiTrendingUp, FiClock, FiActivity, FiMonitor } from "react-icons/fi";
 
 import { useDashboard } from "../hooks/useDashboard";
-import { MetricsProvider } from "../contexts/MetricsProvider";
 import { useOverviewData, useTrends } from "../hooks/metrics";
 import { formatMs } from "../lib/format";  
 import { useMetricsStore } from "../state/metrics.store";
@@ -204,11 +203,5 @@ function ModernOverviewContent() {
 }
 
 export default function ModernOverview() {
-  const { portfolioId } = useDashboard();
-  
-  return (
-    <MetricsProvider portfolioId={portfolioId}>
-      <ModernOverviewContent />
-    </MetricsProvider>
-  );
+  return <ModernOverviewContent />;
 }

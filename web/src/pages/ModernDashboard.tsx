@@ -4,6 +4,7 @@
 
 import { useParams } from 'react-router-dom';
 import { DashboardProvider } from '../contexts/DashboardContext';
+import { MetricsProvider } from '../contexts/MetricsProvider';
 import { useDashboard } from '../hooks/useDashboard';
 import { useHeatmapSlots } from '../hooks/useHeatmapSlots';
 import ModernDashboardLayout from '../components/layout/ModernDashboardLayout';
@@ -53,7 +54,9 @@ export default function ModernDashboard() {
 
   return (
     <DashboardProvider portfolioId={portfolioId}>
-      <DashboardRouter />
+      <MetricsProvider portfolioId={portfolioId}>
+        <DashboardRouter />
+      </MetricsProvider>
     </DashboardProvider>
   );
 }

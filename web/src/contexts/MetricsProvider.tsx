@@ -132,7 +132,7 @@ function MetricsSkeletonLoader() {
  * Loads bootstrap data once on mount and shows skeleton while loading
  */
 export function MetricsProvider({ children, portfolioId }: MetricsProviderProps) {
-  const { loadBootstrap, isLoading, error } = useMetricsStore();
+  const { loadBootstrap, isLoading, error, dailyIndex, slotIndex } = useMetricsStore();
   const [hasInitialized, setHasInitialized] = useState(false);
   
   useEffect(() => {
@@ -192,6 +192,41 @@ export function MetricsProvider({ children, portfolioId }: MetricsProviderProps)
             fontSize: 'var(--font-sm)'
           }}>
             {error}
+          </div>
+        </div>
+      </div>
+    );
+  }
+  
+  // Check if data is empty (no dailyAgg or slots)
+  const hasNoData = dailyIndex.length === 0 && slotIndex.length === 0;
+  if (hasNoData) {
+    return (
+      <div style={{
+        maxWidth: '1400px',
+        margin: '0 auto',
+        padding: '2rem',
+        background: 'var(--dashboard-bg)',
+        minHeight: '100vh'
+      }}>
+        <div style={{
+          textAlign: 'center',
+          padding: '2.5rem 0',
+          color: 'var(--text-primary)'
+        }}>
+          <div style={{
+            color: 'var(--text-secondary)',
+            fontSize: '2rem',
+            marginBottom: '1rem',
+            fontWeight: '600'
+          }}>
+            No project data available
+          </div>
+          <div style={{
+            color: 'var(--text-tertiary)',
+            fontSize: '1.125rem'
+          }}>
+            There is not enough data to display metrics yet. Please check back later.
           </div>
         </div>
       </div>
