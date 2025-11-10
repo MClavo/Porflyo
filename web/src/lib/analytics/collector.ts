@@ -34,6 +34,7 @@ export type ProjectMetrics = {
 // Optimized metrics for backend submission
 export type BackendMetrics = {
   activeTimeMs: number;
+  tffiMs: number;
   isMobile: boolean;
   emailCopied: boolean;
   socialClicks: number;
@@ -72,6 +73,7 @@ class MetricsCollector {
   private scrollElement: HTMLElement | null = null;
   private emailCopied: boolean = false; // Track if email was copied to clipboard
   private socialClicks: number = 0; // Track social media clicks
+  private firstInteractionActiveTime: number | null = null; // Active time when first interaction occurred
 
   // Method to set the element to track for scroll
   setScrollElement(element: HTMLElement | null) {
@@ -126,6 +128,14 @@ class MetricsCollector {
     return activeTime;
   }
 
+  // Record first interaction time (TFFI - Time to First Interaction)
+  private recordFirstInteraction() {
+    if (this.firstInteractionActiveTime === null) {
+      // Capture the current active time when first interaction occurs
+      this.firstInteractionActiveTime = this.getCurrentActiveTime();
+    }
+  }
+
   // Pause active time tracking
   pauseSession() {
     if (this.sessionStart) {
@@ -153,6 +163,9 @@ class MetricsCollector {
       return;
     }
 
+    // Record first interaction
+    this.recordFirstInteraction();
+
     this.projectInteractions = produce(this.projectInteractions, draft => {
       if (!draft[projectId]) {
         draft[projectId] = { buttonClicks: 0, linkClicks: 0 };
@@ -174,6 +187,9 @@ class MetricsCollector {
 
   // Record a link click for a specific project  
   recordProjectLinkClick(projectId: string, href: string) {
+    // Record first interaction
+    this.recordFirstInteraction();
+
     this.projectInteractions = produce(this.projectInteractions, draft => {
       if (!draft[projectId]) {
         draft[projectId] = { buttonClicks: 0, linkClicks: 0 };
@@ -194,6 +210,9 @@ class MetricsCollector {
 
   // Record when email is copied to clipboard
   recordEmailCopied() {
+    // Record first interaction
+    this.recordFirstInteraction();
+
     this.emailCopied = true;
     
     // Send to analytics if available
@@ -204,6 +223,9 @@ class MetricsCollector {
 
   // Record social media click
   recordSocialClick(platform: string) {
+    // Record first interaction
+    this.recordFirstInteraction();
+
     this.socialClicks++;
     
     // Send to analytics if available
@@ -332,8 +354,16 @@ class MetricsCollector {
       liveViews: v.liveViews,
     }));
 
+    // Calculate TFFI (Time to First Interaction)
+    // If there was an interaction, return the active time when it occurred
+    // Otherwise return 0
+    const tffiMs = this.firstInteractionActiveTime !== null 
+      ? this.firstInteractionActiveTime 
+      : 0;
+
     return {
       activeTimeMs: rawMetrics.activeTimeMs,
+      tffiMs,
       isMobile: detectIsMobile,
       emailCopied: this.emailCopied,
       socialClicks: this.socialClicks,
@@ -351,6 +381,7 @@ class MetricsCollector {
     this.heatmapDataProvider = null;
     this.emailCopied = false;
     this.socialClicks = 0;
+    this.firstInteractionActiveTime = null;
     // Clear scroll metrics
     scrollTracker.clear();
     // Clear interaction metrics
