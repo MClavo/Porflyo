@@ -1,32 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { 
-  FiLinkedin, 
-  FiGithub, 
-  FiInstagram, 
-  FiFacebook, 
-  FiYoutube, 
-  FiTwitch,
-  FiGlobe,
-  FiEdit,
-  FiChevronDown,
-  FiCheck
-} from 'react-icons/fi';
-import { 
-  SiX, 
-  SiLeetcode, 
-  SiKaggle, 
-  SiTiktok, 
-  SiDiscord, 
-  SiMedium 
-} from 'react-icons/si';
+import { FiGlobe, FiChevronDown, FiCheck } from 'react-icons/fi';
+import { SOCIAL_PLATFORMS } from '../../constants/socialPlatforms';
 import './SocialPlatformSelector.css';
-
-interface SocialPlatform {
-  id: string;
-  name: string;
-  icon: React.ReactNode;
-  color: string;
-}
 
 interface SocialPlatformSelectorProps {
   selectedPlatform?: string;
@@ -34,23 +9,6 @@ interface SocialPlatformSelectorProps {
   excludePlatforms?: string[];
   disabled?: boolean;
 }
-
-const SOCIAL_PLATFORMS: SocialPlatform[] = [
-  { id: 'blog', name: 'Blog', icon: <FiEdit size={16} />, color: '#6366f1' },
-  { id: 'discord', name: 'Discord', icon: <SiDiscord size={16} />, color: '#5865f2' },
-  { id: 'facebook', name: 'Facebook', icon: <FiFacebook size={16} />, color: '#1877f2' },
-  { id: 'github', name: 'GitHub', icon: <FiGithub size={16} />, color: 'var(--text-primary)' },
-  { id: 'instagram', name: 'Instagram', icon: <FiInstagram size={16} />, color: '#e4405f' },
-  { id: 'kaggle', name: 'Kaggle', icon: <SiKaggle size={16} />, color: '#20beff' },
-  { id: 'leetcode', name: 'LeetCode', icon: <SiLeetcode size={16} />, color: '#ffa116' },
-  { id: 'linkedin', name: 'LinkedIn', icon: <FiLinkedin size={16} />, color: '#0077b5' },
-  { id: 'medium', name: 'Medium', icon: <SiMedium size={16} />, color: '#00ab6c' },
-  { id: 'tiktok', name: 'TikTok', icon: <SiTiktok size={16} />, color: 'var(--text-primary)' },
-  { id: 'twitch', name: 'Twitch', icon: <FiTwitch size={16} />, color: '#9146ff' },
-  { id: 'twitter', name: 'X (Twitter)', icon: <SiX size={16} />, color: '#1da1f2' },
-  { id: 'website', name: 'Website', icon: <FiGlobe size={16} />, color: '#10b981' },
-  { id: 'youtube', name: 'YouTube', icon: <FiYoutube size={16} />, color: '#ff0000' },
-].sort((a, b) => a.name.localeCompare(b.name));
 
 export const SocialPlatformSelector: React.FC<SocialPlatformSelectorProps> = ({
   selectedPlatform,
