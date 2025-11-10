@@ -2,10 +2,10 @@
 
 .dashboard-navbar {
   position: fixed;
-  top: 0;
+  top: var(--navbar-height); /* Positioned below main navbar */
   left: 0;
   right: 0;
-  z-index: 1000;
+  z-index: 999; /* Below main navbar (1000) but above content */
   background: var(--card-bg);
   backdrop-filter: blur(16px);
   border-bottom: 1px solid var(--card-border);
@@ -13,113 +13,30 @@
   /* Evitar que el scrollbar afecte al navbar */
   width: 100vw;
   box-sizing: border-box;
+  height: var(--dashboard-navbar-height);
 }
 
 .dashboard-navbar__container {
   max-width: 1400px;
   margin: 0 auto;
-  padding: var(--space-4) var(--space-6);
-  display: grid;
-  grid-template-columns: auto 1fr auto;
+  padding: 0 var(--space-6); /* Remove vertical padding, let flexbox center */
+  display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: var(--space-6);
+  height: 100%;
 }
 
 /* Pages Section */
 .dashboard-navbar__pages {
   display: flex;
   align-items: center;
+  flex-shrink: 0;
 }
 
-.page-selector {
-  display: flex;
-  align-items: center;
-}
-
-.page-selector__options {
-  display: flex;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: var(--radius-lg);
-  padding: var(--space-1);
-  position: relative;
-  overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  height: 44px; /* Altura fija para alineación */
-  align-items: center;
-}
-
-/* Animated slider background for pages */
-.page-selector__slider {
-  position: absolute;
-  top: var(--space-1);
-  bottom: var(--space-1);
-  width: calc(50% - 2px);
-  background: linear-gradient(
-    135deg,
-    var(--accent-purple) 0%,
-    var(--accent-blue) 100%
-  );
-  border-radius: var(--radius-md);
-  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 
-    0 2px 8px rgba(139, 92, 246, 0.3),
-    0 0 0 1px rgba(255, 255, 255, 0.1);
-}
-
-.page-option {
-  background: none;
-  border: none;
-  padding: var(--space-2) var(--space-4);
-  border-radius: var(--radius-md);
-  font-size: var(--font-sm);
-  font-weight: 500;
-  color: var(--text-secondary);
-  cursor: pointer;
-  position: relative;
-  z-index: 2;
-  transition: all var(--transition-fast);
-  min-width: 80px;
-  white-space: nowrap;
-  height: 36px; /* Altura fija */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.page-option:hover {
-  color: var(--text-primary);
-  transform: translateY(-1px);
-}
-
-.page-option--active {
-  color: var(--text-primary);
-  font-weight: 600;
-}
-
-.page-option__text {
-  position: relative;
-  z-index: 3;
-}
-
-/* Brand Section */
+/* Brand Section - Hidden for compact design */
 .dashboard-navbar__brand {
-  text-align: center;
-  min-width: 0;
-}
-
-.dashboard-navbar__title {
-  font-size: var(--font-xl);
-  font-weight: 700;
-  color: var(--text-primary);
-  margin: 0 0 var(--space-1) 0;
-  line-height: 1.2;
-}
-
-.dashboard-navbar__subtitle {
-  font-size: var(--font-sm);
-  color: var(--text-secondary);
-  margin: 0;
-  opacity: 0.8;
+  display: none;
 }
 
 /* Controls Section */
@@ -127,93 +44,13 @@
   display: flex;
   align-items: center;
   gap: var(--space-4);
+  flex-shrink: 0;
 }
 
 .dashboard-navbar__heatmap-controls {
   display: flex;
   align-items: center;
   gap: var(--space-4);
-}
-
-.time-range-selector {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-  align-items: flex-end;
-}
-
-.time-range-selector__label {
-  font-size: var(--font-xs);
-  font-weight: 600;
-  color: var(--text-secondary);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-.time-range-selector__options {
-  display: flex;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: var(--radius-lg);
-  padding: var(--space-1);
-  position: relative;
-  overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  height: 44px; /* Altura fija para alineación */
-  align-items: center;
-}
-
-/* Animated slider background */
-.time-range-selector__slider {
-  position: absolute;
-  top: var(--space-1);
-  bottom: var(--space-1);
-  width: calc(25% - 2px);
-  background: linear-gradient(
-    135deg,
-    var(--accent-blue) 0%,
-    var(--accent-purple) 100%
-  );
-  border-radius: var(--radius-md);
-  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 
-    0 2px 8px rgba(59, 130, 246, 0.3),
-    0 0 0 1px rgba(255, 255, 255, 0.1);
-}
-
-.time-range-option {
-  flex: 1;
-  background: none;
-  border: none;
-  padding: var(--space-2) var(--space-3);
-  border-radius: var(--radius-md);
-  font-size: var(--font-xs);
-  font-weight: 500;
-  color: var(--text-secondary);
-  cursor: pointer;
-  position: relative;
-  z-index: 2;
-  transition: all var(--transition-fast);
-  min-width: 60px;
-  white-space: nowrap;
-  height: 36px; /* Altura fija */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.time-range-option:hover {
-  color: var(--text-primary);
-  transform: translateY(-1px);
-}
-
-.time-range-option--active {
-  color: var(--text-primary);
-  font-weight: 600;
-}
-
-.time-range-option__text {
-  position: relative;
-  z-index: 3;
 }
 
 /* Separator */
@@ -273,109 +110,71 @@
 /* Responsive Design */
 @media (max-width: 768px) {
   .dashboard-navbar__container {
-    padding: var(--space-3) var(--space-4);
-    grid-template-columns: 1fr;
-    grid-template-rows: auto auto auto;
+    padding: 0 var(--space-4);
+    flex-wrap: wrap;
     gap: var(--space-3);
-    text-align: center;
   }
 
   .dashboard-navbar__pages {
-    justify-content: center;
     order: 1;
   }
 
-  .dashboard-navbar__brand {
-    order: 2;
-  }
-
-  .dashboard-navbar__title {
-    font-size: var(--font-lg);
-  }
-
   .dashboard-navbar__controls {
-    order: 3;
-    justify-content: center;
+    order: 2;
+    gap: var(--space-3);
   }
 
-  .time-range-selector {
-    align-items: center;
-  }
-
-  .time-range-selector__options {
-    width: 100%;
-    max-width: 320px;
-  }
-
-  .time-range-option {
-    min-width: 50px;
-    padding: var(--space-2);
+  .dashboard-navbar__heatmap-controls {
+    gap: var(--space-3);
   }
 }
 
 @media (max-width: 480px) {
   .dashboard-navbar__container {
-    padding: var(--space-2) var(--space-3);
+    padding: 0 var(--space-3);
   }
 
-  .dashboard-navbar__title {
-    font-size: var(--font-base);
-  }
-
-  .dashboard-navbar__subtitle {
-    font-size: var(--font-xs);
-  }
-
-  .time-range-selector__options {
-    max-width: 280px;
-  }
-
-  .time-range-option {
-    font-size: var(--font-xs);
-    padding: var(--space-1) var(--space-2);
+  .dashboard-navbar__controls {
+    flex-wrap: wrap;
   }
 }
 
-/* Focus states for accessibility */
-.time-range-option:focus {
-  outline: 2px solid var(--accent-blue);
-  outline-offset: 2px;
+/* ToggleSelector integration styles - Hide all labels for compact design */
+.dashboard-navbar .toggle-selector__label {
+  display: none;
 }
 
-.time-range-option:focus:not(:focus-visible) {
-  outline: none;
+/* Ensure all toggle selectors in navbar have consistent sizing */
+.dashboard-navbar .toggle-selector {
+  height: auto; /* Let container height control */
 }
 
-/* Loading state animation */
-@keyframes navbar-shimmer {
-  0% {
-    background-position: -200% 0;
-  }
-  100% {
-    background-position: 200% 0;
-  }
+.dashboard-navbar .toggle-selector__container {
+  height: 44px; /* Slightly taller for better vertical alignment */
+  min-width: fit-content; /* Allow natural width based on content */
 }
 
-.dashboard-navbar--loading .time-range-selector__slider {
-  background: linear-gradient(
-    90deg,
-    var(--accent-blue) 25%,
-    var(--accent-purple) 50%,
-    var(--accent-blue) 75%
-  );
-  background-size: 200% 100%;
-  animation: navbar-shimmer 2s ease-in-out infinite;
+.dashboard-navbar .toggle-selector__option {
+  min-width: 90px; /* Wider buttons to prevent text overlap */
+  padding: var(--space-2) var(--space-5);
 }
 
-/* ToggleSelector integration styles */
-.navbar-page-selector .toggle-selector__label {
-  display: none; /* Hide label for page selector */
-}
-
-/* Additional navbar integration styles can be added here as needed */
-
-.dashboard-navbar__heatmap-controls {
+/* SlotSelector integration - compact sizing */
+.dashboard-navbar .slot-selector {
+  height: auto;
   display: flex;
   align-items: center;
-  gap: var(--space-4);
+}
+
+.dashboard-navbar .slot-selector__trigger {
+  height: 53px !important; /* Match toggle buttons height - force override */
+  font-size: var(--font-sm);
+  padding: 0 var(--space-4);
+  min-width: 180px; /* Wider for better text display */
+  width: auto; /* Override fixed width */
+  box-sizing: border-box; /* Ensure padding doesn't affect height */
+}
+
+.dashboard-navbar .slot-selector__label {
+  display: none; /* Hide label in navbar */
 }

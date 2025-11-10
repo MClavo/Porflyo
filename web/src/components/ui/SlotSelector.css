@@ -23,7 +23,8 @@
   align-items: center;
   justify-content: space-between;
   width: 180px;
-  padding: var(--space-3) var(--space-4);
+  height: 44px; /* Match toggle selector height in navbar */
+  padding: 0 var(--space-4);
   background: var(--dashboard-bg-secondary);
   border: 1px solid var(--card-border);
   border-radius: var(--radius-lg);
@@ -273,8 +274,9 @@
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .slot-selector__trigger {
-    width: 160px;
-    padding: var(--space-2) var(--space-3);
+    width: 150px;
+    height: 32px; /* Match toggle selector sm size */
+    padding: 0 var(--space-2);
     font-size: var(--font-xs);
   }
   
@@ -293,6 +295,6 @@
 
 @media (max-width: 480px) {
   .slot-selector__trigger {
-    width: 140px;
+    width: 130px;
   }
 }

@@ -5,8 +5,7 @@
   min-height: 100vh;
   /* Permitir scroll pero mantener estabilidad */
   overflow-x: hidden;
-  /* Add padding-top to account for fixed navbar */
-  padding-top: var(--navbar-height);
+  /* No agregar padding-top aquí ya que lo maneja dashboard-content */
 }
 
 .modern-dashboard__content {

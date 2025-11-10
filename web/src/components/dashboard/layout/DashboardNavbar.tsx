@@ -30,8 +30,6 @@ const HEATMAP_MODE_OPTIONS: ToggleSelectorOption<HeatmapMode>[] = [
 ];
 
 export interface DashboardNavbarProps {
-  title?: string;
-  subtitle?: string;
   currentPage: PageOption;
   onPageChange: (page: PageOption) => void;
   timeRange: TimeRangeOption;
@@ -46,8 +44,6 @@ export interface DashboardNavbarProps {
 }
 
 export const DashboardNavbar: React.FC<DashboardNavbarProps> = ({
-  title = "Analytics Dashboard",
-  subtitle = "Professional insights and key performance indicators",
   currentPage,
   onPageChange,
   timeRange,
@@ -67,16 +63,10 @@ export const DashboardNavbar: React.FC<DashboardNavbarProps> = ({
             options={PAGE_OPTIONS}
             value={currentPage}
             onChange={onPageChange}
-            size="lg"
+            size="md"
             ariaLabel="Select dashboard page"
             className="navbar-page-selector"
           />
-        </div>
-
-        {/* Center - Title */}
-        <div className="dashboard-navbar__brand">
-          <h1 className="dashboard-navbar__title">{title}</h1>
-          <p className="dashboard-navbar__subtitle">{subtitle}</p>
         </div>
 
         {/* Right side - Time Range Toggle or Heatmap Controls */}
@@ -88,7 +78,6 @@ export const DashboardNavbar: React.FC<DashboardNavbarProps> = ({
                 options={HEATMAP_MODE_OPTIONS}
                 value={heatmapMode}
                 onChange={onHeatmapModeChange}
-                label="Calculation Mode"
                 size="md"
                 disabled={slotOptions.length === 0}
                 ariaLabel="Select heatmap calculation mode"
@@ -98,7 +87,7 @@ export const DashboardNavbar: React.FC<DashboardNavbarProps> = ({
                 options={slotOptions}
                 value={selectedSlot}
                 onChange={onSlotChange}
-                placeholder="Select data slot"
+                placeholder="Select slot"
                 disabled={slotOptions.length === 0}
               />
             </div>
@@ -108,7 +97,6 @@ export const DashboardNavbar: React.FC<DashboardNavbarProps> = ({
               options={TIME_RANGE_OPTIONS}
               value={timeRange}
               onChange={onTimeRangeChange}
-              label="Time Range"
               size="md"
               ariaLabel="Select time range"
               className="navbar-time-selector"

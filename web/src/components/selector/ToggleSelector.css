@@ -85,11 +85,11 @@
 
 /* Small size - for mobile or compact contexts */
 .toggle-selector--sm .toggle-selector__container {
-  height: 36px;
+  height: 32px;
 }
 
 .toggle-selector--sm .toggle-selector__option {
-  padding: var(--space-1-5) var(--space-2);
+  padding: var(--space-1) var(--space-2);
   font-size: var(--font-xs);
   min-width: 50px;
 }
@@ -98,26 +98,26 @@
   font-size: 10px;
 }
 
-/* Medium size - default */
+/* Medium size - default, compact for navbar */
 .toggle-selector--md .toggle-selector__container {
-  height: 44px;
+  height: 40px;
 }
 
 .toggle-selector--md .toggle-selector__option {
-  padding: var(--space-2) var(--space-3);
+  padding: var(--space-2) var(--space-4);
   font-size: var(--font-sm);
-  min-width: 60px;
+  min-width: 75px; /* Wider to prevent text clipping */
 }
 
 /* Large size - for prominent contexts */
 .toggle-selector--lg .toggle-selector__container {
-  height: 52px;
+  height: 48px;
 }
 
 .toggle-selector--lg .toggle-selector__option {
-  padding: var(--space-3) var(--space-4);
+  padding: var(--space-2) var(--space-6);
   font-size: var(--font-base);
-  min-width: 80px;
+  min-width: 90px; /* Wider for large buttons */
 }
 
 /* Responsive design */
@@ -125,11 +125,11 @@
   .toggle-selector--md {
     /* Auto-scale to small on mobile */
     .toggle-selector__container {
-      height: 36px;
+      height: 32px;
     }
     
     .toggle-selector__option {
-      padding: var(--space-1-5) var(--space-2);
+      padding: var(--space-1) var(--space-2);
       font-size: var(--font-xs);
       min-width: 50px;
     }
@@ -142,13 +142,13 @@
   .toggle-selector--lg {
     /* Scale down large to medium on mobile */
     .toggle-selector__container {
-      height: 44px;
+      height: 40px;
     }
     
     .toggle-selector__option {
-      padding: var(--space-2) var(--space-3);
+      padding: var(--space-2) var(--space-4);
       font-size: var(--font-sm);
-      min-width: 60px;
+      min-width: 75px;
     }
   }
 }

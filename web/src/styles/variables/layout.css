@@ -1,7 +1,8 @@
 /* Layout - radii, shadows and transitions */
 :root {
-  /* Navbar height */
+  /* Navbar heights */
   --navbar-height: 60px;
+  --dashboard-navbar-height: 76px; /* Height of dashboard-specific navbar (60px + 8px top + 8px bottom) */
 
   /* Border Radius */
   --radius-sm: 4px;

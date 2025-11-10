@@ -170,7 +170,6 @@ function ModernHeatmapContent({ selectedSlot, heatmapMode }: ModernHeatmapConten
         )}
 
         {/* Heatmap overlay component */}
-        {/* TODO: Adjust blur and radius for all and selected day if needed */}
         {isHeatmapReady && !isLoading && (
           <HeatmapCanvas
             items={heatmapPayload.items}

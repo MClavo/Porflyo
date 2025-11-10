@@ -65,7 +65,12 @@ html, body {
   max-width: 1400px;
   margin: 0 auto;
   padding: var(--space-6);
-  padding-top: calc(var(--space-6) + 100px); /* Espacio para el navbar fijo */
+  padding-top: calc(var(--space-6) + var(--navbar-height) + var(--dashboard-navbar-height)); /* Space for both navbars */
+}
+
+/* Allow heatmap to use full width */
+.dashboard-content--no-max {
+  max-width: none;
 }
 
 @keyframes skeleton-loading {
@@ -80,13 +85,13 @@ html, body {
 @media (max-width: 768px) {
   .dashboard-content {
     padding: var(--space-4);
-    padding-top: calc(var(--space-4) + 120px); /* Más espacio para navbar vertical */
+    padding-top: calc(var(--space-4) + 56px + var(--dashboard-navbar-height)); /* Main navbar (56px) + dashboard navbar */
   }
 }
 
 @media (max-width: 480px) {
   .dashboard-content {
     padding: var(--space-3);
-    padding-top: calc(var(--space-3) + 130px); /* Navbar vertical más alto en móvil */
+    padding-top: calc(var(--space-3) + 52px + var(--dashboard-navbar-height)); /* Main navbar (52px) + dashboard navbar */
   }
 }

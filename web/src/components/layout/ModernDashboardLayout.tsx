@@ -33,8 +33,6 @@ export function ModernDashboardLayout({
     <div className="dashboard-container">
       {/* Navbar fijo que nunca cambia */}
       <DashboardNavbar
-        title="Analytics Dashboard"
-        subtitle="Professional insights and key performance indicators"
         currentPage={currentPage}
         onPageChange={setCurrentPage}
         timeRange={timeRange}
