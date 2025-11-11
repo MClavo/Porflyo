@@ -1,0 +1,150 @@
+/* HeatmapModeToggle - Professional toggle component styles */
+
+.heatmap-mode-toggle {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+}
+
+.heatmap-mode-toggle__label {
+  font-size: var(--font-sm);
+  font-weight: 500;
+  color: var(--text-secondary);
+  letter-spacing: 0.025em;
+}
+
+.heatmap-mode-toggle__container {
+  position: relative;
+}
+
+.heatmap-mode-toggle__options {
+  display: flex;
+  position: relative;
+  background: var(--dashboard-bg-secondary);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-xl);
+  padding: 4px;
+  overflow: hidden;
+}
+
+.heatmap-mode-toggle__slider {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  bottom: 4px;
+  width: calc(50% - 4px);
+  background: linear-gradient(135deg, 
+    var(--accent-blue) 0%, 
+    var(--accent-purple) 100%);
+  border-radius: calc(var(--radius-xl) - 4px);
+  transition: transform var(--transition-normal);
+  box-shadow: var(--shadow-md);
+}
+
+.heatmap-mode-option {
+  flex: 1;
+  position: relative;
+  z-index: 1;
+  background: transparent;
+  border: none;
+  padding: var(--space-2) var(--space-4);
+  color: var(--text-secondary);
+  font-size: var(--font-sm);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  border-radius: calc(var(--radius-xl) - 4px);
+  white-space: nowrap;
+  min-width: 100px;
+}
+
+.heatmap-mode-option:hover {
+  color: var(--text-primary);
+}
+
+.heatmap-mode-option:focus {
+  outline: 2px solid var(--accent-blue);
+  outline-offset: 2px;
+}
+
+.heatmap-mode-option--active {
+  color: white;
+  font-weight: 600;
+}
+
+.heatmap-mode-option:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.heatmap-mode-option__text {
+  position: relative;
+  z-index: 1;
+}
+
+/* Hover effects for non-active options */
+.heatmap-mode-option:not(.heatmap-mode-option--active):hover {
+  background: rgba(59, 130, 246, 0.1);
+}
+
+/* Active state styling */
+.heatmap-mode-option--active .heatmap-mode-option__text {
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+/* Animation for slider movement */
+.heatmap-mode-toggle__slider {
+  animation: none;
+}
+
+.heatmap-mode-toggle__options:hover .heatmap-mode-toggle__slider {
+  box-shadow: var(--shadow-lg);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .heatmap-mode-toggle__label {
+    font-size: var(--font-xs);
+  }
+  
+  .heatmap-mode-option {
+    padding: var(--space-1) var(--space-3);
+    font-size: var(--font-xs);
+    min-width: 80px;
+  }
+}
+
+@media (max-width: 480px) {
+  .heatmap-mode-option {
+    min-width: 70px;
+    padding: var(--space-1) var(--space-2);
+  }
+  
+  .heatmap-mode-option__text {
+    font-size: 10px;
+  }
+}
+
+/* Professional enhancement: subtle glow effect */
+.heatmap-mode-toggle__slider::after {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(135deg, 
+    rgba(59, 130, 246, 0.3) 0%, 
+    rgba(139, 92, 246, 0.3) 100%);
+  border-radius: inherit;
+  filter: blur(4px);
+  opacity: 0;
+  transition: opacity var(--transition-fast);
+  z-index: -1;
+}
+
+.heatmap-mode-toggle__options:hover .heatmap-mode-toggle__slider::after {
+  opacity: 1;
+}

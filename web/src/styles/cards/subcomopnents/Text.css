@@ -1,0 +1,23 @@
+/* Text/subtitle/description styles extracted from ProjectCard.css */
+.text,
+.card-text,
+.text-card-description {
+  position: relative;
+  margin: 0;
+  color: var(--description-color, #f8f8ffea);
+  z-index: 20;
+  font: inherit;
+  font-size: 16px;
+  line-height: 1.4;
+  resize: none;
+  white-space: pre-wrap;
+}
+
+/* Editable textarea styles are scoped to edit mode via component markup */
+.text-editable {
+  background: rgba(178, 212, 229, 0.18);
+  border-radius: 8px;
+  padding: 8px;
+  position: relative;
+  z-index: 20;
+}

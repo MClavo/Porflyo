@@ -1,0 +1,156 @@
+/* Layout components */
+.app-container {
+  /* Same as modern.css: subtract root padding to avoid global scroll. */
+  min-height: calc(100vh - 4rem);
+  background: linear-gradient(135deg, var(--surface) 0%, var(--background) 100%);
+}
+
+.main-content {
+  /* max-width: 1200px; */
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+/* Specific styling for profile page */
+.main-content.profile-page {
+  display: flex;
+  flex-direction: column;
+  max-width: 800px;
+}
+
+/* Override for portfolio editor - use full width */
+.main-content:has(.portfolio-editor) {
+  max-width: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* Grid and container utilities */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.grid {
+  display: grid;
+  gap: 1rem;
+}
+
+.flex {
+  display: flex;
+}
+
+.flex-col {
+  flex-direction: column;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.justify-between {
+  justify-content: space-between;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .main-content {
+    padding: 1rem;
+  }
+  
+  .container {
+    padding: 0 0.5rem;
+  }
+}
+
+/* Profile page specific layout */
+.profile-page {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.profile-page > * {
+  width: 100%;
+}
+
+/* Profile header styling */
+.profile-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.profile-avatar {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--border-muted, #e1e5e9);
+}
+
+/* Provider info section styling */
+.profile-provider-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.provider-info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--border-muted, #e1e5e9);
+}
+
+.provider-info-row:last-child {
+  border-bottom: none;
+}
+
+.provider-info-title {
+  font-weight: 600;
+  color: var(--text-muted, #64748b);
+}
+
+/* Form spacing for profile */
+.profile-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.profile-form .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+/* Responsive adjustments for profile page */
+@media (max-width: 768px) {
+  .profile-page {
+    gap: 1.5rem;
+    max-width: 100%;
+  }
+  
+  .profile-avatar {
+    width: 80px;
+    height: 80px;
+  }
+  
+  .provider-info-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+}

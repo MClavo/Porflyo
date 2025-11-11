@@ -1,0 +1,23 @@
+micronaut:
+  test:
+    resources:
+      enabled: false
+
+# S3 Configuration for Testing
+aws:
+  region: us-east-1
+   
+s3:
+  expiration: 5
+  region: us-east-1
+  bucket-name: porflyo-media-test
+  endpoint: ${s3.url:`http://localhost:4566`}
+
+quota:
+  max-saved-sections: 10
+  max-portfolios: 3
+
+logger:
+  levels:
+    com.porflyo: DEBUG
+    root: INFO

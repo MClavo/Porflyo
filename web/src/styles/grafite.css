@@ -1,0 +1,159 @@
+/* @import url('https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700&display=swap'); */
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&family=Syncopate:wght@400;700&display=swap');
+
+
+:root{
+  /* palete */
+  --mint0: #000000;
+  --mint1: #222222;
+  --mint2: #1DCD9F;
+  --mint3: #169976;
+
+  --space0: #393E46;
+  --space1: #00ADB5;
+  --space2: #AAD8D3;
+  --space3: #EEEEEE;
+
+  --cream0: #9AA6B2;
+  --cream1: #BCCCDC;
+  --cream2: #D9EAFD;
+  --cream3: #F8FAFC;
+
+
+
+  --black: oklch(0.15 0 264);
+  --obsidian: oklch(0.5 0 0 / 10);
+
+
+  --bg0: #2e3440;
+  --bg1: #3b4252; 
+  --bg2: #434c5e;
+  --bg3: #4c566a;
+
+  --white0: #d8dee9;
+  --white1: #e5e9f0;
+  --white2: #eceff4;
+
+  --frost0: #8fbcbb;
+  --frost1: #88c0d0;
+  --frost2: #81a1c1;
+  --frost3: #5e81ac;
+
+  --aurora0: #bf616a;
+  --aurora1: #d08770;
+  --aurora2: #ebcb8b;
+  --aurora3: #a3be8c;
+  --aurora4: #b48ead;
+
+  /* Base “dark graphite” */
+  --bg-00: #0b0f14;
+  --bg-01: #11171e;
+  --bg-02: #17212b;
+  --bg-03: #1e2a36; /* leve satin */
+
+  /* Luz central (gris-azulada) */
+  --center-0: #7f8f9e;   /* hotspot */
+  --center-1: #5f6d7a;
+  --center-2: #2a3946;
+
+  /* Acentos cian “neón sobrio” */
+  --edge-0: #5fd3ff;
+  --edge-1: #19b8ff;
+  --edge-ghost: rgba(95,211,255,0.14);   /* halo suave */
+  --edge-line : rgba(95,211,255,0.55);   /* filo */
+
+  /* Texto */
+  --txt-1: #e9f1f6;
+  --txt-2: #b9c7d6;
+
+  /* Bordes/ruido sutil */
+  --stroke: rgba(255,255,255,0.10);
+  --shadow: rgba(0,0,0,0.50);
+}
+
+
+
+
+.card {
+  background: oklch(from var(--space0) l c h / 0.55);
+  backdrop-filter: saturate(150%) blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  box-shadow:
+    0 10px 24px -12px var(--shadow),
+    0 4px 6px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+
+  color: var(--cream3);
+}
+
+/* Halo sutil alrededor del borde */
+/* .card::before{
+  content:"";
+  position:absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background:
+    linear-gradient(140deg,
+      rgba(25,184,255,0.45) 0%,
+      rgba(95,211,255,0.12) 25%,
+      transparent 40%,
+      rgba(95,211,255,0.12) 75%,
+      rgba(25,184,255,0.45) 100%);
+  filter: blur(10px);
+  opacity: .55;
+  z-index: -1;
+} */
+
+/* Variante “edge” con filo más marcado (para tarjetas de destaque) */
+.card.edge {
+  border-width: 1.5px;
+  background-image:
+    linear-gradient(140deg,
+      rgba(25,184,255,0.9) 0%,
+      rgba(95,211,255,0.35) 22%,
+      rgba(95,211,255,0.10) 40%,
+      rgba(95,211,255,0.35) 78%,
+      rgba(25,184,255,0.9) 100%),
+    radial-gradient(140% 160% at 50% 10%,
+      rgba(255,255,255,0.06), rgba(255,255,255,0) 50%),
+    linear-gradient(180deg, rgba(22,30,39,0.86), rgba(12,16,22,0.86));
+}
+
+
+.card.glass {
+  background:
+    linear-gradient(180deg, rgba(20,28,36,0.55), rgba(12,16,22,0.55));
+  backdrop-filter: saturate(120%) blur(4px);
+}
+
+
+.title h1 {
+  font-family: "Syncopate", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 700;
+  font-style: oblique;
+  letter-spacing: 0.5rem;
+
+  font-size: 5rem;
+  color: var(--space1);
+  text-align: center;
+  margin-top: 1rem;
+}
+
+
+
+.title p{
+  font-size: 2rem;
+  font-weight: 400;
+  color: var(--space4);
+  text-align: center;
+}
+
+p {
+  font-family: "Space Grotesk", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-size: 1.5rem;
+  font-style: normal;
+}

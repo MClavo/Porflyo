@@ -1,0 +1,53 @@
+plugins {
+    id("org.graalvm.buildtools.native") version "0.10.6" /* apply false */
+}
+
+ext {
+  javaVersion = (findProperty('javaVersion') ?: '21').toString()
+}
+
+allprojects {
+  group = findProperty('group') ?: 'com.porflyo'
+  version = findProperty('version') ?: '0.4'
+
+  repositories {
+    mavenCentral()
+    maven {
+      url "https://s01.oss.sonatype.org/content/repositories/snapshots/"
+      mavenContent { snapshotsOnly() }
+    }
+    maven {
+      url "https://central.sonatype.com/repository/maven-snapshots/"
+      mavenContent { snapshotsOnly() }
+    }
+  }
+}
+
+subprojects {
+    apply plugin: 'java'  
+
+    java {
+        sourceCompatibility = JavaVersion.toVersion(javaVersion)
+        targetCompatibility = JavaVersion.toVersion(javaVersion)
+    }
+
+    tasks.withType(Test).configureEach {
+        maxParallelForks = Runtime.runtime.availableProcessors().intdiv(2) ?: 1
+        useJUnitPlatform()
+            testLogging {
+                events "failed"
+                exceptionFormat "full"
+            }
+    }
+
+    /* dependencies{
+      compileOnly("io.micronaut:micronaut-http-client:4.9.10")
+    } */
+  /* configurations.all {
+    exclude group: "io.netty"  // si ya no usas nada de Netty 
+    //exclude group: "ch.qos.logback", module: "logback-classic" // si usas otro logger
+  } */
+  
+}
+
+

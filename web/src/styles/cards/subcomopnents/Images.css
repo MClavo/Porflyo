@@ -1,0 +1,227 @@
+/* Image Component Styles */
+
+/* Common styles for both view and edit modes */
+.image-view,
+.image-edit {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.image-container {
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  background: #f8f9fa;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+}
+
+.image-display {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.2s ease-in-out;
+}
+
+.image-display:hover {
+  transform: scale(1.02);
+}
+
+/* Navigation buttons - Always visible and subtle */
+.nav-button {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.15);
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(8px);
+  z-index: 10;
+  opacity: 1;
+  visibility: visible;
+  outline: none;
+}
+
+.nav-button:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+.nav-button:hover {
+  background: rgba(0, 0, 0, 0.25);
+  color: rgba(255, 255, 255, 1);
+  transform: translateY(-50%) scale(1.05);
+}
+
+.nav-button:active {
+  transform: translateY(-50%) scale(0.95);
+  outline: none;
+}
+
+.nav-button-prev {
+  left: 8px;
+}
+
+.nav-button-next {
+  right: 8px;
+}
+
+/* Image counter */
+.image-counter {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 0.25rem 0.75rem;
+  border-radius: 1rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  backdrop-filter: blur(4px);
+  z-index: 10;
+}
+
+/* Edit mode specific styles */
+.image-placeholder {
+  width: 100%;
+  height: 200px;
+  border: 2px dashed #d1d5db;
+  border-radius: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  background: #f9fafb;
+}
+
+.image-placeholder:hover {
+  border-color: #3b82f6;
+  background: #eff6ff;
+}
+
+.placeholder-icon {
+  font-size: 3rem;
+  margin-bottom: 0.5rem;
+  opacity: 0.4;
+  color: #9ca3af;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.placeholder-text {
+  font-size: 0.875rem;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+/* Controls section */
+.image-controls {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  justify-content: center;
+}
+
+.image-controls .btn {
+  min-width: 100px;
+  transition: all 0.2s ease-in-out;
+}
+
+/* Remove button hover effect - red like delete button */
+.image-controls .btn-remove:hover:not(:disabled) {
+  background: #c53030 !important;
+  border-color: #c53030 !important;
+  color: white !important;
+  transform: translateY(-1px);
+}
+
+/* Add Image button hover effect - enhanced blue */
+.image-controls .btn-primary:hover:not(:disabled) {
+  background: #2563eb !important;
+  border-color: #2563eb !important;
+  transform: translateY(-1px);
+}
+
+/* Active states */
+.image-controls .btn-remove:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.image-controls .btn-primary:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+/* Error message */
+.image-error {
+  color: #ef4444;
+  font-size: 0.75rem;
+  text-align: center;
+  margin-top: 0.25rem;
+  padding: 0.5rem;
+  background: rgba(239, 68, 68, 0.1);
+  border-radius: 0.375rem;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .image-display {
+    height: 160px;
+  }
+  
+  .nav-button {
+    width: 28px;
+    height: 28px;
+    font-size: 0.875rem;
+    background: rgba(0, 0, 0, 0.2);
+  }
+  
+  .nav-button-prev {
+    left: 6px;
+  }
+  
+  .nav-button-next {
+    right: 6px;
+  }
+  
+  .image-counter {
+    bottom: 8px;
+    right: 8px;
+    font-size: 0.6875rem;
+    padding: 0.2rem 0.6rem;
+  }
+  
+  .image-placeholder {
+    height: 160px;
+  }
+  
+  .placeholder-icon {
+    font-size: 2.5rem;
+  }
+  
+  .image-controls {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .image-controls .btn {
+    width: 100%;
+    min-width: auto;
+  }
+}

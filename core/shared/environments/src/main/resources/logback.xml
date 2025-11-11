@@ -1,0 +1,20 @@
+<configuration>
+
+  <!-- No logs at startup -->
+  <statusListener class="ch.qos.logback.core.status.NopStatusListener" />
+
+  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>%d{HH:mm:ss} %highlight(%-5level) %magenta[%logger{36}] - %msg%n%ex{short}</pattern>
+    </encoder>
+  </appender>
+
+  <!-- com.porflyo en DEBUG según petición; micornaut y resto en WARN para reducir ruido -->
+  <logger name="com.porflyo" level="DEBUG" />
+  <logger name="io.micronaut" level="WARN" />
+
+  <root level="WARN">
+    <appender-ref ref="STDOUT" />
+  </root>
+
+</configuration>

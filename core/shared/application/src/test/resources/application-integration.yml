@@ -1,0 +1,32 @@
+micronaut:
+  test:
+    resources:
+      enabled: false
+
+# DynamoDB Configuration for Testing
+aws:
+  region: us-east-1
+   
+dynamodb:
+  endpoint: ${dynamodb.url:`http://localhost:8000`}
+  user-table: user-test    
+  metrics-table: metrics-test
+  region: us-east-1
+
+s3:
+  access-key: test
+  secret-key: test
+  expiration: 5
+  region: us-east-1
+  bucket-name: porflyo-media-test
+  endpoint: ${s3.url:`http://localhost:8000`}
+
+quota:
+  max-saved-sections: 10
+  max-portfolios: 3
+
+
+logger:
+  levels:
+    com.porflyo: DEBUG
+    root: INFO

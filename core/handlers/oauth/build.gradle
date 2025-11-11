@@ -1,0 +1,28 @@
+plugins {
+    id 'porflyo.lambda-handler'
+    /* id("org.graalvm.buildtools.native") version "0.10.6" */
+}
+
+micronaut {
+    nativeLambda {
+        lambdaRuntimeClassName = "com.porflyo.OauthNativeEntrypoint"
+    }
+}
+
+dependencies{
+    implementation("io.micronaut:micronaut-http-client")
+}
+
+application {
+    mainClass = 'com.porflyo.OauthNativeEntrypoint'
+}
+
+graalvmNative {
+  binaries {
+    main {
+      buildArgs.addAll([
+        "-Ob",
+      ])
+    }
+  }
+}

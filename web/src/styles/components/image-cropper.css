@@ -1,0 +1,113 @@
+/* Image Cropper Component Styles */
+.image-cropper-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.image-cropper-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+}
+
+.image-cropper-container {
+  position: relative;
+  background: var(--dashboard-bg);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-xl);
+  max-width: 90vw;
+  max-height: 90vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--card-border);
+}
+
+.image-cropper-header {
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--card-border);
+  text-align: center;
+}
+
+.image-cropper-header h3 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.image-cropper-header p {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+}
+
+.image-cropper-content {
+  padding: 1.5rem;
+  display: flex;
+  justify-content: center;
+  max-height: 500px;
+  overflow: auto;
+  background: var(--dashboard-bg-secondary);
+}
+
+.image-cropper-content .ReactCrop {
+  max-width: 100%;
+}
+
+.image-cropper-actions {
+  padding: 1.5rem;
+  border-top: 1px solid var(--card-border);
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  background: var(--dashboard-bg);
+}
+
+/* Make sure buttons use the existing button styles */
+.image-cropper-actions .btn {
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-md);
+  font-weight: 500;
+  transition: var(--transition-normal);
+  cursor: pointer;
+}
+
+.image-cropper-actions .btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .image-cropper-container {
+    margin: 1rem;
+    max-width: calc(100vw - 2rem);
+    max-height: calc(100vh - 2rem);
+  }
+  
+  .image-cropper-header,
+  .image-cropper-content,
+  .image-cropper-actions {
+    padding: 1rem;
+  }
+  
+  .image-cropper-actions {
+    flex-direction: column;
+  }
+  
+  .image-cropper-actions .btn {
+    width: 100%;
+  }
+}

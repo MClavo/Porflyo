@@ -1,0 +1,18 @@
+micronaut:
+  test:
+    resources:
+      enabled: false
+
+# S3 Configuration for Testing (LocalStack)
+s3:
+  access-key: test
+  secret-key: test
+  expiration: 5
+  region: us-east-1
+  bucket-name: porflyo-media-test
+  endpoint: ${s3.url:`http://localhost:4566`}
+
+logger:
+  levels:
+    com.porflyo: DEBUG
+    root: INFO

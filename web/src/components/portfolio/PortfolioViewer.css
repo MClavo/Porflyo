@@ -1,0 +1,12 @@
+.portfolio-viewer {
+  width: 100%;
+  min-height: 100vh;
+  display: block;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .portfolio-viewer {
+    padding: 0;
+  }
+}

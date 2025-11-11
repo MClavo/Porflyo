@@ -1,0 +1,47 @@
+.template2 {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: start;
+  align-items: stretch;
+  align-content: stretch;
+  margin: 16px;
+  gap: 16px;
+}
+
+.template2 #projects {
+  position: relative;
+  flex-grow: 1;
+  /* allow the two main columns to share available space */
+  min-width: 0; /* prevents child overflow from forcing width: 0 collapse */
+  height: 600px;
+  background: #29759d;
+  border-radius: 8px;
+  box-sizing: border-box;
+  padding: 12px;
+}
+
+.template2 #text {
+  position: relative;
+  flex-grow: 1;
+  min-width: 0;
+  height: 600px;
+  background: #29759d;
+  border-radius: 8px;
+  box-sizing: border-box;
+  padding: 12px;
+}
+
+.template2 #job {
+  position: relative;
+  height: 600px;
+  background: #29759d;
+  width: 100%;
+  border-radius: 8px;
+}
+
+.template2 .project-card,
+.template2 .job-card {
+  width: 220px;
+  background-color: rgba(58, 194, 207, 0.95);
+}

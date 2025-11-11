@@ -1,0 +1,101 @@
+/* MetricsTest page specific styles - do not modify global PublicPortfolio.css */
+.metrics-test-container {
+  width: 100vw;
+  height: 100vh;
+  padding: 12px;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.metrics-test-inner {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  gap: 16px;
+  align-items: stretch;
+}
+
+.metrics-test-viewer-wrapper {
+  flex: 1;
+  min-width: 0; /* important for flex shrinking */
+  overflow: auto;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.metrics-test-viewer {
+  width: 100%;
+  height: 100%;
+}
+
+/* Prevent portfolio internal layout from exceeding the wrapper */
+.metrics-test-viewer .portfolio-viewer {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+}
+
+.metrics-test-viewer .template-layout {
+  max-width: 100% !important;
+  width: 100% !important;
+  padding-left: 16px !important;
+  padding-right: 16px !important;
+  box-sizing: border-box;
+  margin: 0 !important;
+}
+
+/* Ensure all content inside the viewer respects boundaries */
+.metrics-test-viewer * {
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.metrics-test-viewer img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+.metrics-test-panel {
+  flex: 0 0 400px;
+  width: 400px;
+  max-height: 100%;
+  overflow: auto;
+  border-left: 1px solid #ddd;
+  padding: 16px;
+  box-sizing: border-box;
+  background: #fafafa;
+  border-radius: 8px;
+
+}
+.json {
+  color: #000;
+}
+
+@media (max-width: 1024px) {
+  .metrics-test-inner {
+    flex-direction: column;
+    height: auto;
+  }
+  
+  .metrics-test-container {
+    height: auto;
+    min-height: 100vh;
+    overflow: visible;
+  }
+  
+  .metrics-test-panel {
+    flex: none;
+    width: 100%;
+    max-height: 400px;
+    border-left: none;
+    border-top: 1px solid #ddd;
+    margin-top: 16px;
+  }
+  
+  .metrics-test-viewer-wrapper {
+    flex: none;
+    min-height: 60vh;
+  }
+}

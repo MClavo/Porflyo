@@ -1,0 +1,99 @@
+/* Colors - grouped variables for the dashboard theme */
+:root {
+  /* Dark Theme (default) */
+  /* Backgrounds */
+  --dashboard-bg: #0a0e16;      /* 212939 */
+  --dashboard-bg-secondary: #111827;
+  --dashboard-obsidian: #1a202c;
+
+  /* Card Colors */
+  --card-bg: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+  --card-bg-hover: linear-gradient(135deg, #374151 0%, #1f2937 100%);
+  --card-border: #374151;
+  --card-border-hover: #4b5563;
+
+  /* Text Colors */
+  --text-primary: #ffffff;
+  --text-secondary: #9ca3af;
+  --text-muted: #6b7280;
+
+  /* Value Colors */
+  --value-primary: #ffffff;
+  --value-secondary: #f3f4f6;
+
+  /* Status Colors */
+  --status-positive: #10b981;
+  --status-negative: #ef4444;
+  --status-neutral: #6b7280;
+
+  /* Accent Colors (main palette) */
+  --accent-blue: #3b82f6;
+  --accent-purple: #8b5cf6;
+  --accent-orange: #f59e0b;
+  --accent-pink: #ec4899;
+  --accent-green: #10b981;
+
+  /* Additional palette for charts (useful for donuts/bubbles/area) */
+  --chart-1: #3B82F6; /* blue */
+  --chart-2: #10B981; /* emerald */
+  --chart-3: #F59E0B; /* amber */
+  --chart-4: #8B5CF6; /* violet */
+  --chart-5: #EF4444; /* red */
+  --chart-6: #06B6D4; /* cyan */
+  --chart-7: #84CC16; /* lime */
+  --chart-8: #F97316; /* orange */
+
+  /* Additional utility colors used across charts/components */
+  --white: #ffffff;
+  --gray-100: #eeeeee;
+  --muted-border: #e2e8f0; /* used in tooltips and light borders */
+
+  /* Nivo calendar palette (kept as separate names for clarity) */
+  --nivo-1: #61cdbb;
+  --nivo-2: #97e3d5;
+  --nivo-3: #e8c1a0;
+  --nivo-4: #f47560;
+  
+  /* Additional blue used in some legacy styles */
+  --blue-600: #3182ce;
+
+  /* Page-level utility colors / aliases */
+  --dashboard-bg-primary: var(--dashboard-bg);
+  --overlay-weak: rgba(0,0,0,0.1);
+  --color-error-text: #ff6b6b; /* soft error */
+}
+
+/* Light Theme */
+body.light-theme {
+  /* Backgrounds */
+  --dashboard-bg: #f8fafc;
+  --dashboard-bg-secondary: #ffffff;
+  --dashboard-obsidian: #f1f5f9;
+
+  /* Card Colors */
+  --card-bg: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  --card-bg-hover: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+  --card-border: #e2e8f0;
+  --card-border-hover: #cbd5e1;
+
+  /* Text Colors */
+  --text-primary: #1a202c;
+  --text-secondary: #4a5568;
+  --text-muted: #718096;
+
+  /* Value Colors */
+  --value-primary: #1a202c;
+  --value-secondary: #2d3748;
+
+  /* Status Colors remain the same for good contrast */
+  --status-positive: #10b981;
+  --status-negative: #ef4444;
+  --status-neutral: #6b7280;
+
+  /* Page-level utility colors / aliases */
+  --dashboard-bg-primary: var(--dashboard-bg);
+  --overlay-weak: rgba(0,0,0,0.05);
+  --color-error-text: #e53e3e;
+}
+
+/* Dark Theme explicit class - uses root defaults */

@@ -1,0 +1,208 @@
+/* EditorHeader - Fixed header component */
+
+.editor-header {
+  position: fixed;
+  top: var(--navbar-height);
+  left: 0;
+  right: 0;
+  min-height: 56px;
+  height: auto;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  background: var(--card-bg);
+  border-bottom: 1px solid var(--card-border);
+  box-shadow: var(--shadow-sm);
+  backdrop-filter: blur(8px);
+  padding: var(--space-2) 0;
+}
+
+/* Container with two groups */
+.editor-header__container {
+  width: 100%;
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: var(--space-2) var(--space-4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+  min-height: 56px;
+  flex-wrap: wrap;
+}
+
+/* Left Group: Title + Template + Mode + Save */
+.editor-header__left {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  flex: 0 1 auto;
+  min-width: 0;
+}
+
+.editor-header__title-area {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 0;
+  flex: 0 1 auto;
+}
+
+.editor-header__title-input {
+  background: none;
+  border: none;
+  font-size: var(--font-lg);
+  font-weight: 700;
+  color: var(--text-primary);
+  outline: none;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  transition: all var(--transition-fast);
+  font-family: var(--font-sans);
+  min-width: 180px;
+  max-width: 300px;
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  height: 44px;
+  background: linear-gradient(135deg, var(--accent-purple), var(--accent-blue));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Right Group: URL + Public + Publish */
+.editor-header__right {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  flex: 0 1 auto;
+  min-width: 0;
+}
+
+.editor-header__title-input::placeholder {
+  background: linear-gradient(135deg, var(--text-secondary), var(--text-tertiary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.editor-header__title-input:hover {
+  background: rgba(255, 255, 255, 0.05);
+  -webkit-text-fill-color: var(--text-primary);
+}
+
+.editor-header__title-input:focus {
+  background: rgba(255, 255, 255, 0.08);
+  -webkit-text-fill-color: var(--text-primary);
+  box-shadow: 0 0 0 2px var(--accent-blue);
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .editor-header__container {
+    gap: var(--space-2);
+  }
+
+  .editor-header__left {
+    gap: var(--space-1-5);
+  }
+
+  .editor-header__right {
+    gap: var(--space-1-5);
+  }
+}
+
+@media (max-width: 1024px) {
+  .editor-header {
+    min-height: auto;
+  }
+
+  .editor-header__container {
+    padding: var(--space-2) var(--space-3);
+    gap: var(--space-3);
+    min-height: auto;
+  }
+
+  .editor-header__left {
+    flex: 1 1 100%;
+    order: 1;
+    justify-content: center;
+  }
+
+  .editor-header__right {
+    flex: 1 1 100%;
+    order: 2;
+    justify-content: center;
+    padding-top: var(--space-2);
+  }
+}
+
+@media (max-width: 900px) {
+  .editor-header__title-input {
+    min-width: 120px;
+    max-width: 200px;
+    font-size: var(--font-base);
+  }
+
+  .editor-header__left,
+  .editor-header__right {
+    gap: var(--space-1-5);
+  }
+}
+
+@media (max-width: 768px) {
+  .editor-header {
+    top: 56px;
+  }
+
+  .editor-header__title-input {
+    font-size: var(--font-sm);
+    min-width: 100px;
+    max-width: 150px;
+  }
+
+  .editor-header__left,
+  .editor-header__right {
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 600px) {
+  .editor-header__container {
+    flex-direction: column;
+    gap: var(--space-2);
+    align-items: stretch;
+  }
+
+  .editor-header__left,
+  .editor-header__right {
+    width: 100%;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .editor-header__right {
+    padding-top: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .editor-header {
+    top: 52px;
+  }
+
+  .editor-header__title-input {
+    font-size: var(--font-xs);
+    min-width: 80px;
+    max-width: 120px;
+  }
+
+  .editor-header__left,
+  .editor-header__right {
+    gap: var(--space-1);
+  }
+}

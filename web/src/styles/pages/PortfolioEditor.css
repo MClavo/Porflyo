@@ -1,0 +1,157 @@
+/* PortfolioEditor - Simplified page layout */
+
+.portfolio-editor {
+  display: flex;
+  flex-direction: column;
+  background: var(--dashboard-bg);
+  color: var(--text-primary);
+  overflow: hidden;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding-top: calc(var(--navbar-height) + var(--editor-header-height, 72px));
+}
+
+/* EditorDndProvider wrapper - manages sidebar and content layout */
+.portfolio-editor > div {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  overflow: hidden;
+  position: relative;
+  transition: padding-left var(--transition-normal);
+}
+
+/* Portfolio content area - scrollable, adjusts width when sidebar is open */
+.portfolio-content {
+  flex: 1;
+  min-width: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  transition: all var(--transition-normal);
+  /* Allow content to determine height naturally */
+  min-height: 100%;
+  display: block;
+  /* Start with full width */
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* When sidebar is open, reduce width instead of shifting */
+.editor-sidebar--open ~ .portfolio-content {
+  width: calc(100% - 320px);
+  max-width: calc(100% - 320px);
+  margin-left: 320px;
+}
+
+/* Custom scrollbar for portfolio content */
+.portfolio-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.portfolio-content::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.portfolio-content::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: var(--radius-sm);
+  transition: background var(--transition-fast);
+}
+
+.portfolio-content::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* Canvas Area */
+.portfolio-editor__canvas {
+  padding: var(--space-4);
+  min-height: calc(100vh - 200px);
+  overflow-x: auto;
+}
+
+.portfolio-editor__canvas-container {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  min-width: 100%;
+  box-sizing: border-box;
+}
+
+/* Loading and Error States */
+.portfolio-editor__loading,
+.portfolio-editor__error {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 80px);
+  padding: var(--space-8);
+  text-align: center;
+}
+
+.portfolio-editor__loading-spinner {
+  display: inline-block;
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(139, 92, 246, 0.3);
+  border-radius: 50%;
+  border-top-color: var(--accent-purple);
+  animation: spin 1s ease-in-out infinite;
+  margin-bottom: var(--space-4);
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.portfolio-editor__error-message {
+  color: var(--status-negative);
+  font-size: var(--font-lg);
+  margin-bottom: var(--space-4);
+}
+
+.portfolio-editor__error-button {
+  background: var(--accent-purple);
+  color: white;
+  border: none;
+  border-radius: var(--radius-md);
+  padding: var(--space-3) var(--space-6);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.portfolio-editor__error-button:hover {
+  background: var(--accent-blue);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .editor-sidebar--open ~ .portfolio-content {
+    width: 100%;
+    max-width: 100%;
+    margin-left: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .portfolio-editor {
+    padding-top: calc(70px + var(--editor-header-height, 72px));
+  }
+
+  .portfolio-content {
+    height: calc(100vh - 70px - var(--editor-header-height, 72px));
+    width: 100%;
+    max-width: 100%;
+  }
+}

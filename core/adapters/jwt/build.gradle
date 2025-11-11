@@ -1,0 +1,5 @@
+plugins { id 'porflyo.application' }
+
+dependencies {
+    implementation("com.nimbusds:nimbus-jose-jwt:10.3")
+}

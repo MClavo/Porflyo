@@ -1,0 +1,323 @@
+/* AboutSection - Exact replica of user-header styling */
+
+.tpl-glass .about-section-container {
+  /* EXACT same styling as .tpl-glass .user-header */
+  margin-bottom: 3rem;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(15px);
+  border-radius: 20px;
+  padding: 2.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.tpl-glass .about-section-info {
+  /* EXACT same styling as .tpl-glass .user-info */
+  flex: 1 1 0%;
+  min-width: 0; /* Prevents flex overflow */
+  display: block;
+}
+
+/* EXACT same styling as .tpl-glass .user-top */
+.tpl-glass .about-section-top {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.tpl-glass .about-section-avatar {
+  /* EXACT same styling as .tpl-glass .user-avatar */
+  /* reserve fixed space for the avatar to avoid overlap */
+  flex: 0 0 140px; /* fixed basis so it won't grow/shrink unexpectedly */
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 1.25rem; /* spacing between avatar and meta */
+}
+
+.tpl-glass .about-section-meta {
+  /* EXACT same styling as .tpl-glass .user-meta */
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex: 1 1 0%;
+  min-width: 0; /* allow text to wrap instead of overflowing */
+}
+
+.tpl-glass .about-avatar-image {
+  /* EXACT same styling as .tpl-glass .avatar-image */
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease;
+  display: block; /* remove inline image artifacts (small stray circle) */
+  line-height: 0;
+  box-sizing: border-box;
+  /* prevent huge images from overflowing the header */
+  max-width: 140px;
+  max-height: 140px;
+}
+
+.tpl-glass .about-avatar-image:hover {
+  transform: scale(1.05);
+}
+
+.tpl-glass .about-avatar-placeholder {
+  /* EXACT same styling as .tpl-glass .avatar-placeholder */
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3.5rem;
+  font-weight: bold;
+  border: 4px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  line-height: 0;
+  color: white;
+  /* keep avatar within reserved 140px box, scale down responsively */
+  max-width: 140px;
+  max-height: 140px;
+  box-sizing: border-box;
+}
+
+.tpl-glass .about-section-info {
+  /* EXACT same styling as .tpl-glass .user-info */
+  flex: 1 1 0%;
+  min-width: 0; /* Prevents flex overflow */
+  display: block;
+}
+
+/* Override Title component styling to match user-name exactly */
+/* View mode (h1) - gradient text */
+.tpl-glass .about-section-name,
+.tpl-glass .about-section-name h1,
+.tpl-glass .about-section-name h2,
+.tpl-glass .about-section-name h3 {
+  font-size: 3rem !important;
+  font-weight: 800 !important;
+  margin: 0 !important;
+  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3) !important;
+  background: linear-gradient(45deg, #ffffff, #e0e7ff) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+  color: transparent !important;
+  padding: 0 !important;
+  line-height: 1.2 !important;
+  border: none !important;
+  outline: none !important;
+}
+
+/* Edit mode (input) - solid white text, NO gradient */
+.tpl-glass .about-section-name-wrapper,
+.tpl-glass .about-section-name-wrapper input {
+  font-size: 3rem !important;
+  font-weight: 800 !important;
+  margin: 0 !important;
+  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3) !important;
+  /* Solid white color instead of gradient */
+  color: #ffffff !important;
+  background: none !important;
+  -webkit-text-fill-color: #ffffff !important;
+  padding: 0 !important;
+  line-height: 1.2 !important;
+  border: none !important;
+  outline: none !important;
+  width: fit-content !important;
+  min-width: 200px !important;
+  max-width: 100% !important;
+  font-family: inherit !important;
+}
+
+/* Focus state for input - subtle background */
+.tpl-glass .about-section-name-wrapper input:focus {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border-radius: 8px !important;
+  padding: 4px 8px !important;
+}
+
+.tpl-glass .about-section-contact {
+  /* EXACT same styling as .tpl-glass .user-contact */
+  margin-bottom: 0rem;
+}
+
+.tpl-glass .about-contact-link {
+  /* EXACT same styling as .tpl-glass .contact-link */
+  color: rgba(255, 255, 255, 0.9);
+  text-decoration: none;
+  font-size: 1.2rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.tpl-glass .about-contact-link:hover {
+  color: white;
+  text-decoration: underline;
+  transform: translateY(-1px);
+}
+
+.tpl-glass .about-section-description {
+  /* EXACT same styling as .tpl-glass .user-description */
+  margin: 1.5rem 0 0rem 0;
+  width: 100%;
+}
+
+/* Override Text component styling to match description exactly */
+.tpl-glass .about-description-text,
+.tpl-glass .about-description-text textarea,
+.tpl-glass .about-description-text div {
+  /* EXACT same styling as .tpl-glass .description-display-readonly and .description-textarea-direct */
+  width: 100% !important;
+  font-size: 1.1rem !important;
+  line-height: 1.6 !important;
+  padding: 1rem !important;
+  border-radius: 12px !important;
+  min-height: 3rem !important;
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  color: rgba(255, 255, 255, 0.9) !important;
+  resize: vertical !important;
+  transition: all 0.3s ease !important;
+  font-family: inherit !important;
+  margin: 0 !important;
+  box-sizing: border-box !important;
+}
+
+.tpl-glass .about-description-text textarea::placeholder {
+  color: rgba(255, 255, 255, 0.6) !important;
+}
+
+.tpl-glass .about-description-text textarea:focus {
+  outline: none !important;
+  border-color: rgba(255, 255, 255, 0.6) !important;
+  background: rgba(255, 255, 255, 0.15) !important;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1) !important;
+}
+
+.tpl-glass .about-social-links {
+  /* EXACT same styling as .tpl-glass .social-links */
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-top: 1rem;
+}
+
+.tpl-glass .about-social-link {
+  /* EXACT same styling as .tpl-glass .social-link */
+  padding: 0.75rem 1.5rem;
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  text-decoration: none;
+  border-radius: 25px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(10px);
+}
+
+.tpl-glass .about-social-link:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+}
+
+.tpl-glass .about-social-link.linkedin:hover {
+  background: linear-gradient(45deg, #0077b5, #00a0dc);
+  border-color: #0077b5;
+}
+
+.tpl-glass .about-social-link.github:hover {
+  background: linear-gradient(45deg, #333, #555);
+  border-color: #333;
+}
+
+.tpl-glass .about-social-link.website:hover {
+  background: linear-gradient(45deg, #FF6B6B, #FF8E8E);
+  border-color: #FF6B6B;
+}
+
+.tpl-glass .about-social-link.twitter:hover {
+  background: linear-gradient(45deg, #1da1f2, #4db8f5);
+  border-color: #1da1f2;
+}
+
+/* Responsive design - EXACT same as user-header */
+@media (max-width: 768px) {
+  .tpl-glass .about-section-container {
+    flex-direction: column;
+    text-align: center;
+    gap: 1.5rem;
+    padding: 1.5rem;
+  }
+
+  .tpl-glass .about-section-avatar {
+    justify-content: center;
+    margin-right: 0;
+  }
+
+  .tpl-glass .about-avatar-image,
+  .tpl-glass .about-avatar-placeholder {
+    width: 120px;
+    height: 120px;
+  }
+
+  .tpl-glass .about-section-name,
+  .tpl-glass .about-section-name h1,
+  .tpl-glass .about-section-name h2,
+  .tpl-glass .about-section-name h3 {
+    font-size: 2.5rem !important;
+  }
+
+  .tpl-glass .about-section-name-wrapper,
+  .tpl-glass .about-section-name-wrapper input {
+    font-size: 2.5rem !important;
+  }
+
+  .tpl-glass .about-social-links {
+    justify-content: center;
+  }
+}
+
+/* Email copy feedback message */
+.email-copy-feedback {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #10b981;
+  color: white;
+  padding: 12px 24px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 10000;
+  font-size: 14px;
+  font-weight: 500;
+  animation: slideDown 0.3s ease-out;
+}
+
+.email-copy-feedback.error {
+  background: #ef4444;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}

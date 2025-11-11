@@ -1,0 +1,75 @@
+.slug-input-container {
+  margin-bottom: 1rem;
+}
+
+.slug-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: #374151;
+}
+
+.url-input-wrapper {
+  display: flex;
+  align-items: center;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  overflow: hidden;
+  background: white;
+}
+
+.url-prefix {
+  background-color: #f3f4f6;
+  padding: 0.5rem 0.75rem;
+  border-right: 1px solid #d1d5db;
+  color: #6b7280;
+  font-size: 0.875rem;
+  white-space: nowrap;
+}
+
+.slug-input {
+  flex: 1;
+  padding: 0.5rem 0.75rem;
+  border: none;
+  outline: none;
+  font-size: 0.875rem;
+  background: transparent;
+}
+
+.slug-input:disabled {
+  background-color: #f3f4f6;
+  color: #6b7280;
+  cursor: not-allowed;
+}
+
+.slug-input.error {
+  color: #dc2626;
+}
+
+.url-input-wrapper:focus-within {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 1px #3b82f6;
+}
+
+.url-input-wrapper:has(.slug-input.error):focus-within {
+  border-color: #dc2626;
+  box-shadow: 0 0 0 1px #dc2626;
+}
+
+.slug-status {
+  margin-top: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.slug-status.available {
+  color: #059669;
+}
+
+.slug-status.unavailable {
+  color: #dc2626;
+}
+
+.slug-status.checking {
+  color: #6b7280;
+}

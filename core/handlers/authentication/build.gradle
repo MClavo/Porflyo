@@ -1,0 +1,25 @@
+plugins { id 'porflyo.lambda-handler' }
+
+micronaut {
+    nativeLambda {
+        lambdaRuntimeClassName = "com.porflyo.AuthenticationNativeEntrypoint"
+    }
+}
+
+dependencies{
+    implementation("io.micronaut:micronaut-http-client")
+}
+
+application {
+    mainClass = 'com.porflyo.AuthenticationNativeEntrypoint'
+}
+
+graalvmNative {
+  binaries {
+    main {
+      buildArgs.addAll([
+        "-Ob",
+      ])
+    }
+  }
+}

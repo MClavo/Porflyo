@@ -7,5 +7,8 @@
 
 # === Misc ===
 .env
+.venv
 .env.*
 !.env.example
+docs/
+EMA/

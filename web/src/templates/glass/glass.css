@@ -1,0 +1,17 @@
+/* ============================================
+   GLASS TEMPLATE - Main Entry Point
+   ============================================
+   This template uses glassmorphism design with
+   a beautiful gradient background and glass-like
+   transparent elements.
+   ============================================ */
+
+/* Import all modular styles */
+@import './styles/base.css';
+@import './styles/user-header.css';
+@import './styles/sections.css';
+@import './styles/items.css';
+@import './styles/about-card.css';
+@import './styles/cards.css';
+@import './styles/forms.css';
+@import './styles/responsive.css';

@@ -1,0 +1,281 @@
+/* Portfolio Card Styles */
+
+.portfolio-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  box-shadow: var(--shadow-md);
+  transition: all var(--transition-normal);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+/* Skeleton Loading Configuration */
+.portfolio-card .react-loading-skeleton {
+  --base-color: #374151;
+  --highlight-color: #4b5563;
+  --animation-direction: normal;
+  --animation-duration: 1.5s;
+}
+
+.portfolio-card:hover {
+  background: var(--card-bg-hover);
+  border-color: var(--card-border-hover);
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
+}
+
+.portfolio-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple));
+  opacity: 0;
+  transition: opacity var(--transition-normal);
+}
+
+.portfolio-card:hover::before {
+  opacity: 1;
+}
+
+/* Card Header */
+.portfolio-card-header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  flex: 1;
+}
+
+.portfolio-header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.portfolio-title {
+  font-size: var(--font-xl);
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+  line-height: 1.3;
+  flex: 1;
+}
+
+/* Delete Icon Button - Top Right */
+.delete-icon-button {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: var(--space-2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-normal);
+  border-radius: var(--radius-md);
+  flex-shrink: 0;
+}
+
+.delete-icon-button:hover:not(:disabled) {
+  color: var(--status-negative);
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid var(--status-negative);
+}
+
+.delete-icon-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Header Middle - URL only */
+.portfolio-header-middle {
+  display: flex;
+  align-items: center;
+}
+
+/* URL Button - Clickable to copy */
+.portfolio-url-button {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  background: rgba(59, 130, 246, 0.05);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  border-radius: var(--radius-md);
+  padding: var(--space-3);
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  min-height: 36px;
+}
+
+.portfolio-url-button:hover {
+  background: rgba(59, 130, 246, 0.1);
+  border-color: var(--accent-blue);
+}
+
+.portfolio-url {
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-size: var(--font-sm);
+  color: var(--accent-blue);
+  flex: 1;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.copy-indicator {
+  display: flex;
+  align-items: center;
+  color: var(--accent-blue);
+  flex-shrink: 0;
+}
+
+.no-url-placeholder {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  padding: var(--space-3);
+  min-height: 36px;
+  border: 1px dashed var(--card-border);
+  border-radius: var(--radius-md);
+}
+
+.no-url-placeholder .text-muted {
+  font-style: italic;
+  color: var(--text-muted);
+  font-size: var(--font-sm);
+}
+
+/* Card Actions - 3 buttons centered and equal */
+.portfolio-card-actions {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-6);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--card-border);
+}
+
+.action-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  font-size: var(--font-sm);
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  border: 1px solid transparent;
+  background: none;
+  min-height: 40px;
+}
+
+.action-button:disabled {
+  opacity: 1;
+  cursor: not-allowed;
+}
+
+.action-button span {
+  display: inline-block;
+}
+
+.action-edit {
+  color: var(--accent-blue);
+  border-color: rgba(59, 130, 246, 0.3);
+  background: rgba(59, 130, 246, 0.1);
+}
+
+.action-edit:hover:not(:disabled) {
+  background: var(--accent-blue);
+  color: white;
+  border-color: var(--accent-blue);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.action-metrics {
+  color: var(--accent-purple);
+  border-color: rgba(139, 92, 246, 0.3);
+  background: rgba(139, 92, 246, 0.1);
+}
+
+.action-metrics:hover:not(:disabled) {
+  background: var(--accent-purple);
+  color: white;
+  border-color: var(--accent-purple);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+}
+
+/* Visit Button - Published (Green with Eye) */
+.action-visit-published {
+  color: var(--accent-green);
+  border-color: rgba(16, 185, 129, 0.3);
+  background: rgba(16, 185, 129, 0.1);
+}
+
+.action-visit-published:hover:not(:disabled) {
+  background: var(--accent-green);
+  color: white;
+  border-color: var(--accent-green);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+/* Visit Button - Draft (Red with Eye Off) */
+.action-visit-draft {
+  color: var(--status-negative);
+  border-color: rgba(239, 68, 68, 0.3);
+  background: rgba(239, 68, 68, 0.1);
+}
+
+.action-visit-draft:hover:not(:disabled) {
+  background: var(--status-negative);
+  color: white;
+  border-color: var(--status-negative);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .portfolio-card {
+    padding: var(--space-5);
+  }
+
+  .portfolio-title {
+    font-size: var(--font-lg);
+  }
+
+  .portfolio-header-middle {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+@media (max-width: 480px) {
+  .portfolio-card {
+    padding: var(--space-4);
+  }
+
+  .portfolio-card-actions {
+    grid-template-columns: 1fr;
+    gap: var(--space-2);
+  }
+
+  .action-button {
+    width: 100%;
+  }
+}

@@ -1,0 +1,80 @@
+{
+  "meta": {
+    "calcVersion": "2025.09.26-r1",
+    "generatedAt": "{{date '2020-01-01' '2025-12-31' 'yyyy-MM-dd''T''HH:mm:ss''Z'}}",
+    "timezone": "Europe/Madrid",
+    "units": { "timeBase": "ds", "displayTime": "ms" },
+    "baseline": { "windowDays": 28 }
+  },
+  "dailyAgg": [
+  {{#repeat 28 28}}
+  {
+    "date": "{{dateTimeShift date='2025-09-01' days=@index format='yyyy-MM-dd'}}",
+    "raw": {
+      "views": {{int 1 50}},
+      "activeTime": {{int 120 10000}},
+      "emailCopies": {{int 0 30}},
+      "desktopViews": {{int 20 150}},
+      "mobileTabletViews": {{int 10 120}},
+      "sumScrollScore": {{int 1000 8000}},
+      "sumScrollTime": {{int 5000 30000}},
+      "qualityVisits": {{int 1 45}},
+      "projectViewTimeTotal": {{int 20000 120000}},
+      "projectExposuresTotal": {{int 100 600}},
+      "projectCodeViewsTotal": {{int 15 50}},
+      "projectLiveViewsTotal": {{int 10 200}},
+      "tffiSumMs": {{int 20000 100000}},
+      "tffiCount": {{int 20 200}},
+      "socialClicksTotal": {{int 0 40}}
+    },
+    "derived": {
+      "deviceMix": { 
+        "desktopPct": 0.8,
+        "mobileTabletPct": 0.2
+      },
+      "engagementAvg": {{int 10 95}},
+      "avgScrollTimeMs": {{int 800 3000}},
+      "avgSessionTime" : {{int 200 3000}},
+      "avgCardViewTimeMs": {{int 1500 4000}},
+      "tffiMeanMs": {{int 400 1200}},
+      "emailConversion": {{float 0 0.4}}
+    },
+    "zScores": { 
+      "visits": {{float -1 1}},
+      "engagement": {{float -1 1}},
+      "tffi": {{float -1 1}}
+    }
+  }{{#unless @last}},{{/unless}}
+  {{/repeat}}
+],
+"slots": [
+  {{#repeat 10 10}}
+  {
+    "date": "{{dateTimeShift date='2025-09-18' days=@index format='yyyy-MM-dd'}}",
+    "projects": [
+      {{#repeat 2 8}}
+      {
+        "projectId": {{int 1 6}},
+        "exposures": {{int 20 120}},
+        "viewTime": {{int 300 6000}},
+        "codeViews": {{int 0 1}},
+        "liveViews": {{int 0 2}}
+      }{{#unless @last}},{{/unless}}
+      {{/repeat}}
+    ],
+    "heatmap": {
+        "meta": { "rows": 512, "k": 400 },
+        "cells": [
+          {{#repeat 400 400}}
+          {
+            "index": {{int 1 10000}},
+            "value": {{int 1 1000}},
+            "count": {{int 1 10}}
+          }{{#unless @last}},{{/unless}}
+          {{/repeat}}
+        ]
+      }
+  }{{#unless @last}},{{/unless}}
+  {{/repeat}}
+]
+}

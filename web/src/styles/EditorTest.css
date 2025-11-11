@@ -1,0 +1,709 @@
+@import url('https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&family=Syncopate:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Oxanium:wght@200..800&family=Syncopate:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+body {
+  display: flex;
+  justify-content: center; 
+  align-items: flex-start; 
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+}
+
+/* Ensure the Editor test page can expand to full viewport width so
+   .layout-preview can occupy all available space when the sidebar is closed */
+.test-layout {
+  width: 100vw;
+  max-width: 100%;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0 12px; /* small page padding, optional */
+}
+
+/* Main content container - holds saved cards and layout preview */
+.main-content {
+  position: relative;
+  display: flex;
+  gap: 16px;
+  width: 100%;
+  min-height: calc(100vh - 120px); /* Account for header height */
+}
+
+/* Saved Cards Sidebar - Fixed positioning */
+.saved-cards-sidebar {
+  position: fixed;
+  top: 0;
+  width: 300px;
+  height: 100vh;
+  z-index: 100;
+  transform: translateX(0);
+  transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+  box-sizing: border-box;
+  padding-top: 16px;
+  padding-bottom: 190px;
+  opacity: 1;
+  overflow: hidden;
+}
+
+/* Hidden state for saved cards sidebar */
+.test-layout[data-mode="view"] .saved-cards-sidebar {
+  transform: translateX(-316px); /* Move completely to the left (width + gap) */
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Layout preview takes remaining space */
+.layout-preview {
+  position: relative;
+  flex: 1;
+  min-width: 0; /* Allow flex item to shrink below content size */
+  
+  transition: margin-left 0.3s ease-in-out;
+}
+
+/* When SavedCards is hidden, expand layout preview */
+.test-layout[data-mode="view"] .layout-preview {
+  margin-left: 0; /* Remove margin when sidebar is hidden */
+}
+
+/* Responsive design for smaller screens */
+@media (max-width: 1024px) {
+  .saved-cards-sidebar {
+    position: relative; /* Change to relative on mobile */
+    width: 100%;
+    height: auto;
+    max-height: 300px;
+    transform: translateY(0);
+    transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+  }
+  
+  /* Hidden state for mobile */
+  .test-layout[data-mode="view"] .saved-cards-sidebar {
+    transform: translateY(-320px); /* Move up instead of left on mobile */
+    opacity: 0;
+  }
+  
+  .layout-preview {
+    flex: none;
+    margin-left: 0; /* No margin on mobile */
+  }
+  
+  /* No margin compensation needed on mobile */
+  .test-layout[data-mode="view"] .layout-preview {
+    margin-left: 0;
+  }
+  
+  .main-content {
+    flex-direction: column;
+    gap: 12px;
+  }
+}
+
+.wrapper {
+  display: flex;  
+  /* flex-wrap: wrap; */
+  flex-direction: row;
+  gap: 1rem;
+  margin: 0;
+  padding: 20px;
+  justify-content: center;
+  align-content: flex-start;
+  align-items: stretch; /* Ensure flex children (cards) stretch to the same height */
+  box-sizing: border-box;
+}
+
+@media (max-width: 900px) {
+  .wrapper {
+    flex-wrap: wrap;
+  }
+}
+
+/* Centered mode toggle button fixed above the wrapper */
+.mode-toggle-container {
+  position: sticky;
+  top: 12px; /* keeps it near the top while scrolling */
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  pointer-events: none; /* allow clicks only on the button itself */
+  z-index: 50;
+}
+
+.mode-toggle {
+  pointer-events: auto;
+  background: #0b74de;
+  color: white;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 999px;
+  font-weight: 600;
+  box-shadow: 0 6px 20px rgba(11,116,222,0.18);
+  cursor: pointer;
+}
+
+.test-header{
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row;
+  gap: 16px;
+  padding: 12px 16px;
+  border-bottom: 1px solid #eee;
+  flex-wrap: wrap;
+}
+
+.test-header h1 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.header-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Portfolio title section styles */
+.portfolio-title-section {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  min-width: 300px; /* Ensure it doesn't get too cramped */
+}
+
+.portfolio-title-section .form-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+  white-space: nowrap;
+}
+
+.portfolio-title-section .form-input {
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 14px;
+  min-width: 200px;
+  flex: 1;
+  max-width: 300px;
+}
+
+.portfolio-title-section .form-input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.portfolio-title-section .save-button {
+  padding: 8px 16px;
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  white-space: nowrap;
+}
+
+.portfolio-title-section .save-button:hover:not(:disabled) {
+  background-color: #2563eb;
+}
+
+.portfolio-title-section .save-button:disabled {
+  background-color: #9ca3af;
+  cursor: not-allowed;
+}
+
+/* Save button section styles */
+.save-button-section {
+  margin-bottom: 1rem;
+}
+
+.save-button-section .save-button {
+  padding: 8px 16px;
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  white-space: nowrap;
+}
+
+.save-button-section .save-button:hover:not(:disabled) {
+  background-color: #2563eb;
+}
+
+.save-button-section .save-button:disabled {
+  background-color: #9ca3af;
+  cursor: not-allowed;
+}
+
+/* Portfolio URL/Slug section styles */
+.portfolio-url-section {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  min-width: 300px;
+  margin-top: 12px;
+}
+
+.portfolio-url-section .form-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+  white-space: nowrap;
+}
+
+.url-input-container {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  max-width: 400px;
+  position: relative;
+}
+
+.url-prefix {
+  padding: 8px 12px;
+  background-color: #f3f4f6;
+  border: 1px solid #d1d5db;
+  border-right: none;
+  border-radius: 6px 0 0 6px;
+  font-size: 14px;
+  color: #6b7280;
+  white-space: nowrap;
+}
+
+.slug-input {
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 0 6px 6px 0 !important;
+  font-size: 14px;
+  flex: 1;
+  min-width: 150px;
+}
+
+.slug-input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.slug-input.error {
+  border-color: #ef4444;
+}
+
+.slug-input.error:focus {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+.slug-status {
+  font-size: 12px;
+  font-weight: 500;
+  padding: 2px 6px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+.slug-status.available {
+  color: #059669;
+  background-color: #d1fae5;
+}
+
+.slug-status.unavailable {
+  color: #dc2626;
+  background-color: #fee2e2;
+}
+
+.slug-status.checking {
+  color: #7c3aed;
+  background-color: #ede9fe;
+}
+
+/* Remove conflicting layout-preview style */
+/* .layout-preview{
+  flex: 1 1 auto;
+  width: 100%;
+  transition: margin-left 200ms ease;
+} */
+
+/* Make header stack on narrow screens */
+@media (max-width: 768px) {
+  .test-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+  
+  .test-header h1 {
+    text-align: center;
+  }
+  
+  .portfolio-title-section {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    min-width: auto;
+  }
+  
+  .portfolio-title-section .form-input {
+    min-width: auto;
+    max-width: none;
+  }
+  
+  .header-controls {
+    justify-content: center;
+  }
+}
+
+.header-controls{
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+/* Ensure controls stay inline on narrow screens and allow wrapping if really needed */
+@media (max-width: 420px) {
+  .header-controls {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+  }
+}
+
+/* Modern select style placed left of the toggle */
+#template-select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background: linear-gradient(180deg, #ffffff, #fbfbff);
+  border: 1px solid #e6e9ef;
+  padding: 8px 12px;
+  padding-right: 36px; /* space for chevron */
+  border-radius: 10px;
+  font-weight: 600;
+  color: #1b2340;
+  box-shadow: 0 4px 18px rgba(17,24,39,0.06);
+  cursor: pointer;
+  min-width: 160px;
+  background-image: linear-gradient(45deg, transparent 50%, #667eea 50%), linear-gradient(135deg, #667eea 50%, transparent 50%);
+  background-position: calc(100% - 16px) calc(1em + 2px), calc(100% - 11px) calc(1em + 2px);
+  background-size: 6px 6px, 6px 6px;
+  background-repeat: no-repeat;
+}
+
+#template-select:focus {
+  outline: none;
+  box-shadow: 0 6px 22px rgba(11,116,222,0.16);
+  border-color: #0b74de;
+}
+
+/* Smaller select on very narrow screens */
+@media (max-width: 420px) {
+  #template-select {
+    min-width: 120px;
+    padding: 7px 10px;
+  }
+}
+
+/* Style the dropdown options to look cleaner in supported browsers */
+#template-select option {
+  background: white;
+  color: #1b2340;
+  padding: 6px 8px;
+}
+
+/* Slightly smaller mode toggle on small screens */
+@media (max-width: 420px) {
+  .mode-toggle {
+    padding: 8px 12px;
+    font-size: 14px;
+  }
+}
+
+.mode-toggle[aria-pressed="true"] {
+  background: #e44d3a;
+}
+
+.mode-toggle:hover {
+  outline: 4px solid rgba(11, 116, 222, 0.5);
+  outline-offset: 2px;
+}
+
+.mode-toggle[aria-pressed="true"]:hover {
+  outline: 4px solid rgba(228, 77, 58, 0.5);
+  outline-offset: 2px;
+}
+
+.saved-state{
+  /* Take the sidebar out of document flow and pin to the right as an overlay.
+     This lets the layout-preview keep its full size whether the sidebar is
+     open or closed. */
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100vh;
+  font-size: 14px;
+  width: 500px; /* nominal width */
+  max-width: 90vw;
+  box-sizing: border-box;
+  background: #fafafa;
+  border-left: 1px solid #eee;
+  padding: 12px;
+  overflow: auto;
+  transform: translateX(0);
+  transition: transform 220ms ease, opacity 180ms ease;
+  z-index: 100; /* above main content */
+  box-shadow: -6px 0 24px rgba(2,6,23,0.06);
+}
+
+.saved-state.closed{
+  /* slide fully off the right edge without affecting layout */
+  transform: translateX(100%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.saved-state pre {
+  margin: 0;
+  /* preserve original newlines from JSON but allow wrapping when needed */
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  max-width: 100%;
+  width: 100%;
+  box-sizing: border-box;
+  font-size: inherit;
+  background: transparent;
+}
+
+
+.test-header{
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  padding: 12px 16px;
+  border-bottom: 1px solid #eee;
+}
+
+.test-main{
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  gap: 16px;
+  width: 100%;
+  min-width: 0; /* allow flex children to grow/shrink correctly */
+}
+
+/* Saved Cards Sidebar */
+.saved-cards-sidebar {
+  flex: 0 0 auto;
+  min-width: 300px;
+  max-width: 300px;
+}
+
+/* small sidebar toggle in header */
+.sidebar-toggle{
+  background: #111827;
+  color: white;
+  border: none;
+  padding: 8px 10px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* ensure layout-preview expands when sidebar is closed */
+.layout-preview{
+  flex: 1 1 auto;
+  min-width: 0; /* allow flex child to shrink properly */
+  width: 100%;
+}
+.sections-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 28px; /* space between projects and jobs */
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Drag overlay styles with template support */
+.drag-overlay {
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  z-index: 10000; /* Higher than sortable cards */
+  pointer-events: none;
+}
+
+/* 
+Z-INDEX HIERARCHY:
+- Normal content: 1-100
+- SavedCard hover: 1000
+- DragOverlay: 10000
+- CardPreviewPopup: 10001
+- SaveCardDialog: 10002 (highest)
+*/
+
+/* Ensure drag overlay inherits all template styles */
+.drag-overlay.template1 {
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+}
+
+.drag-overlay.template1 #projects,
+.drag-overlay.template1 #experiences,
+.drag-overlay.template1 #text {
+  /* Reset any layout constraints for the overlay */
+  position: static;
+  background: transparent;
+  padding: 0;
+  margin: 0;
+  border-radius: 0;
+  min-height: auto;
+  width: auto;
+  flex-grow: 0;
+}
+
+.drag-overlay.template2 {
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+}
+
+/* Sortable card styles for DnD */
+.sortable-card {
+  position: relative;
+}
+
+/* Notification styles */
+.notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  max-width: 400px;
+  padding: 16px;
+  border: 1px solid;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  z-index: 10003; /* Above everything else */
+  animation: slideIn 0.3s ease-out;
+}
+
+.notification-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.notification-message {
+  font-size: 14px;
+  font-weight: 500;
+  flex: 1;
+}
+
+.notification-close {
+  background: none;
+  border: none;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  color: inherit;
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+  padding: 0;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.notification-close:hover {
+  opacity: 1;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Success notification */
+.notification.bg-green-50 {
+  background-color: #f0fdf4;
+}
+.notification.border-green-200 {
+  border-color: #bbf7d0;
+}
+.notification.text-green-800 {
+  color: #166534;
+}
+
+/* Error notification */
+.notification.bg-red-50 {
+  background-color: #fef2f2;
+}
+.notification.border-red-200 {
+  border-color: #fecaca;
+}
+.notification.text-red-800 {
+  color: #991b1b;
+}
+
+/* Info notification */
+.notification.bg-blue-50 {
+  background-color: #eff6ff;
+}
+.notification.border-blue-200 {
+  border-color: #bfdbfe;
+}
+.notification.text-blue-800 {
+  color: #1e40af;
+}
+
+.sortable-card {
+  opacity: 1; /* Default opacity */
+  transition: opacity 0.2s ease;
+}
+
+.sortable-card.not-dragging {
+  /* Explicitly set opacity for non-dragging state */
+  opacity: 1 !important;
+}
+
+.sortable-card.dragging {
+  /* Placeholder card when dragging - reduced opacity to show where it will be placed */
+  opacity: 0.4 !important; /* Increased from 0.2 for better visibility */
+  z-index: 1;
+}
+
+.drag-capture:active {
+  cursor: grabbing;
+}
+
+.jobs-section {
+  width: 100%;
+  padding: 16px 20px;
+  box-sizing: border-box;
+}

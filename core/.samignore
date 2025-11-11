@@ -1,0 +1,52 @@
+# SAM ignore file - tells SAM which files to exclude when packaging
+# We want SAM to use only the optimized JAR for Lambda deployment
+
+# Exclude source code since we have the compiled JAR
+src/
+.gradle/
+gradle/
+gradlew
+gradlew.bat
+*.gradle
+gradle.properties
+settings.gradle
+
+# Exclude documentation and non-essential files
+docs/
+*.md
+*.ps1
+
+# Exclude other build artifacts except the ones we need
+build/classes/
+build/generated/
+build/resources/main/
+build/resources/test/
+build/tmp/
+build/reports/
+build/test-results/
+build/docker/
+
+# Exclude all JARs except the optimized ones
+build/libs/core-0.1.jar
+build/libs/core-0.1-jit.jar
+
+# Keep these JARs for deployment
+!build/libs/core-0.1-all-optimized.jar
+!build/libs/core-0.1-all.jar
+!build/libs/core-0.1-native.jar
+
+# Exclude test files
+test-event.json
+
+# Exclude version control
+.git/
+.gitignore
+
+# Exclude IDE files
+.idea/
+.vscode/
+*.iml
+
+# Exclude other artifacts
+target/
+*.log

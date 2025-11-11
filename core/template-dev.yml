@@ -1,0 +1,152 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+Globals:
+  Function:
+    Timeout: 50
+    Environment:
+      Variables:
+        # Optimize JVM for Lambda cold start
+        JAVA_TOOL_OPTIONS: "-XX:+TieredCompilation -XX:TieredStopAtLevel=1 -XX:+UseSerialGC -Xms128m -Xmx256m -XX:+OptimizeStringConcat -XX:+UseStringDeduplication -XX:+UseCompressedOops"
+        # Micronaut Lambda optimizations  
+        MICRONAUT_ENVIRONMENTS: "lambda"
+        MICRONAUT_CONTEXT_EAGER_INIT: "true"
+        MICRONAUT_SERVER_NETTY_ENABLED: "false"
+
+Resources:
+  # API Handler Lambda
+  PorflyoApi:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: handlers\api
+      Handler: com.porflyo.LocalLambdaEntrypoint::execute
+      Runtime: java21
+      MemorySize: 256
+      Environment:
+        Variables:
+          OAUTH_CLIENT_ID: !Ref OAUTH_CLIENT_ID
+          OAUTH_CLIENT_SECRET: !Ref OAUTH_CLIENT_SECRET
+          OAUTH_REDIRECT_URI: !Ref OAUTH_REDIRECT_URI
+          OAUTH_SCOPE: !Ref OAUTH_SCOPE
+          OAUTH_USER_AGENT: !Ref OAUTH_USER_AGENT
+          JWT_SECRET: !Ref JWT_SECRET
+          JWT_EXPIRATION: !Ref JWT_EXPIRATION
+          FRONTEND_URL: !Ref FRONTEND_URL
+      Events:
+        # Handle API requests
+        HttpApi:
+          Type: HttpApi
+          Properties:
+            Path: /api/{proxy+}
+            Method: ANY
+        DeleteUpload:
+          Type: HttpApi
+          Properties:
+            Path: /api/media/{key+}
+            Method: DELETE
+        GetPublicPortfolio:
+          Type: HttpApi
+          Properties:
+            Path: /public/portfolio/{proxy+}
+            Method: GET
+        CheckUrlAvailability:
+          Type: HttpApi
+          Properties:
+            Path: /public/isurlavailable/{proxy+}
+            Method: GET
+
+  # OAuth Handler Lambda
+  PorflyoOauth:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: handlers\oauth
+      Handler: com.porflyo.OauthLambdaEntrypoint::execute
+      Runtime: java21
+      MemorySize: 256
+      Environment:
+        Variables:
+          OAUTH_CLIENT_ID: !Ref OAUTH_CLIENT_ID
+          OAUTH_CLIENT_SECRET: !Ref OAUTH_CLIENT_SECRET
+          OAUTH_REDIRECT_URI: !Ref OAUTH_REDIRECT_URI
+          OAUTH_SCOPE: !Ref OAUTH_SCOPE
+          OAUTH_USER_AGENT: !Ref OAUTH_USER_AGENT
+          JWT_SECRET: !Ref JWT_SECRET
+          JWT_EXPIRATION: !Ref JWT_EXPIRATION
+          FRONTEND_URL: !Ref FRONTEND_URL
+      Events:
+        # Handle OAuth requests
+        OAuthLogin:
+          Type: HttpApi
+          Properties:
+            Path: /oauth/{proxy+}
+            Method: ANY
+
+  # Authentication Handler Lambda  
+  PorflyoAuthentication:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: handlers\authentication
+      Handler: com.porflyo.AuthenticationLambdaEntrypoint::execute
+      Runtime: java21
+      MemorySize: 256
+      Environment:
+        Variables:
+          OAUTH_CLIENT_ID: !Ref OAUTH_CLIENT_ID
+          OAUTH_CLIENT_SECRET: !Ref OAUTH_CLIENT_SECRET
+          OAUTH_REDIRECT_URI: !Ref OAUTH_REDIRECT_URI
+          OAUTH_SCOPE: !Ref OAUTH_SCOPE
+          OAUTH_USER_AGENT: !Ref OAUTH_USER_AGENT
+          JWT_SECRET: !Ref JWT_SECRET
+          JWT_EXPIRATION: !Ref JWT_EXPIRATION
+          FRONTEND_URL: !Ref FRONTEND_URL
+      Events:
+        # Handle authentication requests
+        AuthRequests:
+          Type: HttpApi
+          Properties:
+            Path: /auth/{proxy+}
+            Method: ANY
+        LogoutRequests:
+          Type: HttpApi
+          Properties:
+            Path: /logout
+            Method: ANY
+  # API Handler Lambda
+  PorflyoMetrics:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: handlers\metrics
+      Handler: com.porflyo.LocalLambdaEntrypoint::execute
+      Runtime: java21
+      MemorySize: 256
+      Environment:
+        Variables:
+          OAUTH_CLIENT_ID: !Ref OAUTH_CLIENT_ID
+          OAUTH_CLIENT_SECRET: !Ref OAUTH_CLIENT_SECRET
+          OAUTH_REDIRECT_URI: !Ref OAUTH_REDIRECT_URI
+          OAUTH_SCOPE: !Ref OAUTH_SCOPE
+          OAUTH_USER_AGENT: !Ref OAUTH_USER_AGENT
+          JWT_SECRET: !Ref JWT_SECRET
+          JWT_EXPIRATION: !Ref JWT_EXPIRATION
+          FRONTEND_URL: !Ref FRONTEND_URL
+      Events:
+        # Handle API requests
+        MetricsApi:
+          Type: HttpApi
+          Properties:
+            Path: /metrics/{proxy+}
+            Method: ANY
+
+Outputs:
+  PorflyoApiUrl:
+    Description: "API Gateway endpoint URL for API Lambda"
+    Value: !Sub "https://${ServerlessHttpApi}.execute-api.${AWS::Region}.amazonaws.com/"
+  PorflyoOauthUrl:
+    Description: "API Gateway endpoint URL for OAuth Lambda"
+    Value: !Sub "https://${ServerlessHttpApi}.execute-api.${AWS::Region}.amazonaws.com/oauth"
+  PorflyoAuthenticationUrl:
+    Description: "API Gateway endpoint URL for Authentication Lambda"
+    Value: !Sub "https://${ServerlessHttpApi}.execute-api.${AWS::Region}.amazonaws.com/auth"
+  PorflyoMetricsUrl:
+    Description: "API Gateway endpoint URL for Metrics Lambda"
+    Value: !Sub "https://${ServerlessHttpApi}.execute-api.${AWS::Region}.amazonaws.com/metrics"

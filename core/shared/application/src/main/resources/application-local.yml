@@ -1,0 +1,37 @@
+micronaut:
+  environments:
+    active: local
+
+# DynamoDB Configuration for SAM Local
+aws:
+  region: us-east-1
+   
+dynamodb:
+  endpoint: http://host.docker.internal:8000
+  user-table: user-test    
+  metrics-table: metrics-test
+  region: us-east-1
+
+s3:
+  access-key: test
+  secret-key: test
+  expiration: 5
+  region: us-east-1
+  bucket-name: porflyo-media-test
+  endpoint: http://host.docker.internal:8000
+
+quota:
+  max-saved-sections: 10
+  max-portfolios: 3
+
+github:
+  api:
+    base-url: https://api.github.com
+    oauth-base-url: https://github.com
+    timeout: 30
+  
+logger:
+  levels:
+    com.porflyo: DEBUG
+    io.micronaut.http: DEBUG
+    root: INFO

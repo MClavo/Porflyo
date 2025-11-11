@@ -1,0 +1,205 @@
+/* Modern Charts Shared Styles */
+
+/* Tooltip específico para ProjectStackedChart con mejor alineación */
+.project-stacked-tooltip {
+  background: rgba(26, 32, 44, 0.95) !important;
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  border-radius: var(--radius-lg) !important;
+  padding: var(--space-2) var(--space-3) !important; /* tighter vertical, more horizontal padding */
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3) !important;
+  min-width: 160px;
+  max-width: 220px;
+  z-index: 1000;
+  transition: all 0.05s ease-out !important;
+  will-change: transform;
+  pointer-events: none;
+  font-size: var(--font-sm) !important;
+}
+
+.project-stacked-tooltip .modern-tooltip__header {
+  font-size: var(--font-sm);
+  font-weight: 700;
+  color: var(--text-primary);
+  text-align: center;
+  margin-bottom: var(--space-2);
+  letter-spacing: 0.025em;
+}
+
+.project-stacked-tooltip .modern-tooltip__separator {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  margin: var(--space-2) 0;
+}
+
+.project-stacked-tooltip .modern-tooltip__content {
+  display: grid;
+  /* name column then value column; center the whole grid inside the tooltip */
+  grid-template-columns: max-content min-content;
+  gap: var(--space-1) var(--space-4); /* slightly increased horizontal gap between name and value */
+  align-items: center;
+  justify-content: center; /* center the grid horizontally */
+  justify-items: start; /* left-align items inside each column */
+  padding: var(--space-1) 0; /* vertical padding */
+}
+
+.project-stacked-tooltip .modern-tooltip__item {
+  display: contents; /* allow grid children to define layout */
+}
+
+.project-stacked-tooltip .modern-tooltip__name {
+  font-size: var(--font-sm);
+  color: var(--text-secondary);
+  font-weight: 500;
+  padding-left: var(--space-1);
+}
+
+.project-stacked-tooltip .modern-tooltip__value {
+  font-size: var(--font-sm);
+  color: var(--text-primary);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  text-align: left; /* values aligned near the name, not right-edge */
+  padding-right: var(--space-2);
+}
+
+/* Chart theme variables - will adapt to light/dark themes */
+:root {
+  /* Map to shared color variables declared in styles/variables/colors.css */
+  --chart-primary: var(--chart-1);
+  --chart-success: var(--chart-2);
+  --chart-warning: var(--chart-3);
+  --chart-danger: var(--chart-5);
+  --chart-info: var(--chart-6);
+  --chart-purple: var(--chart-4);
+  --chart-orange: var(--chart-8);
+  --chart-lime: var(--chart-7);
+
+  /* Chart specific variables */
+  --chart-grid-opacity: 0.2;
+  --chart-hover-opacity: 0.1;
+  --chart-text-secondary: var(--text-secondary, #9ca3af);
+}
+
+/* Dark theme adjustments */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --chart-grid-opacity: 0.15;
+    --chart-hover-opacity: 0.08;
+  }
+}
+
+/* Tooltip moderno que sigue al ratón */
+.modern-tooltip {
+  background: rgba(26, 32, 44, 0.95) !important;
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  border-radius: var(--radius-lg) !important;
+  padding: var(--space-4) !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3) !important;
+  min-width: 200px;
+  z-index: 1000;
+  transition: all 0.05s ease-out !important;
+  will-change: transform;
+  pointer-events: none;
+  font-size: var(--font-sm) !important;
+}
+
+/* Optimización para seguimiento del tooltip */
+.recharts-tooltip-wrapper {
+  transition: transform 0.05s ease-out !important;
+  will-change: transform !important;
+}
+
+/* Hover effects para barras */
+.recharts-bar-rectangle {
+  transition: all 0.2s ease-out;
+  cursor: pointer;
+}
+
+.recharts-bar-rectangle:hover {
+  filter: brightness(1.15) saturate(1.1);
+  stroke: var(--chart-text-secondary);
+  stroke-width: 1;
+  stroke-opacity: 0.4;
+}
+
+/* Chart background styling - uses theme variables */
+.recharts-wrapper {
+  background: transparent !important;
+}
+
+.recharts-surface {
+  background: transparent !important;
+}
+
+/* Grid background should be transparent to let card background show through */
+.recharts-cartesian-grid-bg {
+  fill: transparent !important;
+}
+
+.recharts-wrapper:hover .recharts-cartesian-grid-bg {
+  fill: transparent !important;
+}
+
+/* Cursor styling with theme colors */
+.recharts-cursor-rect {
+  fill: var(--card-bg-hover, rgba(255, 255, 255, 0.05)) !important;
+  opacity: 0.8 !important;
+  stroke: var(--primary-color, #3B82F6) !important;
+  stroke-width: 1 !important;
+  stroke-opacity: 0.2 !important;
+}
+
+/* Ensure cursor rect uses theme colors */
+.recharts-wrapper rect.recharts-cursor-rect {
+  fill: var(--card-bg-hover, rgba(255, 255, 255, 0.05)) !important;
+  opacity: 0.8 !important;
+}
+
+/* Hover effects para sectores del donut */
+.recharts-pie-sector {
+  transition: all 0.2s ease-out;
+  transform-origin: center;
+  cursor: pointer;
+}
+
+.recharts-pie-sector:hover {
+  filter: brightness(1.15);
+  transform: scale(1.08);
+  stroke: rgba(255, 255, 255, 0.2);
+  stroke-width: 2;
+}
+
+/* Animaciones suaves para charts */
+.recharts-surface {
+  transition: all 0.2s ease-out;
+}
+
+/* Estilo para leyendas */
+.modern-chart-legend {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+  font-size: var(--font-xs);
+  color: var(--text-secondary);
+}
+
+.modern-legend-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.modern-legend-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.modern-legend-square {
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+}

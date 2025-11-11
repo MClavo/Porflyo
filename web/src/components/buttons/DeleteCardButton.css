@@ -1,0 +1,33 @@
+.delete-card-button {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  padding: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  border-radius: 6px;
+  flex-shrink: 0;
+  z-index: 1000; /* Above drag-handle (z-index: 15) */
+  font-size: 20px;
+  line-height: 1;
+  width: 28px;
+  height: 28px;
+}
+
+.delete-card-button:hover {
+  color: #ef4444; /* Red color on hover */
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid #ef4444;
+  transform: translateY(-1px);
+}
+
+.delete-card-button:active {
+  transform: translateY(0);
+}
+

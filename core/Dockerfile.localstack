@@ -1,0 +1,26 @@
+FROM localstack/localstack:latest
+
+ENV SERVICES=s3,dynamodb
+ENV GATEWAY_LISTEN=0.0.0.0:4566
+ENV PERSISTENCE=1
+
+USER root
+
+RUN mkdir -p /etc/localstack/init/ready.d && \
+    printf '%s\n' '#!/usr/bin/env bash' \
+    'set -e' \
+    '' \
+    'until awslocal s3api list-buckets >/dev/null 2>&1; do' \
+    '  echo "⏳ Waiting for LocalStack S3..."' \
+    '  sleep 1' \
+    'done' \
+    '' \
+    'awslocal s3api create-bucket --bucket porflyo-media-test || true' \
+    '' \
+    'awslocal s3api put-bucket-cors --bucket porflyo-media-test --cors-configuration '\''{ "CORSRules": [ { "AllowedOrigins": ["*"], "AllowedMethods": ["GET","PUT","POST","DELETE"], "AllowedHeaders": ["*"], "ExposeHeaders": ["ETag"], "MaxAgeSeconds": 3000 } ] }'\''' \
+    '' \
+    'echo "✅ Bucket porflyo-media-test created with CORS configuration."' \
+    > /etc/localstack/init/ready.d/01-setup-cors.sh && \
+    chmod +x /etc/localstack/init/ready.d/01-setup-cors.sh
+
+EXPOSE 4566

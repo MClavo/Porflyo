@@ -1,0 +1,176 @@
+/* ToggleSelector - Unified reusable toggle component styles */
+
+.toggle-selector {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.toggle-selector__label {
+  font-size: var(--font-xs);
+  font-weight: 500;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--space-1);
+}
+
+.toggle-selector__container {
+  display: flex;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: var(--radius-lg);
+  padding: var(--space-1);
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  align-items: center;
+}
+
+/* Animated slider background - FIXED GRADIENT DIRECTION */
+.toggle-selector__slider {
+  position: absolute;
+  top: var(--space-1);
+  bottom: var(--space-1);
+  background: linear-gradient(
+    135deg,
+    var(--accent-blue) 0%,
+    var(--accent-purple) 100%
+  );
+  border-radius: var(--radius-md);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 
+    0 2px 8px rgba(59, 130, 246, 0.3),
+    0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
+.toggle-selector__option {
+  flex: 1;
+  background: none;
+  border: none;
+  border-radius: var(--radius-md);
+  font-weight: 500;
+  color: var(--text-secondary);
+  cursor: pointer;
+  position: relative;
+  z-index: 2;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.toggle-selector__option:hover:not(:disabled) {
+  color: var(--text-primary);
+  transform: translateY(-1px);
+}
+
+.toggle-selector__option:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.toggle-selector__option--active {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.toggle-selector__option-text {
+  position: relative;
+  z-index: 1;
+}
+
+/* Size variants */
+
+/* Small size - for mobile or compact contexts */
+.toggle-selector--sm .toggle-selector__container {
+  height: 32px;
+}
+
+.toggle-selector--sm .toggle-selector__option {
+  padding: var(--space-1) var(--space-2);
+  font-size: var(--font-xs);
+  min-width: 50px;
+}
+
+.toggle-selector--sm .toggle-selector__label {
+  font-size: 10px;
+}
+
+/* Medium size - default, compact for navbar */
+.toggle-selector--md .toggle-selector__container {
+  height: 40px;
+}
+
+.toggle-selector--md .toggle-selector__option {
+  padding: var(--space-2) var(--space-4);
+  font-size: var(--font-sm);
+  min-width: 75px; /* Wider to prevent text clipping */
+}
+
+/* Large size - for prominent contexts */
+.toggle-selector--lg .toggle-selector__container {
+  height: 48px;
+}
+
+.toggle-selector--lg .toggle-selector__option {
+  padding: var(--space-2) var(--space-6);
+  font-size: var(--font-base);
+  min-width: 90px; /* Wider for large buttons */
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .toggle-selector--md {
+    /* Auto-scale to small on mobile */
+    .toggle-selector__container {
+      height: 32px;
+    }
+    
+    .toggle-selector__option {
+      padding: var(--space-1) var(--space-2);
+      font-size: var(--font-xs);
+      min-width: 50px;
+    }
+    
+    .toggle-selector__label {
+      font-size: 10px;
+    }
+  }
+  
+  .toggle-selector--lg {
+    /* Scale down large to medium on mobile */
+    .toggle-selector__container {
+      height: 40px;
+    }
+    
+    .toggle-selector__option {
+      padding: var(--space-2) var(--space-4);
+      font-size: var(--font-sm);
+      min-width: 75px;
+    }
+  }
+}
+
+/* Focus states for accessibility */
+.toggle-selector__option:focus-visible {
+  outline: 2px solid var(--accent-blue);
+  outline-offset: 2px;
+  border-radius: var(--radius-md);
+}
+
+/* Animation enhancements */
+.toggle-selector__slider {
+  /* Enhanced smooth animation */
+  transition: 
+    transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.2s ease;
+}
+
+.toggle-selector__option {
+  /* Subtle hover animation */
+  transition: 
+    all var(--transition-fast),
+    transform 0.15s ease;
+}

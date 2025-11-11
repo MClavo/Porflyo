@@ -1,0 +1,7 @@
+plugins {
+    id 'porflyo.micronaut-base' 
+} 
+
+dependencies {
+    implementation 'com.github.ksuid:ksuid:1.1.3'
+}

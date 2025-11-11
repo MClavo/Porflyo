@@ -1,0 +1,156 @@
+/* Estilos para el componente de métricas de scroll */
+
+.scroll-metrics-display {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 12px;
+  background: #fff;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.scroll-metrics-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.scroll-metrics-header h3 {
+  margin: 0;
+  font-size: 16px;
+  color: #333;
+}
+
+.scroll-metrics-controls {
+  display: flex;
+  gap: 4px;
+}
+
+.control-button {
+  border: none;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+  color: white;
+  transition: all 0.2s ease;
+}
+
+.control-button.start {
+  background-color: #44aa44;
+}
+
+.control-button.stop {
+  background-color: #ff4444;
+}
+
+.control-button.clear {
+  background-color: #666;
+}
+
+.control-button:hover {
+  opacity: 0.8;
+  transform: translateY(-1px);
+}
+
+.engagement-score {
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 6px;
+  padding: 10px;
+  margin-bottom: 12px;
+}
+
+.engagement-score strong {
+  color: #495057;
+  font-size: 14px;
+}
+
+.engagement-bar {
+  width: 100%;
+  height: 8px;
+  background-color: #ddd;
+  border-radius: 4px;
+  margin-top: 6px;
+  overflow: hidden;
+}
+
+.engagement-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.5s ease-in-out;
+}
+
+.detailed-metrics {
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.metric-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 2px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.metric-row:last-child {
+  border-bottom: none;
+}
+
+.metric-row span {
+  color: #666;
+}
+
+.metric-row strong {
+  color: #333;
+  font-weight: 600;
+}
+
+.direction-down {
+  color: #4CAF50 !important;
+}
+
+.direction-up {
+  color: #2196F3 !important;
+}
+
+.direction-mixed {
+  color: #FF9800 !important;
+}
+
+.tracking-status {
+  text-align: center;
+  font-size: 11px;
+  color: #6c757d;
+  padding-top: 8px;
+  border-top: 1px solid #e9ecef;
+  margin-top: 12px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .scroll-metrics-display {
+    padding: 8px;
+  }
+  
+  .scroll-metrics-header h3 {
+    font-size: 14px;
+  }
+  
+  .detailed-metrics {
+    font-size: 12px;
+  }
+}
+
+/* Animation for engagement bar */
+.engagement-score div div {
+  transition: width 0.5s ease-in-out;
+}
+
+/* Button hover effects */
+.scroll-metrics-controls button:hover {
+  opacity: 0.8;
+  transform: translateY(-1px);
+  transition: all 0.2s ease;
+}

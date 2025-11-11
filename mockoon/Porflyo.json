@@ -1,0 +1,102 @@
+{
+  "uuid": "2e970acd-bcd9-4156-8c76-dfa4f64247c5",
+  "lastMigration": 33,
+  "name": "Porflyo",
+  "endpointPrefix": "",
+  "latency": 0,
+  "port": 9002,
+  "hostname": "",
+  "folders": [],
+  "routes": [
+    {
+      "uuid": "0fa4db71-0161-40b4-af77-0c7789586f59",
+      "type": "http",
+      "documentation": "",
+      "method": "get",
+      "endpoint": "metrics",
+      "responses": [
+        {
+          "uuid": "e4307a96-032a-404b-8c4e-5eb81ee7679b",
+          "body": "{}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "",
+          "headers": [],
+          "bodyType": "DATABUCKET",
+          "filePath": "",
+          "databucketID": "mv74",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null,
+      "streamingMode": null,
+      "streamingInterval": 0
+    }
+  ],
+  "rootChildren": [
+    {
+      "type": "route",
+      "uuid": "0fa4db71-0161-40b4-af77-0c7789586f59"
+    }
+  ],
+  "proxyMode": false,
+  "proxyHost": "",
+  "proxyRemovePrefix": false,
+  "tlsOptions": {
+    "enabled": false,
+    "type": "CERT",
+    "pfxPath": "",
+    "certPath": "",
+    "keyPath": "",
+    "caPath": "",
+    "passphrase": ""
+  },
+  "cors": true,
+  "headers": [
+    {
+      "key": "Content-Type",
+      "value": "application/json"
+    },
+    {
+      "key": "Access-Control-Allow-Origin",
+      "value": "*"
+    },
+    {
+      "key": "Access-Control-Allow-Methods",
+      "value": "GET,POST,PUT,PATCH,DELETE,HEAD,OPTIONS"
+    },
+    {
+      "key": "Access-Control-Allow-Headers",
+      "value": "Content-Type, Origin, Accept, Authorization, Content-Length, X-Requested-With"
+    }
+  ],
+  "proxyReqHeaders": [
+    {
+      "key": "",
+      "value": ""
+    }
+  ],
+  "proxyResHeaders": [
+    {
+      "key": "",
+      "value": ""
+    }
+  ],
+  "data": [
+    {
+      "uuid": "5546a54e-fb70-4193-b148-9ddcfed673c4",
+      "id": "mv74",
+      "name": "metrics bootstrap",
+      "documentation": "",
+      "value": "{\r\n  \"meta\": {\r\n    \"calcVersion\": \"2025.09.26-r1\",\r\n    \"generatedAt\": \"{{date '2020-01-01' '2025-12-31' 'yyyy-MM-dd''T''HH:mm:ss''Z'}}\",\r\n    \"timezone\": \"Europe/Madrid\",\r\n    \"units\": { \"timeBase\": \"ds\", \"displayTime\": \"ms\" },\r\n    \"baseline\": { \"windowDays\": 28 }\r\n  },\r\n  \"dailyAgg\": [\r\n  {{#repeat 28 28}}\r\n  {\r\n    \"date\": \"{{dateTimeShift date='2025-09-01' days=@index format='yyyy-MM-dd'}}\",\r\n    \"raw\": {\r\n      \"views\": {{int 1 50}},\r\n      \"activeTime\": {{int 120 10000}},\r\n      \"emailCopies\": {{int 0 30}},\r\n      \"desktopViews\": {{int 20 150}},\r\n      \"mobileTabletViews\": {{int 10 120}},\r\n      \"sumScrollScore\": {{int 1000 8000}},\r\n      \"sumScrollTime\": {{int 5000 30000}},\r\n      \"qualityVisits\": {{int 1 45}},\r\n      \"projectViewTimeTotal\": {{int 20000 120000}},\r\n      \"projectExposuresTotal\": {{int 100 600}},\r\n      \"projectCodeViewsTotal\": {{int 15 50}},\r\n      \"projectLiveViewsTotal\": {{int 10 200}},\r\n      \"tffiSumMs\": {{int 20000 100000}},\r\n      \"tffiCount\": {{int 20 200}},\r\n      \"socialClicksTotal\": {{int 0 40}}\r\n    },\r\n    \"derived\": {\r\n      \"deviceMix\": { \r\n        \"desktopPct\": 0.8,\r\n        \"mobileTabletPct\": 0.2\r\n      },\r\n      \"engagementAvg\": {{int 10 95}},\r\n      \"avgScrollTimeMs\": {{int 800 3000}},\r\n      \"avgSessionTime\" : {{int 200 3000}},\r\n      \"avgCardViewTimeMs\": {{int 1500 4000}},\r\n      \"tffiMeanMs\": {{int 400 1200}},\r\n      \"emailConversion\": {{float 0 0.4}}\r\n    },\r\n    \"zScores\": { \r\n      \"visits\": {{float -1 1}},\r\n      \"engagement\": {{float -1 1}},\r\n      \"tffi\": {{float -1 1}}\r\n    }\r\n  }{{#unless @last}},{{/unless}}\r\n  {{/repeat}}\r\n],\r\n\"slots\": [\r\n  {{#repeat 10 10}}\r\n  {\r\n    \"date\": \"{{dateTimeShift date='2025-09-18' days=@index format='yyyy-MM-dd'}}\",\r\n    \"projects\": [\r\n      {{#repeat 2 8}}\r\n      {\r\n        \"projectId\": {{int 1 6}},\r\n        \"exposures\": {{int 20 120}},\r\n        \"viewTime\": {{int 300 6000}},\r\n        \"codeViews\": {{int 0 1}},\r\n        \"liveViews\": {{int 0 2}}\r\n      }{{#unless @last}},{{/unless}}\r\n      {{/repeat}}\r\n    ],\r\n    \"heatmap\": {\r\n        \"meta\": { \"rows\": 512, \"k\": 400 },\r\n        \"cells\": [\r\n          {{#repeat 400 400}}\r\n          {\r\n            \"index\": {{int 1 10000}},\r\n            \"value\": {{int 1 1000}},\r\n            \"count\": {{int 1 10}}\r\n          }{{#unless @last}},{{/unless}}\r\n          {{/repeat}}\r\n        ]\r\n      }\r\n  }{{#unless @last}},{{/unless}}\r\n  {{/repeat}}\r\n]\r\n}"
+    }
+  ],
+  "callbacks": []
+}

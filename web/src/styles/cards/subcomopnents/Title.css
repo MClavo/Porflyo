@@ -1,0 +1,21 @@
+/* Title styles extracted from ProjectCard.css to be reused by other cards */
+.title,
+.card-title {
+  position: relative;
+  margin: 0;
+  color: var(--title-color, #FAFAFA);
+  z-index: 20;
+  font-size: 32px;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.6);
+  font-family: "Oxanium", sans-serif;
+  font-weight: 500;
+  letter-spacing: 1px;
+  margin-top: 12px;
+  margin-bottom: var(--title-bottom-margin, 12px);
+}
+
+/* Smaller heading variant used inside job cards */
+.job-card-title,
+.card-title.small {
+  font-size: 28px;
+}
