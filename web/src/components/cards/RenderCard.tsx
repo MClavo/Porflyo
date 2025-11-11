@@ -1,5 +1,5 @@
-import { ProjectCard, JobCard, TextCard, AboutCard } from './index';
-import type { AnyCard, ProjectCardSaved, JobCardSaved, TextCardSaved, AboutCardSaved } from '../../state/Cards.types';
+import { ProjectCard, JobCard, EducationCard, TextCard, AboutCard } from './index';
+import type { AnyCard, ProjectCardSaved, JobCardSaved, EducationCardSaved, TextCardSaved, AboutCardSaved } from '../../state/Cards.types';
 import type { Mode } from './subcomponents';
 import type { CardId } from '../../state/Sections.types';
 
@@ -19,6 +19,8 @@ export function renderCard(
       return <ProjectCard key={cardId} mode={mode} {...(data as ProjectCardSaved)} onPatch={onPatch} />;
     case 'job':
       return <JobCard key={cardId} mode={mode} {...(data as JobCardSaved)} onPatch={onPatch} />;
+    case 'education':
+      return <EducationCard key={cardId} mode={mode} {...(data as EducationCardSaved)} onPatch={onPatch} />;
     case 'text':
       return <TextCard key={cardId} mode={mode} {...(data as TextCardSaved)} onPatch={onPatch} />;
     case 'about':

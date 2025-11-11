@@ -45,12 +45,12 @@ export const portfolioReducer = (state: PortfolioState, action: Action): Portfol
 
 
       case "ADD_CARD": {
-    const { sectionId, cardType, initialData } = action.payload;
+        const { sectionId, cardType, initialData } = action.payload;
         const s = draft.sections[sectionId];
         if (!s) return;
         if (!s.allowedTypes.includes(cardType)) return;
         if (typeof s.maxCards === "number" && s.cardsOrder.length >= s.maxCards) return;
-    const { id, card } = createCard(cardType);
+        const { id, card } = createCard(cardType);
 
         // If initialData is provided, merge into the newly created card data
         if (initialData && typeof initialData === "object") {
@@ -99,7 +99,7 @@ export const portfolioReducer = (state: PortfolioState, action: Action): Portfol
 
       case "REPLACE_IMAGE_URLS": {
         const { urlMapping } = action.payload;
-        
+
         // Replace URLs in all cards across all sections
         Object.values(draft.sections).forEach(section => {
           Object.values(section.cardsById).forEach(card => {
@@ -115,7 +115,7 @@ export const portfolioReducer = (state: PortfolioState, action: Action): Portfol
         const { sectionId, data } = action.payload;
         const s = draft.sections[sectionId];
         if (!s) return;
-        
+
         // Merge partial data into existing parsedContent
         if (s.parsedContent && typeof s.parsedContent === 'object') {
           s.parsedContent = { ...s.parsedContent, ...data } as AboutSectionData;
@@ -133,11 +133,11 @@ export const portfolioReducer = (state: PortfolioState, action: Action): Portfol
 function replaceUrlsInCardData(obj: Record<string, unknown>, urlMapping: Record<string, string>): void {
   Object.keys(obj).forEach(key => {
     const value = obj[key];
-    
+
     if (typeof value === 'string' && urlMapping[value]) {
       obj[key] = urlMapping[value];
     } else if (Array.isArray(value)) {
-      obj[key] = value.map(item => 
+      obj[key] = value.map(item =>
         typeof item === 'string' && urlMapping[item] ? urlMapping[item] : item
       );
     } else if (value && typeof value === 'object') {

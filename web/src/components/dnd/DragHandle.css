@@ -79,57 +79,17 @@
 
 /* Add top padding to card content in edit mode to accommodate the drag handle */
 .sortable-card[data-mode="edit"] .project-card,
+.sortable-card[data-mode="edit"] .job-card,
+.sortable-card[data-mode="edit"] .education-card,
 .sortable-card[data-mode="edit"] .text-card,
 .sortable-card[data-mode="edit"] .about-card {
   padding-top: calc(36px + var(--card-padding, 20px));
 }
 
-/* Job cards get side drag handle instead of top */
-.sortable-card[data-mode="edit"] .job-card {
-  padding-top: var(--card-padding, 24px);
-  padding-right: calc(40px + var(--card-padding, 24px));
-}
-
-/* Job card drag handle - positioned on the right side */
-.sortable-card:has(.job-card) .drag-handle {
-  top: 8px;
-  right: 8px;
-  left: auto;
-  width: 32px;
-  /* Use auto height with constraints to fit within card */
-  height: auto;
-  max-height: min(calc(100% - 16px), 200px);
-  min-height: 60px;
-  /* Position from both top and bottom to stay within card bounds */
-  bottom: 8px;
-  flex-direction: column;
-  background: linear-gradient(
-    to right,
-    rgba(255, 255, 255, 0.08) 0%,
-    rgba(255, 255, 255, 0.02) 100%
-  );
-  border-bottom: none;
-  border-left: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.sortable-card:has(.job-card) .drag-handle:hover {
-  background: linear-gradient(
-    to right,
-    rgba(255, 255, 255, 0.12) 0%,
-    rgba(255, 255, 255, 0.04) 100%
-  );
-}
-
-.sortable-card:has(.job-card) .drag-handle .drag-handle__grip {
-  grid-template-columns: repeat(2, 1fr);
-  grid-template-rows: repeat(3, 1fr);
-  gap: 3px;
-  padding: 8px 4px;
-}
-
 /* Ensure the drag handle respects the card's border radius */
 .sortable-card[data-mode="edit"] .project-card,
 .sortable-card[data-mode="edit"] .job-card,
+.sortable-card[data-mode="edit"] .education-card,
 .sortable-card[data-mode="edit"] .text-card,
 .sortable-card[data-mode="edit"] .about-card {
   overflow: visible;
@@ -159,34 +119,17 @@
 
 /* Apply same padding adjustments as regular sortable-cards in edit mode */
 .drag-overlay.sortable-card[data-mode="edit"] .project-card,
+.drag-overlay.sortable-card[data-mode="edit"] .job-card,
+.drag-overlay.sortable-card[data-mode="edit"] .education-card,
 .drag-overlay.sortable-card[data-mode="edit"] .text-card,
 .drag-overlay.sortable-card[data-mode="edit"] .about-card {
   padding-top: calc(36px + var(--card-padding, 20px));
-}
-
-.drag-overlay.sortable-card[data-mode="edit"] .job-card {
-  padding-top: var(--card-padding, 24px);
-  padding-right: calc(40px + var(--card-padding, 24px));
 }
 
 /* Show drag handle correctly positioned in overlay */
 .drag-overlay.sortable-card .drag-handle {
   opacity: 1;
   pointer-events: none;
-}
-
-/* Job card drag handle in overlay - right side */
-.drag-overlay.sortable-card:has(.job-card) .drag-handle {
-  top: 8px;
-  right: 8px;
-  left: auto;
-  width: 32px;
-  /* Limit height to prevent it from extending beyond the card */
-  height: auto;
-  max-height: 200px;
-  min-height: 60px;
-  /* Position relative to the card content */
-  bottom: 8px;
 }
 
 /* Force grabbing cursor on body while dragging */

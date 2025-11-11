@@ -1,7 +1,7 @@
 import React from 'react';
 import './AddCardButton.css';
 
-export type CardTypeOption = 'project' | 'job' | 'text';
+export type CardTypeOption = 'project' | 'job' | 'education' | 'text';
 
 interface Props {
   allowedTypes: CardTypeOption[];

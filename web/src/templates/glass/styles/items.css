@@ -206,6 +206,136 @@
   font-size: 11px;
 }
 
+/* Education cards - Glass style (same as job-card but without description) */
+.tpl-glass .education-card {
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  backdrop-filter: blur(12px);
+  border-radius: 16px;
+  padding: 24px;
+  max-width: 650px;
+  width: 100%;
+  box-sizing: border-box;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.tpl-glass .education-card:hover {
+  background: rgba(255, 255, 255, 0.18);
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+/* Education card header - title and dates */
+.tpl-glass .education-card-header {
+  margin-bottom: 8px;
+}
+
+.tpl-glass .education-card .education-card-title,
+.tpl-glass .education-card .education-card-title-wrapper,
+.tpl-glass .education-card .education-card-title-wrapper input {
+  color: #ffffff;
+  font-size: 20px;
+  font-weight: 600;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  letter-spacing: 0.3px;
+}
+
+/* Dates styling in glass - SAME as view mode */
+.tpl-glass .education-card-dates {
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.tpl-glass .education-card-dates .date-view {
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.tpl-glass .education-card-dates .date-month-select,
+.tpl-glass .education-card-dates .date-year-input {
+  background: none !important;
+  border: none !important;
+  color: rgba(255, 255, 255, 0.75) !important;
+  backdrop-filter: none !important;
+  padding: 0 !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  border-radius: 0 !important;
+  height: auto !important;
+  line-height: 1 !important;
+}
+
+.tpl-glass .education-card-dates .date-month-select {
+  /* Keep default dropdown arrow for glass too */
+  -webkit-appearance: menulist !important;
+  -moz-appearance: menulist !important;
+  appearance: menulist !important;
+  cursor: pointer !important;
+}
+
+.tpl-glass .education-card-dates .date-year-input {
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  appearance: none !important;
+}
+
+.tpl-glass .education-card-dates .date-month-select:focus,
+.tpl-glass .education-card-dates .date-year-input:focus {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3) !important;
+  outline: none !important;
+}
+
+.tpl-glass .education-card-date-separator {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* Institution and location section */
+.tpl-glass .education-card .education-card-institution,
+.tpl-glass .education-card .education-card-institution-wrapper,
+.tpl-glass .education-card .education-card-institution-wrapper input {
+  color: rgba(255, 255, 255, 0.95);
+  font-size: 16px;
+  font-weight: 500;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+}
+
+.tpl-glass .education-card-location-separator {
+  color: rgba(255, 255, 255, 0.4);
+  margin: 0 4px;
+}
+
+.tpl-glass .education-card .education-card-location,
+.tpl-glass .education-card .education-card-location-wrapper span,
+.tpl-glass .education-card .education-card-location-wrapper input {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 14px;
+  font-style: italic;
+}
+
+/* All education card inputs - ALWAYS no padding, no border, DYNAMIC WIDTH (same in view and edit) */
+.tpl-glass .education-card .education-card-title-wrapper input,
+.tpl-glass .education-card .education-card-institution-wrapper input,
+.tpl-glass .education-card .education-card-location-wrapper input,
+.tpl-glass .education-card[data-mode="edit"] .education-card-title-wrapper input,
+.tpl-glass .education-card[data-mode="edit"] .education-card-institution-wrapper input,
+.tpl-glass .education-card[data-mode="edit"] .education-card-location-wrapper input,
+.tpl-glass .education-card[data-mode="edit"] .education-card-title-wrapper input:focus,
+.tpl-glass .education-card[data-mode="edit"] .education-card-institution-wrapper input:focus,
+.tpl-glass .education-card[data-mode="edit"] .education-card-location-wrapper input:focus {
+  background: none !important;
+  border: none !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  outline: none !important;
+  box-shadow: none !important;
+  width: fit-content !important;
+  min-width: 50px !important;
+  max-width: 100% !important;
+}
+
 /* Project cards */
 .tpl-glass .project-card,
 .tpl-glass .item-project,

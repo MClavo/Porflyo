@@ -1,5 +1,5 @@
-/* JobCard - BASE NEUTRAL DESIGN */
-.job-card {
+/* EducationCard - BASE NEUTRAL DESIGN */
+.education-card {
   background: #f5f5f5;
   border: 1px solid #e0e0e0;
   border-radius: 8px;
@@ -13,7 +13,7 @@
 }
 
 /* Header: Title and dates on same line */
-.job-card-header {
+.education-card-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
@@ -22,9 +22,9 @@
 }
 
 /* Position title - large and prominent */
-.job-card .job-card-title,
-.job-card .job-card-title-wrapper,
-.job-card .job-card-title-wrapper input {
+.education-card .education-card-title,
+.education-card .education-card-title-wrapper,
+.education-card .education-card-title-wrapper input {
   flex: 1;
   margin: 0;
   padding: 0;
@@ -42,7 +42,7 @@
 }
 
 /* Dates container - compact and aligned */
-.job-card-dates {
+.education-card-dates {
   display: flex;
   align-items: center;
   gap: 6px;
@@ -52,27 +52,27 @@
   white-space: nowrap;
 }
 
-.job-card-date-separator {
+.education-card-date-separator {
   color: #999;
   font-weight: 300;
   padding: 0 2px;
 }
 
 /* Date component styling - MATCH SIZES */
-.job-card-dates .date-view {
+.education-card-dates .date-view {
   font-size: 13px;
   color: #666;
   white-space: nowrap;
 }
 
-.job-card-dates .date-edit {
+.education-card-dates .date-edit {
   display: flex;
   align-items: center;
   gap: 4px;
 }
 
-.job-card-dates .date-month-select,
-.job-card-dates .date-year-input {
+.education-card-dates .date-month-select,
+.education-card-dates .date-year-input {
   font-size: 13px;
   padding: 0;
   border: none;
@@ -85,7 +85,7 @@
   line-height: 1;
 }
 
-.job-card-dates .date-month-select {
+.education-card-dates .date-month-select {
   /* Dynamic width based on content */
   width: fit-content;
   min-width: 0;
@@ -98,7 +98,7 @@
   padding-right: 0;
 }
 
-.job-card-dates .date-year-input {
+.education-card-dates .date-year-input {
   /* Dynamic width - adjust to 4 digits */
   width: 3ch; /* ch = width of "0" character, 4ch for "2024" */
   min-width: 3ch;
@@ -110,7 +110,7 @@
 }
 
 /* Company and location section */
-.job-card-company-section {
+.education-card-institution-section {
   display: flex;
   align-items: baseline;
   gap: 8px;
@@ -118,9 +118,9 @@
   flex-wrap: wrap;
 }
 
-.job-card .job-card-company,
-.job-card .job-card-company-wrapper,
-.job-card .job-card-company-wrapper input {
+.education-card .education-card-institution,
+.education-card .education-card-institution-wrapper,
+.education-card .education-card-institution-wrapper input {
   margin: 0;
   padding: 0;
   font-size: 15px;
@@ -135,21 +135,21 @@
   max-width: 100%;
 }
 
-.job-card-location-separator {
+.education-card-location-separator {
   color: #999;
   font-size: 14px;
 }
 
-.job-card .job-card-location,
-.job-card .job-card-location-wrapper {
+.education-card .education-card-location,
+.education-card .education-card-location-wrapper {
   display: inline;
   margin: 0;
   padding: 0;
 }
 
-.job-card .job-card-location,
-.job-card .job-card-location-wrapper span,
-.job-card .job-card-location-wrapper input {
+.education-card .education-card-location,
+.education-card .education-card-location-wrapper span,
+.education-card .education-card-location-wrapper input {
   font-size: 14px;
   font-weight: 400;
   color: #666;
@@ -166,7 +166,7 @@
 }
 
 /* Description - bullet points in VIEW mode */
-.job-card .job-card-description {
+.education-card .education-card-description {
   margin: 0;
   padding: 0;
   padding-left: 20px;
@@ -176,17 +176,17 @@
   list-style-type: disc;
 }
 
-.job-card .job-card-description li {
+.education-card .education-card-description li {
   margin-bottom: 4px;
   color: #444;
 }
 
-.job-card .job-card-description li::marker {
+.education-card .education-card-description li::marker {
   color: #999;
 }
 
 /* Description textarea in EDIT mode - SHOW BULLETS VISUALLY */
-.job-card[data-mode="edit"] .job-card-description {
+.education-card[data-mode="edit"] .education-card-description {
   font-size: 14px;
   line-height: 1.6;
   padding: 8px 12px;
@@ -203,38 +203,38 @@
   white-space: pre-wrap;
 }
 
-.job-card[data-mode="edit"] .job-card-description::placeholder {
+.education-card[data-mode="edit"] .education-card-description::placeholder {
   color: #999;
   font-size: 13px;
 }
 
 /* Edit mode - subtle focus states only */
-.job-card[data-mode="edit"] .job-card-title-wrapper input:focus,
-.job-card[data-mode="edit"] .job-card-company-wrapper input:focus,
-.job-card[data-mode="edit"] .job-card-location-wrapper input:focus {
+.education-card[data-mode="edit"] .education-card-title-wrapper input:focus,
+.education-card[data-mode="edit"] .education-card-institution-wrapper input:focus,
+.education-card[data-mode="edit"] .education-card-location-wrapper input:focus {
   outline: none;
   background: rgba(0, 0, 0, 0.02);
   border-bottom: 1px solid #ccc;
   padding-bottom: 2px;
 }
 
-.job-card[data-mode="edit"] .job-card-description:focus {
+.education-card[data-mode="edit"] .education-card-description:focus {
   outline: none;
   border-color: #999;
   background: #fafafa;
 }
 
-.job-card-dates .date-month-select:focus,
-.job-card-dates .date-year-input:focus {
+.education-card-dates .date-month-select:focus,
+.education-card-dates .date-year-input:focus {
   outline: none;
   background: rgba(0, 0, 0, 0.02);
   border-bottom: 1px solid #ccc;
 }
 
 /* Remove all default input/textarea styling that differs from text */
-.job-card input,
-.job-card textarea,
-.job-card p {
+.education-card input,
+.education-card textarea,
+.education-card p {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
@@ -242,16 +242,16 @@
 
 /* Responsive design */
 @media (max-width: 768px) {
-  .job-card-header {
+  .education-card-header {
     flex-direction: column;
     gap: 4px;
   }
   
-  .job-card-dates {
+  .education-card-dates {
     align-self: flex-start;
   }
   
-  .job-card {
+  .education-card {
     min-width: 300px;
     padding: 16px;
   }

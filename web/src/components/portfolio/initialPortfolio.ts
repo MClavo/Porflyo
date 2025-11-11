@@ -48,7 +48,7 @@ export function createInitialEmptyPortfolio(user?: PublicUserDto | null): Portfo
         id: "education",
         type: "education",
         title: "Education",
-        allowedTypes: ["job", "text"],
+        allowedTypes: ["education"],
         maxCards: 6,
         cardsById: {},
         cardsOrder: [],
