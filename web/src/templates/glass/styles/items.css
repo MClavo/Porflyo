@@ -1,0 +1,163 @@
+/* ============================================
+   ITEM STYLES (Different types)
+   ============================================ */
+
+/* Base item content */
+.tpl-glass .item-content {
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: white;
+  border-radius: 12px;
+  padding: 1rem;
+  margin-bottom: 0.75rem;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.tpl-glass .item-content:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+/* Text items */
+.tpl-glass .item-text .text-content {
+  color: white;
+  font-size: 1rem;
+  line-height: 1.5;
+  font-weight: 500;
+}
+
+/* Double text items */
+.tpl-glass .item-doubleText {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(37, 99, 235, 0.1));
+  border-color: rgba(59, 130, 246, 0.3);
+}
+
+.tpl-glass .item-doubleText .double-text-content {
+  color: white;
+}
+
+.tpl-glass .item-doubleText .text1 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  color: #e0e7ff;
+}
+
+.tpl-glass .item-doubleText .text2 {
+  font-size: 0.95rem;
+  opacity: 0.9;
+  line-height: 1.4;
+}
+
+/* Character items */
+.tpl-glass .item-character {
+  background: linear-gradient(135deg, rgba(251, 191, 36, 0.15), rgba(245, 158, 11, 0.1));
+  border-color: rgba(251, 191, 36, 0.3);
+  text-align: center;
+  padding: 0.75rem;
+  min-height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tpl-glass .item-character .character-content {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #fef3c7;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Text Photo items */
+.tpl-glass .item-textPhoto {
+  background: linear-gradient(135deg, rgba(236, 72, 153, 0.15), rgba(219, 39, 119, 0.1));
+  border-color: rgba(236, 72, 153, 0.3);
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.tpl-glass .item-textPhoto .text-content {
+  flex: 1;
+}
+
+.tpl-glass .item-textPhoto .image-content {
+  flex-shrink: 0;
+  width: 80px;
+  height: 80px;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.tpl-glass .item-textPhoto .image-content img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* GitHub project items */
+.tpl-glass .projects-section .item-githubProject {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.12));
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 16px;
+  padding: 1.5rem;
+  margin-bottom: 1.25rem;
+  backdrop-filter: blur(15px);
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+}
+
+.tpl-glass .projects-section .item-githubProject:hover {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0.18));
+  transform: translateY(-3px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.tpl-glass .projects-section .github-project-name {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #ffffff;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.tpl-glass .projects-section .github-project-description {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 1rem;
+}
+
+.tpl-glass .projects-section .github-project-topic {
+  background: rgba(168, 85, 247, 0.3);
+  border: 1px solid rgba(168, 85, 247, 0.5);
+  color: white;
+  font-weight: 600;
+}
+
+.tpl-glass .projects-section .github-project-link {
+  background: rgba(168, 85, 247, 0.4);
+  border: 1px solid rgba(168, 85, 247, 0.6);
+  color: white;
+  font-weight: 700;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.tpl-glass .projects-section .github-project-link:hover {
+  background: rgba(168, 85, 247, 0.6);
+  border-color: rgba(168, 85, 247, 0.8);
+  box-shadow: 0 4px 15px rgba(168, 85, 247, 0.3);
+}
+
+.tpl-glass .projects-section .github-project-link.primary {
+  background: linear-gradient(135deg, rgba(168, 85, 247, 0.6), rgba(139, 92, 246, 0.5));
+  border-color: rgba(168, 85, 247, 0.7);
+}
+
+.tpl-glass .projects-section .github-project-link.primary:hover {
+  background: linear-gradient(135deg, rgba(168, 85, 247, 0.8), rgba(139, 92, 246, 0.7));
+  border-color: rgba(168, 85, 247, 0.9);
+}

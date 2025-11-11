@@ -1,0 +1,122 @@
+/* ============================================
+   RESPONSIVE DESIGN & MEDIA QUERIES
+   ============================================ */
+
+/* Tablet and below */
+@media (max-width: 768px) {
+  .tpl-glass {
+    padding: 1rem;
+  }
+
+  .user-header {
+    flex-direction: column;
+    text-align: center;
+    gap: 1.5rem;
+    padding: 1.5rem;
+  }
+
+  .avatar-image,
+  .avatar-placeholder {
+    width: 120px;
+    height: 120px;
+  }
+
+  .user-name {
+    font-size: 2.5rem;
+  }
+
+  .content-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .social-links {
+    justify-content: center;
+  }
+
+  .portfolio-section {
+    padding: 1.5rem;
+  }
+
+  .section-title {
+    font-size: 1.5rem;
+  }
+
+  /* About card responsive */
+  .tpl-glass .about-card {
+    flex-direction: column;
+    text-align: center;
+    gap: 1.5rem;
+    padding: 1.5rem;
+  }
+
+  .tpl-glass .about-card .about-profile-image {
+    justify-content: center;
+    margin-right: 0;
+  }
+
+  .tpl-glass .about-card .profile-avatar {
+    width: 120px;
+    height: 120px;
+  }
+
+  .tpl-glass .about-card .about-name {
+    position: static;
+    font-size: 2.5rem;
+    text-align: center;
+  }
+
+  .tpl-glass .about-card .about-email,
+  .tpl-glass .about-card .about-socials,
+  .tpl-glass .about-card .about-description {
+    position: static;
+    left: auto;
+    right: auto;
+    top: auto;
+  }
+
+  .tpl-glass .about-card .about-socials {
+    justify-content: center;
+  }
+
+  .tpl-glass .about-card .about-description {
+    text-align: center;
+  }
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+  .tpl-glass {
+    padding: 0.5rem;
+  }
+  
+  .portfolio-section {
+    padding: 1rem;
+    border-radius: 16px;
+    min-height: 200px;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .portfolio-section {
+    border-color: rgba(255, 255, 255, 0.4);
+    background: rgba(0, 0, 0, 0.6) !important;
+  }
+  
+  .tpl-glass .card-container {
+    background: rgba(255, 255, 255, 0.1) !important;
+    border-color: rgba(255, 255, 255, 0.3) !important;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .portfolio-section {
+    transition: none;
+  }
+  
+  .portfolio-section:hover {
+    transform: none;
+  }
+}
