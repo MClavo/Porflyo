@@ -53,12 +53,16 @@
 }
 
 .card-preview-popup-content {
-  padding: var(--space-4);
+  padding: 0;
   background: var(--dashboard-bg-secondary);
   /* Allow scrolling only if content exceeds popup max-height */
   max-height: calc(85vh - 100px); /* Account for header height */
   overflow-y: auto;
   overflow-x: hidden;
+  /* Fit content height */
+  height: fit-content;
+  display: flex;
+  flex-direction: column;
 }
 
 /* Ensure the card inside the popup renders properly */
@@ -67,6 +71,17 @@
   max-width: 100%;
   box-sizing: border-box;
   width: 100%;
+  /* Limit height to content */
+  height: fit-content !important;
+  min-height: 0 !important;
+}
+
+/* Override any template-specific min-heights */
+.card-preview-popup-content .tpl-glass,
+.card-preview-popup-content .tpl-glass > *,
+.card-preview-popup-content .tpl-glass #preview {
+  min-height: 0 !important;
+  height: fit-content !important;
 }
 
 /* Disable interactions in preview */
@@ -86,6 +101,23 @@
   padding: 0 !important;
   width: 100% !important;
   max-width: none !important;
+  min-height: 0 !important;
+  height: fit-content !important;
+}
+
+/* Glass template specific overrides for preview */
+.card-preview-popup-content .tpl-glass .job-card,
+.card-preview-popup-content .tpl-glass .project-card,
+.card-preview-popup-content .tpl-glass .text-card {
+  min-height: 0 !important;
+  height: fit-content !important;
+  backdrop-filter: blur(10px) !important;
+}
+
+.card-preview-popup-content .tpl-glass .item-content,
+.card-preview-popup-content .tpl-glass .card-container {
+  min-height: 0 !important;
+  height: fit-content !important;
 }
 
 .card-preview-popup-content .card-title {
@@ -176,6 +208,6 @@
   }
   
   .card-preview-popup-content {
-    padding: var(--space-3);
+    padding: 0;
   }
 }

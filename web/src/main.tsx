@@ -8,7 +8,6 @@ import { RepositoriesProvider } from './contexts/RepositoriesContext'
 import { SavedSectionsProvider } from './contexts/SavedSectionsContext'
 import { ThemeProvider } from './contexts/theme'
 import { NavbarProvider } from './providers/NavbarProvider'
-import EditorTest from './pages/EditorTest.tsx'
 import Home from './pages/Home.tsx'
 import MetricsTest from './pages/MetricsTest.tsx'
 import ModernDashboard from './pages/ModernDashboard'
@@ -74,7 +73,6 @@ export function AppWithProviders() {
                     </ProtectedRoute>
                   } />
                   <Route path="/t" element={<Test />} />
-                  <Route path="/editor-test" element={<EditorTest />} />
                   
                   {/* Metrics Dashboard Routes */}
                   

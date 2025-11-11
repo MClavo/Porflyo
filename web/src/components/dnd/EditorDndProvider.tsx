@@ -1,11 +1,11 @@
 import React from "react";
 import {
-  closestCenter,
   DndContext,
   DragOverlay,
   PointerSensor,
   useSensor,
   useSensors,
+  pointerWithin,
   type DragEndEvent,
   type DragStartEvent,
   type UniqueIdentifier,
@@ -115,20 +115,23 @@ const EditorDndProvider: React.FC<EditorDndProviderProps> = ({
   return (
     <DndContext
       sensors={sensors}
-      collisionDetection={closestCenter}
+      collisionDetection={pointerWithin}
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
     >
       {children}
       
-      <DragOverlay>
+      <DragOverlay dropAnimation={null}>
         {activeCard && sectionId ? (
-          <div className={`drag-overlay ${template} sortable-card`} data-mode={mode}>
+          <div 
+            className={`drag-overlay tpl-${template} sortable-card`} 
+            data-mode={mode}
+            id={sectionId}
+            style={{ pointerEvents: 'none' }}
+          >
             {/* Show drag handle in edit mode */}
             {mode === "edit" && <DragHandle />}
-            <div id={sectionId}>
-              {renderCard(activeCard, mode, activeId as CardId, () => {})}
-            </div>
+            {renderCard(activeCard, mode, activeId as CardId, () => {})}
           </div>
         ) : null}
       </DragOverlay>

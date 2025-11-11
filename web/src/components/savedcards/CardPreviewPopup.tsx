@@ -54,8 +54,12 @@ export function CardPreviewPopup({ savedCard, children, template = "template1" }
               {savedCard.card.type} • {savedCard.originSectionType}
             </span>
           </div>
-          <div className={`card-preview-popup-content`} data-mode="view">
-            <div id={savedCard.originSectionId || 'preview'} className={`${template}`}>
+          <div className="card-preview-popup-content">
+            <div 
+              className={`tpl-${template} sortable-card`} 
+              data-mode="view"
+              id={savedCard.originSectionId || 'preview'}
+            >
               {renderCard(
                 savedCard.card,
                 "view",
