@@ -4,7 +4,7 @@
 
 /* Input and form elements - No blur in edit mode */
 /* Exclude inputs inside cards to avoid interfering with card-specific styles */
-.tpl-glass input:not(.job-card-title):not(.job-card-company):not(.job-card-location):not([class*="-title"]):not([class*="-company"]):not([class*="-location"]),
+.tpl-glass input:not(.job-card-title):not(.job-card-company):not(.job-card-location):not(.education-card-title):not(.education-card-institution):not(.education-card-location):not(.about-section-name):not([class*="-title"]):not([class*="-company"]):not([class*="-location"]),
 .tpl-glass textarea:not(.job-card-description):not([class*="-description"]),
 .tpl-glass select:not([class*="date-"]) {
   background: rgba(255, 255, 255, 0.1) !important;
@@ -24,7 +24,7 @@
   color: rgba(255, 255, 255, 0.5) !important;
 }
 
-.tpl-glass input:not(.job-card-title):not(.job-card-company):not(.job-card-location):not([class*="-title"]):not([class*="-company"]):not([class*="-location"]):focus,
+.tpl-glass input:not(.job-card-title):not(.job-card-company):not(.job-card-location):not(.education-card-title):not(.education-card-institution):not(.education-card-location):not(.about-section-name):not([class*="-title"]):not([class*="-company"]):not([class*="-location"]):focus,
 .tpl-glass textarea:not(.job-card-description):not([class*="-description"]):focus,
 .tpl-glass select:not([class*="date-"]):focus {
   outline: none !important;

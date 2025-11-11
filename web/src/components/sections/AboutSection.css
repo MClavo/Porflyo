@@ -96,25 +96,52 @@
 }
 
 /* Override Title component styling to match user-name exactly */
+/* View mode (h1) - gradient text */
 .tpl-glass .about-section-name,
-.tpl-glass .about-section-name input,
 .tpl-glass .about-section-name h1,
 .tpl-glass .about-section-name h2,
 .tpl-glass .about-section-name h3 {
-  /* EXACT same styling as .tpl-glass .user-name */
   font-size: 3rem !important;
   font-weight: 800 !important;
-  margin: 0 0 0rem 0 !important;
+  margin: 0 !important;
   text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3) !important;
   background: linear-gradient(45deg, #ffffff, #e0e7ff) !important;
   -webkit-background-clip: text !important;
   -webkit-text-fill-color: transparent !important;
   background-clip: text !important;
   color: transparent !important;
-  border: none !important;
-  outline: none !important;
   padding: 0 !important;
   line-height: 1.2 !important;
+  border: none !important;
+  outline: none !important;
+}
+
+/* Edit mode (input) - solid white text, NO gradient */
+.tpl-glass .about-section-name-wrapper,
+.tpl-glass .about-section-name-wrapper input {
+  font-size: 3rem !important;
+  font-weight: 800 !important;
+  margin: 0 !important;
+  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3) !important;
+  /* Solid white color instead of gradient */
+  color: #ffffff !important;
+  background: none !important;
+  -webkit-text-fill-color: #ffffff !important;
+  padding: 0 !important;
+  line-height: 1.2 !important;
+  border: none !important;
+  outline: none !important;
+  width: fit-content !important;
+  min-width: 200px !important;
+  max-width: 100% !important;
+  font-family: inherit !important;
+}
+
+/* Focus state for input - subtle background */
+.tpl-glass .about-section-name-wrapper input:focus {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border-radius: 8px !important;
+  padding: 4px 8px !important;
 }
 
 .tpl-glass .about-section-contact {
@@ -247,10 +274,14 @@
   }
 
   .tpl-glass .about-section-name,
-  .tpl-glass .about-section-name input,
   .tpl-glass .about-section-name h1,
   .tpl-glass .about-section-name h2,
   .tpl-glass .about-section-name h3 {
+    font-size: 2.5rem !important;
+  }
+
+  .tpl-glass .about-section-name-wrapper,
+  .tpl-glass .about-section-name-wrapper input {
     font-size: 2.5rem !important;
   }
 
