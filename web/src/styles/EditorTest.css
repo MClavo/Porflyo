@@ -693,8 +693,8 @@ Z-INDEX HIERARCHY:
 }
 
 .sortable-card.dragging {
-  /* Placeholder card when dragging */
-  opacity: 0.2 !important; /* Use important to override any inline styles */
+  /* Placeholder card when dragging - reduced opacity to show where it will be placed */
+  opacity: 0.4 !important; /* Increased from 0.2 for better visibility */
   z-index: 1;
 }
 

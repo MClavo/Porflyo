@@ -67,6 +67,16 @@
   position: relative;
 }
 
+/* Dragging state - reduced opacity for placeholder */
+.sortable-card.dragging {
+  opacity: 0.4 !important;
+}
+
+/* Not dragging state - full opacity */
+.sortable-card.not-dragging {
+  opacity: 1 !important;
+}
+
 /* Add top padding to card content in edit mode to accommodate the drag handle */
 .sortable-card[data-mode="edit"] .project-card,
 .sortable-card[data-mode="edit"] .text-card,
@@ -86,8 +96,12 @@
   right: 8px;
   left: auto;
   width: 32px;
-  height: calc(100% - 16px);
+  /* Use auto height with constraints to fit within card */
+  height: auto;
+  max-height: min(calc(100% - 16px), 200px);
   min-height: 60px;
+  /* Position from both top and bottom to stay within card bounds */
+  bottom: 8px;
   flex-direction: column;
   background: linear-gradient(
     to right,
@@ -124,7 +138,7 @@
 /* Drag overlay specific styles */
 .drag-overlay.sortable-card {
   position: relative;
-  opacity: 1;
+  opacity: 1 !important; /* Always full opacity for the dragging card */
   cursor: grabbing !important;
   /* Remove any background - only show the card */
   background: transparent !important;
@@ -167,8 +181,12 @@
   right: 8px;
   left: auto;
   width: 32px;
-  height: calc(100% - 16px);
+  /* Limit height to prevent it from extending beyond the card */
+  height: auto;
+  max-height: 200px;
   min-height: 60px;
+  /* Position relative to the card content */
+  bottom: 8px;
 }
 
 /* Force grabbing cursor on body while dragging */

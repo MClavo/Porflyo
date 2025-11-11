@@ -1,4 +1,5 @@
 import React from "react";
+import { createPortal } from "react-dom";
 import {
   DndContext,
   DragOverlay,
@@ -121,20 +122,24 @@ const EditorDndProvider: React.FC<EditorDndProviderProps> = ({
     >
       {children}
       
-      <DragOverlay dropAnimation={null}>
-        {activeCard && sectionId ? (
-          <div 
-            className={`drag-overlay tpl-${template} sortable-card`} 
-            data-mode={mode}
-            id={sectionId}
-            style={{ pointerEvents: 'none' }}
-          >
-            {/* Show drag handle in edit mode */}
-            {mode === "edit" && <DragHandle />}
-            {renderCard(activeCard, mode, activeId as CardId, () => {})}
-          </div>
-        ) : null}
-      </DragOverlay>
+      {/* Render DragOverlay in a portal to avoid parent overflow constraints */}
+      {createPortal(
+        <DragOverlay dropAnimation={null}>
+          {activeCard && sectionId ? (
+            <div 
+              className={`drag-overlay tpl-${template} sortable-card`} 
+              data-mode={mode}
+              id={sectionId}
+              style={{ pointerEvents: 'none' }}
+            >
+              {/* Show drag handle in edit mode */}
+              {mode === "edit" && <DragHandle />}
+              {renderCard(activeCard, mode, activeId as CardId, () => {})}
+            </div>
+          ) : null}
+        </DragOverlay>,
+        document.body
+      )}
     </DndContext>
   );
 };
