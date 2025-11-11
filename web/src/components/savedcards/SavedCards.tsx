@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useDroppable } from "@dnd-kit/core";
+import { BiPackage } from "react-icons/bi";
 import type { SavedCard } from "../../state/SavedCards.types";
 import type { AnyCard } from "../../state/Cards.types";
 import { SavedCardComponent } from "./SavedCard";
@@ -9,9 +10,8 @@ import "./SavedCards.css";
 export type SavedCardsProps = {
   savedCards: Record<string, SavedCard>;
   mode: "view" | "edit";
-  onSave: (card: AnyCard, originSectionId: string, originSectionType: string, name: string) => void;
-  onRename: (savedCardId: string, name: string) => void;
-  onRemove: (savedCardId: string) => void;
+  onSave: (card: AnyCard, originSectionId: string, originSectionType: string, name: string) => void | Promise<void>;
+  onRemove: (savedCardId: string) => void | Promise<void>;
   onUse: (savedCardId: string, targetSectionId: string) => void;
   template?: string; // Add template prop
 };
@@ -20,7 +20,6 @@ export function SavedCards({
   savedCards, 
   mode, 
   onSave,
-  onRename, 
   onRemove,
   template = "template1"
 }: SavedCardsProps) {
@@ -59,17 +58,6 @@ export function SavedCards({
   return (
     <>
       <div className="saved-cards-container">
-        <div className="saved-cards-header">
-          <h3 className="saved-cards-title">
-            📋 Saved Cards ({savedCardsList.length})
-          </h3>
-          {mode === "edit" && (
-            <div className="saved-cards-hint">
-              Drop cards here to save them
-            </div>
-          )}
-        </div>
-
         <div
           ref={setNodeRef}
           className={`saved-cards-area ${isOver ? "drop-over" : ""} ${
@@ -78,7 +66,9 @@ export function SavedCards({
         >
           {savedCardsList.length === 0 ? (
             <div className="saved-cards-empty">
-              <div className="saved-cards-empty-icon">📦</div>
+              <div className="saved-cards-empty-icon">
+                <BiPackage />
+              </div>
               <div className="saved-cards-empty-text">
                 No saved cards yet
               </div>
@@ -96,7 +86,6 @@ export function SavedCards({
                   <SavedCardComponent
                     key={savedCard.id}
                     savedCard={savedCard}
-                    onRename={onRename}
                     onRemove={onRemove}
                     mode={mode}
                     template={template}
@@ -105,24 +94,6 @@ export function SavedCards({
             </div>
           )}
         </div>
-
-        {mode === "edit" && savedCardsList.length > 0 && (
-          <div className="saved-cards-actions">
-            <button
-              type="button"
-              onClick={() => {
-                if (confirm("Are you sure you want to clear all saved cards?")) {
-                  savedCardsList.forEach((savedCard) => {
-                    onRemove(savedCard.id);
-                  });
-                }
-              }}
-              className="saved-cards-clear-btn"
-            >
-              Clear All
-            </button>
-          </div>
-        )}
       </div>
 
       <SaveCardDialog

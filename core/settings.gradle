@@ -3,7 +3,6 @@ rootProject.name = "core"
 includeBuild('shared/build-logic')
 
 include(
-
     // Core
     "shared:domain",
     "shared:application",
@@ -20,5 +19,6 @@ include(
     "handlers:handlers-common",          // Common utilities for handlers
     "handlers:authentication",
     "handlers:oauth",
-    "handlers:api"
+    "handlers:api",
+    "handlers:metrics"
 )

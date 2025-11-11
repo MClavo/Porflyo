@@ -5,6 +5,10 @@ import { track } from './index';
 import { scrollTracker, type ScrollMetrics } from './scrollTracker';
 import { interactionTracker, type InteractionMetrics } from './interactionTracker';
 import { produce } from 'immer';
+import { isMobile as detectIsMobile } from 'react-device-detect';
+
+// Configuration: Number of top heatmap cells to send to backend
+export const HEATMAP_TOP_CELLS_COUNT = 400;
 
 export type ProjectMetrics = {
   activeTimeMs: number;
@@ -30,10 +34,14 @@ export type ProjectMetrics = {
 // Optimized metrics for backend submission
 export type BackendMetrics = {
   activeTimeMs: number;
+  tffiMs: number;
+  isMobile: boolean;
+  emailCopied: boolean;
+  socialClicks: number;
   projectMetrics: Array<{
     id: string;
-    timeInViewMs: number;
-    timeToFirstInteractionMs: number | null;
+    viewTime: number;
+    exposures: number; // Number of times the project was shown on screen
     codeViews: number; // button clicks (viewing code)
     liveViews: number; // external link clicks (viewing live demo)
   }>;
@@ -63,14 +71,16 @@ class MetricsCollector {
   private heatmapDataProvider: (() => ProjectMetrics['heatmapData']) | null = null;
   private topCellsProvider: ((topN: number) => TopCellData[]) | null = null;
   private scrollElement: HTMLElement | null = null;
+  private emailCopied: boolean = false; // Track if email was copied to clipboard
+  private socialClicks: number = 0; // Track social media clicks
+  private firstInteractionActiveTime: number | null = null; // Active time when first interaction occurred
 
   // Method to set the element to track for scroll
   setScrollElement(element: HTMLElement | null) {
     this.scrollElement = element;
-    
+
     // If we're currently tracking, restart with the new element
     if (this.sessionStart && element) {
-      console.log('🔄 Restarting scroll tracking with new element');
       scrollTracker.stopTracking();
       scrollTracker.startTracking(element);
       // Also restart interaction tracking
@@ -93,18 +103,16 @@ class MetricsCollector {
   startSession() {
     if (!this.sessionStart) {
       this.sessionStart = Date.now();
-      
+            
       // Set up activeTime provider for interaction tracker
       interactionTracker.setActiveTimeProvider(() => this.getCurrentActiveTime());
       
       // Start scroll tracking when session begins, using specific element if available
       if (this.scrollElement) {
-        console.log('🚀 Starting scroll tracking with element:', this.scrollElement);
         scrollTracker.startTracking(this.scrollElement);
         // Also start interaction tracking
         interactionTracker.startTracking(this.scrollElement);
       } else {
-        console.log('⚠️ Starting session but no scroll element set yet');
         // Fallback to window scroll tracking temporarily
         scrollTracker.startTracking(null);
       }
@@ -118,6 +126,14 @@ class MetricsCollector {
       activeTime += Date.now() - this.sessionStart;
     }
     return activeTime;
+  }
+
+  // Record first interaction time (TFFI - Time to First Interaction)
+  private recordFirstInteraction() {
+    if (this.firstInteractionActiveTime === null) {
+      // Capture the current active time when first interaction occurs
+      this.firstInteractionActiveTime = this.getCurrentActiveTime();
+    }
   }
 
   // Pause active time tracking
@@ -143,12 +159,12 @@ class MetricsCollector {
 
   // Record a button click for a specific project
   recordProjectButtonClick(projectId: string, payload: { id?: string; label?: string }) {
-    // Filtrar botones de control de la UI
-    const key = payload.id ?? payload.label ?? '';
-    if (key.toLowerCase().includes('actualizar') || key.toLowerCase().includes('limpiar') || 
-        key.toLowerCase().includes('refresh') || key.toLowerCase().includes('clear')) {
-      return; // No trackear estos botones
+    if (projectId === 'unknown-project') {
+      return;
     }
+
+    // Record first interaction
+    this.recordFirstInteraction();
 
     this.projectInteractions = produce(this.projectInteractions, draft => {
       if (!draft[projectId]) {
@@ -161,6 +177,7 @@ class MetricsCollector {
     interactionTracker.recordButtonClick(projectId);
     
     // Send to analytics if available
+    const key = payload.id ?? payload.label ?? '';
     track('project_button_click', { 
       projectId, 
       button: key, 
@@ -170,6 +187,9 @@ class MetricsCollector {
 
   // Record a link click for a specific project  
   recordProjectLinkClick(projectId: string, href: string) {
+    // Record first interaction
+    this.recordFirstInteraction();
+
     this.projectInteractions = produce(this.projectInteractions, draft => {
       if (!draft[projectId]) {
         draft[projectId] = { buttonClicks: 0, linkClicks: 0 };
@@ -185,6 +205,34 @@ class MetricsCollector {
       projectId, 
       link: href, 
       totalClicks: this.projectInteractions[projectId].linkClicks 
+    });
+  }
+
+  // Record when email is copied to clipboard
+  recordEmailCopied() {
+    // Record first interaction
+    this.recordFirstInteraction();
+
+    this.emailCopied = true;
+    
+    // Send to analytics if available
+    track('email_copied', { 
+      timestamp: Date.now() 
+    });
+  }
+
+  // Record social media click
+  recordSocialClick(platform: string) {
+    // Record first interaction
+    this.recordFirstInteraction();
+
+    this.socialClicks++;
+    
+    // Send to analytics if available
+    track('social_click', { 
+      platform,
+      totalClicks: this.socialClicks,
+      timestamp: Date.now() 
     });
   }
 
@@ -238,8 +286,8 @@ class MetricsCollector {
 
     // Prepare project metrics for backend
     const backendProjectMetricsMap: Record<string, {
-      timeInViewMs: number;
-      timeToFirstInteractionMs: number | null;
+      viewTime: number;
+      exposures: number;
       codeViews: number;
       liveViews: number;
     }> = {};
@@ -251,8 +299,8 @@ class MetricsCollector {
         const projectInteraction = rawMetrics.projectInteractions[projectId];
         
         backendProjectMetricsMap[projectId] = {
-          timeInViewMs: data.timeInViewMs,
-          timeToFirstInteractionMs: data.timeToFirstInteractionMs,
+          viewTime: data.viewTime,
+          exposures: data.exposures, // Number of times shown on screen
           codeViews: projectInteraction?.buttonClicks || 0, // button clicks = code views
           liveViews: projectInteraction?.linkClicks || 0,   // link clicks = live demo views
         };
@@ -263,8 +311,8 @@ class MetricsCollector {
     Object.entries(rawMetrics.projectInteractions).forEach(([projectId, interaction]) => {
       if (!backendProjectMetricsMap[projectId]) {
         backendProjectMetricsMap[projectId] = {
-          timeInViewMs: 0,
-          timeToFirstInteractionMs: null,
+          viewTime: 0,
+          exposures: 0, // No exposures if never viewed
           codeViews: interaction.buttonClicks,
           liveViews: interaction.linkClicks,
         };
@@ -277,28 +325,48 @@ class MetricsCollector {
       scrollTimeMs: scrollMetrics?.timeSpentScrolling || 0,
     };
 
-    // Prepare heatmap data (top 200 cells)
-    const topCells = this.getTopCells(200);
-    const backendHeatmapData = {
+    // Prepare heatmap data (top N cells) - only if not mobile
+    const backendHeatmapData = detectIsMobile ? {
+      cols: 0,
+      rows: 0,
+      topCells: {
+        indices: [],
+        values: [],
+      },
+    } : {
       cols: heatmapData?.cols || 0,
       rows: heatmapData?.rows || 0,
-      topCells: {
-        indices: topCells.map(cell => cell.index),
-        values: topCells.map(cell => cell.value),
-      },
+      topCells: (() => {
+        const topCells = this.getTopCells(HEATMAP_TOP_CELLS_COUNT);
+        return {
+          indices: topCells.map(cell => cell.index),
+          values: topCells.map(cell => cell.value),
+        };
+      })(),
     };
 
     // Convert map -> array with id field
     const backendProjectMetricsArray = Object.entries(backendProjectMetricsMap).map(([id, v]) => ({
       id,
-      timeInViewMs: v.timeInViewMs,
-      timeToFirstInteractionMs: v.timeToFirstInteractionMs,
+      viewTime: v.viewTime,
+      exposures: v.exposures,
       codeViews: v.codeViews,
       liveViews: v.liveViews,
     }));
 
+    // Calculate TFFI (Time to First Interaction)
+    // If there was an interaction, return the active time when it occurred
+    // Otherwise return 0
+    const tffiMs = this.firstInteractionActiveTime !== null 
+      ? this.firstInteractionActiveTime 
+      : 0;
+
     return {
       activeTimeMs: rawMetrics.activeTimeMs,
+      tffiMs,
+      isMobile: detectIsMobile,
+      emailCopied: this.emailCopied,
+      socialClicks: this.socialClicks,
       projectMetrics: backendProjectMetricsArray,
       scrollMetrics: backendScrollMetrics,
       heatmapData: backendHeatmapData,
@@ -311,6 +379,9 @@ class MetricsCollector {
     this.totalActiveMs = 0;
     this.projectInteractions = produce(this.projectInteractions, () => ({}));
     this.heatmapDataProvider = null;
+    this.emailCopied = false;
+    this.socialClicks = 0;
+    this.firstInteractionActiveTime = null;
     // Clear scroll metrics
     scrollTracker.clear();
     // Clear interaction metrics

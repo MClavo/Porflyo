@@ -6,3 +6,6 @@ export * from './repos.api';
 export * from './savedSections.api';
 export * from './user.api';
 export * from './auth.api';
+
+// Metrics API client
+export * from './metrics.client';

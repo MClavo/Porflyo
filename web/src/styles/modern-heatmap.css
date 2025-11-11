@@ -1,0 +1,37 @@
+.dashboard-content.dashboard-content--no-max {
+  /* Remove the global 1400px cap only when this modifier is present (toggled by ModernHeatmap) */
+  max-width: none !important;
+  width: auto !important;
+  margin: 0 auto; /* keep centered but allow it to expand beyond 1400px */
+}
+
+/* Keep the same horizontal padding the dashboard normally provides so sides don't touch the viewport */
+.dashboard-content.dashboard-content--no-max {
+  padding-left: var(--space-6);
+  padding-right: var(--space-6);
+}
+
+@media (max-width: 768px) {
+  .dashboard-content.dashboard-content--no-max {
+    padding-left: var(--space-4);
+    padding-right: var(--space-4);
+  }
+}
+
+@media (max-width: 480px) {
+  .dashboard-content.dashboard-content--no-max {
+    padding-left: var(--space-3);
+    padding-right: var(--space-3);
+  }
+}
+
+.modern-heatmap-container {
+  /* Ensure the inner container can size to its content and not be constrained */
+  width: auto;
+  max-width: none;
+}
+
+.modern-heatmap-container {
+  box-sizing: border-box;
+  width: 100%;
+}

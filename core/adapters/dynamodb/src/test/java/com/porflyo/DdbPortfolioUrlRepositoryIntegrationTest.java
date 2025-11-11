@@ -61,7 +61,7 @@ public class DdbPortfolioUrlRepositoryIntegrationTest
         return Map.of(
             "dynamodb.endpoint", dynamoUrl,
             "dynamodb.region", "us-east-1",
-            "dynamodb.tableName", uniqueTableName,
+            "dynamodb.userTable", uniqueTableName,
             "micronaut.test.resources.enabled", "false"
         );
     }

@@ -190,6 +190,15 @@ public final class LambdaHttpUtils {
      * @param input     the API Gateway event
      * @param position  the position of the path part to extract (0 is the first segment)
      * @return the extracted path part, or empty string if the position is invalid
+     * 
+     * @Example
+     * For a path "/metrics/123/6":
+     * <ul>
+     *   <li>Position 0 returns "metrics"</li>
+     *   <li>Position 1 returns "123"</li>
+     *   <li>Position 2 returns "6"</li>
+     *   <li>Position 3 returns ""</li>
+     * </ul>
      */
     public static String extractPathSegment(APIGatewayV2HTTPEvent input, int position) {
         String[] pathParts = input.getRawPath().split("/");

@@ -1,7 +1,7 @@
 import type { MonthYearValue } from "../components/cards/subcomponents/index";
 
 
-export type CardType = "project" | "job" | "text";
+export type CardType = "project" | "job" | "text" | "about" | "education";
 
 
 export type ProjectCardSaved = {
@@ -22,7 +22,16 @@ export type ProjectCardSaved = {
 export type JobCardSaved = {
   title: string;
   company: string;
+  location: string;
   description: string;
+  dateStart: MonthYearValue;
+  dateEnd: MonthYearValue;
+};
+
+export type EducationCardSaved = {
+  title: string;
+  institution: string;
+  location: string;
   dateStart: MonthYearValue;
   dateEnd: MonthYearValue;
 };
@@ -32,6 +41,14 @@ export type TextCardSaved = {
   description: string;
 };
 
+export type AboutCardSaved = {
+  name: string;
+  description: string;
+  profileImage?: string;
+  email?: string;
+  socials?: Record<string, string>;
+};
+
 
 export type BaseCard = {
   type: CardType;
@@ -39,17 +56,23 @@ export type BaseCard = {
 
 export type ProjectCard = BaseCard & {type: "project"; data: ProjectCardSaved};
 export type JobCard = BaseCard & {type: "job"; data: JobCardSaved};
+export type EducationCard = BaseCard & {type: "education"; data: EducationCardSaved};
 export type TextCard = BaseCard & {type: "text"; data: TextCardSaved};
+export type AboutCard = BaseCard & {type: "about"; data: AboutCardSaved};
 
-export type AnyCard = ProjectCard | JobCard | TextCard;
+export type AnyCard = ProjectCard | JobCard | EducationCard | TextCard | AboutCard;
 
 export type CardPatchByType = {
   project: Partial<ProjectCardSaved>;
   job: Partial<JobCardSaved>;
+  education: Partial<EducationCardSaved>;
   text: Partial<TextCardSaved>;
+  about: Partial<AboutCardSaved>;
 }
 
 export type CardDto = 
   | {type: "project"; data: ProjectCardSaved}
   | {type: "job"; data: JobCardSaved}
-  | {type: "text"; data: TextCardSaved};
+  | {type: "education"; data: EducationCardSaved} 
+  | {type: "text"; data: TextCardSaved}
+  | {type: "about"; data: AboutCardSaved};

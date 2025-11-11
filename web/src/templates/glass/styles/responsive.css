@@ -1,0 +1,129 @@
+/* ============================================
+   RESPONSIVE DESIGN & MEDIA QUERIES
+   ============================================ */
+
+/* Tablet and below */
+@media (max-width: 768px) {
+  .tpl-glass {
+    padding: 1rem;
+  }
+
+  /* Stack grid sections vertically on mobile */
+  .content-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  /* Stack cards in single column on mobile */
+  .tpl-glass .section-cards {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .portfolio-section {
+    padding: 1.5rem;
+  }
+
+  .tpl-glass h1.section-title,
+  .tpl-glass input.section-title {
+    font-size: 1.5rem !important;
+  }
+
+  /* About card responsive */
+  .tpl-glass .about-card {
+    flex-direction: column;
+    text-align: center;
+    gap: 1.5rem;
+    padding: 1.5rem;
+  }
+
+  .tpl-glass .about-card .about-profile-image {
+    justify-content: center;
+    margin-right: 0;
+  }
+
+  .tpl-glass .about-card .profile-avatar {
+    width: 120px;
+    height: 120px;
+  }
+
+  .tpl-glass .about-card .about-name,
+  .tpl-glass .about-card .about-name-wrapper,
+  .tpl-glass .about-card .about-name-wrapper input {
+    position: static;
+    font-size: 2.5rem;
+    text-align: center;
+    max-width: 100%;
+    width: 100%;
+  }
+
+  .tpl-glass .about-card .about-email,
+  .tpl-glass .about-card .about-socials,
+  .tpl-glass .about-card .about-description {
+    position: static;
+    left: auto;
+    right: auto;
+    top: auto;
+  }
+
+  .tpl-glass .about-card .about-socials {
+    justify-content: center;
+  }
+
+  .tpl-glass .about-card .about-description {
+    text-align: center;
+  }
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+  .tpl-glass {
+    padding: 0.75rem;
+  }
+  
+  .portfolio-section {
+    padding: 1rem;
+    border-radius: 16px;
+  }
+
+  .tpl-glass h1.section-title,
+  .tpl-glass input.section-title {
+    font-size: 1.3rem !important;
+  }
+
+  .tpl-glass .card-container,
+  .tpl-glass .item-content {
+    padding: 1rem !important;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .portfolio-section {
+    border-color: rgba(255, 255, 255, 0.5);
+    background: rgba(0, 0, 0, 0.4) !important;
+  }
+  
+  .tpl-glass .card-container {
+    background: rgba(255, 255, 255, 0.15) !important;
+    border-color: rgba(255, 255, 255, 0.4) !important;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .portfolio-section,
+  .tpl-glass .card-container,
+  .tpl-glass .item-content,
+  .tpl-glass button,
+  .tpl-glass input,
+  .tpl-glass a {
+    transition: none !important;
+  }
+  
+  .portfolio-section:hover,
+  .tpl-glass .card-container:hover,
+  .tpl-glass .item-content:hover {
+    transform: none !important;
+  }
+}

@@ -1,10 +1,8 @@
 import React from 'react';
 import { z } from 'zod';
+import { IoChevronBack, IoChevronForward, IoImageOutline } from 'react-icons/io5';
 import type { ImagesProps } from './Fields.types';
-import AddImageButton from '../../buttons/AddImageButton';
-import RemoveImageButton from '../../buttons/RemoveImageButton';
-import './Images.css';
-
+import '../../../styles/cards/subcomopnents/Images.css';
 
 export function Images({
   mode = 'view',
@@ -13,188 +11,208 @@ export function Images({
   className,
   maxImages = 1,
 }: ImagesProps) {
-
-  // Accept any string for local/blob urls; enforce max length
   const schema = React.useMemo(() => z.array(z.string()).max(maxImages, `Max ${maxImages} images`), [maxImages]);
 
-  const [local, setLocal] = React.useState<string[]>(images);
-  const [error, setError] = React.useState<string | undefined>(undefined);
-  const imagesRef = React.useRef<HTMLDivElement>(null);
-  const [currentImageIndex, setCurrentImageIndex] = React.useState(0);
-  const wheelTimeoutRef = React.useRef<number | null>(null);
-  const fileInputRef = React.useRef<HTMLInputElement | null>(null);
+  const [localImages, setLocalImages] = React.useState<string[]>(images);
+  const [currentIndex, setCurrentIndex] = React.useState(0);
+  const [error, setError] = React.useState<string>('');
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
 
+  // Sync with external changes
   React.useEffect(() => {
-    if (mode === 'edit') setLocal(images);
-  }, [images, mode]);
+    setLocalImages(images);
+    setCurrentIndex(0);
+  }, [images]);
 
-  const imageArray = mode === 'edit' ? local : images;
-
-  const navigateToImage = React.useCallback((index: number) => {
-    const element = imagesRef.current;
-    if (!element || imageArray.length === 0) return;
-
-    const targetIndex = Math.max(0, Math.min(index, imageArray.length - 1));
-    const imageWidth = element.scrollWidth / imageArray.length;
-    const targetScrollLeft = targetIndex * imageWidth;
-
-    element.scrollTo({ left: targetScrollLeft, behavior: 'smooth' });
-    setCurrentImageIndex(targetIndex);
-  }, [imageArray]);
-
-  // wheel navigation (retain)
-  React.useEffect(() => {
-    const element = imagesRef.current;
-    if (!element) return;
-
-    const handleWheel = (e: WheelEvent) => {
-      e.preventDefault();
-      if (wheelTimeoutRef.current) clearTimeout(wheelTimeoutRef.current);
-      const direction = e.deltaY > 0 ? 1 : -1;
-      if (imageArray.length <= 1) return;
-      const newIndex = currentImageIndex + direction;
-      if (newIndex >= 0 && newIndex < imageArray.length) navigateToImage(newIndex);
-      wheelTimeoutRef.current = window.setTimeout(() => { wheelTimeoutRef.current = null; }, 150);
-    };
-
-    element.addEventListener('wheel', handleWheel, { passive: false });
-    return () => {
-      element.removeEventListener('wheel', handleWheel);
-      if (wheelTimeoutRef.current) clearTimeout(wheelTimeoutRef.current);
-    };
-  }, [currentImageIndex, imageArray, navigateToImage]);
+  const imageArray = mode === 'edit' ? localImages : images;
 
   const validateAndNotify = React.useCallback((arr: string[]) => {
-    const r = schema.safeParse(arr);
-    setError(r.success ? undefined : r.error.issues[0]?.message);
+    const validation = schema.safeParse(arr);
+    setError(validation.success ? '' : validation.error.issues[0]?.message || '');
     onChange?.(arr);
   }, [schema, onChange]);
 
-  const addFiles = React.useCallback((files: FileList | null) => {
+  const handleAddFiles = React.useCallback((files: FileList | null) => {
     if (!files || files.length === 0) return;
-    const allowed = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg'];
-    const slots = maxImages - local.length;
-    if (slots <= 0) return;
+    
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg'];
+    const availableSlots = maxImages - localImages.length;
+    if (availableSlots <= 0) return;
 
-    const toAdd: string[] = [];
-    for (let i = 0; i < files.length && toAdd.length < slots; i++) {
-      const f = files[i];
-      if (!allowed.includes(f.type)) continue;
-      const url = URL.createObjectURL(f);
-      toAdd.push(url);
+    const newImages: string[] = [];
+    for (let i = 0; i < files.length && newImages.length < availableSlots; i++) {
+      const file = files[i];
+      if (allowedTypes.includes(file.type)) {
+        newImages.push(URL.createObjectURL(file));
+      }
     }
 
-    if (toAdd.length === 0) return;
-    const next = [...local, ...toAdd];
-    setLocal(next);
-    validateAndNotify(next);
-    // navigate to the last added
-    navigateToImage(next.length - 1);
-  }, [local, maxImages, navigateToImage, validateAndNotify]);
+    if (newImages.length > 0) {
+      const updatedImages = [...localImages, ...newImages];
+      setLocalImages(updatedImages);
+      setCurrentIndex(updatedImages.length - 1);
+      validateAndNotify(updatedImages);
+    }
+  }, [localImages, maxImages, validateAndNotify]);
 
   const handleAddClick = () => {
-    if (local.length >= maxImages) return;
+    if (localImages.length >= maxImages) return;
     fileInputRef.current?.click();
   };
 
-  const handleRemove = () => {
-    if (local.length === 0) return;
-    const idx = currentImageIndex;
-    const next = local.filter((_, i) => i !== idx);
-    const newIndex = Math.max(0, Math.min(idx, next.length - 1));
-    setLocal(next);
-    validateAndNotify(next);
-    setCurrentImageIndex(newIndex);
-    // scroll to new index
-    setTimeout(() => navigateToImage(newIndex), 50);
+  const handleRemoveImage = () => {
+    if (localImages.length === 0) return;
+    const updatedImages = localImages.filter((_, index) => index !== currentIndex);
+    setLocalImages(updatedImages);
+    setCurrentIndex(Math.min(currentIndex, updatedImages.length - 1));
+    validateAndNotify(updatedImages);
   };
 
-  const onFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    addFiles(e.target.files);
-    // reset input so same file can be picked again if needed
+  const handlePrevious = () => {
+    setCurrentIndex(prev => prev > 0 ? prev - 1 : imageArray.length - 1);
+  };
+
+  const handleNext = () => {
+    setCurrentIndex(prev => prev < imageArray.length - 1 ? prev + 1 : 0);
+  };
+
+  const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    handleAddFiles(e.target.files);
     if (e.target) e.target.value = '';
   };
 
-  // Drag and drop
+  // Drag and drop functionality
   React.useEffect(() => {
-    const el = imagesRef.current;
-    if (!el || mode !== 'edit') return;
+    if (mode !== 'edit') return;
 
-    const onDragOver = (ev: DragEvent) => { ev.preventDefault(); el.classList.add('drag-over'); };
-    const onDragLeave = () => { el.classList.remove('drag-over'); };
-    const onDrop = (ev: DragEvent) => {
-      ev.preventDefault();
-      el.classList.remove('drag-over');
-      const dt = ev.dataTransfer;
-      if (!dt) return;
-  addFiles(dt.files);
+    const handleDragOver = (e: DragEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
     };
 
-  el.addEventListener('dragover', onDragOver);
-    el.addEventListener('dragleave', onDragLeave);
-    el.addEventListener('drop', onDrop);
+    const handleDrop = (e: DragEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      handleAddFiles(e.dataTransfer?.files || null);
+    };
+
+    document.addEventListener('dragover', handleDragOver);
+    document.addEventListener('drop', handleDrop);
 
     return () => {
-      el.removeEventListener('dragover', onDragOver);
-      el.removeEventListener('dragleave', onDragLeave);
-      el.removeEventListener('drop', onDrop);
+      document.removeEventListener('dragover', handleDragOver);
+      document.removeEventListener('drop', handleDrop);
     };
-  }, [mode, addFiles]);
+  }, [mode, handleAddFiles]);
 
-  // click to navigate (left/right halves)
-  const onClickNavigate = (e: React.MouseEvent) => {
-    const el = imagesRef.current;
-    if (!el || imageArray.length <= 1) return;
-    const rect = el.getBoundingClientRect();
-    const clickX = e.clientX - rect.left;
-    if (clickX < rect.width / 2) navigateToImage(currentImageIndex - 1);
-    else navigateToImage(currentImageIndex + 1);
-  };
-
-  return (
-    <div className={`images-wrapper ${className ?? ''}`}>
-      <div
-        ref={imagesRef}
-        className={`images ${mode === 'edit' ? 'editable' : ''}`}
-        onClick={onClickNavigate}
-      >
-        {imageArray.map((src, i) => (
-          <div key={i} className="image-item">
-            <img src={src} alt={`Image ${i + 1}`} />
-            {imageArray.length > 1 && (
-              <div className="image-index-overlay">{i + 1}/{imageArray.length}</div>
-            )}
-          </div>
-        ))}
-      </div>
-
-      {mode === 'edit' && (
-        <div className="images-controls">
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept=".png,.jpg,.jpeg,.webp,image/*"
-            multiple
-            style={{ display: 'none' }}
-            onChange={onFileInput}
+  // View mode - don't show anything if no images
+  if (mode === 'view') {
+    if (!imageArray || imageArray.length === 0) return null;
+    
+    return (
+      <div className={`image-view ${className || ''}`}>
+        <div className="image-container">
+          <img 
+            src={imageArray[currentIndex]} 
+            alt={`Image ${currentIndex + 1}`}
+            className="image-display"
           />
+          {imageArray.length > 1 && (
+            <>
+              <button 
+                className="nav-button nav-button-prev"
+                onClick={handlePrevious}
+                aria-label="Previous image"
+              >
+                <IoChevronBack />
+              </button>
+              <button 
+                className="nav-button nav-button-next"
+                onClick={handleNext}
+                aria-label="Next image"
+              >
+                <IoChevronForward />
+              </button>
+              <div className="image-counter">
+                {currentIndex + 1} / {imageArray.length}
+              </div>
+            </>
+          )}
+        </div>
+      </div>
+    );
+  }
 
-          <div className="images-controls-row">
-            <RemoveImageButton
-              onClick={handleRemove}
-              disabled={local.length === 0}
-              title="Remove current image"
-            />
-            <AddImageButton
-              onClick={handleAddClick}
-              disabled={local.length >= maxImages}
-              title="Add image"
-            />
+  // Edit mode
+  return (
+    <div className={`image-edit ${className || ''}`}>
+      {localImages.length > 0 ? (
+        <div className="image-container">
+          <img 
+            src={localImages[currentIndex]} 
+            alt={`Image ${currentIndex + 1}`}
+            className="image-display"
+          />
+          {localImages.length > 1 && (
+            <>
+              <button 
+                className="nav-button nav-button-prev"
+                onClick={handlePrevious}
+                aria-label="Previous image"
+              >
+                <IoChevronBack />
+              </button>
+              <button 
+                className="nav-button nav-button-next"
+                onClick={handleNext}
+                aria-label="Next image"
+              >
+                <IoChevronForward />
+              </button>
+            </>
+          )}
+          <div className="image-counter">
+            {currentIndex + 1} / {localImages.length}
           </div>
-          {error && <div className="images-error">{error}</div>}
+        </div>
+      ) : (
+        <div className="image-placeholder" onClick={handleAddClick}>
+          <div className="placeholder-icon">
+            <IoImageOutline />
+          </div>
+          <div className="placeholder-text">Click to add image</div>
         </div>
       )}
+
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept=".png,.jpg,.jpeg,.webp,image/*"
+        multiple
+        style={{ display: 'none' }}
+        onChange={handleFileInput}
+      />
+
+      <div className="image-controls">
+        <button
+          className="btn btn-remove btn-sm"
+          onClick={handleRemoveImage}
+          disabled={localImages.length === 0}
+          title="Remove current image"
+        >
+          Remove
+        </button>
+        <button
+          className="btn btn-primary btn-sm"
+          onClick={handleAddClick}
+          disabled={localImages.length >= maxImages}
+          title="Add image"
+        >
+          Add Image
+        </button>
+      </div>
+      
+      {error && <div className="image-error">{error}</div>}
     </div>
   );
-
 }

@@ -8,6 +8,7 @@ import io.micronaut.core.annotation.Nullable;
 @ConfigurationProperties("dynamodb")
 public record DdbConfig(
     String region,      
-    String tableName,
+    String userTable,
+    String metricsTable,
     @Nullable String endpoint
 ) {}

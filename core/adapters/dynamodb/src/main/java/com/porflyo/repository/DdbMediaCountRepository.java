@@ -53,7 +53,7 @@ public class DdbMediaCountRepository implements MediaCountRepository{
     public DdbMediaCountRepository(DynamoDbEnhancedClient enhanced, DdbConfig dynamoDbConfig, DdbMediaCountMapper mapper) {
         this.mapper = mapper;
         this.table = enhanced.table(
-            dynamoDbConfig.tableName(),
+            dynamoDbConfig.userTable(),
             MediaCountTableSchema.SCHEMA);
     }
 

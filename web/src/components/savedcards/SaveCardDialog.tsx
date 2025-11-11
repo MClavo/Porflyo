@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { IoClose } from "react-icons/io5";
 import type { AnyCard } from "../../state/Cards.types";
 import "./SaveCardDialog.css";
 
@@ -75,7 +76,7 @@ export function SaveCardDialog({
             className="save-card-dialog-close"
             onClick={onCancel}
           >
-            ✕
+            <IoClose />
           </button>
         </div>
 
@@ -107,12 +108,15 @@ export function SaveCardDialog({
               </span>
             </div>
 
+            <div className="save-card-dialog-divider"></div>
+
             <div className="save-card-dialog-actions">
               <button 
                 type="button" 
                 className="save-card-dialog-btn save-card-dialog-btn-cancel"
                 onClick={onCancel}
               >
+               
                 Cancel
               </button>
               <button 
@@ -120,7 +124,8 @@ export function SaveCardDialog({
                 className="save-card-dialog-btn save-card-dialog-btn-save"
                 disabled={!name.trim()}
               >
-                Save Card
+                
+                Save
               </button>
             </div>
           </form>

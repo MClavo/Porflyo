@@ -1,113 +1,258 @@
-/* Alto del item de mes: debe ser el mismo que ITEM_HEIGHT en TSX (36px) */
-:root {
-  --month-item-h: 36px;
-   --card-padding: 20px;
-  --title-bottom-margin: 12px;
-  --title-color: #FAFAFA;
-  --description-color: #f8f8ffea;
-  --card-min-width: 360px;
-  --card-width: 500px;
-  --card-min-height: 600px;
-  --current-card-width: var(--card-width); /* Variable que se actualizará dinámicamente */
+/* JobCard - BASE NEUTRAL DESIGN */
+.job-card {
+  background: #f5f5f5;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 20px 24px;
+  min-width: 400px;
+  max-width: 700px;
+  width: 100%;
+  box-sizing: border-box;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  color: #333;
 }
 
-.job-card{
-  border: 1px solid #ccc;
-  background: rgba(57, 57, 62, 0.848);
-  border-radius: 8px;
-  /* Clean width with clamp - tries to use more viewport width so cards shrink to minimum before wrapping */
-  width: var(--card-width);
-  min-width: var(--card-min-width);
-  /* max-width: 500px; */
-  /* overflow: hidden; */
-  height: auto;
-  min-height: var(--card-min-height);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  font-family: "Poppins", sans-serif;
-  font-weight: 300;
-  font-style: normal;
-
-  position: relative;
+/* Header: Title and dates on same line */
+.job-card-header {
   display: flex;
-  flex-direction: column;
-  align-self: stretch; /* allow the card to stretch to the tallest sibling */
-  /* justify-content: center; */
-  padding: var(--card-padding);
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 6px;
+}
+
+/* Position title - large and prominent */
+.job-card .job-card-title,
+.job-card .job-card-title-wrapper,
+.job-card .job-card-title-wrapper input {
+  flex: 1;
+  margin: 0;
+  padding: 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: #1a1a1a;
+  line-height: 1.3;
+  background: none;
+  border: none;
+  font-family: inherit;
+  width: fit-content;
+  min-width: 50px; /* Minimum for editing */
+  max-width: 100%;
   box-sizing: border-box;
 }
 
-/* Job card titles styling */
-.job-card .job-card-title,
-.job-card[data-mode="edit"] .job-card-title {
-  position: relative;
-  margin: 0;
+/* Dates container - compact and aligned */
+.job-card-dates {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  font-size: 13px;
+  color: #666;
+  white-space: nowrap;
+}
+
+.job-card-date-separator {
+  color: #999;
+  font-weight: 300;
+  padding: 0 2px;
+}
+
+/* Date component styling - MATCH SIZES */
+.job-card-dates .date-view {
+  font-size: 13px;
+  color: #666;
+  white-space: nowrap;
+}
+
+.job-card-dates .date-edit {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.job-card-dates .date-month-select,
+.job-card-dates .date-year-input {
+  font-size: 13px;
   padding: 0;
-  color: var(--title-color);
-  z-index: 10; 
-  font-size: 28px;
-  text-shadow: 0 1px 2px rgba(0,0,0,0.6);
-  font-family: "Oxanium", sans-serif;
-  font-optical-sizing: auto;
-  font-weight: 500;
-  font-style: normal;
-  letter-spacing: 1px;
-  margin-bottom: var(--title-bottom-margin); 
+  border: none;
+  border-radius: 0;
+  background: none;
+  color: #666;
+  font-family: inherit;
+  font-weight: 400;
+  height: auto;
+  line-height: 1;
+}
+
+.job-card-dates .date-month-select {
+  /* Dynamic width based on content */
+  width: fit-content;
+  min-width: 0;
+  max-width: none;
+  cursor: pointer;
+  /* Keep default dropdown arrow */
+  -webkit-appearance: menulist;
+  -moz-appearance: menulist;
+  appearance: menulist;
+  padding-right: 0;
+}
+
+.job-card-dates .date-year-input {
+  /* Dynamic width - adjust to 4 digits */
+  width: 3ch; /* ch = width of "0" character, 4ch for "2024" */
+  min-width: 3ch;
+  max-width: 4ch;
+  text-align: left;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+/* Company and location section */
+.job-card-company-section {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
 }
 
 .job-card .job-card-company,
-.job-card[data-mode="edit"] .job-card-company {
-  position: relative;
+.job-card .job-card-company-wrapper,
+.job-card .job-card-company-wrapper input {
+  margin: 0;
   padding: 0;
-  margin: 0;
-  color: rgba(250, 250, 250, 0.85);
-  z-index: 10; 
-  font-size: 20px;
-  font-weight: 400;
-  margin-bottom: 16px;
-}
-
-.job-card .text-card-description,
-.job-card[data-mode="edit"] .text-card-description {
-  position: relative;
-  margin: 0;
-  color: var(--description-color);
-  z-index: 10; 
-  font: inherit;
-  font-size: 16px;
-  margin-top: 12px;
-}
-
-
-
-
-
-/* Edit mode styles for JobCard */
-.job-card[data-mode="edit"] input,
-.job-card[data-mode="edit"] textarea {
+  font-size: 15px;
+  font-weight: 500;
+  color: #333;
+  background: none;
   border: none;
-  border-radius: 8px;
+  font-family: inherit;
+  line-height: 1.4;
+  width: fit-content;
+  min-width: 50px; /* Minimum for editing */
+  max-width: 100%;
+}
+
+.job-card-location-separator {
+  color: #999;
+  font-size: 14px;
+}
+
+.job-card .job-card-location,
+.job-card .job-card-location-wrapper {
+  display: inline;
   margin: 0;
-  background: rgba(178, 212, 229, 0.18);
-  color: inherit;
-  font: inherit;
-  padding: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  transition: all 120ms ease;
+  padding: 0;
 }
 
-.job-card[data-mode="edit"] input:focus,
-.job-card[data-mode="edit"] textarea:focus {
-  outline: dashed 2px rgba(186, 186, 170, 0.64);
-  background: rgba(178, 212, 229, 0.25);
+.job-card .job-card-location,
+.job-card .job-card-location-wrapper span,
+.job-card .job-card-location-wrapper input {
+  font-size: 14px;
+  font-weight: 400;
+  color: #666;
+  font-style: italic;
+  margin: 0;
+  padding: 0;
+  background: none;
+  border: none;
+  font-family: inherit;
+  display: inline;
+  width: fit-content;
+  min-width: 50px; /* Minimum for editing */
+  max-width: 100%;
 }
 
-.job-card[data-mode="edit"] textarea {
+/* Description - bullet points in VIEW mode */
+.job-card .job-card-description {
+  margin: 0;
+  padding: 0;
+  padding-left: 20px;
+  color: #444;
+  font-size: 14px;
+  line-height: 1.6;
+  list-style-type: disc;
+}
+
+.job-card .job-card-description li {
+  margin-bottom: 4px;
+  color: #444;
+}
+
+.job-card .job-card-description li::marker {
+  color: #999;
+}
+
+/* Description textarea in EDIT mode - SHOW BULLETS VISUALLY */
+.job-card[data-mode="edit"] .job-card-description {
+  font-size: 14px;
+  line-height: 1.6;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: white;
+  color: #444;
+  font-family: inherit;
   resize: vertical;
   min-height: 80px;
+  width: 100%;
+  box-sizing: border-box;
+  /* Show bullet-like formatting hint */
+  white-space: pre-wrap;
 }
 
-/* .job-card[data-mode="edit"] textarea::-webkit-resizer,
-.job-card[data-mode="edit"] textarea::-webkit-scrollbar {
-  display: none; 
+.job-card[data-mode="edit"] .job-card-description::placeholder {
+  color: #999;
+  font-size: 13px;
 }
- */
+
+/* Edit mode - subtle focus states only */
+.job-card[data-mode="edit"] .job-card-title-wrapper input:focus,
+.job-card[data-mode="edit"] .job-card-company-wrapper input:focus,
+.job-card[data-mode="edit"] .job-card-location-wrapper input:focus {
+  outline: none;
+  background: rgba(0, 0, 0, 0.02);
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 2px;
+}
+
+.job-card[data-mode="edit"] .job-card-description:focus {
+  outline: none;
+  border-color: #999;
+  background: #fafafa;
+}
+
+.job-card-dates .date-month-select:focus,
+.job-card-dates .date-year-input:focus {
+  outline: none;
+  background: rgba(0, 0, 0, 0.02);
+  border-bottom: 1px solid #ccc;
+}
+
+/* Remove all default input/textarea styling that differs from text */
+.job-card input,
+.job-card textarea,
+.job-card p {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .job-card-header {
+    flex-direction: column;
+    gap: 4px;
+  }
+  
+  .job-card-dates {
+    align-self: flex-start;
+  }
+  
+  .job-card {
+    min-width: 300px;
+    padding: 16px;
+  }
+}

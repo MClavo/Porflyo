@@ -10,6 +10,7 @@ export default function Template1Layout({ sectionsMap, isEditable }: Template1La
 
   return (
     <div className="template1" data-mode={isEditable ? "edit" : "view"}>
+      <div id="about">{sectionsMap?.about ?? null}</div>
       <div id="projects">{sectionsMap?.projects ?? null}</div>
       <div id="text">{sectionsMap?.text ?? null}</div>
       <div id="experiences">{sectionsMap?.experiences ?? null}</div>

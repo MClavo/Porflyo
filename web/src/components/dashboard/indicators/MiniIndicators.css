@@ -1,0 +1,40 @@
+/* Mini Indicators Styles */
+.mini-indicator {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mini-indicator--ring {
+  position: relative;
+}
+
+.mini-indicator--bar {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.mini-indicator__fill {
+  height: 100%;
+  background: var(--accent-blue);
+  border-radius: 4px;
+  transition: width 0.5s ease-in-out;
+}
+
+/* Color variants */
+.mini-indicator--blue .mini-indicator__fill { background: var(--accent-blue); }
+.mini-indicator--green .mini-indicator__fill { background: var(--accent-green); }
+.mini-indicator--purple .mini-indicator__fill { background: var(--accent-purple); }
+.mini-indicator--orange .mini-indicator__fill { background: var(--accent-orange); }
+.mini-indicator--pink .mini-indicator__fill { background: var(--accent-pink); }
+
+/* Animations */
+@keyframes fill-animation {
+  from { width: 0%; }
+  to { width: var(--target-width); }
+}
+
+.mini-indicator__fill--animated {
+  animation: fill-animation 1s ease-out forwards;
+}

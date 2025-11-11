@@ -64,7 +64,7 @@ public class DdbUserRepositoryIntegrationTest
 
     @BeforeEach
     void recreateTable() {
-        var table = enhanced.table(ddbConfig.tableName(), UserTableSchema.SCHEMA);
+        var table = enhanced.table(ddbConfig.userTable(), UserTableSchema.SCHEMA);
         try { table.deleteTable(); } catch (Exception ignored) {}
         table.createTable();
     }

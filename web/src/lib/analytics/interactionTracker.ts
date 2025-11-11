@@ -17,9 +17,9 @@ export type InteractionMetrics = {
 export type ProjectInteractionData = {
   projectId: string;
   viewStartMs: number | null;
-  timeInViewMs: number;
+  viewTime: number;
   firstInteractionMs: number | null;
-  timeToFirstInteractionMs: number | null;
+  exposures: number; // Number of times the project has been shown on screen
   totalInteractions: number;
   interactionRatePerMinute: number;
   externalClicks: number;
@@ -59,11 +59,9 @@ class InteractionTracker {
 
     this.sessionStartMs = Date.now();
     this.containerElement = containerElement;
-    
+        
     // Set up intersection observer to track project views
     this.setupIntersectionObserver(containerElement);
-    
-    console.log('🎯 Interaction tracking started for container');
   }
 
   // Stop tracking and cleanup
@@ -79,8 +77,6 @@ class InteractionTracker {
         this.recordViewEnd(projectId);
       }
     });
-
-    console.log('🛑 Interaction tracking stopped');
   }
 
   // Setup intersection observer for project view tracking
@@ -89,7 +85,7 @@ class InteractionTracker {
       (entries) => {
         entries.forEach((entry) => {
           const projectElement = entry.target as HTMLElement;
-          const projectId = projectElement.dataset.projectId;
+          const projectId = projectElement.getAttribute('project-id');
           
           if (!projectId) return;
 
@@ -101,19 +97,18 @@ class InteractionTracker {
         });
       },
       {
-        root: container,
-        threshold: 0.3, // Consider "in view" when 30% visible
+        root: null,
+        threshold: 0.5,
         rootMargin: '0px'
       }
     );
 
-    // Observe all elements with data-project-id
-    const projectElements = container.querySelectorAll('[data-project-id]');
+    // Observe all elements with project-id attribute
+    const projectElements = container.querySelectorAll('[project-id]');
     projectElements.forEach((element) => {
       this.intersectionObserver?.observe(element);
     });
 
-    console.log(`👀 Observing ${projectElements.length} project elements`);
   }
 
   // Record when a project comes into view
@@ -121,13 +116,14 @@ class InteractionTracker {
     const now = Date.now();
     let data = this.projectData.get(projectId);
 
+
     if (!data) {
       data = {
         projectId,
         viewStartMs: now,
-        timeInViewMs: 0,
+        viewTime: 0,
         firstInteractionMs: null,
-        timeToFirstInteractionMs: null,
+        exposures: 1,
         totalInteractions: 0,
         interactionRatePerMinute: 0,
         externalClicks: 0,
@@ -140,9 +136,9 @@ class InteractionTracker {
       data.viewStartMs = now;
       data.isCurrentlyInView = true;
       data.lastSeenMs = now;
+      data.exposures++;
     }
 
-    console.log(`👁️ View started for project: ${projectId}`);
   }
 
   // Record when a project goes out of view
@@ -153,17 +149,16 @@ class InteractionTracker {
     const now = Date.now();
     const sessionDuration = data.viewStartMs ? now - data.viewStartMs : 0;
     
-    data.timeInViewMs += sessionDuration;
+    data.viewTime += sessionDuration;
     data.isCurrentlyInView = false;
     data.lastSeenMs = now;
 
     // Recalculate interaction rate
-    if (data.timeInViewMs > 0) {
-      const timeInMinutes = data.timeInViewMs / 60000;
+    if (data.viewTime > 0) {
+      const timeInMinutes = data.viewTime / 60000;
       data.interactionRatePerMinute = data.totalInteractions / timeInMinutes;
     }
 
-    console.log(`👁️ View ended for project: ${projectId}, session duration: ${sessionDuration}ms`);
   }
 
   // Record a button click interaction
@@ -186,18 +181,20 @@ class InteractionTracker {
   }
 
   // Record any interaction
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   private recordInteraction(projectId: string, type: InteractionEvent['type']) {
     const now = Date.now();
     let data = this.projectData.get(projectId);
+
 
     // Ensure project data exists
     if (!data) {
       data = {
         projectId,
         viewStartMs: null,
-        timeInViewMs: 0,
+        viewTime: 0,
         firstInteractionMs: null,
-        timeToFirstInteractionMs: null,
+        exposures: 0,
         totalInteractions: 0,
         interactionRatePerMinute: 0,
         externalClicks: 0,
@@ -210,15 +207,11 @@ class InteractionTracker {
     // Record GLOBAL first interaction timing using activeTime (only once per session)
     if (this.firstInteractionActiveTimeMs === null && this.activeTimeProvider) {
       this.firstInteractionActiveTimeMs = this.activeTimeProvider();
-      console.log(`🎯 FIRST INTERACTION recorded at ${this.firstInteractionActiveTimeMs}ms active time`);
     }
 
-    // Record first interaction for this specific project using activeTime (only once per project)
-    if (!data.firstInteractionMs && this.activeTimeProvider) {
-      const currentActiveTime = this.activeTimeProvider();
+    // Record first interaction for this specific project (only once per project)
+    if (!data.firstInteractionMs) {
       data.firstInteractionMs = now;
-      data.timeToFirstInteractionMs = currentActiveTime;
-      console.log(`🎯 First interaction for project ${projectId}: ${currentActiveTime}ms active time`);
     }
 
     // Update counters
@@ -226,12 +219,10 @@ class InteractionTracker {
     this.totalInteractions++;
 
     // Recalculate interaction rate
-    if (data.timeInViewMs > 0) {
-      const timeInMinutes = data.timeInViewMs / 60000;
+    if (data.viewTime > 0) {
+      const timeInMinutes = data.viewTime / 60000;
       data.interactionRatePerMinute = data.totalInteractions / timeInMinutes;
     }
-
-    console.log(`🔄 ${type} recorded for project: ${projectId} (total interactions: ${data.totalInteractions})`);
   }
 
   // Check if a link is external
@@ -252,7 +243,7 @@ class InteractionTracker {
     this.projectData.forEach((data) => {
       if (data.isCurrentlyInView && data.viewStartMs) {
         const currentSessionDuration = now - data.viewStartMs;
-        const totalTimeInView = data.timeInViewMs + currentSessionDuration;
+        const totalTimeInView = data.viewTime + currentSessionDuration;
         
         if (totalTimeInView > 0) {
           const timeInMinutes = totalTimeInView / 60000;

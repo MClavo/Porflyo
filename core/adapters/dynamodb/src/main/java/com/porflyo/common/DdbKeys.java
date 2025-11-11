@@ -1,5 +1,8 @@
 package com.porflyo.common;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
 import jakarta.validation.constraints.NotNull;
 
 public final class DdbKeys {
@@ -10,6 +13,7 @@ public final class DdbKeys {
     public static final String USER_SK_PREFIX = "PROFILE";
     public static final String GSI_PROVIDER_USER_ID = "provider-user-id-index";
     
+    // ────────────────────────── PORTFOLIO ──────────────────────────
     public static final String USER_PORTFOLIO_SK_PREFIX = "PORTFOLIO#";
     public static final String USER_SAVED_SECTION_SK_PREFIX = "SSECTION#";
     public static final String USER_QUOTA_SK_PREFIX = "QUOTA";
@@ -19,6 +23,13 @@ public final class DdbKeys {
     // ────────────────────────── SLUG ──────────────────────────
     public static final String SLUG_PK_PREFIX = "URL#";
     public static final String SLUG_PORTFOLIO_SK_PREFIX = "SLUG";
+
+    // ────────────────────────── METRICS ──────────────────────────
+    public static final String METRICS_PK_PREFIX = "P#";
+    public static final String METRICS_SK_PREFIX = "M#";
+    public static final String METRICS_SLOT_SK_PREFIX = "S#";
+    public static final int METRICS_DAY_COUNT = 11;  // 3 slots to cover all days in month (31/3=10.33 -> 11)  
+    public static final int METRICS_SLOT_COUNT = 10;
 
 
     public static String pk(@NotNull String prefix, @NotNull String id) {
@@ -40,5 +51,25 @@ public final class DdbKeys {
             throw new IllegalArgumentException("Key does not start with prefix");
         }
         return key.substring(prefix.length());
+    }
+
+    public static String skTodayMonthShard(){
+        // Calculate today's Shard SK
+        LocalDate today = LocalDate.now();
+        int dayOfMonth = today.getDayOfMonth();
+        int slot = (dayOfMonth - 1) / (31 / METRICS_DAY_COUNT);
+        
+        // Format SK as M#yyyy-MM#Shard
+        String monthYear = today.format(DateTimeFormatter.ofPattern("yyyy-MM"));
+        return String.format("%s%s#%d", METRICS_SK_PREFIX, monthYear, slot);
+    }
+
+    public static String skTodaySlot() {
+        // Get current date and calculate slot based on days since epoch
+        long daysSinceEpoch = LocalDate.now().toEpochDay();
+        int slot = (int) (daysSinceEpoch % METRICS_SLOT_COUNT);
+
+        // Format SK as S#Slot
+        return String.format("%s%d", METRICS_SLOT_SK_PREFIX, slot);
     }
 }

@@ -7,8 +7,7 @@ interface AuthProviderProps {
 }
 
 /**
- * AuthProvider component that provides authentication context to the app
- * This should wrap the entire app to provide global auth state
+ * Provides authentication context to the app
  */
 export function AuthProvider({ children }: AuthProviderProps) {
   const authData = useAuth();

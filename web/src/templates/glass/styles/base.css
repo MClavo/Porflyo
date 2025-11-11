@@ -1,0 +1,45 @@
+/* ============================================
+   BASE STYLES - Glass Template
+   ============================================ */
+
+/* Main container */
+.tpl-glass {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  padding: 2rem;
+  line-height: 1.6;
+  /* Ensure background extends to full content height and width */
+  height: auto;
+  display: block;
+  width: 100%;
+  max-width: none;
+  box-sizing: border-box;
+}
+
+/* Portfolio items */
+.tpl-glass .portfolio-item {
+  background: transparent;
+  margin-bottom: 2rem;
+}
+
+/* Glass sections container */
+.glass-sections {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+/* Content wrapper - limits width of content but not background */
+.glass-content-wrapper {
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* Icons */
+.tpl-glass .icon,
+.tpl-glass svg {
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1)) !important;
+}

@@ -9,13 +9,14 @@ aws:
    
 dynamodb:
   endpoint: ${dynamodb.url:`http://localhost:8000`}
-  table-name: user-test    
+  user-table: user-test    
+  metrics-table: metrics-test
   region: us-east-1
 
 s3:
   expiration: 5
   region: us-east-1
-  bucket-name: media-test
+  bucket-name: porflyo-media-test
   endpoint: ${s3.url:`http://localhost:8000`}
 
 quota:

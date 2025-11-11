@@ -5,6 +5,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -46,6 +47,7 @@ class PublicPortfolioDtoMapperTest {
         Portfolio portfolio = new Portfolio(
             new PortfolioId("portfolio123"),
             new UserId("user123"),
+            LocalDate.parse("2025-05-05"),
             "modern",
             "My Portfolio",
             "Test description",
@@ -87,6 +89,7 @@ class PublicPortfolioDtoMapperTest {
         Portfolio portfolio = new Portfolio(
             new PortfolioId("portfolio123"),
             new UserId("user123"),
+            LocalDate.parse("2025-05-05"),
             "modern",
             "My Portfolio",
             "Test description",
@@ -112,6 +115,7 @@ class PublicPortfolioDtoMapperTest {
         Portfolio portfolio = new Portfolio(
             new PortfolioId("portfolio123"),
             new UserId("user123"),
+            LocalDate.parse("2025-05-05"),
             "modern",
             "My Portfolio",
             "Test description",
@@ -138,6 +142,7 @@ class PublicPortfolioDtoMapperTest {
         Portfolio portfolio = new Portfolio(
             new PortfolioId("portfolio123"),
             new UserId("user123"),
+            LocalDate.parse("2025-05-05"),
             "modern",
             "My Portfolio",
             "Test description",
@@ -169,6 +174,7 @@ class PublicPortfolioDtoMapperTest {
         Portfolio portfolio = new Portfolio(
             new PortfolioId("portfolio123"),
             new UserId("user123"),
+            LocalDate.parse("2025-05-05"),
             "modern",
             "My Portfolio",
             "Test description",

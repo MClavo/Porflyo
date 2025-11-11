@@ -2,10 +2,11 @@ import type {
   AnyCard,
   CardDto,
   CardType,
-  JobCardSaved,
   ProjectCardSaved,
+  JobCardSaved,
+  EducationCardSaved,
   TextCardSaved,
-
+  AboutCardSaved,
 } from "./Cards.types";
 
 export const cardFactoriesFromDto = {
@@ -46,9 +47,20 @@ export const cardFactories: Record<CardType, () => AnyCard> = {
       title: "",
       company: "",
       description: "",
+      location: "",
       dateStart: { month: 1, year: new Date().getFullYear() },
       dateEnd: { month: 1, year: new Date().getFullYear() },
     } satisfies JobCardSaved,
+  }),
+  education: () => ({
+    type: "education",
+    data: {
+      title: "",
+      institution: "",
+      location: "",
+      dateStart: { month: 1, year: new Date().getFullYear() },
+      dateEnd: { month: 1, year: new Date().getFullYear() },
+    } satisfies EducationCardSaved,
   }),
   text: () => ({
     type: "text",
@@ -56,5 +68,15 @@ export const cardFactories: Record<CardType, () => AnyCard> = {
       title: "",
       description: "",
     } satisfies TextCardSaved,
+  }),
+  about: () => ({
+    type: "about",
+    data: {
+      name: "",
+      description: "",
+      profileImage: undefined,
+      email: undefined,
+      socials: undefined,
+    } satisfies AboutCardSaved,
   }),
 };

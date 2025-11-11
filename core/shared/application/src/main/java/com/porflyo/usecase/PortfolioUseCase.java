@@ -40,6 +40,7 @@ public class PortfolioUseCase {
     private final MediaUseCase mediaUseCase;
     private final QuotaRepository quotaRepository;
     private final SlugGeneratorPort slugGenerator;
+    private final MetricsUseCase metricsUseCase;
 
     @Inject
     public PortfolioUseCase(
@@ -47,13 +48,15 @@ public class PortfolioUseCase {
             PortfolioUrlRepository portfolioUrlRepository,
             MediaUseCase mediaUseCase,
             QuotaRepository quotaRepository,
-            SlugGeneratorPort slugGenerator) {
+            SlugGeneratorPort slugGenerator,
+            MetricsUseCase metricsUseCase) {
 
         this.portfolioRepository = requireNonNull(portfolioRepository);
         this.portfolioUrlRepository = requireNonNull(portfolioUrlRepository);
         this.mediaUseCase = requireNonNull(mediaUseCase);
         this.quotaRepository = requireNonNull(quotaRepository);
         this.slugGenerator = requireNonNull(slugGenerator);
+        this.metricsUseCase = requireNonNull(metricsUseCase);
     }
 
 
@@ -182,6 +185,7 @@ public class PortfolioUseCase {
     /**
      * Deletes a portfolio: - decrements media usage and deletes from storage keys
      * that reach zero - releases slug mapping (if any) - updates quota
+     * Also deletes Metrics associated with the portfolio.
      */
     
     public void delete(@NonNull UserId userId, @NonNull PortfolioId portfolioId) {
@@ -205,6 +209,9 @@ public class PortfolioUseCase {
         // Delete portfolio and update quota
         portfolioRepository.delete(userId, portfolioId);
         quotaRepository.updatePortfolioCount(userId, -1);
+
+        // Delete associated Metrics
+        metricsUseCase.deleteAll(portfolioId);
     }
 
     

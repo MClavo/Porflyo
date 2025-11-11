@@ -13,16 +13,9 @@ interface ProtectedRouteProps {
 export function ProtectedRoute({ children, fallback }: ProtectedRouteProps) {
   const { isAuthenticated, isLoading } = useAuthContext();
 
-  if (isLoading) {
-    return (
-      <div className="card" style={{ textAlign: 'center', padding: '2rem' }}>
-        <h2>Loading...</h2>
-        <p>Checking authentication status...</p>
-      </div>
-    );
-  }
-
-  if (!isAuthenticated) {
+  // Let the child components handle their own loading states
+  // Only block rendering if we know the user is NOT authenticated
+  if (!isLoading && !isAuthenticated) {
     return fallback || (
       <div className="card" style={{ textAlign: 'center', padding: '2rem' }}>
         <h2>Authentication Required</h2>
@@ -31,5 +24,6 @@ export function ProtectedRoute({ children, fallback }: ProtectedRouteProps) {
     );
   }
 
+  // Render children even during loading - let them show their own skeletons
   return <>{children}</>;
 }

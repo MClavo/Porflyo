@@ -7,16 +7,16 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.porflyo.Item.DdbUserItem;
+import com.porflyo.configuration.DdbConfig;
 import com.porflyo.dto.UserPatchDto;
+import com.porflyo.mapper.DdbUserMapper;
 import com.porflyo.model.ids.ProviderUserId;
 import com.porflyo.model.ids.UserId;
 import com.porflyo.model.user.ProviderAccount;
 import com.porflyo.model.user.User;
 import com.porflyo.ports.UserRepository;
-import com.porflyo.Item.DdbUserItem;
-import com.porflyo.mapper.DdbUserMapper;
 import  com.porflyo.schema.UserTableSchema;
-import com.porflyo.configuration.DdbConfig;
 
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.core.annotation.NonNull;
@@ -47,7 +47,7 @@ public class DdbUserRepository implements UserRepository {
 
     @Inject
     public DdbUserRepository(DynamoDbEnhancedClient enhanced, DdbConfig dynamoDbConfig, DdbUserMapper ddbUserMapper) {
-        this.table = enhanced.table(dynamoDbConfig.tableName(), UserTableSchema.SCHEMA);
+        this.table = enhanced.table(dynamoDbConfig.userTable(), UserTableSchema.SCHEMA);
         this.ddbUserMapper = ddbUserMapper;
     }
 

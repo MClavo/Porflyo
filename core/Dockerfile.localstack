@@ -15,11 +15,11 @@ RUN mkdir -p /etc/localstack/init/ready.d && \
     '  sleep 1' \
     'done' \
     '' \
-    'awslocal s3api create-bucket --bucket media-test || true' \
+    'awslocal s3api create-bucket --bucket porflyo-media-test || true' \
     '' \
-    'awslocal s3api put-bucket-cors --bucket media-test --cors-configuration '\''{ "CORSRules": [ { "AllowedOrigins": ["*"], "AllowedMethods": ["GET","PUT","POST","DELETE"], "AllowedHeaders": ["*"], "ExposeHeaders": ["ETag"], "MaxAgeSeconds": 3000 } ] }'\''' \
+    'awslocal s3api put-bucket-cors --bucket porflyo-media-test --cors-configuration '\''{ "CORSRules": [ { "AllowedOrigins": ["*"], "AllowedMethods": ["GET","PUT","POST","DELETE"], "AllowedHeaders": ["*"], "ExposeHeaders": ["ETag"], "MaxAgeSeconds": 3000 } ] }'\''' \
     '' \
-    'echo "✅ Bucket media-test created with CORS configuration."' \
+    'echo "✅ Bucket porflyo-media-test created with CORS configuration."' \
     > /etc/localstack/init/ready.d/01-setup-cors.sh && \
     chmod +x /etc/localstack/init/ready.d/01-setup-cors.sh
 

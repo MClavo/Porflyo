@@ -1,0 +1,236 @@
+/* ============================================
+   ABOUT CARD - Styled like user-header
+   ============================================ */
+
+.tpl-glass .about-card {
+  /* Exact same styling as user-header */
+  display: flex;
+  align-items: center; /* center vertically so header grows with avatar */
+  gap: 2.5rem;
+  margin-bottom: 3rem;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(15px);
+  border-radius: 20px;
+  padding: 2.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  /* allow the header to grow when children (like the avatar image) are taller */
+  align-items: stretch;
+  flex-direction: row; /* Override the default column layout */
+  position: relative;
+}
+
+.tpl-glass .about-card::after {
+  content: '';
+  display: block;
+  flex: 1 1 0%;
+  min-width: 0; /* Prevents flex overflow */
+}
+
+/* Profile image container */
+.tpl-glass .about-card .about-profile-image {
+  /* Transform to user-avatar styling */
+  flex: 0 0 140px; /* fixed basis so it won't grow/shrink unexpectedly */
+  width: 140px;
+  height: 140px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 1.25rem; /* spacing between avatar and meta */
+  margin-bottom: 0; /* Remove default margin */
+  justify-content: flex-start; /* Override center alignment */
+}
+
+/* Avatar image */
+.tpl-glass .about-card .profile-avatar {
+  /* Exact avatar styling */
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease;
+  display: block; /* remove inline image artifacts (small stray circle) */
+  line-height: 0;
+  box-sizing: border-box;
+  max-width: 140px;
+  max-height: 140px;
+}
+
+.tpl-glass .about-card .profile-avatar:hover {
+  transform: scale(1.05);
+}
+
+/* Avatar placeholder */
+.tpl-glass .about-card .avatar-placeholder {
+  /* Exact avatar placeholder styling */
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3.5rem;
+  font-weight: bold;
+  border: 4px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  line-height: 0;
+  color: white;
+}
+
+/* Name - same style for both view (h1) and edit (input) */
+.tpl-glass .about-card .about-name,
+.tpl-glass .about-card .about-name-wrapper,
+.tpl-glass .about-card .about-name-wrapper input {
+  /* Exact user-name styling */
+  font-size: 3rem;
+  font-weight: 800;
+  margin: 0;
+  padding: 0;
+  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  background: linear-gradient(45deg, #ffffff, #e0e7ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-align: left; /* Override center alignment */
+  position: absolute;
+  top: 2.5rem;
+  left: calc(140px + 1.25rem + 2.5rem); /* avatar width + gap + padding */
+  border: none;
+  font-family: inherit;
+  width: fit-content;
+  min-width: 200px;
+  max-width: calc(100% - 140px - 1.25rem - 5rem);
+  box-sizing: border-box;
+}
+
+/* Subtle focus state for edit mode */
+.tpl-glass .about-card .about-name-wrapper input:focus {
+  outline: none;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 4px 8px;
+  /* Recreate gradient on solid background for visibility */
+  background: rgba(255, 255, 255, 0.08);
+  -webkit-background-clip: border-box;
+  -webkit-text-fill-color: white;
+  background-clip: border-box;
+}
+
+/* Email */
+.tpl-glass .about-card .about-email {
+  /* Transform to contact-link styling */
+  position: absolute;
+  top: calc(2.5rem + 3rem + 0.5rem); /* below name */
+  left: calc(140px + 1.25rem + 2.5rem);
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin-bottom: 0;
+}
+
+.tpl-glass .about-card .about-email-link,
+.tpl-glass .about-card .about-email-input {
+  color: rgba(255, 255, 255, 0.9);
+  text-decoration: none;
+  font-size: 1.2rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: transparent;
+  border: none;
+}
+
+.tpl-glass .about-card .about-email-link:hover {
+  color: white;
+  text-decoration: underline;
+  transform: translateY(-1px);
+}
+
+.tpl-glass .about-card .about-icon {
+  display: none; /* Hide the email icon since we don't need it in this layout */
+}
+
+/* Social links */
+.tpl-glass .about-card .about-socials {
+  /* Transform to social-links styling */
+  position: absolute;
+  top: calc(2.5rem + 3rem + 1.2rem + 1rem); /* below email */
+  left: calc(140px + 1.25rem + 2.5rem);
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-top: 0;
+}
+
+.tpl-glass .about-card .about-social-link {
+  /* Exact social-link styling */
+  padding: 0.75rem 1.5rem;
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  text-decoration: none;
+  border-radius: 25px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(10px);
+  transform: none; /* Override default transform */
+}
+
+.tpl-glass .about-card .about-social-link:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+  color: white; /* Override the blue hover */
+}
+
+.tpl-glass .about-card .about-social-link svg {
+  display: none; /* Hide icons, just show platform name */
+}
+
+/* Social link platform-specific hover colors */
+.tpl-glass .about-card .about-social-link[href*="linkedin"]:hover {
+  background: linear-gradient(45deg, #0077b5, #00a0dc);
+  border-color: #0077b5;
+}
+
+.tpl-glass .about-card .about-social-link[href*="github"]:hover {
+  background: linear-gradient(45deg, #333, #555);
+  border-color: #333;
+}
+
+.tpl-glass .about-card .about-social-link[title="website"]:hover,
+.tpl-glass .about-card .about-social-link[href*="http"]:hover {
+  background: linear-gradient(45deg, #FF6B6B, #FF8E8E);
+  border-color: #FF6B6B;
+}
+
+.tpl-glass .about-card .about-social-link[href*="twitter"]:hover {
+  background: linear-gradient(45deg, #1da1f2, #4db8f5);
+  border-color: #1da1f2;
+}
+
+/* Description */
+.tpl-glass .about-card .about-description {
+  /* Transform to user-description styling */
+  position: absolute;
+  top: calc(2.5rem + 3rem + 1.2rem + 1rem + 2.5rem); /* below socials */
+  left: calc(140px + 1.25rem + 2.5rem);
+  right: 2.5rem;
+  margin: 1.5rem 0 0rem 0;
+  width: auto;
+  text-align: left; /* Override center alignment */
+  font-size: 1.1rem;
+  line-height: 1.6;
+  padding: 1rem;
+  border-radius: 12px;
+  min-height: 3rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.9);
+}

@@ -55,7 +55,6 @@ class ScrollTracker {
     
     // Validate that the element is actually scrollable
     if (element && element.scrollHeight <= element.clientHeight) {
-      console.warn('⚠️ Provided element is not scrollable, falling back to window');
       this.targetElement = window;
     }
     
@@ -66,7 +65,6 @@ class ScrollTracker {
     this.scrollEventListener = this.handleScroll.bind(this);
     this.targetElement.addEventListener('scroll', this.scrollEventListener, { passive: true });
     
-    console.log('✅ Scroll tracking started on:', this.targetElement === window ? 'window' : this.targetElement);
   }
 
   // Stop tracking scroll events
@@ -107,11 +105,6 @@ class ScrollTracker {
       // Session management
       this.startNewSessionIfNeeded();
       this.resetSessionTimeout();
-      
-      // Debug log for troubleshooting
-      if (this.velocities.length % 10 === 0) {
-        console.log(`📊 Scroll event #${this.velocities.length}: ${distance}px, ${(velocity * 1000).toFixed(1)}px/s`);
-      }
     }
     
     this.lastScrollY = currentScrollY;

@@ -8,13 +8,14 @@ aws:
    
 dynamodb:
   endpoint: http://host.docker.internal:8000
-  table-name: user-test    
+  user-table: user-test    
+  metrics-table: metrics-test
   region: us-east-1
 
 s3:
   expiration: 5
   region: us-east-1
-  bucket-name: media-test
+  bucket-name: porflyo-media-test
   endpoint: http://host.docker.internal:8000
 
 quota:

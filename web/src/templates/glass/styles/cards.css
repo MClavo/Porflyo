@@ -1,0 +1,68 @@
+/* ============================================
+   CARD STYLES - Generic card overrides
+   ============================================ */
+
+/* Base card container - Uniform styling */
+.tpl-glass .card-container {
+  background: rgba(255, 255, 255, 0.15) !important;
+  border: 1px solid rgba(255, 255, 255, 0.25) !important;
+  border-radius: 12px !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+  margin-bottom: 1rem !important;
+  transition: all 0.3s ease !important;
+  padding: 1.5rem !important;
+  /* Limit width for better readability */
+  max-width: 100%;
+}
+
+.tpl-glass .card-container:hover {
+  background: rgba(255, 255, 255, 0.2) !important;
+  border-color: rgba(255, 255, 255, 0.3) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* Card headings - Clean, no blur */
+.tpl-glass .card-container h1,
+.tpl-glass .card-container h2,
+.tpl-glass .card-container h3,
+.tpl-glass .card-container h4,
+.tpl-glass .card-container h5,
+.tpl-glass .card-container h6 {
+  color: #ffffff !important;
+  font-weight: 600 !important;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2) !important;
+  margin-top: 0 !important;
+}
+
+/* Card text content - Clear and readable */
+.tpl-glass .card-container p,
+.tpl-glass .card-container span,
+.tpl-glass .card-container div {
+  color: rgba(255, 255, 255, 0.9) !important;
+  text-shadow: none !important;
+  line-height: 1.6 !important;
+}
+
+/* Card inputs in edit mode - No blur */
+.tpl-glass[data-mode="edit"] .card-container input,
+.tpl-glass[data-mode="edit"] .card-container textarea,
+.tpl-glass[data-mode="edit"] .card-container select {
+  background: rgba(255, 255, 255, 0.1) !important;
+  border: 1px solid rgba(255, 255, 255, 0.25) !important;
+  border-radius: 8px !important;
+  color: #ffffff !important;
+  padding: 0.5rem 0.75rem !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.tpl-glass[data-mode="edit"] .card-container input:focus,
+.tpl-glass[data-mode="edit"] .card-container textarea:focus,
+.tpl-glass[data-mode="edit"] .card-container select:focus {
+  background: rgba(255, 255, 255, 0.15) !important;
+  border-color: rgba(255, 255, 255, 0.4) !important;
+  outline: none !important;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1) !important;
+}

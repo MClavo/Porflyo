@@ -1,7 +1,8 @@
 import { useRef, useState, useEffect } from 'react';
 import { PortfolioViewer } from '../components/portfolio';
 import { demoInitialPortfolio } from './editor/demoData';
-import useMetrics from '../hooks/metrics/useMetrics';
+import useMetrics from '../hooks/metrics/useGetMetrics';
+import { useSendMetrics, sendMetricsOnUnload } from '../api/hooks/useMetrics';
 import ScrollMetricsDisplay from '../components/analytics/ScrollMetricsDisplay';
 import InteractionMetricsDisplay from '../components/analytics/InteractionMetricsDisplay';
 import '../styles/PublicPortfolio.css';
@@ -24,13 +25,13 @@ export default function MetricsTest() {
           track: (eventName: string, payload?: unknown) => {
             try {
               analytics.track(eventName, payload);
-            } catch (err) {
-              console.warn('analytics.track failed', err);
+            } catch {
+              // Analytics tracking failed - continue silently
             }
           }
         });
-      } catch (err) {
-        console.info('analytics not available in MetricsTest', err);
+      } catch {
+        // Analytics module not available - continue without it
       }
     })();
     return () => {
@@ -57,6 +58,33 @@ export default function MetricsTest() {
   const [topCellsCount, setTopCellsCount] = useState<number>(200);
   const [showingTopCells, setShowingTopCells] = useState<boolean>(false);
   const [currentView, setCurrentView] = useState<'backend' | 'raw' | 'topCells'>('backend');
+  const [isPaused, setIsPaused] = useState<boolean>(false);
+
+  const { sendMetrics } = useSendMetrics({
+    portfolioId: 'test-portfolio-id',
+  });
+
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      const backendData = getBackendMetrics();
+      
+      const activeTimeSeconds = (backendData.activeTimeMs || 0) / 1000;
+      if (activeTimeSeconds < 10) {
+        return;
+      }
+      
+      sendMetricsOnUnload(
+        'test-portfolio-id',
+        backendData
+      );
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [getBackendMetrics]);
 
   const refresh = () => {
     let data;
@@ -92,7 +120,6 @@ export default function MetricsTest() {
     setMetricsJson(JSON.stringify(backendData, null, 2));
     setShowingTopCells(false);
     setCurrentView('backend');
-    console.log('🚀 Backend Metrics:', backendData);
   };
 
   const showRawMetrics = () => {
@@ -100,11 +127,12 @@ export default function MetricsTest() {
     setMetricsJson(JSON.stringify(rawData, null, 2));
     setShowingTopCells(false);
     setCurrentView('raw');
-    console.log('📊 Raw Metrics:', rawData);
   };
 
   // Auto-refresh every second to show live updates
   useEffect(() => {
+    if (isPaused) return; // No actualizar si está pausado
+    
     // Initial load - show backend metrics by default
     const updateData = () => {
       let data;
@@ -123,7 +151,7 @@ export default function MetricsTest() {
     const interval = setInterval(updateData, 1000);
     
     return () => clearInterval(interval);
-  }, [metricsCollector, currentView, topCellsCount, getBackendMetrics]);
+  }, [metricsCollector, currentView, topCellsCount, getBackendMetrics, isPaused]);
 
   return (
     <div className="public-portfolio-container metrics-test-container">
@@ -139,9 +167,55 @@ export default function MetricsTest() {
                 Los clicks en los proyectos de arriba se agrupan por repoId automáticamente.<br/>
                 Mueve el cursor por toda la pantalla para generar datos del heatmap.
               </p>
+              
+              {/* Social media buttons */}
+              <div style={{ display: 'flex', gap: '10px', marginBottom: '15px', flexWrap: 'wrap' }}>
+                <button 
+                  onClick={() => metricsCollector.recordSocialClick('github')}
+                  style={{ background: '#24292e', color: 'white', border: 'none', padding: '8px 16px', borderRadius: '4px', cursor: 'pointer' }}
+                >
+                  🐙 GitHub
+                </button>
+                <button 
+                  onClick={() => metricsCollector.recordSocialClick('linkedin')}
+                  style={{ background: '#0077b5', color: 'white', border: 'none', padding: '8px 16px', borderRadius: '4px', cursor: 'pointer' }}
+                >
+                  💼 LinkedIn
+                </button>
+                <button 
+                  onClick={() => metricsCollector.recordSocialClick('twitter')}
+                  style={{ background: '#1da1f2', color: 'white', border: 'none', padding: '8px 16px', borderRadius: '4px', cursor: 'pointer' }}
+                >
+                  🐦 Twitter
+                </button>
+              </div>
+              
               <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
                 <button id="general-contact-btn">Contacto General</button>
                 <button id="general-info-btn">Más Información</button>
+                <button 
+                  onClick={() => {
+                    const email = 'test@example.com';
+                    navigator.clipboard.writeText(email).then(() => {
+                      metricsCollector.recordEmailCopied();
+                      alert(`📧 Email copiado al portapapeles: ${email}`);
+                    }).catch(() => {
+                      alert('❌ No se pudo copiar el email');
+                    });
+                  }}
+                  style={{ background: '#f59e0b', color: 'white', border: 'none', padding: '8px 16px', borderRadius: '4px' }}
+                >
+                  📧 Copiar Email
+                </button>
+                <button 
+                  onClick={() => {
+                    const backendData = getBackendMetrics();
+                    sendMetrics(backendData);
+                  }}
+                  style={{ background: '#10b981', color: 'white', border: 'none', padding: '8px 16px', borderRadius: '4px', cursor: 'pointer' }}
+                >
+                  📤 Enviar Métricas Ahora
+                </button>
                 <button 
                   onClick={() => {
                     // Auto-scroll test
@@ -163,9 +237,7 @@ export default function MetricsTest() {
                     // Debug scroll tracking
                     import('../lib/analytics/scrollTracker').then(({ scrollTracker }) => {
                       const status = scrollTracker.getTrackingStatus();
-                      console.log('🔍 Scroll Tracking Status:', status);
                       const metrics = scrollTracker.getMetrics();
-                      console.log('📊 Current Metrics:', metrics);
                       alert(`Tracking: ${status.isTracking}\nElement: ${status.targetElement}\nEvents: ${status.totalEvents}\nDistance: ${metrics.totalScrollDistance}px`);
                     });
                   }}
@@ -178,8 +250,9 @@ export default function MetricsTest() {
                     // Debug interaction tracking
                     import('../lib/analytics/interactionTracker').then(({ interactionTracker }) => {
                       const metrics = interactionTracker.getMetrics();
-                      console.log('🔍 Interaction Tracking Status:', metrics);
-                      alert(`Views: ${metrics.totalViews}\nInteractions: ${metrics.totalInteractions}\nTTFI: ${metrics.timeToFirstInteractionMs}ms\nProjects: ${Object.keys(metrics.projectMetrics).length}`);
+                      const projectsCount = Object.keys(metrics.projectMetrics).length;
+                      const totalExposures = Object.values(metrics.projectMetrics).reduce((sum, p) => sum + p.exposures, 0);
+                      alert(`Views: ${metrics.totalViews}\nInteractions: ${metrics.totalInteractions}\nProjects: ${projectsCount}\nTotal Exposures: ${totalExposures}`);
                     });
                   }}
                   style={{ background: '#6f42c1', color: 'white', border: 'none', padding: '8px 16px', borderRadius: '4px' }}
@@ -269,6 +342,15 @@ export default function MetricsTest() {
           <div style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
             <button onClick={refresh}>Actualizar</button>
             <button onClick={clear}>Limpiar</button>
+            <button 
+              onClick={() => setIsPaused(!isPaused)}
+              style={{ 
+                backgroundColor: isPaused ? '#dc2626' : '#16a34a', 
+                color: 'white' 
+              }}
+            >
+              {isPaused ? '▶️ Reanudar' : '⏸️ Pausar'}
+            </button>
             <button onClick={showBackendMetrics} style={{ backgroundColor: '#2563eb', color: 'white' }}>
               📤 Backend
             </button>
@@ -291,7 +373,7 @@ export default function MetricsTest() {
             }
           </div>
           
-          <pre style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>{metricsJson}</pre>
+          <pre style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }} className='json'>{metricsJson}</pre>
         </aside>
       </div>
     </div>

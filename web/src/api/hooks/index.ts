@@ -7,3 +7,4 @@ export * from './useSavedSectionsManager';
 export * from './usePublic';
 export * from './useUser';
 export * from './useAuth';
+export * from './useMetrics';

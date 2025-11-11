@@ -1,10 +1,6 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 
-# SAM Configuration for Micronaut Lambda with AOT Optimizations
-# Uses the optimized JAR: build/libs/core-0.1-all-optimized.jar
-# This JAR includes all dependencies + Micronaut AOT optimizations for faster cold starts
-
 Globals:
   Function:
     Timeout: 50
@@ -115,6 +111,31 @@ Resources:
           Properties:
             Path: /logout
             Method: ANY
+  # API Handler Lambda
+  PorflyoMetrics:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: handlers\metrics
+      Handler: com.porflyo.LocalLambdaEntrypoint::execute
+      Runtime: java21
+      MemorySize: 256
+      Environment:
+        Variables:
+          OAUTH_CLIENT_ID: !Ref OAUTH_CLIENT_ID
+          OAUTH_CLIENT_SECRET: !Ref OAUTH_CLIENT_SECRET
+          OAUTH_REDIRECT_URI: !Ref OAUTH_REDIRECT_URI
+          OAUTH_SCOPE: !Ref OAUTH_SCOPE
+          OAUTH_USER_AGENT: !Ref OAUTH_USER_AGENT
+          JWT_SECRET: !Ref JWT_SECRET
+          JWT_EXPIRATION: !Ref JWT_EXPIRATION
+          FRONTEND_URL: !Ref FRONTEND_URL
+      Events:
+        # Handle API requests
+        MetricsApi:
+          Type: HttpApi
+          Properties:
+            Path: /metrics/{proxy+}
+            Method: ANY
 
 Outputs:
   PorflyoApiUrl:
@@ -126,3 +147,6 @@ Outputs:
   PorflyoAuthenticationUrl:
     Description: "API Gateway endpoint URL for Authentication Lambda"
     Value: !Sub "https://${ServerlessHttpApi}.execute-api.${AWS::Region}.amazonaws.com/auth"
+  PorflyoMetricsUrl:
+    Description: "API Gateway endpoint URL for Metrics Lambda"
+    Value: !Sub "https://${ServerlessHttpApi}.execute-api.${AWS::Region}.amazonaws.com/metrics"

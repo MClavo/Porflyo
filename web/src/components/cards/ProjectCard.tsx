@@ -52,11 +52,6 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   // current card width so styles can use it (e.g. to size images).
   const cardRef = React.useRef<HTMLDivElement | null>(null);
 
-  // Debug: Log repoId to verify it's being passed correctly
-  React.useEffect(() => {
-    console.log(`🏷️ ProjectCard "${title}" mounted with repoId:`, repoId);
-  }, [repoId, title]);
-
   React.useEffect(() => {
     const el = cardRef.current;
     if (!el) return;
@@ -80,7 +75,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
       ref={cardRef} 
       className="project-card" 
       data-mode={mode}
-      data-project-id={repoId ? String(repoId) : 'unknown-project'}
+      project-id={repoId ? String(repoId) : 'unknown-project'}
     >
       {/* render injected children (e.g. delete button) */}
       {children}
@@ -135,7 +130,6 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
           mode={mode}
           stars={stars}
           forks={forks}
-          onPatch={(patch) => onPatch?.({ stars: patch.stars, forks: patch.forks })}
           className="top-border"
         />
       )}
@@ -168,21 +162,21 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
 
       <div className="footer top-border">
         {liveUrl ? (
-          <a href={liveUrl} target="_blank" rel="noopener noreferrer" className="btn primary">
-            Live Demo
+          <a href={liveUrl} target="_blank" rel="noopener noreferrer" className="btn live">
+            Live
           </a>
         ) : (
-          <button className="btn primary" type="button" disabled={mode === "view"}>
-            {mode === "edit" ? "No Live URL" : "Live Demo"}
+          <button className="btn live" type="button" disabled={mode === "view"}>
+            {mode === "edit" ? "No Live URL" : "Live"}
           </button>
         )}
         
         {repoUrl ? (
-          <a href={repoUrl} target="_blank" rel="noopener noreferrer" className="btn secondary">
+          <a href={repoUrl} target="_blank" rel="noopener noreferrer" className="btn code">
             Source Code
           </a>
         ) : (
-          <button className="btn secondary" type="button" disabled={mode === "view"}>
+          <button className="btn code" type="button" disabled={mode === "view"}>
             {mode === "edit" ? "No Repo URL" : "Source Code"}
           </button>
         )}

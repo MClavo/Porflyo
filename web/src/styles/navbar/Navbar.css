@@ -1,0 +1,274 @@
+/* Import Syncopate font for navbar logo */
+@import url('https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700&display=swap');
+
+/* Navbar Styles - Modern fixed navigation */
+
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background: var(--card-bg);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--card-border);
+  box-shadow: var(--shadow-lg);
+  box-sizing: border-box;
+}
+
+.navbar-content {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: var(--space-3) var(--space-6);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  height: var(--navbar-height);
+  box-sizing: border-box;
+}
+
+/* Separator - Modern gradient line */
+.navbar::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--card-border) 20%,
+    var(--accent-blue) 50%,
+    var(--card-border) 80%,
+    transparent 100%
+  );
+}
+
+.navbar::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(59, 130, 246, 0.3) 50%,
+    transparent 100%
+  );
+  animation: navbar-separator-glow 3s ease-in-out infinite;
+}
+
+@keyframes navbar-separator-glow {
+  0%, 100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+/* Logo Button - Same style as Root page h1 with modern enhancements */
+.navbar-logo {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: var(--space-2) var(--space-3);
+  font-family: "Syncopate", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 700;
+  font-style: oblique;
+  letter-spacing: 0.3rem;
+  font-size: var(--font-xl);
+  color: var(--space1, #00ADB5);
+  transition: all var(--transition-normal);
+  text-decoration: none;
+  outline: none;
+  border-radius: var(--radius-md);
+  position: relative;
+  overflow: hidden;
+}
+
+.navbar-logo::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(0, 173, 181, 0.1),
+    transparent
+  );
+  transition: left 0.5s ease;
+}
+
+.navbar-logo:hover {
+  color: var(--nivo-1);
+  transform: scale(1.05);
+  background: rgba(0, 173, 181, 0.05);
+}
+
+.navbar-logo:hover::before {
+  left: 100%;
+}
+
+.navbar-logo:focus {
+  outline: 2px solid var(--accent-blue);
+  outline-offset: 4px;
+  border-radius: var(--radius-md);
+}
+
+/* Navbar Actions Container */
+.navbar-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+/* Logout Button - Modern style with enhanced effects */
+.navbar-logout {
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  border-radius: var(--radius-lg);
+  padding: var(--space-2) var(--space-4);
+  color: var(--status-negative);
+  font-size: var(--font-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-family: var(--font-sans);
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(239, 68, 68, 0.1);
+  height: 36px;
+}
+
+.navbar-logout::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(239, 68, 68, 0.1),
+    transparent
+  );
+  transition: left 0.3s ease;
+}
+
+.navbar-logout:hover {
+  background: var(--status-negative);
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 
+    0 4px 12px rgba(239, 68, 68, 0.3),
+    0 0 0 1px rgba(255, 255, 255, 0.1);
+  border-color: var(--status-negative);
+}
+
+.navbar-logout:hover::before {
+  left: 100%;
+}
+
+.navbar-logout:focus {
+  outline: 2px solid var(--status-negative);
+  outline-offset: 2px;
+}
+
+.navbar-logout:active {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.2);
+}
+
+/* Hover effects on navbar */
+.navbar:hover .navbar-logo {
+  box-shadow: 0 2px 8px rgba(0, 173, 181, 0.2);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .navbar-content {
+    padding: var(--space-2) var(--space-4);
+    max-width: 100%;
+    height: 56px;
+  }
+
+  .navbar-logo {
+    font-size: var(--font-lg);
+    letter-spacing: 0.2rem;
+    padding: var(--space-2);
+  }
+
+  .navbar-logout {
+    padding: var(--space-2) var(--space-3);
+    font-size: var(--font-xs);
+    height: 32px;
+  }
+}
+
+@media (max-width: 480px) {
+  .navbar-content {
+    padding: var(--space-2) var(--space-3);
+    height: 52px;
+  }
+
+  .navbar-logo {
+    font-size: var(--font-lg);
+    letter-spacing: 0.1rem;
+  }
+
+  .navbar-logout span {
+    display: none; /* Hide "Logout" text on very small screens, keep icon */
+  }
+
+  .navbar-logout {
+    padding: var(--space-2);
+    min-width: 44px; /* Ensure button is still tappable */
+  }
+}
+
+/* Loading state animation */
+@keyframes navbar-shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.navbar--loading .navbar-logo {
+  background: linear-gradient(
+    90deg,
+    var(--space1) 25%,
+    var(--accent-blue) 50%,
+    var(--space1) 75%
+  );
+  background-size: 200% 100%;
+  animation: navbar-shimmer 2s ease-in-out infinite;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Focus states for accessibility */
+.navbar-logout:focus {
+  outline: 2px solid var(--status-negative);
+  outline-offset: 2px;
+}
+
+.navbar-logout:focus:not(:focus-visible) {
+  outline: none;
+}

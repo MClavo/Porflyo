@@ -1,7 +1,7 @@
 
-export type TemplateKey = "template1" | "template2"; 
+export type TemplateKey = "template1" | "template2" | "glass"; 
 
-export const templateList = ["template1", "template2"];
+export const templateList = ["template1", "template2", "glass"];
 
 
 import type { PortfolioState } from "../state/Portfolio.types";

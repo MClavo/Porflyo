@@ -43,11 +43,7 @@ public class DdbPortfolioRepositoryIntegrationTest
     @PostConstruct
     void setUp() {
         this.repository = injectedRepository;
-    }
-
-
-   
-    
+    }   
 
     @Override
     public Map<String, String> getProperties() {

@@ -1,5 +1,6 @@
 package com.porflyo.data;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import com.porflyo.model.ids.PortfolioId;
@@ -69,10 +70,12 @@ public final class PortfolioTestData {
     public static final int DEFAULT_PORTFOLIO_MODEL_VERSION = 1;
     public static final Slug DEFAULT_PORTFOLIO_DESIRED_SLUG = new Slug("test-portfolio");
     public static final Boolean DEFAULT_PORTFOLIO_IS_PUBLISHED = true;
+    public static final LocalDate DEFAULT_PORTFOLIO_CREATED_AT = LocalDate.parse("2025-05-05");
 
     public static final Portfolio DEFAULT_PORTFOLIO = new Portfolio(
         DEFAULT_PORTFOLIO_ID,
         TestData.DEFAULT_USER_ID,
+        DEFAULT_PORTFOLIO_CREATED_AT,
         DEFAULT_PORTFOLIO_TEMPLATE,
         DEFAULT_PORTFOLIO_TITLE,
         DEFAULT_PORTFOLIO_DESCRIPTION,

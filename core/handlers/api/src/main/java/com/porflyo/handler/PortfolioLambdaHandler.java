@@ -1,5 +1,6 @@
 package com.porflyo.handler;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -173,7 +174,7 @@ public class PortfolioLambdaHandler {
             log.debug("Listed {} portfolios for user: {}", dtos.size(), userId.value());
             return LambdaHttpUtils.createResponse(200, jsonMapper.writeValueAsString(dtos));
 
-        } catch (java.io.IOException e) {
+        } catch (IOException e) {
             log.error("Error serializing portfolio list: {}", e.getMessage(), e);
             return LambdaHttpUtils.createErrorResponse(500, "Internal Server Error");
         } catch (Exception e) {

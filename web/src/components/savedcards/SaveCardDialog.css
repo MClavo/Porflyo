@@ -1,10 +1,13 @@
+/* Save Card Dialog - Modern Dark Theme */
+
 .save-card-dialog-overlay {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(4px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -13,10 +16,11 @@
 }
 
 .save-card-dialog {
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-  max-width: 400px;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-xl);
+  max-width: 500px;
   width: 90%;
   max-height: 90vh;
   overflow: hidden;
@@ -27,138 +31,254 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px 24px 16px;
-  border-bottom: 1px solid #e1e5e9;
-  background: #f8f9fa;
+  padding: var(--space-6) var(--space-6) var(--space-4);
+  border-bottom: 1px solid var(--card-border);
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1));
+  position: relative;
+}
+
+.save-card-dialog-header::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple));
 }
 
 .save-card-dialog-header h3 {
   margin: 0;
-  font-size: 18px;
-  font-weight: 600;
-  color: #333;
+  font-size: var(--font-xl);
+  font-weight: 700;
+  color: var(--text-primary);
+  font-family: var(--font-sans);
 }
 
 .save-card-dialog-close {
-  background: none;
-  border: none;
-  font-size: 20px;
+  background: transparent;
+  border: 1px solid transparent;
+  font-size: var(--font-xl);
   cursor: pointer;
-  padding: 4px;
-  border-radius: 50%;
-  width: 32px;
-  height: 32px;
+  padding: var(--space-2);
+  border-radius: var(--radius-md);
+  width: 36px;
+  height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #666;
-  transition: all 0.2s ease;
+  color: var(--text-secondary);
+  transition: all var(--transition-fast);
 }
 
 .save-card-dialog-close:hover {
-  background: #e0e0e0;
-  color: #333;
+  background: rgba(239, 68, 68, 0.1);
+  border-color: var(--status-negative);
+  color: var(--status-negative);
 }
 
 .save-card-dialog-content {
-  padding: 24px;
+  padding: var(--space-6);
 }
 
 .save-card-dialog-content p {
-  margin: 0 0 20px;
-  color: #666;
-  font-size: 14px;
-  line-height: 1.5;
+  margin: 0 0 var(--space-5);
+  color: var(--text-secondary);
+  font-size: var(--font-base);
+  line-height: 1.6;
 }
 
 .save-card-dialog-field {
-  margin-bottom: 20px;
+  margin-bottom: var(--space-5);
 }
 
 .save-card-dialog-field label {
   display: block;
-  margin-bottom: 8px;
-  font-weight: 500;
-  color: #333;
-  font-size: 14px;
+  margin-bottom: var(--space-2);
+  font-weight: 600;
+  color: var(--text-primary);
+  font-size: var(--font-sm);
 }
 
 .save-card-dialog-field input {
   width: 100%;
-  padding: 12px 16px;
-  border: 2px solid #e1e5e9;
-  border-radius: 8px;
-  font-size: 14px;
-  transition: border-color 0.2s ease;
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-md);
+  font-size: var(--font-base);
+  background: var(--dashboard-bg-secondary);
+  color: var(--text-primary);
+  transition: all var(--transition-fast);
   box-sizing: border-box;
+  font-family: var(--font-sans);
 }
 
 .save-card-dialog-field input:focus {
   outline: none;
-  border-color: #007acc;
-  box-shadow: 0 0 0 3px rgba(0, 122, 204, 0.1);
+  border-color: var(--accent-blue);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+.save-card-dialog-field input::placeholder {
+  color: var(--text-muted);
 }
 
 .save-card-dialog-info {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  margin-bottom: 24px;
-  padding: 12px;
-  background: #f8f9fa;
-  border-radius: 6px;
+  gap: var(--space-2);
+  margin-bottom: var(--space-6);
+  padding: var(--space-4);
+  background: rgba(59, 130, 246, 0.05);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  border-radius: var(--radius-md);
 }
 
 .save-card-dialog-meta {
-  font-size: 12px;
-  color: #666;
+  font-size: var(--font-sm);
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
 }
 
 .save-card-dialog-meta strong {
-  color: #333;
+  color: var(--text-primary);
   font-weight: 600;
+}
+
+.save-card-dialog-divider {
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--card-border) 20%,
+    var(--card-border) 80%,
+    transparent
+  );
+  margin: var(--space-5) 0;
 }
 
 .save-card-dialog-actions {
   display: flex;
-  gap: 12px;
-  justify-content: flex-end;
+  gap: var(--space-3);
+  justify-content: center;
 }
 
 .save-card-dialog-btn {
-  padding: 12px 24px;
-  border: none;
-  border-radius: 8px;
-  font-size: 14px;
+  padding: var(--space-3) var(--space-5);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  font-size: var(--font-sm);
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all var(--transition-normal);
+  font-family: var(--font-sans);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-width: 120px;
 }
 
 .save-card-dialog-btn-cancel {
-  background: #f1f3f4;
-  color: #333;
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  color: var(--status-negative);
+  box-shadow: 0 2px 4px rgba(239, 68, 68, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.save-card-dialog-btn-cancel::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(239, 68, 68, 0.1),
+    transparent
+  );
+  transition: left 0.3s ease;
 }
 
 .save-card-dialog-btn-cancel:hover {
-  background: #e8eaed;
+  background: var(--status-negative);
+  color: white;
+  transform: translateY(-1px);
+  box-shadow: 
+    0 4px 12px rgba(239, 68, 68, 0.3),
+    0 0 0 1px rgba(255, 255, 255, 0.1);
+  border-color: var(--status-negative);
+}
+
+.save-card-dialog-btn-cancel:hover::before {
+  left: 100%;
+}
+
+.save-card-dialog-btn-cancel:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.2);
 }
 
 .save-card-dialog-btn-save {
-  background: #007acc;
+  background: linear-gradient(135deg, var(--accent-purple), var(--accent-blue));
   color: white;
+  border: none;
+  box-shadow: 
+    0 2px 8px rgba(139, 92, 246, 0.3),
+    0 0 0 1px rgba(255, 255, 255, 0.1);
+  position: relative;
+  overflow: hidden;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.save-card-dialog-btn-save::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  transition: left 0.5s ease;
+  pointer-events: none;
 }
 
 .save-card-dialog-btn-save:hover:not(:disabled) {
-  background: #0066aa;
+  transform: translateY(-2px);
+  box-shadow: 
+    0 4px 12px rgba(139, 92, 246, 0.4),
+    0 0 0 1px rgba(255, 255, 255, 0.15),
+    0 0 20px rgba(139, 92, 246, 0.2);
+}
+
+.save-card-dialog-btn-save:hover:not(:disabled)::before {
+  left: 100%;
+}
+
+.save-card-dialog-btn-save:active:not(:disabled) {
   transform: translateY(-1px);
+  box-shadow: 
+    0 2px 8px rgba(139, 92, 246, 0.3),
+    0 0 0 1px rgba(255, 255, 255, 0.1);
 }
 
 .save-card-dialog-btn-save:disabled {
-  background: #ccc;
-  color: #999;
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-muted);
   cursor: not-allowed;
   transform: none;
+  opacity: 0.5;
 }
 
 /* Animations */
@@ -174,10 +294,33 @@
 @keyframes slideIn {
   from {
     opacity: 0;
-    transform: translateY(-20px) scale(0.9);
+    transform: translateY(-20px) scale(0.95);
   }
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .save-card-dialog {
+    max-width: 95%;
+    margin: var(--space-4);
+  }
+
+  .save-card-dialog-header,
+  .save-card-dialog-content {
+    padding: var(--space-4);
+  }
+
+  .save-card-dialog-actions {
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .save-card-dialog-btn {
+    width: 100%;
+    justify-content: center;
   }
 }

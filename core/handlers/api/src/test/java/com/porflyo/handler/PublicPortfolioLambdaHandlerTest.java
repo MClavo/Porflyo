@@ -56,6 +56,7 @@ class PublicPortfolioLambdaHandlerTest {
         // given
         PublicPortfolioView portfolioView = new PublicPortfolioView(
             "portfolio123", 
+            "2024-01-01",
             "modern", 
             "My Portfolio", 
             "Test description", 

@@ -11,6 +11,7 @@ import io.micronaut.serde.annotation.Serdeable;
 @Introspected
 public record PublicPortfolioView(
     String portfolioId,             // Used for Metrics
+    String createdAt,
     String template,
     String title,
     String description,

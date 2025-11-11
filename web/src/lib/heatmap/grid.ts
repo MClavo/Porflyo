@@ -1,6 +1,11 @@
 import type { HeatmapData, TopCell } from './types';
 import { produce } from 'immer';
 
+// Heatmap configuration: Controls update frequency to prevent values from growing too fast
+// Only 1 out of every HEATMAP_UPDATE_RATE mouse move events will be recorded
+export const HEATMAP_UPDATE_RATE = 3; // Update every N events (1=every event, 2=every 2nd event, 3=every 3rd, etc.)
+export const HEATMAP_CLICK_MULTIPLIER = 3; // Multiplier when mouse button is pressed (e.g., 3 = 3x more heat)
+
 export class HeatmapGrid {
   private grid: Float32Array;
   private cols: number;
@@ -8,6 +13,7 @@ export class HeatmapGrid {
   private cellWidth: number;
   private cellHeight: number;
   private maxCount: number;
+  private eventCounter: number; // Counter to throttle updates
 
   constructor(cols: number, rows: number, cellWidth: number, cellHeight: number) {
     this.cols = cols;
@@ -16,6 +22,7 @@ export class HeatmapGrid {
     this.cellHeight = cellHeight;
     this.grid = new Float32Array(cols * rows);
     this.maxCount = 1;
+    this.eventCounter = 0;
   }
 
   resize(cols: number, rows: number, cellWidth: number, cellHeight: number): void {
@@ -44,14 +51,22 @@ export class HeatmapGrid {
     this.grid = newGrid;
   }
 
-  addHeat(x: number, y: number): void {
+  addHeat(x: number, y: number, isMouseDown: boolean = false): void {
+    // Increment counter and check if we should update this event
+    this.eventCounter++;
+    if (this.eventCounter % HEATMAP_UPDATE_RATE !== 0) {
+      return; // Skip this event
+    }
+
     const cx = Math.floor(x / this.cellWidth);
     const cy = Math.floor(y / this.cellHeight);
     
     if (cx < 0 || cy < 0 || cx >= this.cols || cy >= this.rows) return;
     
     const idx = cy * this.cols + cx;
-    this.grid[idx] = this.grid[idx] + 1;
+    // Apply multiplier when mouse button is pressed
+    const increment = isMouseDown ? HEATMAP_CLICK_MULTIPLIER : 1;
+    this.grid[idx] = this.grid[idx] + increment;
     
     if (this.grid[idx] > this.maxCount) {
       this.maxCount = this.grid[idx];
@@ -119,6 +134,7 @@ export class HeatmapGrid {
   reset(): void {
     this.grid.fill(0);
     this.maxCount = 1;
+    this.eventCounter = 0;
   }
 
   showTopCellsOnly(topN: number): void {

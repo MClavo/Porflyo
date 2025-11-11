@@ -1,0 +1,139 @@
+/* Drag Handle Component Styles */
+.drag-handle {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  right: 4px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.08) 0%,
+    rgba(255, 255, 255, 0.02) 100%
+  );
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  cursor: grab;
+  z-index: 15;
+  transition: all 0.2s ease;
+  border-radius: 4px;
+  backdrop-filter: blur(4px);
+}
+
+.drag-handle:hover {
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.12) 0%,
+    rgba(255, 255, 255, 0.04) 100%
+  );
+}
+
+.drag-handle:active {
+  cursor: grabbing;
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.15) 0%,
+    rgba(255, 255, 255, 0.05) 100%
+  );
+}
+
+.drag-handle__grip {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 4px;
+  padding: 4px;
+  pointer-events: none;
+}
+
+.drag-handle__dot {
+  width: 4px;
+  height: 4px;
+  background-color: rgba(255, 255, 255, 0.4);
+  border-radius: 50%;
+  transition: background-color 0.2s ease;
+}
+
+.drag-handle:hover .drag-handle__dot {
+  background-color: rgba(255, 255, 255, 0.6);
+}
+
+.drag-handle:active .drag-handle__dot {
+  background-color: rgba(255, 255, 255, 0.7);
+}
+
+/* Ensure the drag handle is positioned correctly within sortable cards */
+.sortable-card {
+  position: relative;
+}
+
+/* Dragging state - reduced opacity for placeholder */
+.sortable-card.dragging {
+  opacity: 0.4 !important;
+}
+
+/* Not dragging state - full opacity */
+.sortable-card.not-dragging {
+  opacity: 1 !important;
+}
+
+/* Add top padding to card content in edit mode to accommodate the drag handle */
+.sortable-card[data-mode="edit"] .project-card,
+.sortable-card[data-mode="edit"] .job-card,
+.sortable-card[data-mode="edit"] .education-card,
+.sortable-card[data-mode="edit"] .text-card,
+.sortable-card[data-mode="edit"] .about-card {
+  padding-top: calc(36px + var(--card-padding, 20px));
+}
+
+/* Ensure the drag handle respects the card's border radius */
+.sortable-card[data-mode="edit"] .project-card,
+.sortable-card[data-mode="edit"] .job-card,
+.sortable-card[data-mode="edit"] .education-card,
+.sortable-card[data-mode="edit"] .text-card,
+.sortable-card[data-mode="edit"] .about-card {
+  overflow: visible;
+}
+
+/* Drag overlay specific styles */
+.drag-overlay.sortable-card {
+  position: relative;
+  opacity: 1 !important; /* Always full opacity for the dragging card */
+  cursor: grabbing !important;
+  /* Remove any background - only show the card */
+  background: transparent !important;
+  /* Fit content size */
+  width: fit-content;
+  min-width: 0;
+  max-width: none;
+  /* Remove any padding/margin that might cut off content */
+  padding: 0;
+  margin: 0;
+  /* Ensure full card is visible */
+  overflow: visible;
+}
+
+.drag-overlay.sortable-card * {
+  cursor: grabbing !important;
+}
+
+/* Apply same padding adjustments as regular sortable-cards in edit mode */
+.drag-overlay.sortable-card[data-mode="edit"] .project-card,
+.drag-overlay.sortable-card[data-mode="edit"] .job-card,
+.drag-overlay.sortable-card[data-mode="edit"] .education-card,
+.drag-overlay.sortable-card[data-mode="edit"] .text-card,
+.drag-overlay.sortable-card[data-mode="edit"] .about-card {
+  padding-top: calc(36px + var(--card-padding, 20px));
+}
+
+/* Show drag handle correctly positioned in overlay */
+.drag-overlay.sortable-card .drag-handle {
+  opacity: 1;
+  pointer-events: none;
+}
+
+/* Force grabbing cursor on body while dragging */
+body.dragging,
+body.dragging * {
+  cursor: grabbing !important;
+}

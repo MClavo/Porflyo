@@ -83,3 +83,22 @@
   -moz-appearance: textfield;
   appearance: textfield;
 }
+
+/* Read-only input styles */
+.stat-input-readonly {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  color: rgba(255, 255, 255, 0.7) !important;
+  cursor: not-allowed !important;
+  user-select: none;
+}
+
+.stat-input-readonly:focus {
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  background: rgba(255, 255, 255, 0.05) !important;
+  box-shadow: none !important;
+}
+
+.stat-input-readonly:hover {
+  border-color: rgba(255, 255, 255, 0.15) !important;
+}

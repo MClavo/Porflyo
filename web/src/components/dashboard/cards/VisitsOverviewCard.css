@@ -1,0 +1,270 @@
+/* Visits Overview Card Styles */
+.visits-overview-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  box-shadow: var(--shadow-md);
+  transition: all var(--transition-normal);
+  position: relative;
+  overflow: hidden;
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  grid-column: span 3; /* Ocupa 3 columnas del grid */
+}
+
+.visits-overview-card:hover {
+  background: var(--card-bg-hover);
+  border-color: var(--card-border-hover);
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
+}
+
+.visits-overview-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--accent-blue);
+  opacity: 0;
+  transition: opacity var(--transition-normal);
+}
+
+.visits-overview-card:hover::before {
+  opacity: 1;
+}
+
+/* Header */
+.visits-overview-card__header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.visits-overview-card__icon {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent-blue);
+  opacity: 0.8;
+}
+
+.visits-overview-card__title {
+  font-size: var(--font-md);
+  color: var(--text-secondary);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Main Visits Section */
+.visits-overview-card__main {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  padding: var(--space-4) 0;
+}
+
+.visits-overview-card__visits {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-4);
+}
+
+.visits-overview-card__visits-number {
+  font-size: var(--font-4xl);
+  font-weight: 900;
+  color: var(--value-primary);
+  line-height: 1;
+  text-align: center;
+}
+
+.visits-overview-card__change {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--font-sm);
+  font-weight: 600;
+}
+
+.visits-overview-card__change--positive {
+  color: var(--status-positive);
+}
+
+.visits-overview-card__change--negative {
+  color: var(--status-negative);
+}
+
+.visits-overview-card__change--neutral {
+  color: var(--status-neutral);
+}
+
+/* Rates Section */
+.visits-overview-card__rates {
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-start;
+  gap: var(--space-6);
+  padding-top: var(--space-4);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.visits-overview-card__rate {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  flex: 1;
+}
+
+.visits-overview-card__rate-ring {
+  position: relative;
+}
+
+.visits-overview-card__rate-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.visits-overview-card__rate-label {
+  font-size: var(--font-sm);
+  color: var(--text-secondary);
+  font-weight: 600;
+  text-align: center;
+}
+
+.visits-overview-card__rate-change {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--font-xs);
+  font-weight: 600;
+}
+
+.visits-overview-card__rate-change--positive {
+  color: var(--status-positive);
+}
+
+.visits-overview-card__rate-change--negative {
+  color: var(--status-negative);
+}
+
+.visits-overview-card__rate-change--neutral {
+  color: var(--status-neutral);
+}
+
+/* Change Icons */
+.change-icon {
+  font-size: var(--font-lg);
+  font-weight: 900;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.change-icon.positive {
+  color: var(--status-positive);
+}
+
+.change-icon.negative {
+  color: var(--status-negative);
+}
+
+.change-icon.neutral {
+  color: var(--status-neutral);
+}
+
+.change-value {
+  font-size: inherit;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* Loading State */
+.visits-overview-card--loading .skeleton {
+  background: linear-gradient(90deg, #374151 25%, #4b5563 50%, #374151 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+  border-radius: var(--radius-sm);
+}
+
+.skeleton--icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+}
+
+.skeleton--title {
+  width: 150px;
+  height: 16px;
+}
+
+.skeleton--visits {
+  width: 120px;
+  height: 48px;
+  margin: var(--space-4) auto;
+}
+
+.skeleton--ring {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+}
+
+.skeleton--rate-label {
+  width: 80px;
+  height: 14px;
+}
+
+@keyframes loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .visits-overview-card {
+    grid-column: span 1;
+    min-height: 180px;
+  }
+  
+  .visits-overview-card__visits-number {
+    font-size: var(--font-3xl);
+  }
+  
+  .visits-overview-card__rates {
+    gap: var(--space-4);
+  }
+}
+
+@media (max-width: 480px) {
+  .visits-overview-card {
+    padding: var(--space-4);
+  }
+  
+  .visits-overview-card__rates {
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-4);
+  }
+  
+  .visits-overview-card__rate {
+    flex-direction: row;
+    align-items: center;
+    gap: var(--space-3);
+    width: 100%;
+    justify-content: center;
+  }
+}

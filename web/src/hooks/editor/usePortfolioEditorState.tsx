@@ -1,11 +1,12 @@
 import { useEffect, useMemo, useReducer } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useLocation } from 'react-router-dom';
+import { useAuthContext } from '../ui/useAuthContext';
 import { mapPublicPortfolioDtoToPortfolioState } from '../../api/mappers/portfolio.mappers';
 // mode type previously used when this hook owned UI state
 import type { AnyCard } from '../../state/Cards.types';
 import { portfolioReducer } from '../../state/Portfolio.reducer';
 import type { PortfolioState } from '../../state/Portfolio.types';
-import { initialEmptyPortfolio } from '../../components/portfolio/initialPortfolio';
+import { createInitialEmptyPortfolio } from '../../components/portfolio/initialPortfolio';
 import { usePortfolioSave } from '../save/usePortfolioSave';
 
 import { usePortfolioLoader } from './usePortfolioLoader';
@@ -15,26 +16,25 @@ import { useSlug } from '../publication/useSlug';
 import { useSavedCards } from '../../state/SavedCards.hooks';
 import { usePublicationManager } from '../publication/usePublicationManager';
 
-const initialPortfolio: PortfolioState = {
-  template: initialEmptyPortfolio.template,
-  title: initialEmptyPortfolio.title,
-  sections: initialEmptyPortfolio.sections,
-};
+// This will be computed dynamically based on whether we have user data
 
 export function usePortfolioEditorState({ onPortfolioChange, showNotification }: {
   onPortfolioChange?: (p: PortfolioState) => void;
   showNotification: (msg: string, type?: 'success'|'error'|'info') => void;
 }) {
   const { id: portfolioId } = useParams<{ id: string }>();
+  const location = useLocation();
+  const { user } = useAuthContext();
   const isEditing = Boolean(portfolioId);
+  const isCreatingNew = location.pathname.includes('/portfolios/new');
+  const shouldStartInEditMode = isEditing || isCreatingNew;
 
-  const { mode, toggleMode, selectedTemplate, setSelectedTemplate } = useEditorMode();
+  const { mode, toggleMode, selectedTemplate, setSelectedTemplate } = useEditorMode(
+    shouldStartInEditMode ? 'edit' : 'view', 
+    location.pathname // Use pathname as reset key
+  );
 
-  const [portfolio, dispatch] = useReducer(portfolioReducer, {
-    template: selectedTemplate,
-    title: '',
-    sections: {},
-  } as PortfolioState);
+  const [portfolio, dispatch] = useReducer(portfolioReducer, createInitialEmptyPortfolio());
   // Loader for existing portfolio
   const { existingPortfolio, portfolioLoading, portfolioError } = usePortfolioLoader(portfolioId || null);
 
@@ -50,16 +50,38 @@ export function usePortfolioEditorState({ onPortfolioChange, showNotification }:
 
   const { state: savedCardsState } = useSavedCards();
 
-  // Load existing portfolio into reducer
+  // Combined effect to handle all portfolio loading scenarios
   useEffect(() => {
     if (isEditing && existingPortfolio) {
+      // Load existing portfolio
+
       const mappedPortfolio = mapPublicPortfolioDtoToPortfolioState(existingPortfolio);
       dispatch({ type: 'LOAD_PORTFOLIO', payload: mappedPortfolio });
       setSelectedTemplate(mappedPortfolio.template);
-    } else if (!isEditing) {
+    } else if (isCreatingNew) {
+      // Create new portfolio - always reset to clean state
+      // Pass user data to pre-populate about section if available
+      const initialPortfolio = createInitialEmptyPortfolio(user);
       dispatch({ type: 'LOAD_PORTFOLIO', payload: initialPortfolio });
+      setSelectedTemplate(initialPortfolio.template);
+    } else if (!isEditing && !isCreatingNew) {
+      // Fallback for other scenarios
+
+      const initialPortfolio = createInitialEmptyPortfolio();
+      dispatch({ type: 'LOAD_PORTFOLIO', payload: initialPortfolio });
+      setSelectedTemplate(initialPortfolio.template);
     }
-  }, [isEditing, existingPortfolio, setSelectedTemplate]);
+  }, [isEditing, existingPortfolio, isCreatingNew, user, setSelectedTemplate, location.pathname]);
+
+  // Sync selectedTemplate with portfolio.template
+  useEffect(() => {
+    if (portfolio?.template !== selectedTemplate) {
+      dispatch({
+        type: "SWITCH_TEMPLATE",
+        payload: { template: selectedTemplate },
+      });
+    }
+  }, [selectedTemplate, portfolio?.template]);
 
   useEffect(() => {
     onPortfolioChange?.(portfolio);

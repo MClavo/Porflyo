@@ -1,16 +1,18 @@
 import React from "react";
+import { createPortal } from "react-dom";
 import {
-  closestCenter,
   DndContext,
   DragOverlay,
   PointerSensor,
   useSensor,
   useSensors,
+  pointerWithin,
   type DragEndEvent,
   type DragStartEvent,
   type UniqueIdentifier,
 } from "@dnd-kit/core";
 import { renderCard } from "../cards/RenderCard";
+import DragHandle from "./DragHandle";
 import type { AnyCard } from "../../state/Cards.types";
 import type { CardId } from "../../state/Sections.types";
 import type { TemplateKey } from "../../templates/Template.types";
@@ -54,11 +56,13 @@ const EditorDndProvider: React.FC<EditorDndProviderProps> = ({
 
   const handleDragStart = (event: DragStartEvent) => {
     setActiveId(event.active.id);
+    document.body.classList.add('dragging');
     onDragStart?.(event);
   };
 
   const handleDragEnd = (event: DragEndEvent) => {
     setActiveId(null);
+    document.body.classList.remove('dragging');
     onDragEnd?.(event);
   };
 
@@ -112,21 +116,30 @@ const EditorDndProvider: React.FC<EditorDndProviderProps> = ({
   return (
     <DndContext
       sensors={sensors}
-      collisionDetection={closestCenter}
+      collisionDetection={pointerWithin}
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
     >
       {children}
       
-      <DragOverlay>
-        {activeCard && sectionId ? (
-          <div className={`drag-overlay ${template}`} data-mode={mode}>
-            <div id={sectionId}>
+      {/* Render DragOverlay in a portal to avoid parent overflow constraints */}
+      {createPortal(
+        <DragOverlay dropAnimation={null}>
+          {activeCard && sectionId ? (
+            <div 
+              className={`drag-overlay tpl-${template} sortable-card`} 
+              data-mode={mode}
+              id={sectionId}
+              style={{ pointerEvents: 'none' }}
+            >
+              {/* Show drag handle in edit mode */}
+              {mode === "edit" && <DragHandle />}
               {renderCard(activeCard, mode, activeId as CardId, () => {})}
             </div>
-          </div>
-        ) : null}
-      </DragOverlay>
+          ) : null}
+        </DragOverlay>,
+        document.body
+      )}
     </DndContext>
   );
 };

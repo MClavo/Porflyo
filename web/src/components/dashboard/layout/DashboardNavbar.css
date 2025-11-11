@@ -1,0 +1,180 @@
+/* Dashboard Navbar - Modern fixed navigation */
+
+.dashboard-navbar {
+  position: fixed;
+  top: var(--navbar-height); /* Positioned below main navbar */
+  left: 0;
+  right: 0;
+  z-index: 999; /* Below main navbar (1000) but above content */
+  background: var(--card-bg);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--card-border);
+  box-shadow: var(--shadow-lg);
+  /* Evitar que el scrollbar afecte al navbar */
+  width: 100vw;
+  box-sizing: border-box;
+  height: var(--dashboard-navbar-height);
+}
+
+.dashboard-navbar__container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 var(--space-6); /* Remove vertical padding, let flexbox center */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-6);
+  height: 100%;
+}
+
+/* Pages Section */
+.dashboard-navbar__pages {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+/* Brand Section - Hidden for compact design */
+.dashboard-navbar__brand {
+  display: none;
+}
+
+/* Controls Section */
+.dashboard-navbar__controls {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  flex-shrink: 0;
+}
+
+.dashboard-navbar__heatmap-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+/* Separator */
+.dashboard-navbar__separator {
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--card-border) 20%,
+    var(--accent-blue) 50%,
+    var(--card-border) 80%,
+    transparent 100%
+  );
+  position: relative;
+}
+
+.dashboard-navbar__separator::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(59, 130, 246, 0.3) 50%,
+    transparent 100%
+  );
+  animation: separator-glow 3s ease-in-out infinite;
+}
+
+@keyframes separator-glow {
+  0%, 100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+/* Hover effects on navbar */
+.dashboard-navbar:hover .time-range-selector__slider {
+  box-shadow: 
+    0 4px 12px rgba(59, 130, 246, 0.4),
+    0 0 0 1px rgba(255, 255, 255, 0.15),
+    0 0 20px rgba(59, 130, 246, 0.2);
+}
+
+.dashboard-navbar:hover .page-selector__slider {
+  box-shadow: 
+    0 4px 12px rgba(139, 92, 246, 0.4),
+    0 0 0 1px rgba(255, 255, 255, 0.15),
+    0 0 20px rgba(139, 92, 246, 0.2);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .dashboard-navbar__container {
+    padding: 0 var(--space-4);
+    flex-wrap: wrap;
+    gap: var(--space-3);
+  }
+
+  .dashboard-navbar__pages {
+    order: 1;
+  }
+
+  .dashboard-navbar__controls {
+    order: 2;
+    gap: var(--space-3);
+  }
+
+  .dashboard-navbar__heatmap-controls {
+    gap: var(--space-3);
+  }
+}
+
+@media (max-width: 480px) {
+  .dashboard-navbar__container {
+    padding: 0 var(--space-3);
+  }
+
+  .dashboard-navbar__controls {
+    flex-wrap: wrap;
+  }
+}
+
+/* ToggleSelector integration styles - Hide all labels for compact design */
+.dashboard-navbar .toggle-selector__label {
+  display: none;
+}
+
+/* Ensure all toggle selectors in navbar have consistent sizing */
+.dashboard-navbar .toggle-selector {
+  height: auto; /* Let container height control */
+}
+
+.dashboard-navbar .toggle-selector__container {
+  height: 44px; /* Slightly taller for better vertical alignment */
+  min-width: fit-content; /* Allow natural width based on content */
+}
+
+.dashboard-navbar .toggle-selector__option {
+  min-width: 90px; /* Wider buttons to prevent text overlap */
+  padding: var(--space-2) var(--space-5);
+}
+
+/* SlotSelector integration - compact sizing */
+.dashboard-navbar .slot-selector {
+  height: auto;
+  display: flex;
+  align-items: center;
+}
+
+.dashboard-navbar .slot-selector__trigger {
+  height: 53px !important; /* Match toggle buttons height - force override */
+  font-size: var(--font-sm);
+  padding: 0 var(--space-4);
+  min-width: 180px; /* Wider for better text display */
+  width: auto; /* Override fixed width */
+  box-sizing: border-box; /* Ensure padding doesn't affect height */
+}
+
+.dashboard-navbar .slot-selector__label {
+  display: none; /* Hide label in navbar */
+}

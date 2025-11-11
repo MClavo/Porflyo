@@ -8,9 +8,8 @@ interface PortfoliosProviderProps {
 }
 
 /**
- * PortfoliosProvider component that provides portfolios context to the app
- * Exactly like AuthProvider - simple wrapper that uses a hook for all logic
- * This should wrap the entire app to provide global portfolios state
+ * Provides portfolios context to the app.
+ * Uses authentication context to fetch user-specific portfolios.
  */
 export function PortfoliosProvider({ children }: PortfoliosProviderProps) {
   const { user, isLoading: authIsLoading } = useAuthContext();

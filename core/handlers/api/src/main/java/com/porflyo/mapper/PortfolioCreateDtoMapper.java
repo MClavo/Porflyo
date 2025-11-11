@@ -1,8 +1,8 @@
 package com.porflyo.mapper;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import com.porflyo.dto.PortfolioCreateDto;
 import com.porflyo.model.ids.PortfolioId;
@@ -31,8 +31,9 @@ public class PortfolioCreateDtoMapper {
         List<PortfolioSection> sectionsWithKeys = convertSectionsUrlsToKeys(dto.sections());
         
         return new Portfolio(
-            new PortfolioId(UUID.randomUUID().toString()),
+            PortfolioId.newKsuid(),
             userId,
+            LocalDate.now(),
             dto.template(),
             dto.title(),
             dto.description(),

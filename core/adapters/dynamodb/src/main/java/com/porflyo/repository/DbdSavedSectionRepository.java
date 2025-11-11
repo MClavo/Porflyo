@@ -40,7 +40,7 @@ public class DbdSavedSectionRepository implements SavedSectionRepository {
     @Inject
     DbdSavedSectionRepository(DynamoDbEnhancedClient enhanced, DdbConfig dynamoDbConfig, DdbSavedSectionMapper mapper) {
         this.table = enhanced.table(
-            dynamoDbConfig.tableName(),
+            dynamoDbConfig.userTable(),
             SavedSectionTableSchema.SCHEMA);
         this.mapper = mapper;
     }

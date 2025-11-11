@@ -73,7 +73,7 @@ aws:
 
 s3:
   region: us-east-1
-  bucket: porflyo-media-test
+  bucket: porflyo-porflyo-media-test
   expiration: 5 
 
 # DynamoDB configuration is now only in test profile configurations

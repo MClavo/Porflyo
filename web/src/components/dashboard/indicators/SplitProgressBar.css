@@ -1,0 +1,79 @@
+/* Split Progress Bar Styles */
+.split-progress-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  align-items: flex-start;
+}
+
+.split-progress-labels {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  width: 100%;
+}
+
+.split-progress-label {
+  font-size: var(--font-xs);
+  font-weight: 600;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.split-progress-label--left::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent-blue);
+}
+
+.split-progress-label--right::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent-purple);
+}
+
+.split-progress-bar {
+  display: flex;
+  border-radius: 4px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.1);
+  width: 100%;
+  position: relative;
+}
+
+.split-progress-segment {
+  height: 100%;
+  transition: width 0.8s ease-out;
+  position: relative;
+}
+
+.split-progress-segment--left {
+  border-radius: 4px 0 0 4px;
+}
+
+.split-progress-segment--right {
+  border-radius: 0 4px 4px 0;
+}
+
+/* Animation on load */
+@keyframes fill-left {
+  from { width: 0%; }
+}
+
+@keyframes fill-right {
+  from { width: 0%; }
+}
+
+.split-progress-segment--left {
+  animation: fill-left 1s ease-out;
+}
+
+.split-progress-segment--right {
+  animation: fill-right 1s ease-out 0.2s both;
+}

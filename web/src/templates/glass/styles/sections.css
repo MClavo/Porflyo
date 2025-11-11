@@ -1,0 +1,141 @@
+/* ============================================
+   PORTFOLIO SECTIONS
+   ============================================ */
+
+/* Base portfolio section - Uniform style for all sections */
+.portfolio-section {
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(15px);
+  border-radius: 20px;
+  padding: 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  margin-bottom: 2rem;
+}
+
+.portfolio-section:hover {
+  background: rgba(255, 255, 255, 0.15);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+}
+
+/* Section titles - Applied directly to h1 and input elements */
+.tpl-glass h1.section-title,
+.tpl-glass input.section-title {
+  color: #ffffff !important;
+  font-size: 1.8rem !important;
+  font-weight: 700 !important;
+  margin-bottom: 1.5rem !important;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3) !important;
+  position: relative !important;
+  padding: 0 !important;
+  padding-bottom: 0.5rem !important; /* Keep bottom padding for ::after spacing */
+  margin: 0 !important;
+  margin-bottom: 1.5rem !important; /* Keep bottom margin */
+  /* Remove all default styles */
+  background: none !important;
+  border: none !important;
+  font-family: inherit !important;
+  line-height: inherit !important;
+  width: 100% !important;
+  outline: none !important;
+  display: block !important;
+  -webkit-background-clip: unset !important;
+  -webkit-text-fill-color: unset !important;
+  background-clip: unset !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  appearance: none !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+}
+
+/* Wrapper for input in edit mode - needed for ::after to work */
+.tpl-glass div[class*="section-"][class*="-wrapper"] {
+  position: relative !important;
+  display: block !important;
+  margin-bottom: 1.5rem !important;
+  padding-bottom: 0.5rem !important;
+}
+
+/* Input inside wrapper should not have margin or padding-bottom */
+.tpl-glass div[class*="section-"][class*="-wrapper"] input {
+  margin-bottom: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+/* Subtle background for input in edit mode */
+.tpl-glass[data-mode="edit"] input.section-title {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border-radius: 8px !important;
+  padding-left: 0.5rem !important;
+  padding-right: 0.5rem !important;
+}
+
+/* After pseudo-element for h1 - directly on element */
+.tpl-glass h1.section-title::after {
+  content: '' !important;
+  position: absolute !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  width: 50px !important;
+  height: 3px !important;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.8), transparent) !important;
+  border-radius: 2px !important;
+  display: block !important;
+}
+
+/* After pseudo-element for input wrapper - on wrapper, not input */
+.tpl-glass div[class*="section-"][class*="-wrapper"]::after {
+  content: '' !important;
+  position: absolute !important;
+  bottom: 0 !important;
+  left: 0.5rem !important; /* Adjust for input padding */
+  width: 50px !important;
+  height: 3px !important;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.8), transparent) !important;
+  border-radius: 2px !important;
+  display: block !important;
+  z-index: 10 !important;
+  pointer-events: none !important;
+}
+
+/* Section content container */
+.tpl-glass .section-content {
+  position: relative;
+  z-index: 1;
+}
+
+/* Cards container - Grid layout for better organization */
+.tpl-glass .section-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 400px), 1fr));
+  gap: 1.5rem;
+  margin-top: 1rem;
+}
+
+/* Experience and Education sections - ALWAYS vertical (one column) */
+.tpl-glass #experiences .section-cards,
+.tpl-glass #education .section-cards {
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Content grid layout for side-by-side sections */
+.content-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+/* Remove all section-specific color overrides */
+.tpl-glass .portfolio-section {
+  /* Uniform styling - no color variations */
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.25);
+}
