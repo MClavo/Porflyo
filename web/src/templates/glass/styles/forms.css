@@ -2,63 +2,73 @@
    FORMS, INPUTS, BUTTONS & LINKS
    ============================================ */
 
-/* Input and form elements */
-.tpl-glass input,
-.tpl-glass textarea,
-.tpl-glass select {
+/* Input and form elements - No blur in edit mode */
+/* Exclude inputs inside cards to avoid interfering with card-specific styles */
+.tpl-glass input:not(.job-card-title):not(.job-card-company):not(.job-card-location):not([class*="-title"]):not([class*="-company"]):not([class*="-location"]),
+.tpl-glass textarea:not(.job-card-description):not([class*="-description"]),
+.tpl-glass select:not([class*="date-"]) {
   background: rgba(255, 255, 255, 0.1) !important;
-  border: 1px solid rgba(255, 255, 255, 0.2) !important;
-  border-radius: 12px !important;
+  border: 1px solid rgba(255, 255, 255, 0.25) !important;
+  border-radius: 8px !important;
   color: #ffffff !important;
-  backdrop-filter: blur(10px) !important;
-  -webkit-backdrop-filter: blur(10px) !important;
+  padding: 0.5rem 0.75rem !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
   transition: all 0.3s ease !important;
+  font-family: inherit !important;
+  font-size: 1rem !important;
 }
 
 .tpl-glass input::placeholder,
 .tpl-glass textarea::placeholder {
-  color: rgba(255, 255, 255, 0.6) !important;
+  color: rgba(255, 255, 255, 0.5) !important;
 }
 
-.tpl-glass input:focus,
-.tpl-glass textarea:focus,
-.tpl-glass select:focus {
+.tpl-glass input:not(.job-card-title):not(.job-card-company):not(.job-card-location):not([class*="-title"]):not([class*="-company"]):not([class*="-location"]):focus,
+.tpl-glass textarea:not(.job-card-description):not([class*="-description"]):focus,
+.tpl-glass select:not([class*="date-"]):focus {
   outline: none !important;
-  border-color: rgba(255, 255, 255, 0.4) !important;
+  border-color: rgba(255, 255, 255, 0.5) !important;
   background: rgba(255, 255, 255, 0.15) !important;
   box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1) !important;
 }
 
-/* Buttons */
+/* Buttons - Clean styling */
 .tpl-glass button {
-  background: rgba(255, 255, 255, 0.15) !important;
-  border: 1px solid rgba(255, 255, 255, 0.2) !important;
-  border-radius: 12px !important;
+  background: rgba(255, 255, 255, 0.2) !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  border-radius: 8px !important;
   color: #ffffff !important;
-  backdrop-filter: blur(10px) !important;
-  -webkit-backdrop-filter: blur(10px) !important;
+  padding: 0.5rem 1rem !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
   font-weight: 600 !important;
   transition: all 0.3s ease !important;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2) !important;
+  text-shadow: none !important;
+  cursor: pointer !important;
 }
 
 .tpl-glass button:hover {
-  background: rgba(255, 255, 255, 0.25) !important;
-  border-color: rgba(255, 255, 255, 0.3) !important;
+  background: rgba(255, 255, 255, 0.3) !important;
+  border-color: rgba(255, 255, 255, 0.4) !important;
   transform: translateY(-1px) !important;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
 }
 
-/* Links */
+.tpl-glass button:active {
+  transform: translateY(0) !important;
+}
+
+/* Links - Clean, readable */
 .tpl-glass a {
-  color: rgba(255, 255, 255, 0.9) !important;
+  color: rgba(255, 255, 255, 0.95) !important;
   text-decoration: underline !important;
-  text-decoration-color: rgba(255, 255, 255, 0.3) !important;
+  text-decoration-color: rgba(255, 255, 255, 0.4) !important;
   transition: all 0.3s ease !important;
+  text-shadow: none !important;
 }
 
 .tpl-glass a:hover {
   color: #ffffff !important;
   text-decoration-color: rgba(255, 255, 255, 0.8) !important;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2) !important;
 }

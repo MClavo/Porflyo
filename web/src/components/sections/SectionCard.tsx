@@ -130,7 +130,12 @@ const SectionCard: React.FC<SectionCardProps> = ({
         onChange={(v) => onPatch?.({ title: v })}
       />
 
-      {/* add card button placed under the title and above the cards */}
+      {/* cards list with DnD context */}
+      <SortableContext items={cardsOrder}>
+        <div ref={setSectionNodeRef} className={`section-cards ${sectionType} ${isOverSection ? "drop-over" : ""}`}>{renderCards()}</div>
+      </SortableContext>
+
+      {/* add card button placed at the bottom, after all cards */}
       {mode === "edit" &&
         (typeof maxCards === "undefined" ||
           cardsOrder.length < (maxCards ?? 0)) && (
@@ -141,11 +146,6 @@ const SectionCard: React.FC<SectionCardProps> = ({
             />
           </div>
         )}
-
-      {/* cards list with DnD context */}
-      <SortableContext items={cardsOrder}>
-        <div ref={setSectionNodeRef} className={`section-cards ${sectionType} ${isOverSection ? "drop-over" : ""}`}>{renderCards()}</div>
-      </SortableContext>
     </>
   );
 };

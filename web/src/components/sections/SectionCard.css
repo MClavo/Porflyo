@@ -3,7 +3,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: 8px 0 12px 0; /* small gap between title and cards */
+  margin: 12px 0 8px 0; /* gap above the button, positioned at bottom */
 }
 
 .section-add-card .add-card-root {

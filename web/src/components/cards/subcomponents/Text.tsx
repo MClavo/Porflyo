@@ -35,6 +35,28 @@ export function Text({
   };
 
   if (mode === "edit") {
+    // For short single-line fields like location, use input instead of textarea
+    if (className?.includes('location') || maxLength <= 100) {
+      // Calculate size based on content length
+      const inputSize = Math.max(placeholder.length, local.length || 1);
+      
+      return (
+        <input
+          type="text"
+          className={className ?? "text"}
+          placeholder={placeholder}
+          value={local}
+          size={inputSize}
+          maxLength={maxLength}
+          required={required}
+          aria-label="Text"
+          aria-invalid={!!error}
+          onChange={(e) => handleChange(e.target.value)}
+        />
+      );
+    }
+    
+    // For longer multi-line text, use textarea
     return (
       <TextareaAutosize
         className={className ?? "text"}
@@ -49,5 +71,11 @@ export function Text({
       />
     );
   }
+  
+  // View mode - render as inline text if it's meant to be inline (like location)
+  if (className?.includes('location')) {
+    return <span className={className ?? "text"}>{value}</span>;
+  }
+  
   return <p className={className ?? "text"}>{value}</p>;
 }

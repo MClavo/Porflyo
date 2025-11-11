@@ -60,16 +60,14 @@ const SortableCard: React.FC<SortableCardProps> = ({
         data-sortable-id={id}
         data-mode={mode}
       >
-        {/* Drag handle visible only in edit mode */}
+        {/* Drag handle and delete button at container level - outside card content */}
         <DragHandle listeners={listeners} attributes={attributes} />
+        <DeleteCardButton onDelete={onRemove} />
 
         {React.cloneElement(
           cardEl,
           {},
-          <>
-            <DeleteCardButton onDelete={onRemove} />
-            {originalChildren}
-          </>
+          originalChildren
         )}
       </div>
     );

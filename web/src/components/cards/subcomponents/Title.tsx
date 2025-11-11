@@ -35,18 +35,24 @@ export function Title({
   };
 
   if (mode === "edit") {
+    // Calculate size based on content length (min 1, add buffer for comfort)
+    const inputSize = Math.max(placeholder.length, local.length || 1);
+    
     return (
-      <input
-        type="text"
-        className={className ?? "title"}
-        placeholder={placeholder}
-        value={local}
-        maxLength={maxLength}
-        aria-invalid={!!error}
-        aria-label="Title"
-        required={required}
-        onChange={(e) => handleChange(e.target.value)}
-      />
+      <div className={`${className ?? "title"}-wrapper`}>
+        <input
+          type="text"
+          className={className ?? "title"}
+          placeholder={placeholder}
+          value={local}
+          size={inputSize}
+          maxLength={maxLength}
+          aria-invalid={!!error}
+          aria-label="Title"
+          required={required}
+          onChange={(e) => handleChange(e.target.value)}
+        />
+      </div>
     );
   }
 

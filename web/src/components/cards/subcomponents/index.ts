@@ -7,6 +7,7 @@ import '../../../styles/cards/subcomopnents/Stats.css';
 
 export { Title } from './Title';
 export { Text } from './Text';
+export { BulletText } from './BulletText';
 export { List } from './List';
 export { Images } from './Image';
 export { Date } from './Date';

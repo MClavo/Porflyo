@@ -1,4 +1,5 @@
 import React from 'react';
+import { createPortal } from 'react-dom';
 import { useRepositoriesContext } from '../../hooks/ui/useRepositoriesContext';
 import type { Repository } from '../../api/types/repository.types';
 import './RepositoryDialog.css';
@@ -11,9 +12,6 @@ interface RepositoryDialogProps {
 
 export function RepositoryDialog({ isOpen, onClose, onSelectRepo }: RepositoryDialogProps) {
   const { repositories, isLoading, error } = useRepositoriesContext();
-
-  if (!isOpen) return null;
-
   const handleRepoClick = (repo: Repository) => {
     onSelectRepo(repo);
     onClose();
@@ -25,7 +23,9 @@ export function RepositoryDialog({ isOpen, onClose, onSelectRepo }: RepositoryDi
     }
   };
 
-  return (
+  if (!isOpen) return null;
+
+  const dialogContent = (
     <div className="repository-dialog" onClick={handleBackdropClick}>
       <div className="repository-dialog-content">
         <div className="repository-dialog-header">
@@ -106,4 +106,7 @@ export function RepositoryDialog({ isOpen, onClose, onSelectRepo }: RepositoryDi
       </div>
     </div>
   );
+
+  // Render using a portal to escape any overflow:hidden containers
+  return createPortal(dialogContent, document.body);
 }
