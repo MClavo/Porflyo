@@ -1,5 +1,5 @@
 import React from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { RepositoryDialog } from "../components/dialogs/RepositoryDialog";
 import EditorDndProvider from "../components/dnd/EditorDndProvider";
 import LayoutPreview from "../components/portfolio/LayoutPreview";
@@ -24,6 +24,7 @@ export default function PortfolioEditor({
   onPortfolioChange,
 }: { onPortfolioChange?: (p: PortfolioState) => void } = {}) {
   const location = useLocation();
+  const navigate = useNavigate();
   const [notification, setNotification] = React.useState<{
     message: string;
     type: "success" | "error" | "info";
@@ -132,6 +133,20 @@ export default function PortfolioEditor({
         }
       });
       showNotification("Card added to section", "success");
+    }
+  };
+
+  // Wrapper for save that handles navigation after creating a new portfolio
+  const handleSaveWithNavigation = async () => {
+    try {
+      const result = await state.actions.handleSavePortfolio();
+      // If we're creating a new portfolio (not in edit mode), redirect to edit page
+      if (!isEditMode && result?.portfolioId) {
+        navigate(`/portfolios/${result.portfolioId}/edit`);
+      }
+    } catch (err) {
+      // Error is already handled in handleSavePortfolio
+      console.error('Save failed:', err);
     }
   };
 
@@ -253,7 +268,7 @@ export default function PortfolioEditor({
       <EditorHeader
         portfolioTitle={state.data.portfolio.title}
         onTitleChange={state.actions.handleTitleChange}
-        onSave={state.actions.handleSavePortfolio}
+        onSave={handleSaveWithNavigation}
         isSaving={state.actions.isSaving}
         mode={state.ui.mode}
         onModeToggle={state.ui.toggleMode}

@@ -123,11 +123,13 @@ export function usePortfolioEditorState({ onPortfolioChange, showNotification }:
 
   const handleSavePortfolio = async () => {
     try {
-      await savePortfolio(portfolio, portfolioId);
+      const result = await savePortfolio(portfolio, portfolioId);
       showNotification('Portfolio saved successfully!', 'success');
+      return result;
     } catch (err) {
       console.error('Failed to save portfolio:', err);
       showNotification('Failed to save portfolio. Please try again.', 'error');
+      throw err;
     }
   };
 
