@@ -28,7 +28,7 @@
 }
 
 .saved-card:hover {
-  background: var(--card-bg-hover);
+  background: var(--tint-light);
   border-color: var(--card-border-hover);
   box-shadow: var(--shadow-md);
   transform: translateY(-2px);

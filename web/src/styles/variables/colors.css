@@ -1,14 +1,13 @@
 :root {
-  /* Fondo base “frío” */
   --dashboard-bg: #0a0e16;
   --dashboard-bg-secondary: #111827;
 
-    /* Status Colors */
+  /* Status Colors */
   --status-positive: #10b981;
   --status-negative: #ef4444;
   --status-neutral: #6b7280;
 
-  /* Acentos (solo 2) */
+  /* Accent Colors */
   --accent-blue: #3b82f6;
   --accent-blue-600: #2563eb;
   --accent-purple: #8b5cf6;
@@ -16,8 +15,9 @@
   --accent-orange: #f59e0b;
   --accent-pink: #ec4899;
   --accent-green: #10b981;
+  --accent-teal: #14b8a6;
 
-    /* Additional palette for charts (useful for donuts/bubbles/area) */
+  /* Additional palette for charts (useful for donuts/bubbles/area) */
   --chart-1: #3B82F6; /* blue */
   --chart-2: #10B981; /* emerald */
   --chart-3: #F59E0B; /* amber */
@@ -27,37 +27,37 @@
   --chart-7: #84CC16; /* lime */
   --chart-8: #F97316; /* orange */
 
-  /* Tintes/overlays para pegar con el agua */
-  --tint-light: rgba(59,130,246,.10);   /* azul */
-  --tint-dark:  rgba(124,58,237,.12);   /* violeta */
+  --tint-light: rgba(59,130,246,.10); 
+  --tint-dark:  rgba(124,58,237,.12);  
 
-  /* Superficies “glass” */
+  /* Card Backgrounds and Borders */
   --card-bg: linear-gradient(180deg, rgba(17,24,39,0.72), rgba(17,24,39,0.60));
   --card-bg-hover: linear-gradient(180deg, rgba(31,41,55,0.78), rgba(17,24,39,0.66));
   --card-border: rgba(148,163,184,.16);
   --card-border-hover: rgba(148,163,184,.28);
 
-  /* Texto */
+  /* Text */
   --text-primary: #e5e7eb;
   --text-secondary: #cbd5e1;
   --text-muted: #94a3b8;
 
-  /* Sombras frías coherentes */
   --shadow-md: 0 8px 28px -10px rgba(0,0,0,.45);
   --shadow-lg: 0 16px 48px -12px rgba(0,0,0,.55);
 }
+
 
 /* Light Theme */
 body.light-theme {
   --dashboard-bg: #eef3f8;
   --dashboard-bg-secondary: #ffffff;
 
-  /* vidrio sedoso en light */
+  /* Card Backgrounds and Borders */
   --card-bg: linear-gradient(180deg, rgba(255,255,255,0.70), rgba(255,255,255,0.58));
   --card-bg-hover: linear-gradient(180deg, rgba(255,255,255,0.78), rgba(255,255,255,0.64));
   --card-border: rgba(15,23,42,.08);
   --card-border-hover: rgba(15,23,42,.14);
 
+  /* Text */
   --text-primary: #0f172a;
   --text-secondary: #1f2937;
   --text-muted: #64748b;

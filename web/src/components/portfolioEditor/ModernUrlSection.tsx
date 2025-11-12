@@ -74,7 +74,7 @@ export const ModernUrlSection: React.FC<ModernUrlSectionProps> = ({
       <div className="modern-url-section__container">
         <div className="modern-url-section__prefix">
           <FiLink size={16} />
-          <span>porflyo.com/</span>
+          <span>porflyo.com/p/</span>
         </div>
         
         <input
