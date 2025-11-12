@@ -52,6 +52,11 @@
   --scrollbar-thumb-bg: rgba(148, 163, 184, 0.2);
   --scrollbar-thumb-bg-hover: rgba(148, 163, 184, 0.4);
   --scrollbar-thumb-radius: 4px;
+
+  /* Skeleton Loading */
+  --skeleton-base-color: #374151;
+  --skeleton-highlight-color: #4b5563;
+  --skeleton-animation-duration: 1.5s;
 }
 
 
@@ -68,8 +73,8 @@ body.light-theme {
   --card-border-hover: rgba(15,23,42,.14);
 
   /* Text */
-  --text-primary: #0f172a;
-  --text-secondary: #1f2937;
+  --text-primary: #252c32;
+  --text-secondary: #3d444f;
   --text-muted: #64748b;
 
   --tint-light: rgba(59,130,246,.12);
@@ -81,4 +86,9 @@ body.light-theme {
   /* Scrollbar */
   --scrollbar-thumb-bg: rgba(255, 255, 255, 0.4);
   --scrollbar-thumb-bg-hover: rgba(255, 255, 255, 0.3);
+
+  /* Skeleton Loading */
+  --skeleton-base-color: #e2e8f0;
+  --skeleton-highlight-color: #f1f5f9;
+  --skeleton-animation-duration: 1.5s;
 }

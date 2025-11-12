@@ -156,16 +156,17 @@
 
 /* Loading skeleton adjustments */
 .kpi-card .react-loading-skeleton {
-  --base-color: #374151;
-  --highlight-color: #4b5563;
+  --base-color: var(--skeleton-base-color);
+  --highlight-color: var(--skeleton-highlight-color);
   --animation-direction: normal;
-  --animation-duration: 1.5s;
+  --animation-duration: var(--skeleton-animation-duration);
 }
 
-/* Global skeleton configuration for dark theme */
+/* Global skeleton configuration */
 .react-loading-skeleton {
-  --base-color: #374151;
-  --highlight-color: #4b5563;
+  --base-color: var(--skeleton-base-color);
+  --highlight-color: var(--skeleton-highlight-color);
+  --animation-duration: var(--skeleton-animation-duration);
 }
 
 /* Span por defecto (móvil): full width */
