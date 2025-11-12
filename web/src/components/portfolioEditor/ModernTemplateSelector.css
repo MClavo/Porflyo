@@ -6,8 +6,8 @@
 }
 
 .modern-template-selector__trigger {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
   border-radius: var(--radius-lg);
   padding: var(--space-3) var(--space-4);
   color: var(--text-primary);
@@ -29,9 +29,7 @@
   background: rgba(255, 255, 255, 0.08);
   border-color: var(--accent-blue);
   transform: translateY(-1px);
-  box-shadow: 
-    0 4px 12px rgba(59, 130, 246, 0.2),
-    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  box-shadow: var(-shadow-md)
 }
 
 .modern-template-selector__trigger:focus {
@@ -75,7 +73,7 @@
   right: 0;
   z-index: 1000;
   margin-top: var(--space-2);
-  background: var(--card-bg);
+  background: var(--card-bg-extra) ;
   border: 1px solid var(--card-border);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-lg);
@@ -119,25 +117,17 @@
 }
 
 .modern-template-selector__option:hover {
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--card-bg-hover);
   transform: translateX(4px);
 }
 
 .modern-template-selector__option--selected {
-  background: linear-gradient(
-    135deg,
-    rgba(139, 92, 246, 0.1) 0%,
-    rgba(59, 130, 246, 0.1) 100%
-  );
+  background: var(--tint-light);
   border: 1px solid rgba(139, 92, 246, 0.2);
 }
 
 .modern-template-selector__option--selected:hover {
-  background: linear-gradient(
-    135deg,
-    rgba(139, 92, 246, 0.15) 0%,
-    rgba(59, 130, 246, 0.15) 100%
-  );
+  background: var(--tint-light);
 }
 
 .modern-template-selector__option-content {

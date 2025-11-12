@@ -54,6 +54,7 @@ body.light-theme {
   /* Card Backgrounds and Borders */
   --card-bg: linear-gradient(180deg, rgba(255,255,255,0.70), rgba(255,255,255,0.58));
   --card-bg-hover: linear-gradient(180deg, rgba(255,255,255,0.78), rgba(255,255,255,0.64));
+  --card-bg-extra: linear-gradient(180deg, rgba(255,255,255,0.86), rgba(255,255,255,0.78));
   --card-border: rgba(15,23,42,.08);
   --card-border-hover: rgba(15,23,42,.14);
 
