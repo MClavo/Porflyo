@@ -12,6 +12,9 @@ export interface ModernPublishButtonProps {
   isPublished: boolean;
   isSlugAvailable: boolean;
   isSaving: boolean;
+  hasChanges: boolean;
+  currentSlug: string;
+  lastVerifiedSlug: string;
 }
 
 export const ModernPublishButton: React.FC<ModernPublishButtonProps> = ({
@@ -19,9 +22,18 @@ export const ModernPublishButton: React.FC<ModernPublishButtonProps> = ({
   isPublishing,
   isPublished,
   isSlugAvailable,
-  isSaving
+  isSaving,
+  hasChanges,
+  currentSlug,
+  lastVerifiedSlug
 }) => {
-  const canPublish = isSlugAvailable && !isPublishing && !isSaving;
+  // Only allow publish if:
+  // 1. Slug is available
+  // 2. Not currently publishing or saving
+  // 3. There are changes
+  // 4. Current slug has been verified (matches last verified slug)
+  const slugHasBeenVerified = currentSlug === lastVerifiedSlug;
+  const canPublish = isSlugAvailable && !isPublishing && !isSaving && hasChanges && slugHasBeenVerified;
 
   return (
     <button

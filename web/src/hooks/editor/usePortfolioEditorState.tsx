@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useReducer } from 'react';
 import { useParams, useLocation } from 'react-router-dom';
 import { useAuthContext } from '../ui/useAuthContext';
+import { usePortfoliosContext } from '../ui/usePortfoliosContext';
 import { mapPublicPortfolioDtoToPortfolioState } from '../../api/mappers/portfolio.mappers';
 // mode type previously used when this hook owned UI state
 import type { AnyCard } from '../../state/Cards.types';
@@ -25,6 +26,7 @@ export function usePortfolioEditorState({ onPortfolioChange, showNotification }:
   const { id: portfolioId } = useParams<{ id: string }>();
   const location = useLocation();
   const { user } = useAuthContext();
+  const { updatePortfolio } = usePortfoliosContext();
   const isEditing = Boolean(portfolioId);
   const isCreatingNew = location.pathname.includes('/portfolios/new');
   const shouldStartInEditMode = isEditing || isCreatingNew;
@@ -38,14 +40,16 @@ export function usePortfolioEditorState({ onPortfolioChange, showNotification }:
   // Loader for existing portfolio
   const { existingPortfolio, portfolioLoading, portfolioError } = usePortfolioLoader(portfolioId || null);
 
-  const { slug, setSlug, updateSlugFromTitle, currentSlug, isSlugAvailable, isCheckingSlug, handleSlugAvailabilityChange } = useSlug({ isEditing, existingPortfolio });
+  const { slug, setSlug, updateSlugFromTitle, currentSlug, isSlugAvailable, isCheckingSlug, handleSlugAvailabilityChange, lastVerifiedSlug } = useSlug({ isEditing, existingPortfolio });
 
-  const { isPublished, setIsPublished, handlePublish, isPublishing, updateNormalizedSlug } = usePublicationManager({
+  const { isPublished, setIsPublished, handlePublish, isPublishing, updateNormalizedSlug, hasChanges } = usePublicationManager({
     portfolioId,
     existingPortfolio,
+    currentSlug: slug,
     onSuccess: () => {
       showNotification('Publication settings updated successfully!', 'success');
-    }
+    },
+    updatePortfolioInCache: updatePortfolio
   });
 
   const { state: savedCardsState } = useSavedCards();
@@ -157,12 +161,14 @@ export function usePortfolioEditorState({ onPortfolioChange, showNotification }:
       isCheckingSlug,
       handleSlugAvailabilityChange: handleSlugAvailabilityChangeLocal,
       updateSlugFromTitle,
+      lastVerifiedSlug,
     },
     publication: {
       isPublished,
       setIsPublished,
       isPublishing,
       handlePublishClick,
+      hasChanges,
     },
     actions: {
       handleTitleChange,

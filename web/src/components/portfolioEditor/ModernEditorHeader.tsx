@@ -6,7 +6,7 @@ import React from 'react';
 import { type TemplateKey } from '../../templates/Template.types';
 import { ModernModeToggle } from './ModernModeToggle';
 import { ModernTemplateSelector } from './ModernTemplateSelector';
-import { ModernUrlSection } from './ModernUrlSection';
+import { UrlSection } from './UrlSection';
 import { ModernPublicToggle } from './ModernPublicToggle';
 import { ModernSaveButton } from './ModernSaveButton';
 import { ModernPublishButton } from './ModernPublishButton';
@@ -32,12 +32,14 @@ export interface ModernEditorHeaderProps {
   isSlugAvailable?: boolean;
   isCheckingSlug?: boolean;
   onSlugAvailabilityChange?: (available: boolean) => void;
+  lastVerifiedSlug?: string;
   
   // Publication
   isPublished?: boolean;
   setIsPublished?: (published: boolean) => void;
   onPublish?: () => void;
   isPublishing?: boolean;
+  hasChanges?: boolean;
   
   // Page context
   isEditMode: boolean; // true if /portfolios/{id}/edit, false if /portfolios/new
@@ -58,10 +60,12 @@ export const ModernEditorHeader: React.FC<ModernEditorHeaderProps> = ({
   isSlugAvailable,
   isCheckingSlug,
   onSlugAvailabilityChange,
+  lastVerifiedSlug,
   isPublished,
   setIsPublished,
   onPublish,
   isPublishing,
+  hasChanges,
   isEditMode
 }) => {
   const headerRef = React.useRef<HTMLElement>(null);
@@ -121,7 +125,7 @@ export const ModernEditorHeader: React.FC<ModernEditorHeaderProps> = ({
         {/* Right Group: URL + Public + Publish */}
         {isEditMode && (
           <div className="editor-header__right">
-            <ModernUrlSection
+            <UrlSection
               slug={slug || ''}
               setSlug={setSlug || (() => {})}
               currentSlug={currentSlug}
@@ -142,6 +146,9 @@ export const ModernEditorHeader: React.FC<ModernEditorHeaderProps> = ({
                 isPublished={isPublished || false}
                 isSlugAvailable={isSlugAvailable || false}
                 isSaving={isSaving}
+                hasChanges={hasChanges || false}
+                currentSlug={slug || ''}
+                lastVerifiedSlug={lastVerifiedSlug || ''}
               />
             )}
           </div>

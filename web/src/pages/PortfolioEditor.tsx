@@ -267,10 +267,12 @@ export default function PortfolioEditor({
         isSlugAvailable={state.slug.isSlugAvailable}
         isCheckingSlug={state.slug.isCheckingSlug}
         onSlugAvailabilityChange={(available: boolean) => state.slug.handleSlugAvailabilityChange(available, false)}
+        lastVerifiedSlug={state.slug.lastVerifiedSlug}
         isPublished={state.publication.isPublished}
         setIsPublished={state.publication.setIsPublished}
         onPublish={state.publication.handlePublishClick}
         isPublishing={state.publication.isPublishing}
+        hasChanges={state.publication.hasChanges}
         isEditMode={isEditMode}
       />
 
