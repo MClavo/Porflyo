@@ -3,9 +3,11 @@
 .modern-dashboard {
   width: 100%;
   min-height: 100vh;
-  /* Permitir scroll pero mantener estabilidad */
+  /* Scroll handling moved to dashboard-theme.css */
+  overflow-y: auto;
   overflow-x: hidden;
-  /* No agregar padding-top aquí ya que lo maneja dashboard-content */
+  position: relative;
+  box-sizing: border-box;
 }
 
 .modern-dashboard__content {

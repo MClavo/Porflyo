@@ -5,14 +5,19 @@
   min-height: 100vh;
   color: var(--text-primary);
   font-family: var(--font-sans);
-  /* Add padding-top to account for fixed navbar */
-  padding-top: var(--navbar-height);
+  /* Removed padding-top, handled by dashboard-theme.css */
+  overflow-y: auto;
+  overflow-x: hidden;
+  position: relative;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .profile-content {
   max-width: 1000px;
   margin: 0 auto;
   padding: var(--space-8);
+  padding-top: var(--space-8);
   display: flex;
   flex-direction: column;
   gap: var(--space-8);

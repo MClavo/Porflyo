@@ -2,7 +2,7 @@
 
 .home-page {
   background: var(--dashboard-bg);
-  min-height: 100vh;
+  min-height: calc(100vh - var(--navbar-height));
   color: var(--text-primary);
   font-family: var(--font-sans);
   /* Add padding-top to account for fixed navbar */
@@ -212,7 +212,7 @@ body.light-theme .home-page .react-loading-skeleton{
 .portfolios-empty {
   text-align: center;
   padding: var(--space-16);
-  color: var(--text-secondary);
+  color: var(--text-secondar  y);
 }
 
 .portfolios-empty-icon {

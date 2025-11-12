@@ -51,7 +51,7 @@
 }
 
 /* Custom scrollbar for portfolio content */
-.portfolio-content::-webkit-scrollbar {
+/* .portfolio-content::-webkit-scrollbar {
   width: 8px;
 }
 
@@ -67,7 +67,7 @@
 
 .portfolio-content::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.3);
-}
+} */
 
 /* Canvas Area */
 .portfolio-editor__canvas {

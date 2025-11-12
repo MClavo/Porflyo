@@ -96,7 +96,7 @@
 /* Sidebar Content - scrollable area */
 .editor-sidebar__content {
   flex: 1;
-  overflow-y: auto;
+  overflow-y: hide;
   overflow-x: visible;
   display: flex;
   flex-direction: column;
@@ -104,6 +104,7 @@
   padding: var(--space-4);
   opacity: 1;
   transition: opacity var(--transition-normal);
+  scrollbar-width: none;
 }
 
 .editor-sidebar--closed .editor-sidebar__content {
