@@ -4,6 +4,7 @@ import { FiEdit3, FiMail, FiGithub } from 'react-icons/fi';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 import { getSocialPlatform } from '../../constants/socialPlatforms';
+import { useTheme } from '../../contexts/theme/useTheme';
 
 interface User {
   name: string;
@@ -22,6 +23,7 @@ export const UserProfileCard: React.FC<UserProfileCardProps> = ({
   user, 
   isLoading = false 
 }) => {
+  const { isDark } = useTheme();
   if (isLoading) {
     return (
       <div className="user-profile-section">
@@ -82,8 +84,8 @@ export const UserProfileCard: React.FC<UserProfileCardProps> = ({
           </div>
           {socialEntries.length > 0 && (
             <div className="user-profile-socials">
-              {socialEntries.map(([platform, url]) => {
-                const socialInfo = getSocialPlatform(platform);
+          {socialEntries.map(([platform, url]) => {
+            const socialInfo = getSocialPlatform(platform, isDark);
                 if (!socialInfo) return null;
                 
                 return (

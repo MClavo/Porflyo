@@ -6,14 +6,15 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.7);
-  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(8px);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 9999;
   padding: var(--space-4);
   animation: fadeIn 0.2s ease-out;
+  border-radius: var(--radius-lg);
 }
 
 @keyframes fadeIn {
@@ -26,7 +27,7 @@
 }
 
 .confirm-dialog {
-  background: var(--card-bg);
+  background: var(--dashboard-bg);
   border: 1px solid var(--card-border);
   border-radius: var(--radius-xl);
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
