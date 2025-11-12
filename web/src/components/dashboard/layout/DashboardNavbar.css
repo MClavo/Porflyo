@@ -16,15 +16,24 @@
   height: var(--dashboard-navbar-height);
 }
 
+
 .dashboard-navbar__container {
   max-width: 1400px;
   margin: 0 auto;
   padding: 0 var(--space-6); /* Remove vertical padding, let flexbox center */
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  justify-content: space-between;
   gap: var(--space-6);
   height: 100%;
+}
+
+/* Back Button Section */
+.dashboard-navbar__back {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  justify-self: start;
 }
 
 /* Pages Section */
@@ -32,6 +41,7 @@
   display: flex;
   align-items: center;
   flex-shrink: 0;
+  justify-self: center;
 }
 
 /* Brand Section - Hidden for compact design */
@@ -45,6 +55,7 @@
   align-items: center;
   gap: var(--space-4);
   flex-shrink: 0;
+  justify-self: end;
 }
 
 .dashboard-navbar__heatmap-controls {
@@ -113,6 +124,10 @@
     padding: 0 var(--space-4);
     flex-wrap: wrap;
     gap: var(--space-3);
+  }
+
+  .dashboard-navbar__back {
+    order: 0;
   }
 
   .dashboard-navbar__pages {

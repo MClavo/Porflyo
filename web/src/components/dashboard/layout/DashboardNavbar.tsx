@@ -8,6 +8,7 @@ import { RANGE_OPTIONS } from '../../../lib/timeRange';
 import SlotSelector, { type SlotOption } from '../../ui/SlotSelector';
 import { type HeatmapMode } from '../../ui/HeatmapModeToggle';
 import ToggleSelector, { type ToggleSelectorOption } from '../../selector/ToggleSelector';
+import { BackButton } from '../../buttons/BackButton';
 import './DashboardNavbar.css';
 
 export type PageOption = 'overview' | 'heatmap' | 'projects';
@@ -57,6 +58,11 @@ export const DashboardNavbar: React.FC<DashboardNavbarProps> = ({
   return (
     <nav className="dashboard-navbar">
       <div className="dashboard-navbar__container">
+        {/* Back button */}
+        <div className="dashboard-navbar__back">
+          <BackButton />
+        </div>
+
         {/* Left side - Page Navigation */}
         <div className="dashboard-navbar__pages">
           <ToggleSelector

@@ -12,6 +12,8 @@ import {
 import '../styles/pages/ProfilePage.css';
 import '../styles/components/buttons.css';
 
+import { BackButton } from '../components/buttons/BackButton';
+
 const ProfilePage: React.FC = () => {
   const { user, refetch, setAuthenticatedUser, isLoading: userLoading } = useAuthContext();
   const [avatarUploadMessage, setAvatarUploadMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
@@ -93,6 +95,7 @@ const ProfilePage: React.FC = () => {
 
   return (
     <div className="profile-page">
+              <BackButton />
       <div className="profile-content">
         <ModernProfileHeader user={user} isLoading={userLoading} />
         

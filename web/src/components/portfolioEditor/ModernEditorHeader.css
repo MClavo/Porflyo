@@ -73,6 +73,10 @@
   background-clip: text;
 }
 
+.editor-header .back-button {
+  margin-left: 115px;
+}
+
 /* Right Group: URL + Public + Publish */
 .editor-header__right {
   display: flex;

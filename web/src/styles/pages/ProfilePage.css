@@ -54,10 +54,26 @@
   box-shadow: var(--shadow-lg);
 }
 
+.profile-page .back-button {
+  position: fixed;
+  top: calc(var(--navbar-height) + var(--space-8));
+  left: calc((100vw - 1000px) / 2 - var(--space-6) - 100px);
+  z-index: 100;
+}
+
+/* Ajuste para pantallas medianas donde el contenido aún está centrado pero más cerca del borde */
+@media (max-width: 1200px) {
+  .profile-page .back-button {
+    left: var(--space-6);
+  }
+}
+
 .profile-header-content {
   display: flex;
   align-items: center;
   gap: var(--space-6);
+  flex-wrap: wrap;
+  position: relative;
 }
 
 .profile-header-avatar {
@@ -516,6 +532,13 @@
 
 /* Responsive Design */
 @media (max-width: 768px) {
+  .profile-page .back-button {
+    position: fixed;
+    top: calc(var(--navbar-height) + var(--space-6));
+    left: var(--space-4);
+    z-index: 100;
+  }
+
   .profile-content {
     padding: var(--space-6);
     gap: var(--space-6);
@@ -565,6 +588,11 @@
 }
 
 @media (max-width: 480px) {
+  .profile-page .back-button {
+    top: calc(var(--navbar-height) + var(--space-4));
+    left: var(--space-3);
+  }
+
   .profile-content {
     padding: var(--space-4);
   }

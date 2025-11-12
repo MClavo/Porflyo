@@ -1,0 +1,94 @@
+/* BackButton - Modern back/cancel button styles */
+
+.back-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.25rem;
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  background: var(--card-bg);
+  color: var(--text-secondary);
+  box-shadow: var(--shadow-sm);
+  font-family: var(--font-sans);
+  white-space: nowrap;
+}
+
+.back-button:hover {
+  background: var(--card-bg-hover);
+  border-color: var(--card-border-hover);
+  color: var(--text-primary);
+  box-shadow: var(--shadow-md);
+  transform: translateX(-2px);
+}
+
+.back-button:active {
+  transform: translateX(-1px);
+  box-shadow: var(--shadow-sm);
+}
+
+.back-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.back-button__icon {
+  width: 1rem;
+  height: 1rem;
+  transition: transform var(--transition-fast);
+}
+
+.back-button:hover .back-button__icon {
+  transform: translateX(-2px);
+}
+
+.back-button__text {
+  line-height: 1;
+}
+
+/* Compact variant for smaller spaces */
+.back-button--compact {
+  padding: 0.5rem 0.875rem;
+  font-size: 0.8125rem;
+}
+
+.back-button--compact .back-button__icon {
+  width: 0.875rem;
+  height: 0.875rem;
+}
+
+/* Icon-only variant */
+.back-button--icon-only {
+  padding: 0.625rem;
+  min-width: 2.5rem;
+}
+
+.back-button--icon-only .back-button__text {
+  display: none;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .back-button {
+    padding: 0.5rem 1rem;
+    font-size: 0.8125rem;
+  }
+
+  .back-button__icon {
+    width: 0.875rem;
+    height: 0.875rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .back-button {
+    padding: 0.5rem 0.75rem;
+  }
+}

@@ -10,6 +10,7 @@ import { UrlSection } from './UrlSection';
 import { ModernPublicToggle } from './ModernPublicToggle';
 import { ModernSaveButton } from './ModernSaveButton';
 import { ModernPublishButton } from './ModernPublishButton';
+import { BackButton } from '../buttons/BackButton';
 import './ModernEditorHeader.css';
 
 export interface ModernEditorHeaderProps {
@@ -96,9 +97,11 @@ export const ModernEditorHeader: React.FC<ModernEditorHeaderProps> = ({
 
   return (
     <header ref={headerRef} className="editor-header">
+      <BackButton />
       <div className="editor-header__container">
-        {/* Left Group: Title + Template + Mode + Save */}
+        {/* Left Group: Back + Title + Template + Mode + Save */}
         <div className="editor-header__left">
+          
           <div className="editor-header__title-area">
             <input
               type="text"
