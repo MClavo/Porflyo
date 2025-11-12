@@ -183,7 +183,7 @@
 
 .profile-field-input {
   padding: var(--space-3) var(--space-4);
-  background: rgba(55, 65, 81, 0.5);
+  background: var(--card-bg);
   border: 1px solid var(--card-border);
   border-radius: var(--radius-md);
   color: var(--text-primary);
@@ -195,7 +195,7 @@
 
 .profile-field-input:focus {
   border-color: var(--accent-blue);
-  background: rgba(55, 65, 81, 0.8);
+  background: var(--card-bg-hover);
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 

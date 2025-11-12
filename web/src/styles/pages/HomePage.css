@@ -9,6 +9,19 @@
   padding-top: var(--navbar-height);
 }
 
+.user-profile-section,
+.portfolios-section{
+  backdrop-filter: blur(14px) saturate(115%);
+  -webkit-backdrop-filter: blur(14px) saturate(115%);
+}
+
+body.light-theme .home-page .react-loading-skeleton{
+  --base-color: #e5e7eb;   /* slate-200 */
+  --highlight-color: #f1f5f9;
+}
+
+
+
 .home-content {
   max-width: 1400px;
   width: 95%;
@@ -52,6 +65,7 @@
   right: 0;
   height: 4px;
   background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple));
+    opacity: .45;
 }
 
 .user-profile-section:hover {

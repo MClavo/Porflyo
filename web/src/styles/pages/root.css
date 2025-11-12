@@ -40,7 +40,7 @@ p {
   min-height: 100vh;
   display: flex;
   align-items: center;
-  justify-content: flex-start; /* align items at the top instead of center */
+  justify-content: flex-start; 
   flex-direction: column;
   padding: 8rem;
   box-sizing: border-box;
@@ -49,12 +49,6 @@ p {
 
 body.root-body-bg {
   background: none !important;
-  background-image: url('../../assets/world2.png') !important;
-  background-repeat: no-repeat !important;
-  background-position: center calc(20vh) !important;
-  background-size: 190% 200% !important; /* wider and twice as tall */
-  background-color: transparent !important;
-  min-height: 100vh;
 }
 
 .root-content {

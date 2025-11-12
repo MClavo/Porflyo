@@ -11,3 +11,18 @@ body {
 * {
   transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
+
+/* When shader is active, make top-level page containers transparent so shader is visible */
+body.has-shader {
+  background: transparent !important;
+}
+
+/* Affected page wrapper classes to make sure the shader shows through */
+.home-page, .profile-page, .root-page, .modern-projects-page, .modern-heatmap-page, .portfolio-page {
+  background: transparent !important;
+}
+
+/* If components apply strong background via #root or other selectors, handle that too */
+#root.has-shader, #root {
+  background: transparent !important;
+}

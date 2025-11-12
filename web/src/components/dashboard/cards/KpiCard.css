@@ -38,11 +38,12 @@
 }
 
 /* Color variants */
-.kpi-card--blue::before { background: var(--accent-blue); }
-.kpi-card--green::before { background: var(--accent-green); }
-.kpi-card--purple::before { background: var(--accent-purple); }
-.kpi-card--orange::before { background: var(--accent-orange); }
-.kpi-card--pink::before { background: var(--accent-pink); }
+.kpi-card::before{ display:none; }
+.kpi-card--blue::before,
+.kpi-card--green::before,
+.kpi-card--purple::before,
+.kpi-card--orange::before,
+.kpi-card--pink::before { display:none; }
 
 /* Card Header */
 .kpi-card-header {
@@ -167,8 +168,26 @@
   --highlight-color: #4b5563;
 }
 
+/* Span por defecto (móvil): full width */
+.kpi-card{ grid-column: 1 / -1; }
+
+/* ≥768px (MD: 6 cols) → 3 cols (dos por fila) */
+@media (min-width: 768px){
+  .kpi-card{ grid-column: span 3; }
+}
+
+/* ≥1024px (LG: 8 cols) → 4 cols (dos por fila) */
+@media (min-width: 1024px){
+  .kpi-card{ grid-column: span 4; }
+}
+
+/* ≥1280px (XL: 12 cols) → 3 cols (cuatro por fila) */
+@media (min-width: 1280px){
+  .kpi-card{ grid-column: span 3; }
+}
+
 /* Responsive adjustments */
-@media (max-width: 768px) {
+/* @media (max-width: 768px) {
   .kpi-card {
     padding: var(--space-4);
     min-height: 100px;
@@ -182,8 +201,8 @@
     margin-bottom: var(--space-3);
   }
 }
-
-@media (max-width: 480px) {
+ */
+/* @media (max-width: 480px) {
   .kpi-card {
     padding: var(--space-3);
     min-height: 90px;
@@ -192,4 +211,5 @@
   .kpi-card-value {
     font-size: var(--font-xl);
   }
-}
+} */
+

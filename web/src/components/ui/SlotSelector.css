@@ -25,7 +25,7 @@
   width: 180px;
   height: 44px; /* Match toggle selector height in navbar */
   padding: 0 var(--space-4);
-  background: var(--dashboard-bg-secondary);
+  background: var(--card-bg);
   border: 1px solid var(--card-border);
   border-radius: var(--radius-lg);
   color: var(--text-primary);
@@ -116,7 +116,7 @@
   top: calc(100% + var(--space-1));
   left: 0;
   right: 0;
-  background: var(--dashboard-obsidian);
+  background: var(--dashboard-bg);
   border: 1px solid var(--accent-blue);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-xl);
@@ -204,7 +204,7 @@
 }
 
 .slot-selector__option--all .slot-selector__option-label {
-  color: var(--accent-green);
+  color: var(--accent-blue);
   font-size: var(--font-base);
 }
 

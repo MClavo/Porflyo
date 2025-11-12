@@ -308,3 +308,33 @@
     text-overflow: ellipsis;
   }
 }
+
+/* Padding y título */
+.modern-area-chart{ padding: var(--space-5) var(--space-6); }
+.modern-area-chart__title{ font-size: var(--font-lg); }
+
+/* Leyenda en una línea con scroll “silencioso” si desborda */
+.modern-area-chart__legend{
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  scrollbar-width: none; -ms-overflow-style: none;
+}
+.modern-area-chart__legend::-webkit-scrollbar{ display:none; }
+
+.modern-legend-item{
+  padding: var(--space-1) var(--space-2);
+  font-size: var(--font-xs);
+  border: 1px solid rgba(255,255,255,.08);
+}
+.modern-legend-item--active{ background: rgba(255,255,255,.08); }
+.modern-legend-item--inactive{ opacity: .55; }
+
+/* Tooltip dark/light */
+.modern-tooltip{ background: rgba(26,32,44,.94); }
+body.light-theme .modern-tooltip{
+  background: rgba(255,255,255,.92);
+  border-color: rgba(15,23,42,.12);
+}
+body.light-theme .modern-tooltip__header{ color: var(--text-primary); }
+body.light-theme .modern-tooltip__name{ color: var(--text-secondary); }
+body.light-theme .modern-tooltip__value{ color: var(--text-primary); }

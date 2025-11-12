@@ -12,7 +12,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
-  grid-column: span 3; /* Ocupa 3 columnas del grid */
+  grid-column: 1 / -1; 
 }
 
 .visits-overview-card:hover {
@@ -22,17 +22,7 @@
   transform: translateY(-2px);
 }
 
-.visits-overview-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: var(--accent-blue);
-  opacity: 0;
-  transition: opacity var(--transition-normal);
-}
+
 
 .visits-overview-card:hover::before {
   opacity: 1;
@@ -232,39 +222,27 @@
     background-position: -200% 0;
   }
 }
-
-/* Responsive */
-@media (max-width: 768px) {
-  .visits-overview-card {
-    grid-column: span 1;
-    min-height: 180px;
-  }
-  
-  .visits-overview-card__visits-number {
-    font-size: var(--font-3xl);
-  }
-  
-  .visits-overview-card__rates {
-    gap: var(--space-4);
-  }
+@media (min-width: 1024px){                        /* LG: 8 cols → ocupa toda la fila */
+  .visits-overview-card{ grid-column: span 8; }
 }
 
-@media (max-width: 480px) {
-  .visits-overview-card {
-    padding: var(--space-4);
-  }
-  
-  .visits-overview-card__rates {
-    flex-direction: column;
-    align-items: center;
-    gap: var(--space-4);
-  }
-  
-  .visits-overview-card__rate {
-    flex-direction: row;
-    align-items: center;
-    gap: var(--space-3);
-    width: 100%;
-    justify-content: center;
-  }
+@media (min-width: 1280px){                        /* XL: 12 cols → ocupa 6 */
+  .visits-overview-card{ grid-column: span 6; }
+}
+
+/* Reducir altura visual del Overview */
+.visits-overview-card { min-height: 260px; padding-block: var(--space-5); }
+.visits-overview-card__main { padding: var(--space-3) 0; }
+
+/* Cifra principal más dominante pero compacta */
+.visits-overview-card__visits-number{
+  font-size: var(--font-4xl);
+  letter-spacing: -0.02em;
+}
+
+/* Separador suave y menos padding en el bloque de rates */
+.visits-overview-card__rates{
+  padding-top: var(--space-3);
+  border-top: 1px solid color-mix(in oklab, var(--text-muted) 12%, transparent);
+  gap: var(--space-5);
 }

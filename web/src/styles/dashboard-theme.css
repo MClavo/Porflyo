@@ -95,3 +95,12 @@ html, body {
     padding-top: calc(var(--space-3) + 52px + var(--dashboard-navbar-height)); /* Main navbar (52px) + dashboard navbar */
   }
 }
+
+/* When shader is active make dashboard backgrounds transparent so shader shows through */
+body.has-shader html,
+body.has-shader body,
+body.has-shader #root,
+body.has-shader .dashboard-container,
+body.has-shader .dashboard-content {
+  background: transparent !important;
+}

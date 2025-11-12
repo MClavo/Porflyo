@@ -120,8 +120,8 @@ function ModernOverviewContent() {
     <>
 
         <KpiGrid 
-          columns={{ base: 1, sm: 2, md: 3, lg: 4, xl: 7 }}
-          gap={6}
+          columns={{ base: 1, sm: 2, md: 6, lg: 8, xl: 12 }}
+        gap={6}
         >
           {/* Visits Overview Card - spans 3 columns */}
           <VisitsOverviewCard

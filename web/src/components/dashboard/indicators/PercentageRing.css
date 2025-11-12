@@ -5,7 +5,7 @@
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  background: rgba(0, 0, 0, 0.2);
+  background: var(--dashboard-bg);
   backdrop-filter: blur(4px);
   box-shadow: 
     0 4px 12px rgba(0, 0, 0, 0.15),

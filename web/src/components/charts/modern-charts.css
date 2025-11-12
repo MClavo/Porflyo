@@ -2,7 +2,7 @@
 
 /* Tooltip específico para ProjectStackedChart con mejor alineación */
 .project-stacked-tooltip {
-  background: rgba(26, 32, 44, 0.95) !important;
+  background: var(--card-bg);
   backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.15) !important;
   border-radius: var(--radius-lg) !important;
@@ -91,7 +91,7 @@
 
 /* Tooltip moderno que sigue al ratón */
 .modern-tooltip {
-  background: rgba(26, 32, 44, 0.95) !important;
+  background: var(--card-bg);
   backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.15) !important;
   border-radius: var(--radius-lg) !important;
