@@ -11,7 +11,7 @@ export function Text({
   placeholder = "Write something…",
   maxLength = 300,
   required,
-  rows = 3,
+  rows = 1,
 }: BaseFieldProps) {
   const schema = React.useMemo(
     () =>

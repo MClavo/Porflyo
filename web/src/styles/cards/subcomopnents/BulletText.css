@@ -1,0 +1,78 @@
+/* BulletText component styles - Consistent between view and edit modes */
+
+.bullet-text-wrapper {
+  position: relative;
+  margin: 0;
+  padding: 0;
+}
+
+/* View mode - bullet list */
+.bullet-text,
+ul.bullet-text {
+  position: relative;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  color: var(--description-color, #f8f8ffea);
+  font-size: 15px;
+  line-height: 1.6;
+  font-weight: 300;
+  text-align: left;
+  z-index: 20;
+}
+
+.bullet-text li {
+  position: relative;
+  margin: 0 0 4px 0;
+  padding: 0 0 0 20px;
+}
+
+.bullet-text li:last-child {
+  margin-bottom: 0;
+}
+
+.bullet-text li::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: rgba(255, 255, 255, 0.6);
+  font-weight: bold;
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+/* Edit mode - textarea styled to match view mode visually */
+textarea.bullet-text {
+  width: 100%;
+  min-height: auto;
+  margin: 0;
+  padding: 2px 6px;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  color: var(--description-color, #f8f8ffea);
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 300;
+  line-height: 1.6;
+  text-align: left;
+  resize: none;
+  box-sizing: border-box;
+  transition: background 0.15s ease;
+}
+
+textarea.bullet-text:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+textarea.bullet-text:focus {
+  outline: none;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 1px 5px;
+}
+
+textarea.bullet-text::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}

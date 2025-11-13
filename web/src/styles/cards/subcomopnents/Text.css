@@ -1,23 +1,56 @@
-/* Text/subtitle/description styles extracted from ProjectCard.css */
+/* Text/subtitle/description styles - Consistent between view and edit modes */
+
 .text,
 .card-text,
-.text-card-description {
+.text-card-description,
+p.text,
+p.card-text {
   position: relative;
   margin: 0;
+  padding: 0;
   color: var(--description-color, #f8f8ffea);
-  z-index: 20;
-  font: inherit;
+  font-family: inherit;
   font-size: 16px;
-  line-height: 1.4;
-  resize: none;
+  font-weight: 300;
+  line-height: 1.5;
   white-space: pre-wrap;
+  text-align: left;
+  z-index: 20;
 }
 
-/* Editable textarea styles are scoped to edit mode via component markup */
-.text-editable {
-  background: rgba(178, 212, 229, 0.18);
-  border-radius: 8px;
-  padding: 8px;
-  position: relative;
-  z-index: 20;
+/* Edit mode - textarea styled to match p exactly */
+textarea.text,
+textarea.card-text,
+textarea.text-card-description {
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  padding: 2px 6px;
+  margin: -2px -6px;
+  color: var(--description-color, #f8f8ffea);
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 300;
+  line-height: 1.5;
+  text-align: left;
+  resize: none;
+  min-height: auto;
+  transition: background 0.15s ease;
+  box-sizing: border-box;
+}
+
+textarea.text:hover,
+textarea.card-text:hover,
+textarea.text-card-description:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+textarea.text:focus,
+textarea.card-text:focus,
+textarea.text-card-description:focus {
+  outline: none;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 1px 5px;
 }
