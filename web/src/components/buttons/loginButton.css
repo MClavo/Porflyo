@@ -1,4 +1,4 @@
-.text {
+.space-button .text {
   translate: 2% -6%;
   letter-spacing: 0.01ch;
   color: hsl(0 0% calc(60% + (var(--active) * 26%)));
@@ -6,7 +6,7 @@
   padding: 0 34px;
   font-weight: 600;
 }
-.text::before {
+.space-button .text::before {
   content: "";
   position: absolute;
   top: -290%;
@@ -21,7 +21,7 @@
   animation-delay: 1s;
   display: none;
 }
-.text::after {
+.space-button .text::after {
   content: "";
   display: none;
   position: absolute;

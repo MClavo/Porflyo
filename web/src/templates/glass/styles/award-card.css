@@ -9,19 +9,20 @@
   border-radius: 16px;
   padding: 1.5rem;
   width: 100%;
-  max-width: 370px;
-  min-width: 320px;
+  max-width: 350px;
+  min-width: 350px;
   box-sizing: border-box;
   transition: all 0.3s ease;
   position: relative;
+  --card-padding: 1.5rem;
 }
 
 /* Same size in both modes */
 .tpl-glass .award-card[data-mode="view"],
 .tpl-glass .award-card[data-mode="edit"] {
   width: 100%;
-  max-width: 370px;
-  min-width: 320px;
+  max-width: 350px;
+  min-width: 350px;
   padding: 1.5rem;
   border: 1px solid rgba(255, 255, 255, 0.22);
   background: rgba(255, 255, 255, 0.12);
@@ -161,7 +162,7 @@
   padding: 8px 12px;
   backdrop-filter: blur(8px);
   color: rgba(255, 255, 255, 0.9);
-  resize: none;
+  resize: none !important;
   box-sizing: border-box !important;
 }
 

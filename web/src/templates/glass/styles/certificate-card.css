@@ -9,20 +9,21 @@
   border-radius: 16px;
   padding: 0;
   width: 100%;
-  max-width: 370px;
-  min-width: 320px;
+  max-width: 350px;
+  min-width: 350px;
   box-sizing: border-box;
   transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
+  --card-padding: 0;
 }
 
 /* Same size in both modes */
 .tpl-glass .certificate-card[data-mode="view"],
 .tpl-glass .certificate-card[data-mode="edit"] {
   width: 100%;
-  max-width: 370px;
-  min-width: 320px;
+  max-width: 350px;
+  min-width: 350px;
   padding: 0;
   border: 1px solid rgba(255, 255, 255, 0.22);
   background: rgba(255, 255, 255, 0.12);
@@ -44,6 +45,11 @@
   width: 100%;
   margin: 0;
   padding: 0;
+}
+
+/* Add top padding in edit mode to accommodate drag handle */
+.tpl-glass .certificate-card[data-mode="edit"] .certificate-card__image {
+  padding-top: 36px;
 }
 
 .tpl-glass .certificate-card__image .image-container {
@@ -70,6 +76,11 @@
   border-radius: 0;
 }
 
+.tpl-glass .certificate-card__image .image-placeholder {
+  width: auto !important;
+}
+
+
 /* Content section with padding */
 .tpl-glass .certificate-card__content {
   padding: 1.25rem;
@@ -92,9 +103,17 @@
   letter-spacing: 0.3px;
   margin: 0;
   margin-bottom: 8px;
-  width: 100%;
   word-wrap: break-word;
   overflow-wrap: break-word;
+  word-break: break-word;
+  white-space: normal;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+}
+
+.sortable-card[data-mode="edit"] .certificate-card__title-wrapper input {
+  width: 90% !important;
 }
 
 .tpl-glass .certificate-card__date {
@@ -150,7 +169,6 @@
   border-radius: 0 !important;
   outline: none !important;
   box-shadow: none !important;
-  width: 100% !important;
   box-sizing: border-box !important;
 }
 

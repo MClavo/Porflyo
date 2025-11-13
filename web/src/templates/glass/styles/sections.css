@@ -140,7 +140,7 @@
 /* Achievements section - 3 column grid */
 .tpl-glass #achievements .section-cards {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 370px));
+  grid-template-columns: repeat(auto-fit, minmax(350px, 200px));
   gap: 1.5rem;
   justify-content: center;
   justify-items: stretch;
