@@ -1,0 +1,156 @@
+/* ============================================
+   AWARD CARDS - Glass style
+   ============================================ */
+
+.tpl-glass .award-card {
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  backdrop-filter: blur(12px);
+  border-radius: 16px;
+  padding: 1.5rem;
+  max-width: 390px;
+  width: 100%;
+  box-sizing: border-box;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+/* Same size in both modes */
+.tpl-glass .award-card[data-mode="view"],
+.tpl-glass .award-card[data-mode="edit"] {
+  max-width: 370px;
+  padding: 1.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.tpl-glass .award-card[data-mode="edit"] {
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.tpl-glass .award-card:hover {
+  background: rgba(255, 255, 255, 0.18);
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+/* Event section */
+.tpl-glass .award-card__event-section {
+  margin-bottom: 8px;
+}
+
+.tpl-glass .award-card .award-card__event,
+.tpl-glass .award-card .award-card__event input {
+  color: #ffffff;
+  font-size: 24px;
+  font-weight: 700;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  letter-spacing: 0.3px;
+  line-height: 1.2;
+  margin: 0;
+}
+
+/* Category section */
+.tpl-glass .award-card__category-section {
+  margin-bottom: 8px;
+}
+
+.tpl-glass .award-card .award-card__category,
+.tpl-glass .award-card .award-card__category input {
+  color: rgba(255, 255, 255, 0.95);
+  font-size: 18px;
+  font-weight: 600;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+  margin: 0;
+}
+
+/* Date section */
+.tpl-glass .award-card__date {
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: 12px;
+}
+
+.tpl-glass .award-card__date .date-view {
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.tpl-glass .award-card__date .date-month-select,
+.tpl-glass .award-card__date .date-year-input {
+  background: none !important;
+  border: none !important;
+  color: rgba(255, 255, 255, 0.75) !important;
+  backdrop-filter: none !important;
+  padding: 0 !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  border-radius: 0 !important;
+  height: auto !important;
+  line-height: 1 !important;
+}
+
+.tpl-glass .award-card__date .date-month-select {
+  -webkit-appearance: menulist !important;
+  -moz-appearance: menulist !important;
+  appearance: menulist !important;
+  cursor: pointer !important;
+}
+
+.tpl-glass .award-card__date .date-year-input {
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  appearance: none !important;
+}
+
+.tpl-glass .award-card__date .date-month-select:focus,
+.tpl-glass .award-card__date .date-year-input:focus {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3) !important;
+  outline: none !important;
+}
+
+/* Description */
+.tpl-glass .award-card .award-card__description,
+.tpl-glass .award-card .award-card__description span,
+.tpl-glass .award-card .award-card__description textarea {
+  color: rgba(255, 255, 255, 0.88);
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+/* All award card inputs - ALWAYS no padding, no border, DYNAMIC WIDTH (same in view and edit) */
+.tpl-glass .award-card .award-card__event input,
+.tpl-glass .award-card .award-card__category input,
+.tpl-glass .award-card[data-mode="edit"] .award-card__event input,
+.tpl-glass .award-card[data-mode="edit"] .award-card__category input,
+.tpl-glass .award-card[data-mode="edit"] .award-card__event input:focus,
+.tpl-glass .award-card[data-mode="edit"] .award-card__category input:focus {
+  background: none !important;
+  border: none !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  outline: none !important;
+  box-shadow: none !important;
+  width: 100% !important;
+}
+
+/* Description textarea in edit mode */
+.tpl-glass .award-card[data-mode="edit"] .award-card__description textarea {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  padding: 8px 12px;
+  backdrop-filter: blur(8px);
+  color: rgba(255, 255, 255, 0.9);
+  resize: none;
+}
+
+.tpl-glass .award-card[data-mode="edit"] .award-card__description textarea:focus {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.35);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
+}

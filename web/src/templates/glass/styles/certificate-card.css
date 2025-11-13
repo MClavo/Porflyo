@@ -1,0 +1,216 @@
+/* ============================================
+   CERTIFICATE CARDS - Glass style
+   ============================================ */
+
+.tpl-glass .certificate-card {
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  backdrop-filter: blur(12px);
+  border-radius: 16px;
+  padding: 0;
+  max-width: 390px;
+  width: 100%;
+  box-sizing: border-box;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Same size in both modes */
+.tpl-glass .certificate-card[data-mode="view"],
+.tpl-glass .certificate-card[data-mode="edit"] {
+  max-width: 370px;
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.tpl-glass .certificate-card[data-mode="edit"] {
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.tpl-glass .certificate-card:hover {
+  background: rgba(255, 255, 255, 0.18);
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+/* Image section - full width at top */
+.tpl-glass .certificate-card__image {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.tpl-glass .certificate-card__image .image-container {
+  border-radius: 0;
+  border: none;
+  box-shadow: none;
+  /* Support transparent images with a subtle checkerboard pattern for glass theme */
+  background: 
+    linear-gradient(45deg, rgba(255, 255, 255, 0.05) 25%, transparent 25%),
+    linear-gradient(-45deg, rgba(255, 255, 255, 0.05) 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, rgba(255, 255, 255, 0.05) 75%),
+    linear-gradient(-45deg, transparent 75%, rgba(255, 255, 255, 0.05) 75%);
+  background-size: 20px 20px;
+  background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+  background-color: rgba(255, 255, 255, 0.08);
+}
+
+.tpl-glass .certificate-card__image img {
+  width: 100%;
+  height: calc(var(--current-card-width, 100%) * 0.56);
+  max-height: 250px;
+  object-fit: cover;
+  display: block;
+  border-radius: 0;
+}
+
+/* Content section with padding */
+.tpl-glass .certificate-card__content {
+  padding: 1.25rem;
+}
+
+/* Header with title and date */
+.tpl-glass .certificate-card__header {
+  margin-bottom: 0.75rem;
+}
+
+.tpl-glass .certificate-card .certificate-card__title,
+.tpl-glass .certificate-card .certificate-card__title input {
+  color: #ffffff;
+  font-size: 20px;
+  font-weight: 600;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  letter-spacing: 0.3px;
+  margin: 0;
+  margin-bottom: 8px;
+}
+
+.tpl-glass .certificate-card__date {
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 13px;
+  font-weight: 500;
+  margin: 0;
+}
+
+.tpl-glass .certificate-card__date .date-view {
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.tpl-glass .certificate-card__date .date-month-select,
+.tpl-glass .certificate-card__date .date-year-input {
+  background: none !important;
+  border: none !important;
+  color: rgba(255, 255, 255, 0.75) !important;
+  backdrop-filter: none !important;
+  padding: 0 !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  border-radius: 0 !important;
+  height: auto !important;
+  line-height: 1 !important;
+}
+
+.tpl-glass .certificate-card__date .date-month-select {
+  -webkit-appearance: menulist !important;
+  -moz-appearance: menulist !important;
+  appearance: menulist !important;
+  cursor: pointer !important;
+}
+
+.tpl-glass .certificate-card__date .date-year-input {
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  appearance: none !important;
+}
+
+.tpl-glass .certificate-card__date .date-month-select:focus,
+.tpl-glass .certificate-card__date .date-year-input:focus {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3) !important;
+  outline: none !important;
+}
+
+/* Title input styling */
+.tpl-glass .certificate-card .certificate-card__title input {
+  background: none !important;
+  border: none !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  outline: none !important;
+  box-shadow: none !important;
+  width: 100% !important;
+}
+
+.tpl-glass .certificate-card .certificate-card__title input:focus {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3) !important;
+}
+
+/* URL input in edit mode */
+.tpl-glass .certificate-card__url {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.tpl-glass .certificate-card__url .url-label {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: 6px;
+  display: block;
+}
+
+.tpl-glass .certificate-card__url .url-input {
+  width: 100%;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 13px;
+  transition: all 0.2s ease;
+}
+
+.tpl-glass .certificate-card__url .url-input:focus {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.35);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
+}
+
+.tpl-glass .certificate-card__url .url-input::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+/* Footer button */
+.tpl-glass .certificate-card__footer {
+  margin-top: 0.75rem;
+  padding-top: 0;
+  border-top: none;
+}
+
+.tpl-glass .certificate-card__footer .btn-certificate {
+  display: inline-block;
+  background: rgba(255, 255, 255, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  color: white;
+  padding: 10px 20px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  text-align: center;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.tpl-glass .certificate-card__footer .btn-certificate:hover {
+  background: rgba(255, 255, 255, 0.35);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}

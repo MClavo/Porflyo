@@ -3,3 +3,5 @@ export { default as JobCard } from './JobCard';
 export { default as EducationCard } from './EducationCard';
 export { default as TextCard } from './TextCard';
 export { AboutCard } from './AboutCard';
+export { default as CertificateCard } from './CertificateCard';
+export { default as AwardCard } from './AwardCard';

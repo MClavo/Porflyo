@@ -125,6 +125,30 @@
   margin-right: auto;
 }
 
+/* Projects section - Centered grid with consistent spacing */
+.tpl-glass #projects .section-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 400px), 1fr));
+  gap: 1.5rem;
+  justify-content: center;
+  justify-items: center;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Achievements section - 3 column grid */
+.tpl-glass #achievements .section-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 360px), 1fr));
+  gap: 1.5rem;
+  justify-content: center;
+  justify-items: center;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 /* Content grid layout for side-by-side sections */
 .content-grid {
   display: grid;

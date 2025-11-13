@@ -1,7 +1,7 @@
 import type { MonthYearValue } from "../components/cards/subcomponents/index";
 
 
-export type CardType = "project" | "job" | "text" | "about" | "education";
+export type CardType = "project" | "job" | "text" | "about" | "education" | "certificate" | "award";
 
 
 export type ProjectCardSaved = {
@@ -49,6 +49,20 @@ export type AboutCardSaved = {
   socials?: Record<string, string>;
 };
 
+export type CertificateCardSaved = {
+  title: string;
+  date: MonthYearValue;
+  image?: string;
+  certificateUrl?: string;
+};
+
+export type AwardCardSaved = {
+  event: string;
+  category: string;
+  date: MonthYearValue;
+  description: string;
+};
+
 
 export type BaseCard = {
   type: CardType;
@@ -59,8 +73,10 @@ export type JobCard = BaseCard & {type: "job"; data: JobCardSaved};
 export type EducationCard = BaseCard & {type: "education"; data: EducationCardSaved};
 export type TextCard = BaseCard & {type: "text"; data: TextCardSaved};
 export type AboutCard = BaseCard & {type: "about"; data: AboutCardSaved};
+export type CertificateCard = BaseCard & {type: "certificate"; data: CertificateCardSaved};
+export type AwardCard = BaseCard & {type: "award"; data: AwardCardSaved};
 
-export type AnyCard = ProjectCard | JobCard | EducationCard | TextCard | AboutCard;
+export type AnyCard = ProjectCard | JobCard | EducationCard | TextCard | AboutCard | CertificateCard | AwardCard;
 
 export type CardPatchByType = {
   project: Partial<ProjectCardSaved>;
@@ -68,6 +84,8 @@ export type CardPatchByType = {
   education: Partial<EducationCardSaved>;
   text: Partial<TextCardSaved>;
   about: Partial<AboutCardSaved>;
+  certificate: Partial<CertificateCardSaved>;
+  award: Partial<AwardCardSaved>;
 }
 
 export type CardDto = 
@@ -75,4 +93,6 @@ export type CardDto =
   | {type: "job"; data: JobCardSaved}
   | {type: "education"; data: EducationCardSaved} 
   | {type: "text"; data: TextCardSaved}
-  | {type: "about"; data: AboutCardSaved};
+  | {type: "about"; data: AboutCardSaved}
+  | {type: "certificate"; data: CertificateCardSaved}
+  | {type: "award"; data: AwardCardSaved};

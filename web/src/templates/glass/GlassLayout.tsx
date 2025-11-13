@@ -42,24 +42,23 @@ export default function GlassLayout({ sectionsMap, isEditable }: GlassLayoutProp
             </div>
           )}
 
-          {/* Skills and Achievements in 2-column grid */}
-          <div className="content-grid">
-            {sectionsMap?.text && (
-              <div className="portfolio-section" id="text">
-                <div className="section-content">
-                  {sectionsMap.text}
-                </div>
+          {/* Skills Section - Full width */}
+          {sectionsMap?.text && (
+            <div className="portfolio-section" id="text">
+              <div className="section-content">
+                {sectionsMap.text}
               </div>
-            )}
+            </div>
+          )}
 
-            {sectionsMap?.achievements && (
-              <div className="portfolio-section" id="achievements">
-                <div className="section-content">
-                  {sectionsMap.achievements}
-                </div>
+          {/* Achievements Section - Full width */}
+          {sectionsMap?.achievements && (
+            <div className="portfolio-section" id="achievements">
+              <div className="section-content">
+                {sectionsMap.achievements}
               </div>
-            )}
-          </div>
+            </div>
+          )}
 
           {/* Contact Section - Full width at bottom */}
           {sectionsMap?.contact && (

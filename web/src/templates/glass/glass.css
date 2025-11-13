@@ -11,6 +11,12 @@
 @import './styles/user-header.css';
 @import './styles/sections.css';
 @import './styles/items.css';
+@import './styles/job-card.css';
+@import './styles/education-card.css';
+@import './styles/project-card.css';
+@import './styles/text-card.css';
+@import './styles/certificate-card.css';
+@import './styles/award-card.css';
 @import './styles/about-card.css';
 @import './styles/cards.css';
 @import './styles/forms.css';
