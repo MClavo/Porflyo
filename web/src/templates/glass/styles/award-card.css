@@ -8,8 +8,9 @@
   backdrop-filter: blur(12px);
   border-radius: 16px;
   padding: 1.5rem;
-  max-width: 390px;
   width: 100%;
+  max-width: 370px;
+  min-width: 320px;
   box-sizing: border-box;
   transition: all 0.3s ease;
   position: relative;
@@ -18,7 +19,9 @@
 /* Same size in both modes */
 .tpl-glass .award-card[data-mode="view"],
 .tpl-glass .award-card[data-mode="edit"] {
+  width: 100%;
   max-width: 370px;
+  min-width: 320px;
   padding: 1.5rem;
   border: 1px solid rgba(255, 255, 255, 0.22);
   background: rgba(255, 255, 255, 0.12);
@@ -38,6 +41,7 @@
 /* Event section */
 .tpl-glass .award-card__event-section {
   margin-bottom: 8px;
+  width: 100%;
 }
 
 .tpl-glass .award-card .award-card__event,
@@ -49,11 +53,15 @@
   letter-spacing: 0.3px;
   line-height: 1.2;
   margin: 0;
+  width: 100%;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 /* Category section */
 .tpl-glass .award-card__category-section {
   margin-bottom: 8px;
+  width: 100%;
 }
 
 .tpl-glass .award-card .award-card__category,
@@ -63,6 +71,9 @@
   font-weight: 600;
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
   margin: 0;
+  width: 100%;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 /* Date section */
@@ -118,6 +129,9 @@
   color: rgba(255, 255, 255, 0.88);
   font-size: 14px;
   line-height: 1.7;
+  width: 100%;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 /* All award card inputs - ALWAYS no padding, no border, DYNAMIC WIDTH (same in view and edit) */
@@ -134,11 +148,13 @@
   outline: none !important;
   box-shadow: none !important;
   width: 100% !important;
+  box-sizing: border-box !important;
 }
 
 /* Description textarea in edit mode */
 .tpl-glass .award-card[data-mode="edit"] .award-card__description textarea {
-  width: 100%;
+  width: 100% !important;
+  min-height: 80px;
   background: rgba(255, 255, 255, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 8px;
@@ -146,6 +162,7 @@
   backdrop-filter: blur(8px);
   color: rgba(255, 255, 255, 0.9);
   resize: none;
+  box-sizing: border-box !important;
 }
 
 .tpl-glass .award-card[data-mode="edit"] .award-card__description textarea:focus {

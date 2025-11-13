@@ -15,6 +15,7 @@
   padding: var(--space-4);
   animation: fadeIn 0.2s ease-out;
   border-radius: var(--radius-lg);
+  height: 100;
 }
 
 @keyframes fadeIn {

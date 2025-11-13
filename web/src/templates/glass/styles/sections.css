@@ -140,10 +140,10 @@
 /* Achievements section - 3 column grid */
 .tpl-glass #achievements .section-cards {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 360px), 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(320px, 370px));
   gap: 1.5rem;
   justify-content: center;
-  justify-items: center;
+  justify-items: stretch;
   max-width: 1200px;
   margin-left: auto;
   margin-right: auto;
