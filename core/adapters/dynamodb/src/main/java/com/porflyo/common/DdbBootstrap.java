@@ -31,7 +31,7 @@ import software.amazon.awssdk.services.dynamodb.model.ResourceNotFoundException;
  * </p>
  * !!!! NEVER use this in production !!!!
  */
-@Requires(env = { Environment.TEST, Environment.DEVELOPMENT, "local" })
+@Requires(env = {Environment.DEVELOPMENT, "local", "integration", "s3-integration" })
 @Requires(beans = DdbConfig.class) // Only if DynamoDbConfig is present
 public class DdbBootstrap implements ApplicationEventListener<StartupEvent> {
 

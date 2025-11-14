@@ -2,6 +2,9 @@ package com.porflyo.usecase;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.porflyo.model.ids.SectionId;
 import com.porflyo.model.ids.UserId;
 import com.porflyo.model.portfolio.PortfolioSection;
@@ -13,7 +16,7 @@ import com.porflyo.ports.SavedSectionRepository;
 import jakarta.inject.Inject;
 
 public class SavedSectionUseCase {
-    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(SavedSectionUseCase.class);
+    private static final Logger log = LoggerFactory.getLogger(SavedSectionUseCase.class);
 
     private final MediaCountRepository mediaCountRepository;
     private final MediaUseCase mediaUseCase;

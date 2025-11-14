@@ -42,7 +42,7 @@ import io.micronaut.json.JsonMapper;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import jakarta.inject.Inject;
 
-@MicronautTest(environments = "local")
+@MicronautTest(environments = "test")
 @ExtendWith(MockitoExtension.class)
 @DisplayName("Metrics Get Handler Tests")
 class MetricsGetHandlerTest {

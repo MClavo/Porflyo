@@ -33,7 +33,7 @@ import com.porflyo.ports.QuotaRepository;
 import com.porflyo.ports.SlugGeneratorPort;
 
 @ExtendWith(MockitoExtension.class)
-@DisplayName("PortfolioUseCase (unit)")
+@DisplayName("PortfolioUseCase Tests")
 class PortfolioUseCaseTest {
 
     @Mock PortfolioRepository portfolioRepository;
@@ -41,6 +41,7 @@ class PortfolioUseCaseTest {
     @Mock MediaUseCase mediaUseCase;
     @Mock QuotaRepository quotaRepository;
     @Mock SlugGeneratorPort slugGenerator;
+    @Mock MetricsUseCase metricsUseCase;
 
     @InjectMocks PortfolioUseCase portfolioUseCase;
 

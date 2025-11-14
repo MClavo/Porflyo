@@ -1,22 +1,35 @@
 micronaut:
-  test:
-    resources:
-      enabled: false
+  environments:
+    active: local
 
-oauth:
-  provider-name: github
-  client-id: test-client-id
-  client-secret: test-client-secret
-  redirect-uri: http://localhost:8080/callback
-  scope: repo
-  user-agent: test-agent
+# DynamoDB Configuration for SAM Local
+aws:
+  region: us-east-1
+   
+dynamodb:
+  endpoint: http://host.docker.internal:8000
+  user-table: user-test    
+  metrics-table: metrics-test
+  region: us-east-1
+
+s3:
+  access-key: test
+  secret-key: test
+  expiration: 5
+  region: us-east-1
+  bucket-name: porflyo-media-test
+  endpoint: http://host.docker.internal:8000
+
+quota:
+  max-saved-sections: 10
+  max-portfolios: 3
 
 github:
   api:
-    base-url: ${github.url:`http://localhost:8089`}
-    oauth-base-url: ${github.url:`http://localhost:8089`}
-    timeout: 2
-
+    base-url: https://api.github.com
+    oauth-base-url: https://github.com
+    timeout: 30
+  
 logger:
   levels:
     com.porflyo: DEBUG

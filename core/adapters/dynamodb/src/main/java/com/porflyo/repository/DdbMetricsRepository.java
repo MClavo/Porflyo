@@ -7,9 +7,11 @@ import static com.porflyo.common.DdbKeys.pk;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,9 +57,28 @@ public class DdbMetricsRepository implements PortfolioMetricsRepository {
     // ────────────────────────── Save ──────────────────────────
 
     @Override
-    public void saveTodayMetrics(PortfolioMetrics metrics) {
-        table.putItem(DdbPortfolioMetricsMapper.toItem(List.of(metrics)));
-        log.debug("Saved metrics for portfolio: {}", metrics.portfolioId().value());    
+    public void saveTodayMetrics(PortfolioMetrics currentPortfolioMetrics) {
+        // Metrics are sharded and saved as a list therefore
+        // first retrieve existing metrics for today
+        Key key = buildTodayMetricsKey(currentPortfolioMetrics.portfolioId(), currentPortfolioMetrics.date());
+
+        // Metrics must have been aggregated before saving, 
+        // so we overwrite any existing metrics for today
+        DdbPortfolioMetricsItem existingItem = table.getItem(r -> r.key(key));
+        List<PortfolioMetrics> existingMetrics = existingItem != null
+            ? DdbPortfolioMetricsMapper.fromItem(existingItem)
+            : new ArrayList<PortfolioMetrics>();
+        
+        // Combine existing metrics with new metrics, overwriting today's entry
+        List<PortfolioMetrics> combinedMetrics = existingMetrics.stream()
+            .filter(pm -> !pm.date().equals(currentPortfolioMetrics.date()))
+            .collect(Collectors.toCollection(ArrayList::new));
+
+        combinedMetrics.add(currentPortfolioMetrics);
+
+        // Save back to DynamoDB
+        table.putItem(DdbPortfolioMetricsMapper.toItem(combinedMetrics));
+        log.debug("Saved metrics for portfolio: {}", currentPortfolioMetrics.portfolioId().value());    
     }
 
 
@@ -122,7 +143,7 @@ public class DdbMetricsRepository implements PortfolioMetricsRepository {
 
     @Override
     public Optional<PortfolioMetrics> getTodayMetrics(PortfolioId portfolioId) {
-        Key key = buildTodayMetricsKey(portfolioId);
+        Key key = buildTodayMetricsKey(portfolioId, LocalDate.now());
         DdbPortfolioMetricsItem item = table.getItem(r -> r.key(key));
 
         if (item == null) {
@@ -193,9 +214,9 @@ public class DdbMetricsRepository implements PortfolioMetricsRepository {
 
     // ────────────────────────── Private Methods ──────────────────────────
 
-    private Key buildTodayMetricsKey(PortfolioId id) {
+    private Key buildTodayMetricsKey(PortfolioId id, LocalDate date) {
         String pk = pk(METRICS_PK_PREFIX, id.value());
-        String sk = DdbKeys.skTodayMonthShard();
+        String sk = DdbKeys.skTodayMonthShard(date);
 
         return Key.builder()
                 .partitionValue(pk)
