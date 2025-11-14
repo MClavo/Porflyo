@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 import { uploadBlobImages, isBlobUrl } from '../clients/media.api';
 import type { AnyCard } from '../../state/Cards.types';
+import type { PortfolioState } from '../../state/Portfolio.types';
 
 /**
  * Hook for managing media uploads for cards
@@ -73,7 +74,75 @@ export const useMedia = () => {
     return { card: updatedCard, urlMapping };
   }, []);
 
+  /**
+   * Process entire portfolio and upload all blob images
+   * Returns a mapping of blob URLs to S3 URLs
+   */
+  const processPortfolioImages = useCallback(async (
+    portfolio: PortfolioState
+  ): Promise<Record<string, string>> => {
+    const blobUrls: string[] = [];
+
+    // Extract all blob URLs from all sections and cards
+    Object.values(portfolio.sections).forEach(section => {
+      // Extract from cards
+      Object.values(section.cardsById).forEach(card => {
+        const extractImages = (data: Record<string, unknown>) => {
+          // Check for images array (ProjectCard)
+          if (data.images && Array.isArray(data.images)) {
+            data.images.forEach((url: string) => {
+              if (isBlobUrl(url) && !blobUrls.includes(url)) {
+                blobUrls.push(url);
+              }
+            });
+          }
+
+          // Check for single image field (CertificateCard)
+          if (data.image && typeof data.image === 'string' && isBlobUrl(data.image)) {
+            if (!blobUrls.includes(data.image)) {
+              blobUrls.push(data.image);
+            }
+          }
+
+          // Check for profileImage (AboutCard)
+          if (data.profileImage && typeof data.profileImage === 'string' && isBlobUrl(data.profileImage)) {
+            if (!blobUrls.includes(data.profileImage)) {
+              blobUrls.push(data.profileImage);
+            }
+          }
+        };
+
+        if (card.data) {
+          extractImages(card.data);
+        }
+      });
+
+      // Also check parsedContent for about sections
+      if (section.parsedContent && typeof section.parsedContent === 'object') {
+        const parsedContent = section.parsedContent as Record<string, unknown>;
+        if (parsedContent.profileImage && typeof parsedContent.profileImage === 'string' && isBlobUrl(parsedContent.profileImage)) {
+          if (!blobUrls.includes(parsedContent.profileImage)) {
+            blobUrls.push(parsedContent.profileImage);
+          }
+        }
+      }
+    });
+
+    // If no blob URLs found, return empty mapping
+    if (blobUrls.length === 0) {
+      return {};
+    }
+
+    // Upload all blob images in batch and get the URL mapping
+    const urlMapping = await uploadBlobImages(
+      blobUrls.map(blobUrl => ({ blobUrl }))
+    );
+
+    return urlMapping;
+  }, []);
+
   return {
     processCardImages,
+    processPortfolioImages,
   };
 };

@@ -3,6 +3,7 @@ import { useParams, useLocation } from 'react-router-dom';
 import { useAuthContext } from '../ui/useAuthContext';
 import { usePortfoliosContext } from '../ui/usePortfoliosContext';
 import { mapPublicPortfolioDtoToPortfolioState } from '../../api/mappers/portfolio.mappers';
+import { useMedia } from '../../api/hooks/useMedia';
 // mode type previously used when this hook owned UI state
 import type { AnyCard } from '../../state/Cards.types';
 import { portfolioReducer } from '../../state/Portfolio.reducer';
@@ -53,6 +54,7 @@ export function usePortfolioEditorState({ onPortfolioChange, showNotification }:
   });
 
   const { state: savedCardsState } = useSavedCards();
+  const { processPortfolioImages } = useMedia();
 
   // Combined effect to handle all portfolio loading scenarios
   useEffect(() => {
@@ -123,7 +125,43 @@ export function usePortfolioEditorState({ onPortfolioChange, showNotification }:
 
   const handleSavePortfolio = async () => {
     try {
-      const result = await savePortfolio(portfolio, portfolioId);
+      // First, upload all blob images in the portfolio
+      const urlMapping = await processPortfolioImages(portfolio);
+      
+      // If there are any blob images, update the portfolio state with S3 URLs
+      if (Object.keys(urlMapping).length > 0) {
+        dispatch({
+          type: 'REPLACE_IMAGE_URLS',
+          payload: { urlMapping }
+        });
+      }
+
+      // Note: The reducer updates the state synchronously, but we need to save
+      // the updated portfolio. We'll use the portfolio from the next render cycle
+      // by waiting a tick, or we can construct the updated portfolio manually.
+      // For simplicity, we'll create a temporary updated portfolio object.
+      let portfolioToSave = portfolio;
+      if (Object.keys(urlMapping).length > 0) {
+        // Create a deep copy and apply the URL replacements
+        portfolioToSave = JSON.parse(JSON.stringify(portfolio)) as PortfolioState;
+        
+        // Apply URL replacements to the copy
+        Object.values(portfolioToSave.sections).forEach(section => {
+          Object.values(section.cardsById).forEach(card => {
+            if (card.data) {
+              replaceUrlsInObject(card.data as Record<string, unknown>, urlMapping);
+            }
+          });
+          
+          // Also update parsedContent for about sections
+          if (section.parsedContent && typeof section.parsedContent === 'object') {
+            replaceUrlsInObject(section.parsedContent as Record<string, unknown>, urlMapping);
+          }
+        });
+      }
+
+      // Now save the portfolio with all S3 URLs
+      const result = await savePortfolio(portfolioToSave, portfolioId);
       showNotification('Portfolio saved successfully!', 'success');
       return result;
     } catch (err) {
@@ -131,6 +169,23 @@ export function usePortfolioEditorState({ onPortfolioChange, showNotification }:
       showNotification('Failed to save portfolio. Please try again.', 'error');
       throw err;
     }
+  };
+
+  // Helper function to replace URLs in an object recursively
+  const replaceUrlsInObject = (obj: Record<string, unknown>, urlMapping: Record<string, string>): void => {
+    Object.keys(obj).forEach(key => {
+      const value = obj[key];
+
+      if (typeof value === 'string' && urlMapping[value]) {
+        obj[key] = urlMapping[value];
+      } else if (Array.isArray(value)) {
+        obj[key] = value.map(item =>
+          typeof item === 'string' && urlMapping[item] ? urlMapping[item] : item
+        );
+      } else if (value && typeof value === 'object') {
+        replaceUrlsInObject(value as Record<string, unknown>, urlMapping);
+      }
+    });
   };
 
   // wrapper to keep previous behavior: when slug is available and check finished, normalize it
