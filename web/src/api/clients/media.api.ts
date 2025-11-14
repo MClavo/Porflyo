@@ -1,16 +1,11 @@
 import MD5 from 'crypto-js/md5';
 import Base64 from 'crypto-js/enc-base64';
 import WordArray from 'crypto-js/lib-typedarrays';
+import type { PresignRequestDto } from '../types/dto';
+
 export interface PresignedPutResponse {
   url: string;
   fields: Record<string, string>;
-}
-
-export interface MediaUploadRequest {
-  key: string;
-  contentType: string;
-  size: number;
-  md5: string;
 }
 
 /**
@@ -40,7 +35,7 @@ export const calculateMD5 = async (blob: Blob): Promise<string> => {
  * Request a presigned PUT URL from the backend
  */
 export const requestPresignedPost = async (
-  requests: MediaUploadRequest[]
+  requests: PresignRequestDto[]
 ): Promise<PresignedPutResponse[]> => {
   const response = await fetch('/api/media', {
     method: 'POST',
@@ -85,73 +80,7 @@ export const uploadToS3 = async (
 };
 
 /**
- * Check if user has a custom profile image (not from GitHub)
- */
-export const hasCustomProfileImage = (user: { profileImage: string; providerAvatarUrl: string }): boolean => {
-  return user.profileImage !== user.providerAvatarUrl;
-};
-
-/**
- * Check if URL is a GitHub avatar URL
- */
-export const isGitHubAvatarUrl = (url: string): boolean => {
-  return url.includes('avatars.githubusercontent.com');
-};
-
-/**
- * Complete workflow to upload a profile picture
- * Now simplified since the backend provides profileImageKey directly
- */
-export const uploadProfilePicture = async (
-  imageBlob: Blob,
-  profileImageKey: string
-): Promise<void> => {
-  try {
-    // For now, let's try without MD5 to see if that's causing the issue
-    const uploadRequest: MediaUploadRequest = {
-      key: profileImageKey,
-      contentType: 'image/webp',
-      size: imageBlob.size,
-      md5: await calculateMD5(imageBlob), // Calculate MD5 for testing
-    };
-
-    // Get presigned URL
-  // requestPresignedPost now accepts an array and returns an array.
-  const presignedPuts = await requestPresignedPost([uploadRequest]);
-
-  // Use the first presigned response for this single upload
-  const presignedPut = presignedPuts[0];
-
-  // Upload to S3
-  await uploadToS3(presignedPut, imageBlob);
-    
-  } catch (error) {
-    console.error('Error uploading profile picture:', error);
-    throw error;
-  }
-};
-
-/**
- * Delete a profile picture using the profileImageKey
- */
-export const deleteProfilePicture = async (profileImageKey: string): Promise<void> => {
-  try {
-    const response = await fetch(`/api/media/${encodeURIComponent(profileImageKey)}`, {
-      method: 'DELETE',
-      credentials: 'include',
-    });
-
-    if (!response.ok && response.status !== 404) {
-      throw new Error(`Failed to delete profile picture: ${response.statusText}`);
-    }
-  } catch (error) {
-    console.error('Error deleting profile picture:', error);
-    // Don't throw error for delete operations to avoid blocking the UI
-  }
-};
-
-/**
- * Check if a URL is a blob URL (created by URL.createObjectURL)
+ * Check if URL is a blob URL (created by URL.createObjectURL)
  */
 export const isBlobUrl = (url: string): boolean => {
   return url.startsWith('blob:');
@@ -182,38 +111,93 @@ export const getImageUrl = (key: string, presignedUrl?: string): string => {
 };
 
 /**
- * Upload multiple images for a card and return the mapping of old URLs to new S3 URLs
+ * Delete a profile picture using the profileImageKey
  */
-export const uploadCardImages = async (
-  blobUrls: string[]
+export const deleteProfilePicture = async (profileImageKey: string): Promise<void> => {
+  try {
+    const response = await fetch(`/api/media/${encodeURIComponent(profileImageKey)}`, {
+      method: 'DELETE',
+      credentials: 'include',
+    });
+
+    if (!response.ok && response.status !== 404) {
+      throw new Error(`Failed to delete profile picture: ${response.statusText}`);
+    }
+  } catch (error) {
+    console.error('Error deleting profile picture:', error);
+    // Don't throw error for delete operations to avoid blocking the UI
+  }
+};
+
+/**
+ * Upload a profile picture
+ */
+export const uploadProfilePicture = async (
+  imageBlob: Blob,
+  profileImageKey: string
+): Promise<void> => {
+  try {
+    const uploadRequest: PresignRequestDto = {
+      key: profileImageKey,
+      contentType: 'image/webp',
+      size: imageBlob.size,
+      md5: await calculateMD5(imageBlob),
+    };
+
+    // Get presigned URL
+    const presignedPuts = await requestPresignedPost([uploadRequest]);
+    const presignedPut = presignedPuts[0];
+
+    // Upload to S3
+    await uploadToS3(presignedPut, imageBlob);
+  } catch (error) {
+    console.error('Error uploading profile picture:', error);
+    throw error;
+  }
+};
+
+/**
+ * Retrieve blob from blob URL
+ * This is a global registry managed by the browser
+ */
+const getBlobFromBlobUrl = async (blobUrl: string): Promise<Blob> => {
+  const response = await fetch(blobUrl);
+  return response.blob();
+};
+
+/**
+ * Upload multiple blob images and return URL mapping
+ * @param blobsWithUrls - Array of {blobUrl, blob} pairs. If blob is provided, it will be used directly.
+ */
+export const uploadBlobImages = async (
+  blobsWithUrls: Array<{ blobUrl: string; blob?: Blob }>
 ): Promise<Record<string, string>> => {
-  if (blobUrls.length === 0) {
+  if (blobsWithUrls.length === 0) {
     return {};
   }
 
   const urlMapping: Record<string, string> = {};
-  const uploadRequests: MediaUploadRequest[] = [];
+  const uploadRequests: PresignRequestDto[] = [];
   const blobsWithKeys: Array<{ blob: Blob; key: string; originalUrl: string }> = [];
 
   // Prepare upload requests for each blob
-  for (const blobUrl of blobUrls) {
+  for (const { blobUrl, blob } of blobsWithUrls) {
     try {
-      // Fetch the blob from the blob URL
-      const response = await fetch(blobUrl);
-      const blob = await response.blob();
+      // Use provided blob or fetch from blob URL
+      const blobToUpload = blob || await getBlobFromBlobUrl(blobUrl);
       
       const key = generateImageKey();
-      const md5 = await calculateMD5(blob);
+      const md5 = await calculateMD5(blobToUpload);
       
       uploadRequests.push({
         key,
         contentType: 'image/webp',
-        size: blob.size,
+        size: blobToUpload.size,
         md5,
       });
       
       blobsWithKeys.push({
-        blob,
+        blob: blobToUpload,
         key,
         originalUrl: blobUrl,
       });
@@ -244,7 +228,7 @@ export const uploadCardImages = async (
 
     return urlMapping;
   } catch (error) {
-    console.error('Failed to upload card images:', error);
+    console.error('Failed to upload blob images:', error);
     throw error;
   }
 };

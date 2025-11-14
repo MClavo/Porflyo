@@ -13,6 +13,7 @@ import { usePortfolioEditorState } from "../hooks/editor/usePortfolioEditorState
 import { useRepositoryFlow } from "../hooks/save/repository/useRepositoryFlow";
 import { useSavedCards } from "../state/SavedCards.hooks";
 import { useSavedSectionsContext } from "../hooks/ui/useSavedSectionsContext";
+import { useMedia } from "../api/hooks/useMedia";
 import { type TemplateKey } from "../templates/Template.types";
 import type { CardType, CardPatchByType } from "../state/Cards.types";
 import type { PortfolioState } from "../state/Portfolio.types";
@@ -60,6 +61,9 @@ export default function PortfolioEditor({
   // Saved sections from API
   const savedSectionsContext = useSavedSectionsContext();
 
+  // Media hook for uploading images
+  const { processCardImages } = useMedia();
+
   // Track if we've loaded saved sections to avoid reloading
   const hasLoadedSavedSections = React.useRef(false);
 
@@ -78,13 +82,26 @@ export default function PortfolioEditor({
   // Saved cards handlers
   const handleSaveCard = async (card: AnyCard, originSectionId: string, originSectionType: string, name: string) => {
     try {
-      const savedSection = await savedCardsContext.saveCard(card, originSectionId, originSectionType, name);
+      // First, upload any blob images and get the card with updated S3 URLs
+      const { card: cardWithUploadedImages, urlMapping } = await processCardImages(card);
+      
+      // Update the portfolio state with new URLs (replaces blobs in all cards)
+      if (Object.keys(urlMapping).length > 0) {
+        state.dispatch({
+          type: 'REPLACE_IMAGE_URLS',
+          payload: { urlMapping }
+        });
+      }
+      
+      // Now save the card with the S3 URLs
+      const savedSection = await savedCardsContext.saveCard(cardWithUploadedImages, originSectionId, originSectionType, name);
       
       // Also add to saved sections context
       savedSectionsContext.addSection(savedSection);
       
       showNotification("Card saved successfully", "success");
-    } catch {
+    } catch (error) {
+      console.error("Error saving card:", error);
       showNotification("Failed to save card", "error");
     }
   };

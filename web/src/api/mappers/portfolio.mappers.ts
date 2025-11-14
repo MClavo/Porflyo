@@ -112,14 +112,24 @@ export function mapSectionStateToPortfolioSection(section: SectionState): Portfo
     };
   }).filter(Boolean);
 
-  // Extract media URLs from items (for future image support)
+  // Extract media URLs from items
   const mediaUrls: string[] = [];
-  // TODO: Implement media extraction when adding image support
-  // items.forEach(item => {
-  //   if (item.type === 'project' && item.images) {
-  //     mediaUrls.push(...item.images);
-  //   }
-  // });
+  items.forEach(item => {
+    if (item && typeof item === 'object') {
+      // Extract from images array (ProjectCard)
+      if ('images' in item && Array.isArray(item.images)) {
+        mediaUrls.push(...item.images.filter((url): url is string => typeof url === 'string'));
+      }
+      // Extract from single image field (CertificateCard)
+      if ('image' in item && typeof item.image === 'string') {
+        mediaUrls.push(item.image);
+      }
+      // Extract from profileImage (AboutCard)
+      if ('profileImage' in item && typeof item.profileImage === 'string') {
+        mediaUrls.push(item.profileImage);
+      }
+    }
+  });
 
   return {
     sectionType: section.id,
