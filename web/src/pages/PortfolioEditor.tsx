@@ -188,6 +188,11 @@ export default function PortfolioEditor({
         continue; // Skip regular SectionCard rendering
       }
 
+      // In view mode, skip sections that have no cards
+      if (state.ui.mode === 'view' && (!s.cardsOrder || s.cardsOrder.length === 0)) {
+        continue;
+      }
+
       // Regular sections with cards
       sectionsMap[sid] = (
         <SectionCard

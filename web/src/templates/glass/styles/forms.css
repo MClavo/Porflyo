@@ -48,6 +48,10 @@
   cursor: pointer !important;
 }
 
+.tpl-glass .add-card-option {
+  color: #7a828f !important;
+}
+
 .tpl-glass button:hover {
   background: rgba(255, 255, 255, 0.3) !important;
   border-color: rgba(255, 255, 255, 0.4) !important;

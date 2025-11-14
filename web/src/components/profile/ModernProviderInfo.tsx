@@ -42,7 +42,7 @@ export const ModernProviderInfo: React.FC<ModernProviderInfoProps> = ({
     return null;
   }
 
-  const githubUrl = `https://github.com/${user.providerUserName}`;
+  const githubUrl = `https://github.com/${user.providerUserName.replace(/\s+/g, '')}`;
 
   return (
     <div className="profile-section">
