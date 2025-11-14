@@ -85,7 +85,7 @@
 .project-card__images .images img {
   display: block;
   width: 100%;
-  /* 16:9 aspect ratio - adjust as needed */
+  max-width: var(--current-card-width);  /* 16:9 aspect ratio - adjust as needed */
   height: calc(var(--current-card-width, 100%) * 0.56);
   object-fit: cover;
 }
