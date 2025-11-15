@@ -61,16 +61,11 @@
   display: none !important;
 }
 
-.tpl-ats div[class*="section-"][class*="-wrapper"] {
+.tpl-ats .about-section-name {
   position: relative !important;
   display: block !important;
   margin-bottom: var(--ats-section-spacing) !important;
   padding-bottom: 0 !important;
-}
-
-.tpl-ats div[class*="section-"][class*="-wrapper"] input {
-  margin-bottom: 0 !important;
-  padding-bottom: var(--ats-title-margin-bottom) !important;
 }
 
 .tpl-ats[data-mode="edit"] input.section-title {

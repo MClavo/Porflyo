@@ -60,7 +60,7 @@
 .tpl-ats .about-section-name-wrapper input {
   font-size: var(--ats-font-size-name) !important;
   font-weight: 700 !important;
-  margin: 0 !important;
+/*   margin: 0 !important; */
   text-shadow: none !important;
   color: var(--ats-text-color) !important;
   background: none !important;
@@ -173,7 +173,7 @@
   background: none !important;
   border: none !important;
   color: var(--ats-text-color) !important;
-  resize: vertical !important;
+  /* resize: none !important; */
   transition: none !important;
   font-family: var(--ats-font-family) !important;
   margin: 0 !important;

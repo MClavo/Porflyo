@@ -21,3 +21,7 @@
   max-width: 100%;
   background-color: var(--ats-bg-color);
 }
+
+.tpl-ats textarea {
+  resize: none !important;
+}
