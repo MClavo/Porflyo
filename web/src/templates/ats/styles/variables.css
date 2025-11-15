@@ -1,0 +1,31 @@
+/* ============================================
+   ATS TEMPLATE - CSS VARIABLES
+   ============================================ */
+
+.tpl-ats {
+  /* Colors */
+  --ats-bg-color: #ffffff;
+  --ats-text-color: #000000;
+  --ats-text-secondary: #333333;
+  --ats-text-muted: #666666;
+  --ats-border-color: #000000;
+  
+  /* Typography */
+  --ats-font-family: 'Times New Roman', Times, serif;
+  --ats-font-size-base: 11pt;
+  --ats-font-size-name: 24pt;
+  --ats-font-size-section-title: 14pt;
+  --ats-font-size-contact: 10pt;
+  --ats-line-height-base: 1.4;
+  
+  /* Spacing */
+  --ats-container-width: 1000px;
+  --ats-padding-page: 40px;
+  --ats-section-spacing: 20px;
+  --ats-element-spacing: 8px;
+  --ats-title-margin-bottom: 8px;
+  
+  /* Borders */
+  --ats-border-width: 1px;
+  --ats-section-border-width: 1.5px;
+}

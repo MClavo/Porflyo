@@ -1,0 +1,108 @@
+/* ============================================
+   PORTFOLIO SECTIONS
+   ============================================ */
+
+.tpl-ats .portfolio-section {
+  width: 100%;
+  background: none;
+  backdrop-filter: none;
+  border-radius: 0;
+  padding: 0;
+  border: none;
+  box-shadow: none;
+  transition: none;
+  margin-bottom: var(--ats-section-spacing);
+}
+
+.tpl-ats .portfolio-section:hover {
+  background: none;
+  transform: none;
+  box-shadow: none;
+}
+
+.tpl-ats .section-content {
+  width: 100%;
+}
+
+/* Section titles */
+.tpl-ats h1.section-title,
+.tpl-ats input.section-title {
+  color: var(--ats-text-color) !important;
+  font-size: var(--ats-font-size-section-title) !important;
+  font-weight: 700 !important;
+  margin-bottom: var(--ats-title-margin-bottom) !important;
+  text-shadow: none !important;
+  padding: 0 !important;
+  padding-bottom: var(--ats-title-margin-bottom) !important;
+  margin: 0 !important;
+  margin-bottom: 0 !important;
+  background: none !important;
+  border: none !important;
+  border-bottom: var(--ats-section-border-width) solid var(--ats-border-color) !important;
+  font-family: var(--ats-font-family) !important;
+  line-height: 1.2 !important;
+  width: 100% !important;
+  outline: none !important;
+  display: block !important;
+  -webkit-background-clip: unset !important;
+  -webkit-text-fill-color: var(--ats-text-color) !important;
+  background-clip: unset !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  appearance: none !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Remove the after pseudo-element from title */
+.tpl-ats h1.section-title::after {
+  display: none !important;
+}
+
+.tpl-ats div[class*="section-"][class*="-wrapper"] {
+  position: relative !important;
+  display: block !important;
+  margin-bottom: var(--ats-section-spacing) !important;
+  padding-bottom: 0 !important;
+}
+
+.tpl-ats div[class*="section-"][class*="-wrapper"] input {
+  margin-bottom: 0 !important;
+  padding-bottom: var(--ats-title-margin-bottom) !important;
+}
+
+.tpl-ats[data-mode="edit"] input.section-title {
+  background: rgba(0, 0, 0, 0.01) !important;
+  border-radius: 0 !important;
+  padding-left: 0.5rem !important;
+  padding-right: 0.5rem !important;
+}
+
+.tpl-ats div[class*="section-"][class*="-wrapper"]::after {
+  display: none !important;
+}
+
+/* Cards container - Always single column */
+.tpl-ats .section-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+/* Force single column in all sections */
+.tpl-ats #experiences .section-cards,
+.tpl-ats #education .section-cards,
+.tpl-ats #projects .section-cards,
+.tpl-ats #achievements .section-cards,
+.tpl-ats #skills .section-cards,
+.tpl-ats #text .section-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 100%;
+  margin-left: 0;
+  margin-right: 0;
+}
