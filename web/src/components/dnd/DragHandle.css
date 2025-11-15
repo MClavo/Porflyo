@@ -107,7 +107,7 @@
   /* Remove any background - only show the card */
   background: transparent !important;
   /* Fit content size */
-  width: fit-content;
+  /* width: fit-content; */
   min-width: 0;
   max-width: none;
   /* Remove any padding/margin that might cut off content */
