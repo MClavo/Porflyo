@@ -1,0 +1,285 @@
+/* ============================================
+   AWARD CARD - ATS Template
+   ============================================ */
+
+/* Base card - no visible borders or background */
+.tpl-ats .award-card {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 0;
+  background: none;
+  border: none;
+  border-radius: 0;
+  transition: none;
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+  min-width: 100%;
+  box-sizing: border-box;
+  margin-bottom: 12px;
+}
+
+.tpl-ats .award-card:hover {
+  box-shadow: none;
+}
+
+.tpl-ats .award-card[data-mode="edit"] {
+  border: none;
+  background: none;
+  padding: 0;
+}
+
+/* Event Section - bold and slightly larger */
+.tpl-ats .award-card__event-section {
+  margin-bottom: 0;
+  width: 100%;
+}
+
+.tpl-ats .award-card__event {
+  font-size: 12pt;
+  font-weight: 700;
+  color: var(--ats-text-color);
+  line-height: var(--ats-line-height-base);
+  width: 100%;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  font-family: var(--ats-font-family);
+  margin: 0;
+  padding: 0;
+  text-shadow: none;
+  -webkit-text-fill-color: var(--ats-text-color);
+  -webkit-background-clip: unset;
+  background-clip: unset;
+  background: none;
+}
+
+.tpl-ats input.award-card__event,
+.tpl-ats h1.award-card__event,
+.tpl-ats h2.award-card__event,
+.tpl-ats h3.award-card__event {
+  width: 100%;
+  font-size: 12pt;
+  font-weight: 700;
+  color: var(--ats-text-color);
+  line-height: var(--ats-line-height-base);
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  outline: none;
+  box-sizing: border-box;
+  font-family: var(--ats-font-family);
+  text-shadow: none;
+  -webkit-text-fill-color: var(--ats-text-color);
+  -webkit-background-clip: unset;
+  background-clip: unset;
+}
+
+.tpl-ats .award-card[data-mode="edit"] input.award-card__event:focus {
+  outline: none;
+  background: rgba(0, 0, 0, 0.1);
+  padding-bottom: 2px;
+}
+
+/* Category Section - normal weight */
+.tpl-ats .award-card__category-section {
+  display: flex;
+  align-items: baseline;
+  gap: 0;
+  margin-bottom: 0;
+  width: 100%;
+}
+
+.tpl-ats .award-card__category {
+  font-size: var(--ats-font-size-base);
+  font-weight: 400;
+  color: var(--ats-text-color);
+  line-height: var(--ats-line-height-base);
+  width: 100%;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  font-family: var(--ats-font-family);
+  margin: 0;
+  padding: 0;
+  text-shadow: none;
+  -webkit-text-fill-color: var(--ats-text-color);
+  -webkit-background-clip: unset;
+  background-clip: unset;
+  background: none;
+}
+
+.tpl-ats input.award-card__category,
+.tpl-ats h1.award-card__category,
+.tpl-ats h2.award-card__category,
+.tpl-ats h3.award-card__category {
+  width: 100%;
+  font-size: var(--ats-font-size-base);
+  font-weight: 400;
+  color: var(--ats-text-color);
+  line-height: var(--ats-line-height-base);
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  outline: none;
+  box-sizing: border-box;
+  font-family: var(--ats-font-family);
+  text-shadow: none;
+  -webkit-text-fill-color: var(--ats-text-color);
+  -webkit-background-clip: unset;
+  background-clip: unset;
+}
+
+.tpl-ats .award-card[data-mode="edit"] .award-card__category-wrapper input.award-card__category:focus {
+  outline: none;
+  background: rgba(0, 0, 0, 0.1);
+  padding-bottom: 2px;
+}
+
+/* Date Section */
+.tpl-ats .award-card__date {
+  font-size: var(--ats-font-size-base);
+  color: var(--ats-text-color);
+  font-weight: 400;
+  margin-bottom: 2px;
+  font-family: var(--ats-font-family);
+}
+
+/* Date component styling */
+.tpl-ats .award-card__date .date-view {
+  font-size: var(--ats-font-size-base);
+  color: var(--ats-text-color);
+  white-space: nowrap;
+  font-family: var(--ats-font-family);
+}
+
+.tpl-ats .award-card__date .date-edit {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.tpl-ats .award-card__date .date-month-select,
+.tpl-ats .award-card__date .date-year-input {
+  font-size: var(--ats-font-size-base);
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  background: none;
+  color: var(--ats-text-color);
+  font-family: var(--ats-font-family);
+  font-weight: 400;
+  height: auto;
+  line-height: 1;
+}
+
+.tpl-ats .award-card__date .date-month-select {
+  width: fit-content;
+  min-width: 0;
+  max-width: none;
+  cursor: pointer;
+  -webkit-appearance: menulist;
+  -moz-appearance: menulist;
+  appearance: menulist;
+  padding-right: 0;
+}
+
+.tpl-ats .award-card__date .date-year-input {
+  width: 3ch;
+  min-width: 3ch;
+  max-width: 4ch;
+  text-align: left;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+.tpl-ats .award-card__date .date-month-select:focus,
+.tpl-ats .award-card__date .date-year-input:focus {
+  outline: none;
+  background: rgba(0, 0, 0, 0.02);
+  border-bottom: 1px solid var(--ats-border-color);
+}
+
+/* Description */
+.tpl-ats .award-card__description {
+  font-size: var(--ats-font-size-base);
+  color: var(--ats-text-color);
+  line-height: var(--ats-line-height-base);
+  margin-top: 0;
+  width: 100%;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  font-family: var(--ats-font-family);
+}
+
+/* .tpl-ats .award-card span.award-card__description, */
+.tpl-ats .award-card .award-card__description {
+  width: 100%;
+  display: block;
+  margin: 0;
+  padding: 0;
+  text-align: left;
+  color: var(--ats-text-color);
+  font-size: var(--ats-font-size-base);
+  line-height: var(--ats-line-height-base);
+  font-family: var(--ats-font-family);
+}
+
+.tpl-ats .award-card  textarea.award-card__description {
+  width: 100%;
+  min-height: 60px;
+  resize: none;
+  font-size: var(--ats-font-size-base);
+  color: var(--ats-text-color);
+  line-height: var(--ats-line-height-base);
+  background: none;
+  border: none;
+  border-radius: 0;
+  padding: 4px 8px;
+  box-sizing: border-box;
+  font-family: var(--ats-font-family);
+  outline: none;
+  transition: none;
+}
+
+.tpl-ats .award-card  textarea.award-card__description:hover {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.tpl-ats .award-card__description textarea:focus {
+  outline: none;
+  background: rgba(0, 0, 0, 0.01);
+  border: 1px solid var(--ats-border-color);
+  padding: 3px 7px;
+  margin: -4px -8px;
+}
+
+.tpl-ats .award-card[data-mode="edit"] .award-card__description textarea {
+  resize: none;
+  width: 100%;
+}
+
+/* Edit mode specific styles */
+.tpl-ats .award-card[data-mode="edit"] .award-card__event,
+.tpl-ats .award-card[data-mode="edit"] .award-card__category,
+.tpl-ats .award-card[data-mode="edit"] .award-card__description {
+  min-height: auto;
+  width: 100%;
+}
+
+.tpl-ats .award-card[data-mode="edit"] input,
+.tpl-ats .award-card[data-mode="edit"] textarea {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Remove all default styling */
+.tpl-ats .award-card input,
+.tpl-ats .award-card textarea,
+.tpl-ats .award-card p {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
