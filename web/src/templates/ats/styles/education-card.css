@@ -1,0 +1,224 @@
+/* ============================================
+   EDUCATION CARD - ATS Template
+   ============================================ */
+
+/* Base card - no visible borders or background */
+.tpl-ats .education-card {
+  background: none;
+  border: none;
+  border-radius: 0;
+  padding: 0;
+  /* margin-bottom: 12px; */
+  min-width: 100%;
+  max-width: 100%;
+  width: 100%;
+  box-sizing: border-box;
+  font-family: var(--ats-font-family);
+  color: var(--ats-text-color);
+}
+
+/* Header: Title and dates on same line */
+.tpl-ats .education-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 16px;
+  margin-bottom: 2px;
+}
+
+/* Degree/Program title - bold and slightly larger */
+.tpl-ats .education-card .education-card-title,
+.tpl-ats .education-card .education-card-title-wrapper,
+.tpl-ats .education-card .education-card-title-wrapper input,
+.tpl-ats .education-card .education-card-title-wrapper h1,
+.tpl-ats .education-card .education-card-title-wrapper h2,
+.tpl-ats .education-card .education-card-title-wrapper h3 {
+  flex: 1;
+  margin: 0;
+  padding: 0;
+  font-size: 12pt;
+  font-weight: 700;
+  color: var(--ats-text-color);
+  line-height: var(--ats-line-height-base);
+  background: none;
+  border: none;
+  font-family: var(--ats-font-family);
+  width: auto;
+  min-width: 50px;
+  max-width: 100%;
+  box-sizing: border-box;
+  text-shadow: none;
+  -webkit-text-fill-color: var(--ats-text-color);
+  -webkit-background-clip: unset;
+  background-clip: unset;
+}
+
+/* Dates container - aligned to the right */
+.tpl-ats .education-card-dates {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+  font-size: var(--ats-font-size-base);
+  color: var(--ats-text-color);
+  white-space: nowrap;
+}
+
+.tpl-ats .education-card-date-separator {
+  color: var(--ats-text-color);
+  font-weight: 400;
+  padding: 0 2px;
+}
+
+/* Date component styling */
+.tpl-ats .education-card-dates .date-view {
+  font-size: var(--ats-font-size-base);
+  color: var(--ats-text-color);
+  white-space: nowrap;
+  font-family: var(--ats-font-family);
+}
+
+.tpl-ats .education-card-dates .date-edit {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.tpl-ats .education-card-dates .date-month-select,
+.tpl-ats .education-card-dates .date-year-input {
+  font-size: var(--ats-font-size-base);
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  background: none;
+  color: var(--ats-text-color);
+  font-family: var(--ats-font-family);
+  font-weight: 400;
+  height: auto;
+  line-height: 1;
+}
+
+.tpl-ats .education-card-dates .date-month-select {
+  width: fit-content;
+  min-width: 0;
+  max-width: none;
+  cursor: pointer;
+  -webkit-appearance: menulist;
+  -moz-appearance: menulist;
+  appearance: menulist;
+  padding-right: 0;
+}
+
+.tpl-ats .education-card-dates .date-year-input {
+  width: 3ch;
+  min-width: 3ch;
+  max-width: 4ch;
+  text-align: left;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+/* Institution and location section */
+.tpl-ats .education-card-institution-section {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin-bottom: 4px;
+  flex-wrap: wrap;
+}
+
+.tpl-ats .education-card .education-card-institution,
+.tpl-ats .education-card .education-card-institution-wrapper,
+.tpl-ats .education-card .education-card-institution-wrapper input,
+.tpl-ats .education-card .education-card-institution-wrapper h1,
+.tpl-ats .education-card .education-card-institution-wrapper h2,
+.tpl-ats .education-card .education-card-institution-wrapper h3 {
+  margin: 0;
+  padding: 0;
+  font-size: var(--ats-font-size-base);
+  font-weight: 400;
+  color: var(--ats-text-color);
+  background: none;
+  border: none;
+  font-family: var(--ats-font-family);
+  line-height: var(--ats-line-height-base);
+  width: auto;
+  min-width: 50px;
+  max-width: 100%;
+  text-shadow: none;
+  -webkit-text-fill-color: var(--ats-text-color);
+  -webkit-background-clip: unset;
+  background-clip: unset;
+}
+
+.tpl-ats .education-card-location-separator {
+  color: var(--ats-text-color);
+  font-size: var(--ats-font-size-base);
+}
+
+.tpl-ats .education-card .education-card-location,
+.tpl-ats .education-card .education-card-location-wrapper {
+  display: inline;
+  margin: 0;
+  padding: 0;
+}
+
+.tpl-ats .education-card .education-card-location,
+.tpl-ats .education-card .education-card-location-wrapper span,
+.tpl-ats .education-card .education-card-location-wrapper input {
+  font-size: var(--ats-font-size-base);
+  font-weight: 400;
+  color: var(--ats-text-color);
+  font-style: normal;
+  margin: 0;
+  padding: 0;
+  background: none;
+  border: none;
+  font-family: var(--ats-font-family);
+  display: inline;
+  width: auto;
+  min-width: 50px;
+  max-width: 100%;
+}
+
+/* Edit mode - minimal focus states */
+.tpl-ats .education-card[data-mode="edit"] .education-card-title-wrapper input:focus,
+.tpl-ats .education-card[data-mode="edit"] .education-card-institution-wrapper input:focus,
+.tpl-ats .education-card[data-mode="edit"] .education-card-location-wrapper input:focus {
+  outline: none;
+  background: rgba(0, 0, 0, 0.02);
+  border-bottom: 1px solid var(--ats-border-color);
+  padding-bottom: 2px;
+}
+
+.tpl-ats .education-card-dates .date-month-select:focus,
+.tpl-ats .education-card-dates .date-year-input:focus {
+  outline: none;
+  background: rgba(0, 0, 0, 0.02);
+  border-bottom: 1px solid var(--ats-border-color);
+}
+
+/* Remove all default input styling */
+.tpl-ats .education-card input,
+.tpl-ats .education-card textarea,
+.tpl-ats .education-card p {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+/* Ensure consistent look in both edit and view modes */
+.tpl-ats .education-card[data-mode="view"] .education-card-title,
+.tpl-ats .education-card[data-mode="edit"] .education-card-title-wrapper input {
+  font-size: 12pt;
+  font-weight: 700;
+}
+
+.tpl-ats .education-card[data-mode="view"] .education-card-institution,
+.tpl-ats .education-card[data-mode="edit"] .education-card-institution-wrapper input,
+.tpl-ats .education-card[data-mode="view"] .education-card-location,
+.tpl-ats .education-card[data-mode="edit"] .education-card-location-wrapper input {
+  font-size: var(--ats-font-size-base);
+  font-weight: 400;
+}
