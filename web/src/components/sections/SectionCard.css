@@ -23,7 +23,7 @@
 
 /* Card drag hover effects - removed cursor styles since drag handle manages this now */
 .sortable-card {
-  width: fit-content;
+  width: auto;
   transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
 }
 
