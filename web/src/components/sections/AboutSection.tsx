@@ -112,6 +112,7 @@ export function AboutSection({ mode, data, onPatch, className }: AboutSectionPro
             placeholder="Enter your portfolio description here..."
             rows={3}
             className="about-description-text"
+            maxLength={600}
           />
         </div>
       </div>
