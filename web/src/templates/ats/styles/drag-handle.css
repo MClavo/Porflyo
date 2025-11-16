@@ -98,4 +98,8 @@
   backdrop-filter: none !important;
   border: 1px solid var(--ats-border-color) !important;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
+  /* Force ATS container width for drag overlay */
+  width: var(--ats-container-width) !important;
+  max-width: var(--ats-container-width) !important;
+  min-width: var(--ats-container-width) !important;
 }

@@ -130,7 +130,15 @@ const EditorDndProvider: React.FC<EditorDndProviderProps> = ({
               className={`drag-overlay tpl-${template} sortable-card`} 
               data-mode={mode}
               id={sectionId}
-              style={{ pointerEvents: 'none' }}
+              style={{ 
+                pointerEvents: 'none',
+                // Force ATS width when using ATS template
+                ...(template === 'ats' ? {
+                  width: '1000px',
+                  maxWidth: '1000px',
+                  minWidth: '1000px'
+                } : {})
+              }}
             >
               {/* Show drag handle in edit mode */}
               {mode === "edit" && <DragHandle />}
