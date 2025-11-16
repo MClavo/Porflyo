@@ -68,12 +68,12 @@
   padding-bottom: 0 !important;
 }
 
-.tpl-ats[data-mode="edit"] input.section-title {
+/* .tpl-ats[data-mode="edit"] input.section-title {
   background: rgba(0, 0, 0, 0.01) !important;
   border-radius: 0 !important;
   padding-left: 0.5rem !important;
   padding-right: 0.5rem !important;
-}
+} */
 
 .tpl-ats div[class*="section-"][class*="-wrapper"]::after {
   display: none !important;
