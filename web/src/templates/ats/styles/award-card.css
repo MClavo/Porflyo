@@ -2,11 +2,16 @@
    AWARD CARD - ATS Template
    ============================================ */
 
-/* Base card - no visible borders or background */
+/* Base card - use grid layout to reposition date */
 .tpl-ats .award-card {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-areas:
+    "event date"
+    "category category"
+    "description description";
+  column-gap: 16px;
+  row-gap: 2px;
   padding: 0;
   background: none;
   border: none;
@@ -30,18 +35,20 @@
   padding: 0;
 }
 
-/* Event Section - bold and slightly larger */
+/* Event Section - positioned in grid */
 .tpl-ats .award-card__event-section {
+  grid-area: event;
   margin-bottom: 0;
   width: 100%;
+  align-self: baseline;
 }
 
 .tpl-ats .award-card__event {
+  flex: 1;
   font-size: 12pt;
   font-weight: 700;
   color: var(--ats-text-color);
   line-height: var(--ats-line-height-base);
-  width: 100%;
   word-wrap: break-word;
   overflow-wrap: break-word;
   font-family: var(--ats-font-family);
@@ -82,8 +89,9 @@
   padding-bottom: 2px;
 }
 
-/* Category Section - normal weight */
+/* Category Section - positioned in grid */
 .tpl-ats .award-card__category-section {
+  grid-area: category;
   display: flex;
   align-items: baseline;
   gap: 0;
@@ -137,13 +145,18 @@
   padding-bottom: 2px;
 }
 
-/* Date Section */
+/* Date Section - positioned in grid, aligned to the right */
 .tpl-ats .award-card__date {
+  grid-area: date;
+  flex-shrink: 0;
   font-size: var(--ats-font-size-base);
   color: var(--ats-text-color);
   font-weight: 400;
-  margin-bottom: 2px;
+  margin-bottom: 0;
   font-family: var(--ats-font-family);
+  white-space: nowrap;
+  align-self: baseline;
+  text-align: right;
 }
 
 /* Date component styling */
@@ -202,8 +215,9 @@
   border-bottom: 1px solid var(--ats-border-color);
 }
 
-/* Description */
+/* Description - positioned in grid */
 .tpl-ats .award-card__description {
+  grid-area: description;
   font-size: var(--ats-font-size-base);
   color: var(--ats-text-color);
   line-height: var(--ats-line-height-base);

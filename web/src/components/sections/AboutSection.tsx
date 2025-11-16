@@ -110,7 +110,7 @@ export function AboutSection({ mode, data, onPatch, className }: AboutSectionPro
             value={data.description}
             onChange={(description) => onPatch?.({ description })}
             placeholder="Enter your portfolio description here..."
-            rows={3}
+            rows={1}
             className="about-description-text"
             maxLength={600}
           />

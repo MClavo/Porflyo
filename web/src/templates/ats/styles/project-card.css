@@ -324,7 +324,7 @@
   flex-direction: column;
   gap: 6px;
   padding: 0;
-  margin-top: 8px;
+  /* margin-top: 8px; */
 }
 
 .tpl-ats .project-card__urls .url-input-group {
@@ -381,7 +381,7 @@
 .tpl-ats .project-card__footer {
   display: flex;
   gap: 12px;
-  margin-top: 8px;
+  /* margin-top: 8px; */
   padding: 0;
 }
 
