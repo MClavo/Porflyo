@@ -315,14 +315,111 @@
   display: none;
 }
 
-/* URL inputs - hide in ATS template */
+/* ============================================
+   URL INPUTS - Edit Mode
+   ============================================ */
+
 .tpl-ats .project-card__urls {
-  display: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 0;
+  margin-top: 8px;
 }
 
-/* Footer buttons - hide in ATS template */
+.tpl-ats .project-card__urls .url-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.tpl-ats .project-card__urls .url-label {
+  margin: 0;
+  padding: 0;
+  color: var(--ats-text-color);
+  font-family: var(--ats-font-family);
+  font-size: 10pt;
+  font-weight: 600;
+  line-height: var(--ats-line-height-base);
+}
+
+.tpl-ats .project-card__urls .url-input {
+  width: 100%;
+  padding: 4px 8px;
+  margin: 0;
+  background: rgba(0, 0, 0, 0.02);
+  border: none;
+  border-radius: 0;
+  color: var(--ats-text-color);
+  font-family: var(--ats-font-family);
+  font-size: var(--ats-font-size-base);
+  line-height: var(--ats-line-height-base);
+  box-sizing: border-box;
+  transition: none;
+}
+
+.tpl-ats .project-card__urls .url-input:hover {
+  background: rgba(0, 0, 0, 0.03);
+}
+
+.tpl-ats .project-card__urls .url-input:focus {
+  outline: none;
+  background: rgba(0, 0, 0, 0.02);
+  border-bottom: 1px solid var(--ats-border-color);
+  padding-bottom: 3px;
+}
+
+.tpl-ats .project-card__urls .url-input::placeholder {
+  color: rgba(0, 0, 0, 0.4);
+  font-style: italic;
+}
+
+/* ============================================
+   FOOTER BUTTONS - View Mode
+   ============================================ */
+
 .tpl-ats .project-card__footer {
-  display: none;
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+  padding: 0;
+}
+
+.tpl-ats .project-card__footer .btn {
+  flex: 1;
+  padding: 6px 12px;
+  margin: 0;
+  background: none;
+  border: none;
+  border-radius: 0;
+  color: var(--ats-text-color);
+  font-family: var(--ats-font-family);
+  font-size: 10pt;
+  font-weight: 600;
+  line-height: var(--ats-line-height-base);
+  text-align: center;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+  transition: none;
+  box-sizing: border-box;
+  box-shadow: none;
+}
+
+.tpl-ats .project-card__footer .btn:hover:not(:disabled) {
+  background: rgba(0, 0, 0, 0.03);
+  text-decoration: underline;
+}
+
+.tpl-ats .project-card__footer .btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  text-decoration: none;
+}
+
+.tpl-ats .project-card__footer .btn-full {
+  flex: 1;
+  width: 100%;
 }
 
 /* Remove all transitions and effects */
