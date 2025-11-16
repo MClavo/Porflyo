@@ -12,7 +12,7 @@ export type CardPreviewPopupProps = {
   template?: string; // Add template prop to receive current template
 };
 
-export function CardPreviewPopup({ savedCard, children, template = "template1" }: CardPreviewPopupProps) {
+export function CardPreviewPopup({ savedCard, children, template = "ats" }: CardPreviewPopupProps) {
   const [isVisible, setIsVisible] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 

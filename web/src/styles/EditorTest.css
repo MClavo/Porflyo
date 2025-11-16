@@ -559,31 +559,10 @@ Z-INDEX HIERARCHY:
 */
 
 /* Ensure drag overlay inherits all template styles */
-.drag-overlay.template1 {
-  font-family: inherit;
-  font-size: inherit;
-  color: inherit;
-}
 
-.drag-overlay.template1 #projects,
-.drag-overlay.template1 #experiences,
-.drag-overlay.template1 #text {
-  /* Reset any layout constraints for the overlay */
-  position: static;
-  background: transparent;
-  padding: 0;
-  margin: 0;
-  border-radius: 0;
-  min-height: auto;
-  width: auto;
-  flex-grow: 0;
-}
 
-.drag-overlay.template2 {
-  font-family: inherit;
-  font-size: inherit;
-  color: inherit;
-}
+
+
 
 /* Sortable card styles for DnD */
 .sortable-card {

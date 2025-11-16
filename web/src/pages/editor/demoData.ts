@@ -7,7 +7,7 @@ import type { MonthYearValue } from "../../components/cards/subcomponents/Fields
 // Raw JSON payload provided by user (inlined here for demo purposes)
 const raw = {
   id: "50ac9fd2-5221-4065-b799-ed2782f565a8",
-  template: "template1",
+  template: "ats",
   title: "TEST",
   sections: [
     {
@@ -110,7 +110,7 @@ raw.sections.forEach((s) => {
 });
 
 const demoInitialPortfolio: PortfolioState = {
-  template: raw.template as 'template1' | 'template2',
+  template: raw.template as 'ats' | 'glass',
   title: raw.title,
   sections,
 };

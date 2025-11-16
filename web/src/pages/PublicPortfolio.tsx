@@ -8,9 +8,6 @@ import { sendMetricsOnUnload } from '../api/hooks/useMetrics';
 import useMetrics from '../hooks/metrics/useGetMetrics';
 import '../styles/PublicPortfolio.css';
 
-// Import template CSS files
-import '../templates/template1/template1.css';
-import '../templates/template2/template2.css';
 
 interface LoadingState {
   isLoading: boolean;

@@ -14,17 +14,13 @@ export interface ModernTemplateSelectorProps {
 
 // Template descriptions for better user experience
 const TEMPLATE_DESCRIPTIONS: Record<TemplateKey, { label: string; description: string }> = {
-  template1: { 
-    label: 'Template 1', 
-    description: 'Clean layout with projects, text, and experiences' 
-  },
-  template2: { 
-    label: 'Template 2', 
-    description: 'Modern layout with jobs, text, and projects' 
-  },
   glass: { 
     label: 'Glass', 
     description: 'Professional glassmorphism design with animated backgrounds' 
+  },
+  ats: {
+    label: 'ATS',
+    description: 'Applicant tracking system like layout for streamlined resumes'
   }
 };
 
