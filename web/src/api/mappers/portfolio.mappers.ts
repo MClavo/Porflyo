@@ -9,12 +9,17 @@ import type { TemplateKey } from '../../templates/Template.types';
 import type { PublicPortfolioDto, PortfolioCreateDto, PortfolioPatchDto, PortfolioSection, PublicPortfolioView } from '../types/dto';
 import { parseAboutSectionData, serializeAboutSectionData } from '../../components/sections/AboutSection.types';
 import type { AboutSectionData } from '../../components/sections/AboutSection.types';
+import { createInitialEmptyPortfolio } from '../../components/portfolio/initialPortfolio';
 
 /**
  * Convert backend PortfolioSection to frontend SectionState
  */
 export function mapPortfolioSectionToSectionState(section: PortfolioSection, id: string): SectionState {
   const sectionType = (section.sectionType as SectionType) || 'text';
+  
+  // Get the schema from initialPortfolio to ensure we have allowedTypes and maxCards
+  const initialPortfolio = createInitialEmptyPortfolio();
+  const schemaSection = initialPortfolio.sections[id];
   
   // Special handling for 'about' section - parse as structured data instead of cards
   if (sectionType === 'about') {
@@ -24,8 +29,8 @@ export function mapPortfolioSectionToSectionState(section: PortfolioSection, id:
       id,
       type: sectionType,
       title: (section.title as string) || 'About Me',
-      maxCards: 0, // About section doesn't use cards
-      allowedTypes: [], // About section doesn't use cards
+      maxCards: schemaSection?.maxCards ?? 0,
+      allowedTypes: schemaSection?.allowedTypes ?? [],
       cardsById: {},
       cardsOrder: [],
       parsedContent: aboutData,
@@ -56,28 +61,16 @@ export function mapPortfolioSectionToSectionState(section: PortfolioSection, id:
     }
   }
   
-  // Set default allowedTypes based on section type
-  let defaultAllowedTypes: CardType[] = [];
-  switch (sectionType) {
-    case 'projects':
-      defaultAllowedTypes = ['project', 'job'];
-      break;
-    case 'experiences':
-      defaultAllowedTypes = ['job'];
-      break;
-    case 'text':
-      defaultAllowedTypes = ['text'];
-      break;
-    default:
-      defaultAllowedTypes = ['text'];
-  }
+  // Get allowedTypes and maxCards from schema, with fallbacks
+  const allowedTypes = schemaSection?.allowedTypes ?? ['text'];
+  const maxCards = schemaSection?.maxCards;
   
   return {
     id,
     type: sectionType,
-    title: (section.title as string) || '',
-    maxCards: undefined, // Not provided by backend, use frontend default
-    allowedTypes: defaultAllowedTypes, // Use defaults based on section type
+    title: (section.title as string) || schemaSection?.title || '',
+    maxCards,
+    allowedTypes,
     cardsById,
     cardsOrder,
   } as SectionState;

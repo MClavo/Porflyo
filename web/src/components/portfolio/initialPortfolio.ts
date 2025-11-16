@@ -75,7 +75,7 @@ export function createInitialEmptyPortfolio(user?: PublicUserDto | null): Portfo
         id: "achievements",
         type: "achievements",
         title: "Achievements",
-        allowedTypes: ["text", "certificate", "award"],
+        allowedTypes: ["certificate", "award"],
         maxCards: 6,
         cardsById: {},
         cardsOrder: [],
