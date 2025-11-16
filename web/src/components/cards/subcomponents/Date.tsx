@@ -86,6 +86,14 @@ export function Date({
     if (!value || typeof value.month !== "number" || typeof value.year !== "number") {
       return null;
     }
+    // Show "Present" if month is -1
+    if (value.month === -1) {
+      return (
+        <span className={`date-view date-present ${className ?? ""}`}>
+          Present
+        </span>
+      );
+    }
     return (
       <span className={`date-view ${className ?? ""}`}>
         {monthNames[value.month % 12]} {value.year}
@@ -93,14 +101,18 @@ export function Date({
     );
   }
 
+  const isPresent = localMonth === -1;
+
   return (
-    <div className={`date-edit ${className ?? ""}`}>
+    <div className={`date-edit ${isPresent ? "date-present" : ""} ${className ?? ""}`}>
       <select
         className="date-month-select"
         value={localMonth}
         onChange={(e) => handleMonthChange(parseInt(e.target.value, 10))}
         aria-label="Month"
       >
+        <option value={-1} className="date-present-option">Present</option>
+        <option disabled>──────────</option>
         {monthNames.map((name, index) => (
           <option key={index} value={index}>
             {name}
