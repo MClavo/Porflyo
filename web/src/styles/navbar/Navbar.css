@@ -109,7 +109,7 @@
 }
 
 .navbar-logo:hover {
-  color: var(--nivo-1);
+  color: var(--space1, #00ADB5);
   transform: scale(1.05);
   background: rgba(0, 173, 181, 0.05);
 }

@@ -73,7 +73,7 @@
   right: 0;
   z-index: 1000;
   margin-top: var(--space-2);
-  background: var(--card-bg-extra) ;
+  background: var(--card-bg-extra);
   border: 1px solid var(--card-border);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-lg);
@@ -99,7 +99,7 @@
 
 .modern-template-selector__option {
   width: 100%;
-  background: none;
+  background: var(--card-bg);
   border: none;
   border-radius: var(--radius-md);
   padding: var(--space-3);
@@ -117,7 +117,7 @@
 }
 
 .modern-template-selector__option:hover {
-  background: var(--card-bg-hover);
+  background: var(--card-bg-hover-contrast);
   transform: translateX(4px);
 }
 

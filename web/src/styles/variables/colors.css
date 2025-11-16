@@ -33,6 +33,7 @@
   /* Card Backgrounds and Borders */
   --card-bg: linear-gradient(180deg, rgba(17,24,39,0.72), rgba(17,24,39,0.60));
   --card-bg-hover: linear-gradient(180deg, rgba(31,41,55,0.78), rgba(17,24,39,0.66));
+  --card-bg-hover-contrast: linear-gradient(180deg, rgba(51,61,75,0.78), rgba(41,51,65,0.66));
   --card-bg-extra: linear-gradient(180deg, rgba(17,24,39,0.86), rgba(9,17,24,0.78));
   --card-border: rgba(148,163,184,.16);
   --card-border-hover: rgba(148,163,184,.28);
@@ -68,6 +69,7 @@ body.light-theme {
   /* Card Backgrounds and Borders */
   --card-bg: linear-gradient(180deg, rgba(255,255,255,0.70), rgba(255,255,255,0.58));
   --card-bg-hover: linear-gradient(180deg, rgba(255,255,255,0.78), rgba(255,255,255,0.64));
+  --card-bg-hover-contrast: linear-gradient(180deg, rgba(215,215,215,0.78), rgba(205,205,205,0.64));
   --card-bg-extra: linear-gradient(180deg, rgba(255,255,255,0.86), rgba(255,255,255,0.78));
   --card-border: rgba(15,23,42,.08);
   --card-border-hover: rgba(15,23,42,.14);

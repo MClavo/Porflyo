@@ -166,8 +166,8 @@
 }
 
 .tpl-ats .certificate-card__date .date-year-input {
-  width: 3ch;
-  min-width: 3ch;
+  /* width: 3ch; */
+  /* min-width: 3ch; */
   max-width: 4ch;
   text-align: left;
   -webkit-appearance: none;
