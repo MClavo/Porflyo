@@ -2,60 +2,355 @@
 
 :root {
   --space1: #00ADB5;
-}
-
-/* Scope h1 styles to only apply within the root page */
-.root-page h1 {
-  font-family: "Syncopate", sans-serif;
-  font-optical-sizing: auto;
-  font-weight: 700;
-  font-style: oblique;
-  letter-spacing: 0.5rem;
-  font-size: 5rem;
-  color: var(--space1);
-  text-align: center;
-  margin-top: 1rem;
-  bottom: 0;
-  margin-bottom: 0;
-}
-
-p {
-  padding-top: 0;
-  font-family: "Space Grotesk", sans-serif;
-  font-optical-sizing: auto;
-  font-weight: 400;
-  font-size: 2rem;
-  color: white;
-  text-align: center;
-  margin-bottom: 12rem;
+  --landing-navbar-height: 60px;
+  /* H1 emphasis variables */
+  --h1-stroke-dark: rgba(0,0,0,0.40);
+  --h1-shadow-dark: 0 14px 36px rgba(0,0,0,0.45);
+  --h1-halo-opacity-dark: 0.18;
+  --h1-stroke-light: rgba(255,255,255,0.9);
+  --h1-shadow-light: 0 10px 28px rgba(255,255,255,0.06);
+  --h1-halo-opacity-light: 0.85;
 }
 
 #root{
   background: transparent !important;
 }
 
-/* Container that holds content and the background image */
-.root-page {
-  position: relative;
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: flex-start; 
-  flex-direction: column;
-  padding: 8rem;
-  box-sizing: border-box;
-}
-
-
 body.root-body-bg {
   background: none !important;
 }
 
-.root-content {
+/* Container that holds content and the background */
+.root-page {
   position: relative;
-  z-index: 1; /* put content above the image */
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  box-sizing: border-box;
+}
+
+/* Landing Navbar */
+.landing-navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--landing-navbar-height);
+  backdrop-filter: blur(12px) saturate(100%);
+  -webkit-backdrop-filter: blur(12px) saturate(100%);
+  background: rgba(10, 14, 22, 0.7);
+  border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+  z-index: 100;
+  transition: all 0.3s ease;
+}
+
+body.light-theme .landing-navbar {
+  background: rgba(255, 255, 255, 0.7);
+  border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+/* Adjust h1 treatment for light theme so it remains readable against blue-ish shader */
+body.light-theme .root-page h1 {
+  -webkit-text-stroke: 0.6px var(--h1-stroke-light);
+  text-shadow: 0 4px 10px rgba(0,0,0,0.12), var(--h1-shadow-light);
+}
+
+body.light-theme .root-page h1::before {
+  background: rgba(255,255,255,0.92);
+  /* keep halo subtle on light theme */
+  opacity: calc(var(--h1-halo-opacity-light) * 0.18);
+}
+
+.landing-navbar-content {
+  max-width: 1400px;
+  margin: 0 auto;
+  height: 100%;
+  display: flex;
+  justify-content: center;
   align-items: center;
+  padding: 0 2rem;
+}
+
+.landing-logo {
+  font-family: "Syncopate", sans-serif;
+  font-weight: 700;
+  font-style: oblique;
+  letter-spacing: 0.2rem;
+  font-size: 1.5rem;
+  color: var(--space1);
+  cursor: default;
+}
+
+.landing-navbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.github-link {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(148, 163, 184, 0.1);
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.github-link:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(148, 163, 184, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+body.light-theme .github-link {
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(15, 23, 42, 0.1);
+  color: var(--text-primary);
+}
+
+body.light-theme .github-link:hover {
+  background: rgba(255, 255, 255, 0.9);
+  border-color: rgba(15, 23, 42, 0.2);
+}
+
+/* Main Content */
+.root-content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  padding-top: var(--landing-navbar-height);
+  margin: 0 auto;
+  width: 100%;
+  max-width: 1400px;
+}
+
+/* Hero Section */
+.hero-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 6rem 2rem 4rem;
+  gap: 2rem;
+}
+
+.root-page h1 {
+  font-family: "Syncopate", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 700;
+  font-style: oblique;
+  letter-spacing: 0.5rem;
+  font-size: 6rem;
+  color: var(--space1);
+  text-align: center;
+  margin: 0;
+  line-height: 1.1;
+  position: relative;
+  z-index: 2;
+  -webkit-text-stroke: 0.6px var(--h1-stroke-dark);
+  text-shadow: 0 2px 0 rgba(0,0,0,0.10), 0 12px 30px rgba(0,0,0,0.35);
+}
+
+/* subtle frosted halo band behind the title to separate it from the animated background */
+.root-page h1::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: min(86%, 1100px);
+  height: 1.6em;
+  border-radius: 12px;
+  z-index: -1;
+  background: rgba(0,0,0,0.28);
+  filter: blur(18px);
+  opacity: var(--h1-halo-opacity-dark);
+  transition: background 220ms ease, opacity 220ms ease, transform 220ms ease;
+  pointer-events: none;
+}
+
+.hero-tagline {
+  font-family: "Space Grotesk", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 600;
+  font-size: 2rem;
+  color: #fafafa;
+  text-align: center;
+  margin: 0;
+  line-height: 1.3;
+}
+
+.hero-description {
+  font-family: "Space Grotesk", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-size: 1.25rem;
+  color: #dddddd;
+  text-align: center;
+  margin: 0;
+  max-width: 600px;
+  line-height: 1.6;
+}
+
+/* Features Grid */
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2rem;
+  padding: 2rem;
+  margin: 2rem 0 4rem;
+  width: 100%;
+  max-width: 1200px;
+}
+
+.feature-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 16px;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 1rem;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(14px) saturate(115%);
+  -webkit-backdrop-filter: blur(14px) saturate(115%);
+}
+
+.feature-card:hover {
+  background: var(--card-bg-hover);
+  border-color: var(--card-border-hover);
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+
+.feature-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  box-shadow: 0 8px 16px rgba(59, 130, 246, 0.3);
+}
+
+.feature-card h3 {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.feature-card p {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .features-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .landing-navbar-content {
+    padding: 0 1.5rem;
+  }
+
+  .landing-logo {
+    font-size: 1.25rem;
+    letter-spacing: 0.15rem;
+  }
+
+  .github-link span {
+    display: none;
+  }
+
+  .hero-section {
+    padding: 4rem 1.5rem 3rem;
+    gap: 1.5rem;
+  }
+
+  .root-page h1 {
+    font-size: 3.5rem;
+    letter-spacing: 0.3rem;
+  }
+
+  .hero-tagline {
+    font-size: 1.5rem;
+  }
+
+  .hero-description {
+    font-size: 1.1rem;
+  }
+
+  .features-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    padding: 1.5rem;
+    margin: 1.5rem 0 3rem;
+  }
+
+  .feature-card {
+    padding: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .landing-navbar-content {
+    padding: 0 1rem;
+  }
+
+  .landing-navbar-actions {
+    gap: 1rem;
+  }
+
+  .hero-section {
+    padding: 3rem 1rem 2rem;
+  }
+
+  .root-page h1 {
+    font-size: 2.5rem;
+    letter-spacing: 0.2rem;
+  }
+
+  .hero-tagline {
+    font-size: 1.25rem;
+  }
+
+  .hero-description {
+    font-size: 1rem;
+  }
+
+  .features-grid {
+    padding: 1rem;
+    margin: 1rem 0 2rem;
+  }
+
+  .feature-card {
+    padding: 1.25rem;
+  }
+
+  .feature-icon {
+    width: 48px;
+    height: 48px;
+  }
 }
