@@ -9,6 +9,8 @@
   border-radius: 16px;
   padding: 24px;
   width: 100%;
+  max-width: 100%;
+  min-width: 100%;
   box-sizing: border-box;
   transition: all 0.3s ease;
   position: relative;
@@ -23,28 +25,62 @@
 
 /* Job card header - title and dates */
 .tpl-glass .job-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 16px;
   margin-bottom: 8px;
 }
 
 .tpl-glass .job-card .job-card-title,
 .tpl-glass .job-card .job-card-title-wrapper,
+.tpl-glass .job-card .job-card-title-wrapper h1,
+.tpl-glass .job-card .job-card-title-wrapper h2,
+.tpl-glass .job-card .job-card-title-wrapper h3,
 .tpl-glass .job-card .job-card-title-wrapper input {
+  flex: 1;
+  margin: 0;
+  padding: 0;
   color: #ffffff;
   font-size: 20px;
   font-weight: 600;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   letter-spacing: 0.3px;
+  line-height: 1.3;
+  width: auto;
+  min-width: 50px;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
-/* Dates styling in glass - SAME as view mode */
+/* Dates container - aligned to the right */
 .tpl-glass .job-card-dates {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
   color: rgba(255, 255, 255, 0.75);
   font-size: 13px;
   font-weight: 500;
+  white-space: nowrap;
+}
+
+.tpl-glass .job-card-date-separator {
+  color: rgba(255, 255, 255, 0.5);
+  padding: 0 2px;
 }
 
 .tpl-glass .job-card-dates .date-view {
   color: rgba(255, 255, 255, 0.75);
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.tpl-glass .job-card-dates .date-edit {
+  display: flex;
+  align-items: center;
+  gap: 2px;
 }
 
 .tpl-glass .job-card-dates .date-month-select,
@@ -62,13 +98,20 @@
 }
 
 .tpl-glass .job-card-dates .date-month-select {
+  width: fit-content;
+  min-width: 0;
+  max-width: none;
   -webkit-appearance: menulist !important;
   -moz-appearance: menulist !important;
   appearance: menulist !important;
   cursor: pointer !important;
+  padding-right: 0;
 }
 
 .tpl-glass .job-card-dates .date-year-input {
+  min-width: 3ch;
+  max-width: 4ch;
+  text-align: left;
   -webkit-appearance: none !important;
   -moz-appearance: none !important;
   appearance: none !important;
@@ -81,23 +124,44 @@
   outline: none !important;
 }
 
-.tpl-glass .job-card-date-separator {
-  color: rgba(255, 255, 255, 0.5);
+/* Company and location section */
+.tpl-glass .job-card-company-section {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
 }
 
-/* Company and location section */
 .tpl-glass .job-card .job-card-company,
 .tpl-glass .job-card .job-card-company-wrapper,
+.tpl-glass .job-card .job-card-company-wrapper h1,
+.tpl-glass .job-card .job-card-company-wrapper h2,
+.tpl-glass .job-card .job-card-company-wrapper h3,
 .tpl-glass .job-card .job-card-company-wrapper input {
+  margin: 0;
+  padding: 0;
   color: rgba(255, 255, 255, 0.95);
   font-size: 16px;
   font-weight: 500;
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+  width: auto;
+  min-width: 50px;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .tpl-glass .job-card-location-separator {
   color: rgba(255, 255, 255, 0.4);
-  margin: 0 4px;
+  margin: 0;
+  padding: 0 2px;
+}
+
+.tpl-glass .job-card .job-card-location,
+.tpl-glass .job-card .job-card-location-wrapper {
+  display: inline;
+  margin: 0;
+  padding: 0;
 }
 
 .tpl-glass .job-card .job-card-location,
@@ -106,14 +170,24 @@
   color: rgba(255, 255, 255, 0.7);
   font-size: 14px;
   font-style: italic;
+  margin: 0;
+  padding: 0;
+  display: inline;
+  width: auto;
+  min-width: 50px;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 /* Description bullet points */
 .tpl-glass .job-card .job-card-description {
+  margin: 0;
+  padding: 0;
+  padding-left: 22px;
   color: rgba(255, 255, 255, 0.88);
   font-size: 14px;
   line-height: 1.7;
-  padding-left: 22px;
+  list-style-type: disc;
 }
 
 .tpl-glass .job-card .job-card-description li {
@@ -126,32 +200,61 @@
   font-size: 0.9em;
 }
 
-/* All job card inputs - ALWAYS no padding, no border, DYNAMIC WIDTH (same in view and edit) */
+/* All job card inputs - ALWAYS no background/border in base state, DYNAMIC WIDTH (same in view and edit) */
 .tpl-glass .job-card .job-card-title-wrapper input,
 .tpl-glass .job-card .job-card-company-wrapper input,
-.tpl-glass .job-card .job-card-location-wrapper input,
-.tpl-glass .job-card[data-mode="edit"] .job-card-title-wrapper input,
-.tpl-glass .job-card[data-mode="edit"] .job-card-company-wrapper input,
-.tpl-glass .job-card[data-mode="edit"] .job-card-location-wrapper input,
-.tpl-glass .job-card[data-mode="edit"] .job-card-title-wrapper input:focus,
-.tpl-glass .job-card[data-mode="edit"] .job-card-company-wrapper input:focus,
-.tpl-glass .job-card[data-mode="edit"] .job-card-location-wrapper input:focus {
-  background: none !important;
-  border: none !important;
-  padding: 0 !important;
-  border-radius: 0 !important;
-  outline: none !important;
-  box-shadow: none !important;
-  width: fit-content !important;
-  min-width: 50px !important;
-  max-width: 100% !important;
+.tpl-glass .job-card .job-card-location-wrapper input {
+  background: none;
+  border: none;
+  padding: 0;
+  border-radius: 0;
+  outline: none;
+  box-shadow: none;
+  width: auto;
+  min-width: 50px;
+  max-width: 100%;
+  box-sizing: border-box;
+  transition: background 0.15s ease;
 }
 
-.tpl-glass .job-card[data-mode="edit"] .job-card-description {
+.tpl-glass .job-card .job-card-title-wrapper input:hover,
+.tpl-glass .job-card .job-card-company-wrapper input:hover,
+.tpl-glass .job-card .job-card-location-wrapper input:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+  padding: 2px 4px;
+  margin: -2px -4px;
+}
+
+.tpl-glass .job-card .job-card-title-wrapper input:focus,
+.tpl-glass .job-card .job-card-company-wrapper input:focus,
+.tpl-glass .job-card .job-card-location-wrapper input:focus {
   background: rgba(255, 255, 255, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  padding: 2px 4px;
+  margin: -2px -4px;
+  outline: none;
+}
+
+/* Description textarea in edit mode */
+.tpl-glass .job-card[data-mode="edit"] .job-card-description {
+  width: 100%;
+  min-height: 80px;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
   backdrop-filter: blur(8px);
   color: rgba(255, 255, 255, 0.9);
+  font-size: 14px;
+  line-height: 1.7;
+  resize: none;
+  box-sizing: border-box;
+}
+
+.tpl-glass .job-card[data-mode="edit"] .job-card-description:hover {
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .tpl-glass .job-card[data-mode="edit"] .job-card-description:focus {
@@ -161,8 +264,7 @@
   box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
 }
 
-/* Bullet point counter in edit mode */
-.tpl-glass .job-card-description-wrapper > div {
-  color: rgba(255, 255, 255, 0.6);
-  font-size: 11px;
+.tpl-glass .job-card[data-mode="edit"] .job-card-description::placeholder {
+  color: rgba(255, 255, 255, 0.4);
 }
+

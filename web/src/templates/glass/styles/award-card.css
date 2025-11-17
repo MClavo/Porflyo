@@ -9,27 +9,12 @@
   border-radius: 16px;
   padding: 1.5rem;
   width: 100%;
-  max-width: 350px;
-  min-width: 350px;
+  max-width: 100%;
+  min-width: 100%;
   box-sizing: border-box;
   transition: all 0.3s ease;
   position: relative;
   --card-padding: 1.5rem;
-}
-
-/* Same size in both modes */
-.tpl-glass .award-card[data-mode="view"],
-.tpl-glass .award-card[data-mode="edit"] {
-  width: 100%;
-  max-width: 350px;
-  min-width: 350px;
-  padding: 1.5rem;
-  border: 1px solid rgba(255, 255, 255, 0.22);
-  background: rgba(255, 255, 255, 0.12);
-}
-
-.tpl-glass .award-card[data-mode="edit"] {
-  border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 .tpl-glass .award-card:hover {
@@ -46,17 +31,44 @@
 }
 
 .tpl-glass .award-card .award-card__event,
+.tpl-glass .award-card .award-card__event h1,
+.tpl-glass .award-card .award-card__event h2,
+.tpl-glass .award-card .award-card__event h3,
 .tpl-glass .award-card .award-card__event input {
+  margin: 0;
+  padding: 0;
   color: #ffffff;
-  font-size: 24px;
+  font-size: 20px;
   font-weight: 700;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   letter-spacing: 0.3px;
-  line-height: 1.2;
-  margin: 0;
+  line-height: 1.3;
   width: 100%;
   word-wrap: break-word;
   overflow-wrap: break-word;
+  box-sizing: border-box;
+}
+
+.tpl-glass .award-card .award-card__event input {
+  background: none;
+  border: none;
+  transition: background 0.15s ease;
+}
+
+.tpl-glass .award-card .award-card__event input:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+  padding: 2px 4px;
+  margin: -2px -4px;
+}
+
+.tpl-glass .award-card .award-card__event input:focus {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  padding: 2px 4px;
+  margin: -2px -4px;
+  outline: none;
 }
 
 /* Category section */
@@ -66,15 +78,43 @@
 }
 
 .tpl-glass .award-card .award-card__category,
+.tpl-glass .award-card .award-card__category h1,
+.tpl-glass .award-card .award-card__category h2,
+.tpl-glass .award-card .award-card__category h3,
 .tpl-glass .award-card .award-card__category input {
+  margin: 0;
+  padding: 0;
   color: rgba(255, 255, 255, 0.95);
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 600;
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
-  margin: 0;
+  line-height: 1.3;
   width: 100%;
   word-wrap: break-word;
   overflow-wrap: break-word;
+  box-sizing: border-box;
+}
+
+.tpl-glass .award-card .award-card__category input {
+  background: none;
+  border: none;
+  transition: background 0.15s ease;
+}
+
+.tpl-glass .award-card .award-card__category input:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+  padding: 2px 4px;
+  margin: -2px -4px;
+}
+
+.tpl-glass .award-card .award-card__category input:focus {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  padding: 2px 4px;
+  margin: -2px -4px;
+  outline: none;
 }
 
 /* Date section */
@@ -87,6 +127,14 @@
 
 .tpl-glass .award-card__date .date-view {
   color: rgba(255, 255, 255, 0.75);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.tpl-glass .award-card__date .date-edit {
+  display: flex;
+  align-items: center;
+  gap: 2px;
 }
 
 .tpl-glass .award-card__date .date-month-select,
@@ -104,13 +152,20 @@
 }
 
 .tpl-glass .award-card__date .date-month-select {
+  width: fit-content;
+  min-width: 0;
+  max-width: none;
   -webkit-appearance: menulist !important;
   -moz-appearance: menulist !important;
   appearance: menulist !important;
   cursor: pointer !important;
+  padding-right: 0;
 }
 
 .tpl-glass .award-card__date .date-year-input {
+  min-width: 3ch;
+  max-width: 4ch;
+  text-align: left;
   -webkit-appearance: none !important;
   -moz-appearance: none !important;
   appearance: none !important;
@@ -125,50 +180,49 @@
 
 /* Description */
 .tpl-glass .award-card .award-card__description,
-.tpl-glass .award-card .award-card__description span,
-.tpl-glass .award-card .award-card__description textarea {
+.tpl-glass .award-card .award-card__description p,
+.tpl-glass .award-card .award-card__description span {
+  margin: 0;
+  padding: 0;
   color: rgba(255, 255, 255, 0.88);
   font-size: 14px;
   line-height: 1.7;
   width: 100%;
   word-wrap: break-word;
   overflow-wrap: break-word;
-}
-
-/* All award card inputs - ALWAYS no padding, no border, DYNAMIC WIDTH (same in view and edit) */
-.tpl-glass .award-card .award-card__event input,
-.tpl-glass .award-card .award-card__category input,
-.tpl-glass .award-card[data-mode="edit"] .award-card__event input,
-.tpl-glass .award-card[data-mode="edit"] .award-card__category input,
-.tpl-glass .award-card[data-mode="edit"] .award-card__event input:focus,
-.tpl-glass .award-card[data-mode="edit"] .award-card__category input:focus {
-  background: none !important;
-  border: none !important;
-  padding: 0 !important;
-  border-radius: 0 !important;
-  outline: none !important;
-  box-shadow: none !important;
-  width: 100% !important;
-  box-sizing: border-box !important;
+  white-space: pre-wrap;
 }
 
 /* Description textarea in edit mode */
-.tpl-glass .award-card[data-mode="edit"] .award-card__description textarea {
-  width: 100% !important;
+.tpl-glass .award-card .award-card__description textarea {
+  width: 100%;
   min-height: 80px;
   background: rgba(255, 255, 255, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 8px;
   padding: 8px 12px;
+  margin: 0;
   backdrop-filter: blur(8px);
   color: rgba(255, 255, 255, 0.9);
-  resize: none !important;
-  box-sizing: border-box !important;
+  font-size: 14px;
+  line-height: 1.7;
+  resize: none;
+  box-sizing: border-box;
+  transition: all 0.2s ease;
 }
 
-.tpl-glass .award-card[data-mode="edit"] .award-card__description textarea:focus {
+.tpl-glass .award-card .award-card__description textarea:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.tpl-glass .award-card .award-card__description textarea:focus {
   background: rgba(255, 255, 255, 0.12);
   border-color: rgba(255, 255, 255, 0.35);
   outline: none;
   box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
 }
+
+.tpl-glass .award-card .award-card__description textarea::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+

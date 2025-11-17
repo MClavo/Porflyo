@@ -85,7 +85,17 @@
 }
 
 /* Loading and Error States */
-.portfolio-editor__loading,
+.portfolio-editor__loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+  min-height: calc(100vh - 80px);
+  padding: var(--space-8);
+  text-align: center;
+}
+
 .portfolio-editor__error {
   display: flex;
   align-items: center;

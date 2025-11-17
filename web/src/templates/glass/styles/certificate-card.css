@@ -9,28 +9,13 @@
   border-radius: 16px;
   padding: 0;
   width: 100%;
-  max-width: 350px;
-  min-width: 350px;
+  max-width: 100%;
+  min-width: 100%;
   box-sizing: border-box;
   transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
   --card-padding: 0;
-}
-
-/* Same size in both modes */
-.tpl-glass .certificate-card[data-mode="view"],
-.tpl-glass .certificate-card[data-mode="edit"] {
-  width: 100%;
-  max-width: 350px;
-  min-width: 350px;
-  padding: 0;
-  border: 1px solid rgba(255, 255, 255, 0.22);
-  background: rgba(255, 255, 255, 0.12);
-}
-
-.tpl-glass .certificate-card[data-mode="edit"] {
-  border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 .tpl-glass .certificate-card:hover {
@@ -86,19 +71,24 @@
 
 /* Header with title and date */
 .tpl-glass .certificate-card__header {
-  margin-bottom: 0.75rem;
+  margin-bottom: 12px;
   width: 100%;
 }
 
 .tpl-glass .certificate-card .certificate-card__title,
+.tpl-glass .certificate-card .certificate-card__title h1,
+.tpl-glass .certificate-card .certificate-card__title h2,
+.tpl-glass .certificate-card .certificate-card__title h3,
 .tpl-glass .certificate-card .certificate-card__title input {
+  margin: 0;
+  padding: 0;
+  margin-bottom: 8px;
   color: #ffffff;
   font-size: 20px;
   font-weight: 600;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   letter-spacing: 0.3px;
-  margin: 0;
-  margin-bottom: 8px;
+  line-height: 1.3;
   word-wrap: break-word;
   overflow-wrap: break-word;
   word-break: break-word;
@@ -106,10 +96,29 @@
   overflow: hidden;
   text-overflow: ellipsis;
   width: 100%;
+  box-sizing: border-box;
 }
 
-.sortable-card[data-mode="edit"] .certificate-card__title-wrapper input {
-  width: 90% !important;
+.tpl-glass .certificate-card .certificate-card__title input {
+  background: none;
+  border: none;
+  transition: background 0.15s ease;
+}
+
+.tpl-glass .certificate-card .certificate-card__title input:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+  padding: 2px 4px;
+  margin: -2px -4px 6px -4px;
+}
+
+.tpl-glass .certificate-card .certificate-card__title input:focus {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  padding: 2px 4px;
+  margin: -2px -4px 6px -4px;
+  outline: none;
 }
 
 .tpl-glass .certificate-card__date {
@@ -121,6 +130,14 @@
 
 .tpl-glass .certificate-card__date .date-view {
   color: rgba(255, 255, 255, 0.75);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.tpl-glass .certificate-card__date .date-edit {
+  display: flex;
+  align-items: center;
+  gap: 2px;
 }
 
 .tpl-glass .certificate-card__date .date-month-select,
@@ -138,13 +155,20 @@
 }
 
 .tpl-glass .certificate-card__date .date-month-select {
+  width: fit-content;
+  min-width: 0;
+  max-width: none;
   -webkit-appearance: menulist !important;
   -moz-appearance: menulist !important;
   appearance: menulist !important;
   cursor: pointer !important;
+  padding-right: 0;
 }
 
 .tpl-glass .certificate-card__date .date-year-input {
+  min-width: 3ch;
+  max-width: 4ch;
+  text-align: left;
   -webkit-appearance: none !important;
   -moz-appearance: none !important;
   appearance: none !important;
@@ -157,21 +181,6 @@
   outline: none !important;
 }
 
-/* Title input styling */
-.tpl-glass .certificate-card .certificate-card__title input {
-  background: none !important;
-  border: none !important;
-  padding: 0 !important;
-  border-radius: 0 !important;
-  outline: none !important;
-  box-shadow: none !important;
-  box-sizing: border-box !important;
-}
-
-.tpl-glass .certificate-card .certificate-card__title input:focus {
-  background: rgba(255, 255, 255, 0.05) !important;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.3) !important;
-}
 
 /* URL input in edit mode */
 .tpl-glass .certificate-card__url {
@@ -201,6 +210,10 @@
   box-sizing: border-box;
 }
 
+.tpl-glass .certificate-card__url .url-input:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
 .tpl-glass .certificate-card__url .url-input:focus {
   background: rgba(255, 255, 255, 0.12);
   border-color: rgba(255, 255, 255, 0.35);
@@ -214,7 +227,7 @@
 
 /* Footer button */
 .tpl-glass .certificate-card__footer {
-  margin-top: 0.75rem;
+  margin-top: 12px;
   padding-top: 0;
   border-top: none;
   width: 100%;
@@ -241,3 +254,4 @@
   transform: translateY(-1px);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
+
