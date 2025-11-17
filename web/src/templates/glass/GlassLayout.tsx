@@ -31,6 +31,17 @@ export default function GlassLayout({
 
   const currentGradient = getGradientById(selectedGradientId);
 
+  // Expose current gradient as a global CSS variable so preview popups
+  // and other isolated renderers can pick it up.
+  useEffect(() => {
+    if (typeof document !== 'undefined' && document.documentElement && document.documentElement.style) {
+      document.documentElement.style.setProperty(
+        "--porflyo-glass-gradient",
+        currentGradient.gradient
+      );
+    }
+  }, [currentGradient.gradient]);
+
   const handleGradientChange = (gradientId: string) => {
     setSelectedGradientId(gradientId);
     

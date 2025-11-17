@@ -44,3 +44,8 @@
 .tpl-glass svg {
   filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1)) !important;
 }
+
+.card-preview-popup .card-preview-popup-content {
+  background: var(--porflyo-glass-gradient);
+
+}

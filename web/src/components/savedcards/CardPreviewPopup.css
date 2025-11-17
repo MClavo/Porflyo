@@ -18,7 +18,7 @@
 
 .card-preview-popup-header {
   padding: var(--space-4) var(--space-5);
-  background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1));
+  background: var(--card-bg-extra);
   border-bottom: 1px solid var(--card-border);
   display: flex;
   flex-direction: column;
