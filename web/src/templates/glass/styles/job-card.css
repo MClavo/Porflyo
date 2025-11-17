@@ -166,7 +166,7 @@
 
 .tpl-glass .job-card .job-card-location,
 .tpl-glass .job-card .job-card-location-wrapper span,
-.tpl-glass .job-card .job-card-location-wrapper input {
+.tpl-glass .job-card input.job-card-location {
   color: rgba(255, 255, 255, 0.7);
   font-size: 14px;
   font-style: italic;
@@ -203,7 +203,7 @@
 /* All job card inputs - ALWAYS no background/border in base state, DYNAMIC WIDTH (same in view and edit) */
 .tpl-glass .job-card .job-card-title-wrapper input,
 .tpl-glass .job-card .job-card-company-wrapper input,
-.tpl-glass .job-card .job-card-location-wrapper input {
+.tpl-glass .job-card input.job-card-location {
   background: none;
   border: none;
   padding: 0;
@@ -219,7 +219,7 @@
 
 .tpl-glass .job-card .job-card-title-wrapper input:hover,
 .tpl-glass .job-card .job-card-company-wrapper input:hover,
-.tpl-glass .job-card .job-card-location-wrapper input:hover {
+.tpl-glass .job-card input.job-card-location:hover {
   background: rgba(255, 255, 255, 0.05);
   border-radius: 4px;
   padding: 2px 4px;
@@ -228,7 +228,7 @@
 
 .tpl-glass .job-card .job-card-title-wrapper input:focus,
 .tpl-glass .job-card .job-card-company-wrapper input:focus,
-.tpl-glass .job-card .job-card-location-wrapper input:focus {
+.tpl-glass .job-card input.job-card-location:focus {
   background: rgba(255, 255, 255, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 4px;

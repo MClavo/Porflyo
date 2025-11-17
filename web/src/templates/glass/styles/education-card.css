@@ -34,10 +34,10 @@
 
 .tpl-glass .education-card .education-card-title,
 .tpl-glass .education-card .education-card-title-wrapper,
-.tpl-glass .education-card .education-card-title-wrapper h1,
-.tpl-glass .education-card .education-card-title-wrapper h2,
-.tpl-glass .education-card .education-card-title-wrapper h3,
-.tpl-glass .education-card .education-card-title-wrapper input {
+.tpl-glass .education-card  h1.education-card-title-wrapper,
+.tpl-glass .education-card  h2.education-card-title-wrapper,
+.tpl-glass .education-card  h3.education-card-title-wrapper,
+.tpl-glass .education-card  .education-card-title-wrapper input{
   flex: 1;
   margin: 0;
   padding: 0;
@@ -192,8 +192,13 @@
   width: auto;
   min-width: 50px;
   max-width: 100%;
+  width: fit-content;
   box-sizing: border-box;
   transition: background 0.15s ease;
+}
+
+.tpl-glass .education-card .education-card-title-wrapper input{
+  width: max-content !important;
 }
 
 .tpl-glass .education-card .education-card-title-wrapper input:hover,
