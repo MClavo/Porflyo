@@ -4,7 +4,7 @@
 
 import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ZAxis } from 'recharts';
 import type { TooltipProps } from './types';
-import './modern-charts.css';
+import './charts.css';
 
 export interface BubbleDataPoint {
   id: number | string;
@@ -132,35 +132,35 @@ export const ProjectBubbleChart: React.FC<ProjectBubbleChartProps> = ({
       const data = payload[0].payload as typeof chartData[0] & Record<string, unknown>;
       
       return (
-        <div className="modern-tooltip">
-          <div className="modern-tooltip__header">
+        <div className="tooltip">
+          <div className="tooltip__header">
             {data.label}
           </div>
-          <div className="modern-tooltip__separator"></div>
-          <div className="modern-tooltip__content">
-            <div className="modern-tooltip__item">
-              <span className="modern-tooltip__name">{xAxisLabel}</span>
-              <span className="modern-tooltip__value">
+          <div className="tooltip__separator"></div>
+          <div className="tooltip__content">
+            <div className="tooltip__item">
+              <span className="tooltip__name">{xAxisLabel}</span>
+              <span className="tooltip__value">
                 {typeof data.rawX === 'number' ? data.rawX.toFixed(1) : data.rawX}
               </span>
             </div>
-            <div className="modern-tooltip__item">
-              <span className="modern-tooltip__name">{yAxisLabel}</span>
-              <span className="modern-tooltip__value">
+            <div className="tooltip__item">
+              <span className="tooltip__name">{yAxisLabel}</span>
+              <span className="tooltip__value">
                 {typeof data.rawY === 'number' ? data.rawY.toFixed(2) : data.rawY}
               </span>
             </div>
-            <div className="modern-tooltip__item">
-              <span className="modern-tooltip__name">{sizeLabel}</span>
-              <span className="modern-tooltip__value">
+            <div className="tooltip__item">
+              <span className="tooltip__name">{sizeLabel}</span>
+              <span className="tooltip__value">
                 {typeof data.rawSize === 'number' ? `${data.rawSize.toFixed(1)}s` : data.rawSize}
               </span>
             </div>
             {/* Show total interactions as bonus info */}
             {typeof data.totalInteractions === 'number' && (
-              <div className="modern-tooltip__item">
-                <span className="modern-tooltip__name">Total Interactions</span>
-                <span className="modern-tooltip__value">
+              <div className="tooltip__item">
+                <span className="tooltip__name">Total Interactions</span>
+                <span className="tooltip__value">
                   {data.totalInteractions.toLocaleString()}
                 </span>
               </div>

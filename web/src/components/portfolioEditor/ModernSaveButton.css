@@ -1,6 +1,6 @@
 /* ModernSaveButton - Save button styles */
 
-.modern-save-button {
+.save-button {
   background: linear-gradient(
     135deg,
     var(--accent-purple) 0%,
@@ -27,7 +27,7 @@
   justify-content: center;
 }
 
-.modern-save-button:hover:not(:disabled) {
+.save-button:hover:not(:disabled) {
   transform: translateY(-2px);
   box-shadow: 
     0 4px 12px rgba(139, 92, 246, 0.4),
@@ -35,7 +35,7 @@
     0 0 20px rgba(139, 92, 246, 0.2);
 }
 
-.modern-save-button:active:not(:disabled) {
+.save-button:active:not(:disabled) {
   transform: translateY(-1px);
   box-shadow: 
     0 2px 8px rgba(139, 92, 246, 0.3),
@@ -43,7 +43,7 @@
 }
 
 /* Disabled state */
-.modern-save-button:disabled {
+.save-button:disabled {
   background: rgba(156, 163, 175, 0.3);
   color: var(--text-tertiary);
   cursor: not-allowed;
@@ -52,13 +52,13 @@
   text-shadow: none;
 }
 
-.modern-save-button__icon {
+.save-button__icon {
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.modern-save-button__spinner {
+.save-button__spinner {
   animation: save-spin 1s linear infinite;
 }
 
@@ -71,13 +71,13 @@
   }
 }
 
-.modern-save-button__text {
+.save-button__text {
   font-family: var(--font-sans);
   letter-spacing: 0.02em;
 }
 
 /* Shimmer effect on hover */
-.modern-save-button::before {
+.save-button::before {
   content: '';
   position: absolute;
   top: 0;
@@ -94,17 +94,17 @@
   pointer-events: none;
 }
 
-.modern-save-button:hover:not(:disabled)::before {
+.save-button:hover:not(:disabled)::before {
   left: 100%;
 }
 
 /* Focus states */
-.modern-save-button:focus {
+.save-button:focus {
   outline: 2px solid rgba(255, 255, 255, 0.5);
   outline-offset: 2px;
 }
 
-.modern-save-button:focus:not(:focus-visible) {
+.save-button:focus:not(:focus-visible) {
   outline: none;
 }
 
@@ -131,7 +131,7 @@
   }
 }
 
-.modern-save-button--success {
+.save-button--success {
   background: linear-gradient(
     135deg,
     var(--status-positive) 0%,
@@ -142,18 +142,18 @@
 
 /* Mobile responsive */
 @media (max-width: 768px) {
-  .modern-save-button {
+  .save-button {
     padding: var(--space-2) var(--space-4);
     min-width: 80px;
   }
 
-  .modern-save-button__text {
+  .save-button__text {
     font-size: var(--font-xs);
   }
 }
 
 @media (max-width: 480px) {
-  .modern-save-button {
+  .save-button {
     width: 100%;
     justify-content: center;
   }

@@ -18,7 +18,7 @@ body.has-shader {
 }
 
 /* Affected page wrapper classes to make sure the shader shows through */
-.home-page, .profile-page, .root-page, .modern-projects-page, .modern-heatmap-page, .portfolio-page {
+.home-page, .profile-page, .root-page, .projects-page, .heatmap-page, .portfolio-page {
   background: transparent !important;
 }
 

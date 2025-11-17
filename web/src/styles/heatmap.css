@@ -25,13 +25,13 @@
   }
 }
 
-.modern-heatmap-container {
+.heatmap-container {
   /* Ensure the inner container can size to its content and not be constrained */
   width: auto;
   max-width: none;
 }
 
-.modern-heatmap-container {
+.heatmap-container {
   box-sizing: border-box;
   width: 100%;
 }

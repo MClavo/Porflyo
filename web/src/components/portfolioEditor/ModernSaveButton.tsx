@@ -17,15 +17,15 @@ export const ModernSaveButton: React.FC<ModernSaveButtonProps> = ({
 }) => {
   return (
     <button
-      className="modern-save-button"
+      className="save-button"
       onClick={onSave}
       disabled={isSaving}
       aria-label="Save portfolio"
     >
-      <div className="modern-save-button__icon">
-        {isSaving ? <FiLoader className="modern-save-button__spinner" /> : <FiSave size={16} />}
+      <div className="save-button__icon">
+        {isSaving ? <FiLoader className="save-button__spinner" /> : <FiSave size={16} />}
       </div>
-      <span className="modern-save-button__text">
+      <span className="save-button__text">
         {isSaving ? 'Saving...' : 'Save'}
       </span>
     </button>

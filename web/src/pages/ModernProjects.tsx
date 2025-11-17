@@ -14,7 +14,7 @@ import { ProjectStackedChart } from "../components/charts/ProjectStackedChart";
 import { ProjectRankingCard } from "../components/dashboard/ProjectRankingCard";
 import type { ProjectRaw } from "../api/types/slots.types";
 import "../styles/dashboard-theme.css";
-import "../styles/modern-projects.css";
+import "../styles/projects.css";
 
 interface ProjectMetrics {
   projectId: number;
@@ -172,7 +172,7 @@ function ModernProjectsContent() {
   
   if (isLoading || !isReady) {
     return (
-      <div className="modern-projects-container">
+      <div className="projects-container">
         <DashboardHeader 
           title="Projects Analytics"
           subtitle="Project performance and interaction insights"
@@ -191,7 +191,7 @@ function ModernProjectsContent() {
 
   if (projectMetrics.length === 0) {
     return (
-      <div className="modern-projects-container">
+      <div className="projects-container">
         <DashboardHeader 
           title="Projects Analytics"
           subtitle="No project data available for the selected time range"
@@ -219,7 +219,7 @@ function ModernProjectsContent() {
   }
 
   return (
-    <div className="modern-projects-container">
+    <div className="projects-container">
       <DashboardHeader 
         title="Projects Analytics"
         subtitle={`Performance insights across ${projectMetrics.length} projects`}
@@ -284,8 +284,8 @@ function ModernProjectsContent() {
       </KpiGrid>
 
       {/* Main Charts Section - Stacked Chart + Donut */}
-      <div className="modern-projects-main-section">
-        <div className="modern-projects-stacked-container">
+      <div className="projects-main-section">
+        <div className="projects-stacked-container">
           <ProjectStackedChart 
             data={projectMetrics.slice(0, 8).map(p => ({
               ...p,
@@ -296,7 +296,7 @@ function ModernProjectsContent() {
           />
         </div>
         
-        <div className="modern-projects-donut-container">
+        <div className="projects-donut-container">
           <ProjectDonutChart 
             data={projectMetrics.slice(0, 8).map(p => ({
               ...p,
@@ -310,7 +310,7 @@ function ModernProjectsContent() {
       </div>
 
       {/* Bottom Row - Bubble Chart and Rankings */}
-      <div className="modern-projects-bottom-row">
+      <div className="projects-bottom-row">
         <ProjectBubbleChart 
           data={projectMetrics.slice(0, 10).map(p => ({
             id: p.projectId,
@@ -355,7 +355,7 @@ function ModernProjectsContent() {
 
 export default function ModernProjects() {
   return (
-    <div className="modern-projects-page">
+    <div className="projects-page">
       <ModernProjectsContent />
     </div>
   );

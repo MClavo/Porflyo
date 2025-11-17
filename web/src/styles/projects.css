@@ -1,6 +1,6 @@
 /* ModernProjects - Modern projects page styles */
 
-.modern-projects-page {
+.projects-page {
   width: 100%;
   min-height: 100vh;
   background: var(--dashboard-bg-primary);
@@ -10,7 +10,7 @@
 
 /* Content and header styles are handled inline for now */
 
-.modern-projects-empty-state {
+.projects-empty-state {
   /* Empty state animation */
   animation: fadeInUp 0.6s ease-out;
 }
@@ -27,19 +27,19 @@
 }
 
 /* Main section with stacked chart and donut */
-.modern-projects-main-section {
+.projects-main-section {
   display: grid;
   grid-template-columns: 2fr 1fr;
   gap: var(--space-6);
   margin-top: var(--space-8);
 }
 
-.modern-projects-donut-container {
+.projects-donut-container {
   /* Donut chart container with reduced width */
   max-width: 450px;
 }
 
-.modern-projects-bottom-row {
+.projects-bottom-row {
   display: grid;
   grid-template-columns: 2fr 1fr;
   gap: var(--space-6);
@@ -48,26 +48,26 @@
 
 /* Responsive design */
 @media (max-width: 1200px) {
-  .modern-projects-bottom-row {
+  .projects-bottom-row {
     grid-template-columns: 1fr;
   }
 }
 
 @media (max-width: 768px) {
-  .modern-projects-content {
+  .projects-content {
     padding: var(--space-4) !important;
   }
   
-  .modern-projects-empty-state div {
+  .projects-empty-state div {
     font-size: 48px !important;
   }
 
-  .modern-projects-charts-grid {
+  .projects-charts-grid {
     grid-template-columns: 1fr;
     gap: var(--space-4);
   }
 
-  .modern-projects-bottom-row {
+  .projects-bottom-row {
     grid-template-columns: 1fr;
     gap: var(--space-4);
   }
@@ -75,7 +75,7 @@
 
 /* Chart specific responsive improvements */
 @media (max-width: 480px) {
-  .modern-projects-charts-grid {
+  .projects-charts-grid {
     grid-template-columns: 1fr;
     margin-top: var(--space-6);
   }

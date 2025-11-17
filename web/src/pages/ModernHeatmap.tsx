@@ -13,7 +13,7 @@ import HeatmapSkeleton from "../components/ui/HeatmapSkeleton";
 import { NoDataMessage } from "../components/dashboard";
 import type { HeatmapMode } from "../components/ui/HeatmapModeToggle";
 import "../styles/dashboard-theme.css";
-import "../styles/modern-heatmap.css";
+import "../styles/heatmap.css";
 
 interface ModernHeatmapProps {
   selectedSlot?: string;
@@ -153,7 +153,7 @@ function ModernHeatmapContent({ selectedSlot, heatmapMode }: ModernHeatmapConten
   }
 
   return (
-    <div className="modern-heatmap-container">
+    <div className="heatmap-container">
       {/* Portfolio con heatmap overlay */}
       <div
         ref={portfolioRef}
@@ -207,7 +207,7 @@ function ModernHeatmapContent({ selectedSlot, heatmapMode }: ModernHeatmapConten
 
 export default function ModernHeatmap({ selectedSlot = 'all', heatmapMode = 'raw' }: ModernHeatmapProps) {
   return (
-    <div className="modern-heatmap-page">
+    <div className="heatmap-page">
       <ModernHeatmapContent selectedSlot={selectedSlot} heatmapMode={heatmapMode} />
     </div>
   );

@@ -65,20 +65,20 @@ const CustomTooltip: React.FC<TooltipProps> = ({ active, payload, label }) => {
   };
 
   return (
-    <div className="modern-tooltip">
-      <div className="modern-tooltip__header">
+    <div className="tooltip">
+      <div className="tooltip__header">
         {label ? formatDate(label) : ''}
       </div>
-      <div className="modern-tooltip__separator"></div>
-      <div className="modern-tooltip__content">
+      <div className="tooltip__separator"></div>
+      <div className="tooltip__content">
         {payload.map((entry, index: number) => (
-          <div key={index} className="modern-tooltip__item">
+          <div key={index} className="tooltip__item">
             <div 
-              className="modern-tooltip__color-dot"
+              className="tooltip__color-dot"
               style={{ backgroundColor: entry.color }}
             ></div>
-            <span className="modern-tooltip__name">{entry.name}</span>
-            <span className="modern-tooltip__value">
+            <span className="tooltip__name">{entry.name}</span>
+            <span className="tooltip__value">
               {typeof entry.value === 'number' 
                 ? entry.value.toLocaleString() 
                 : entry.value}
@@ -126,8 +126,8 @@ export const ModernAreaChart: React.FC<ModernAreaChartProps> = ({
 
   if (isLoading) {
     return (
-      <div className="modern-area-chart">
-        <div className="modern-area-chart__header">
+      <div className="area-chart">
+        <div className="area-chart__header">
           <div className="skeleton skeleton__title"></div>
           <div className="skeleton skeleton__subtitle"></div>
         </div>
@@ -137,36 +137,36 @@ export const ModernAreaChart: React.FC<ModernAreaChartProps> = ({
   }
 
   return (
-    <div className="modern-area-chart">
-      <div className="modern-area-chart__header">
-        <div className="modern-area-chart__title-section">
-          <h3 className="modern-area-chart__title">{title}</h3>
+    <div className="area-chart">
+      <div className="area-chart__header">
+        <div className="area-chart__title-section">
+          <h3 className="area-chart__title">{title}</h3>
           {subtitle && (
-            <p className="modern-area-chart__subtitle">{subtitle}</p>
+            <p className="area-chart__subtitle">{subtitle}</p>
           )}
         </div>
 
         {/* Legend personalizada con toggle */}
-        <div className="modern-area-chart__legend">
+        <div className="area-chart__legend">
           {metrics.map((metric) => (
             <button
               key={metric.key}
-              className={`modern-legend-item ${
-                activeMetrics.has(metric.key) ? 'modern-legend-item--active' : 'modern-legend-item--inactive'
+              className={`legend-item ${
+                activeMetrics.has(metric.key) ? 'legend-item--active' : 'legend-item--inactive'
               }`}
               onClick={() => toggleMetric(metric.key)}
             >
               <div 
-                className="modern-legend-item__color"
+                className="legend-item__color"
                 style={{ backgroundColor: metric.color }}
               ></div>
-              <span className="modern-legend-item__name">{metric.name}</span>
+              <span className="legend-item__name">{metric.name}</span>
             </button>
           ))}
         </div>
       </div>
 
-      <div className="modern-area-chart__container" style={{ height }}>
+      <div className="area-chart__container" style={{ height }}>
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart
             data={data}

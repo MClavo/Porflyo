@@ -66,42 +66,42 @@ export const ModernTemplateSelector: React.FC<ModernTemplateSelectorProps> = ({
   };
 
   return (
-    <div className="modern-template-selector" ref={dropdownRef}>
+    <div className="template-selector" ref={dropdownRef}>
       <button
-        className="modern-template-selector__trigger"
+        className="template-selector__trigger"
         onClick={() => setIsOpen(!isOpen)}
         aria-expanded={isOpen}
         aria-haspopup="listbox"
         aria-label="Select template"
       >
         <FiLayout size={16} />
-        <span className="modern-template-selector__label">Template:</span>
-        <span className="modern-template-selector__value">{selectedOption.label}</span>
+        <span className="template-selector__label">Template:</span>
+        <span className="template-selector__value">{selectedOption.label}</span>
         <FiChevronDown 
           size={16} 
-          className={`modern-template-selector__chevron ${isOpen ? 'modern-template-selector__chevron--open' : ''}`}
+          className={`template-selector__chevron ${isOpen ? 'template-selector__chevron--open' : ''}`}
         />
       </button>
 
       {isOpen && (
-        <div className="modern-template-selector__dropdown">
-          <div className="modern-template-selector__options">
+        <div className="template-selector__dropdown">
+          <div className="template-selector__options">
             {TEMPLATE_OPTIONS.map((option) => (
               <button
                 key={option.value}
-                className={`modern-template-selector__option ${
-                  option.value === selectedTemplate ? 'modern-template-selector__option--selected' : ''
+                className={`template-selector__option ${
+                  option.value === selectedTemplate ? 'template-selector__option--selected' : ''
                 }`}
                 onClick={() => handleSelect(option.value)}
                 role="option"
                 aria-selected={option.value === selectedTemplate}
               >
-                <div className="modern-template-selector__option-content">
-                  <span className="modern-template-selector__option-label">{option.label}</span>
-                  <span className="modern-template-selector__option-description">{option.description}</span>
+                <div className="template-selector__option-content">
+                  <span className="template-selector__option-label">{option.label}</span>
+                  <span className="template-selector__option-description">{option.description}</span>
                 </div>
                 {option.value === selectedTemplate && (
-                  <div className="modern-template-selector__check">✓</div>
+                  <div className="template-selector__check">✓</div>
                 )}
               </button>
             ))}

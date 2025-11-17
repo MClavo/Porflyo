@@ -19,7 +19,7 @@ import Root from './pages/root.tsx'
 import { NavbarProvider } from './providers/NavbarProvider'
 import { SavedCardsProvider } from './state/SavedCards.context'
 import './styles/dashboard-theme.css'
-import './styles/modern-dashboard.css'
+import './styles/dashboard.css'
 import './styles/professional-dashboard.css'
 import './styles/theme.css'
 // analytics initialization intentionally removed from global startup.

@@ -1,11 +1,11 @@
 /* ModernModeToggle - Spectacular toggle button styles */
 
-.modern-mode-toggle {
+.mode-toggle {
   display: flex;
   align-items: center;
 }
 
-.modern-mode-toggle__container {
+.mode-toggle__container {
   position: relative;
   display: flex;
   background: rgba(255, 255, 255, 0.05);
@@ -22,7 +22,7 @@
   height: auto;
 }
 
-.modern-mode-toggle__slider {
+.mode-toggle__slider {
   position: absolute;
   top: 0;
   bottom: 0;
@@ -43,7 +43,7 @@
   margin: 2px;
 }
 
-.modern-mode-toggle__slider--view {
+.mode-toggle__slider--view {
   transform: translateX(calc(100% - 4px));
   background: linear-gradient(
     135deg,
@@ -56,7 +56,7 @@
     0 0 20px rgba(59, 130, 246, 0.2);
 }
 
-.modern-mode-toggle__option {
+.mode-toggle__option {
   position: relative;
   z-index: 2;
   background: none;
@@ -77,52 +77,52 @@
   height: 100%;
 }
 
-.modern-mode-toggle__option--active {
+.mode-toggle__option--active {
   color: white;
   font-weight: 600;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
-.modern-mode-toggle__option span {
+.mode-toggle__option span {
   font-family: var(--font-sans);
   letter-spacing: 0.02em;
 }
 
 /* Simple hover effect on container */
-.modern-mode-toggle__container:hover {
+.mode-toggle__container:hover {
   background: rgba(255, 255, 255, 0.08);
   border-color: rgba(255, 255, 255, 0.15);
 }
 
 /* Focus states */
-.modern-mode-toggle__container:focus {
+.mode-toggle__container:focus {
   outline: 2px solid var(--accent-blue);
   outline-offset: 2px;
   border-radius: var(--radius-lg);
 }
 
-.modern-mode-toggle__container:focus:not(:focus-visible) {
+.mode-toggle__container:focus:not(:focus-visible) {
   outline: none;
 }
 
 /* Mobile responsive */
 @media (max-width: 768px) {
-  .modern-mode-toggle__option {
+  .mode-toggle__option {
     min-width: 70px;
     padding: var(--space-2) var(--space-3);
   }
 
-  .modern-mode-toggle__option span {
+  .mode-toggle__option span {
     font-size: var(--font-xs);
   }
 }
 
 @media (max-width: 480px) {
-  .modern-mode-toggle__option span {
+  .mode-toggle__option span {
     display: none;
   }
 
-  .modern-mode-toggle__option {
+  .mode-toggle__option {
     min-width: 44px;
     padding: var(--space-2);
   }

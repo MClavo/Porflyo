@@ -17,7 +17,7 @@
   font-size: var(--font-sm) !important;
 }
 
-.project-stacked-tooltip .modern-tooltip__header {
+.project-stacked-tooltip .tooltip__header {
   font-size: var(--font-sm);
   font-weight: 700;
   color: var(--text-primary);
@@ -26,13 +26,13 @@
   letter-spacing: 0.025em;
 }
 
-.project-stacked-tooltip .modern-tooltip__separator {
+.project-stacked-tooltip .tooltip__separator {
   height: 1px;
   background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
   margin: var(--space-2) 0;
 }
 
-.project-stacked-tooltip .modern-tooltip__content {
+.project-stacked-tooltip .tooltip__content {
   display: grid;
   /* name column then value column; center the whole grid inside the tooltip */
   grid-template-columns: max-content min-content;
@@ -43,18 +43,18 @@
   padding: var(--space-1) 0; /* vertical padding */
 }
 
-.project-stacked-tooltip .modern-tooltip__item {
+.project-stacked-tooltip .tooltip__item {
   display: contents; /* allow grid children to define layout */
 }
 
-.project-stacked-tooltip .modern-tooltip__name {
+.project-stacked-tooltip .tooltip__name {
   font-size: var(--font-sm);
   color: var(--text-secondary);
   font-weight: 500;
   padding-left: var(--space-1);
 }
 
-.project-stacked-tooltip .modern-tooltip__value {
+.project-stacked-tooltip .tooltip__value {
   font-size: var(--font-sm);
   color: var(--text-primary);
   font-weight: 700;
@@ -90,7 +90,7 @@
 }
 
 /* Tooltip moderno que sigue al ratón */
-.modern-tooltip {
+.tooltip {
   background: var(--card-bg);
   backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.15) !important;
@@ -177,7 +177,7 @@
 }
 
 /* Estilo para leyendas */
-.modern-chart-legend {
+.chart-legend {
   display: flex;
   justify-content: center;
   gap: var(--space-3);
@@ -186,19 +186,19 @@
   color: var(--text-secondary);
 }
 
-.modern-legend-item {
+.legend-item {
   display: flex;
   align-items: center;
   gap: var(--space-1);
 }
 
-.modern-legend-dot {
+.legend-dot {
   width: 8px;
   height: 8px;
   border-radius: 50%;
 }
 
-.modern-legend-square {
+.legend-square {
   width: 8px;
   height: 8px;
   border-radius: 2px;

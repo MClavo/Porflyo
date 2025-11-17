@@ -38,7 +38,7 @@ function DashboardRouter() {
       heatmapMode={currentPage === 'heatmap' ? heatmapMode : 'raw'}
       onHeatmapModeChange={currentPage === 'heatmap' ? handleModeChange : () => {}}
     >
-      <div className="modern-dashboard__content">
+      <div className="dashboard__content">
         {renderCurrentPage()}
       </div>
     </ModernDashboardLayout>

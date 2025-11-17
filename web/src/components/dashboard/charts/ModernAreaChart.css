@@ -1,5 +1,5 @@
 /* Modern Area Chart Styles */
-.modern-area-chart {
+.area-chart {
   background: var(--card-bg);
   border: 1px solid var(--card-border);
   border-radius: var(--radius-lg);
@@ -11,14 +11,14 @@
   margin-top: var(--space-8);
 }
 
-.modern-area-chart:hover {
+.area-chart:hover {
   background: var(--card-bg-hover);
   border-color: var(--card-border-hover);
   box-shadow: var(--shadow-lg);
   transform: translateY(-2px);
 }
 
-.modern-area-chart::before {
+.area-chart::before {
   content: '';
   position: absolute;
   top: 0;
@@ -30,12 +30,12 @@
   transition: opacity var(--transition-normal);
 }
 
-.modern-area-chart:hover::before {
+.area-chart:hover::before {
   opacity: 1;
 }
 
 /* Header */
-.modern-area-chart__header {
+.area-chart__header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
@@ -43,11 +43,11 @@
   gap: var(--space-4);
 }
 
-.modern-area-chart__title-section {
+.area-chart__title-section {
   flex: 1;
 }
 
-.modern-area-chart__title {
+.area-chart__title {
   font-size: var(--font-xl);
   font-weight: 700;
   color: var(--text-primary);
@@ -55,7 +55,7 @@
   line-height: 1.2;
 }
 
-.modern-area-chart__subtitle {
+.area-chart__subtitle {
   font-size: var(--font-sm);
   color: var(--text-secondary);
   margin: 0;
@@ -63,14 +63,14 @@
 }
 
 /* Legend personalizada */
-.modern-area-chart__legend {
+.area-chart__legend {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-3);
   align-items: center;
 }
 
-.modern-legend-item {
+.legend-item {
   display: flex;
   align-items: center;
   gap: var(--space-2);
@@ -84,40 +84,40 @@
   font-weight: 500;
 }
 
-.modern-legend-item--active {
+.legend-item--active {
   background: rgba(255, 255, 255, 0.08);
   color: var(--text-primary);
 }
 
-.modern-legend-item--inactive {
+.legend-item--inactive {
   background: rgba(255, 255, 255, 0.02);
   color: var(--text-secondary);
   opacity: 0.6;
 }
 
-.modern-legend-item:hover {
+.legend-item:hover {
   background: rgba(255, 255, 255, 0.12);
   transform: translateY(-1px);
 }
 
-.modern-legend-item__color {
+.legend-item__color {
   width: 12px;
   height: 12px;
   border-radius: 50%;
   transition: all var(--transition-fast);
 }
 
-.modern-legend-item--inactive .modern-legend-item__color {
+.legend-item--inactive .legend-item__color {
   opacity: 0.4;
 }
 
-.modern-legend-item__name {
+.legend-item__name {
   font-weight: 600;
   white-space: nowrap;
 }
 
 /* Chart Container */
-.modern-area-chart__container {
+.area-chart__container {
   position: relative;
   width: 100%;
 }
@@ -129,7 +129,7 @@
 }
 
 /* Custom Tooltip */
-.modern-tooltip {
+.tooltip {
   background: rgba(26, 32, 44, 0.95);
   backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.15);
@@ -143,7 +143,7 @@
   pointer-events: none;
 }
 
-.modern-tooltip__header {
+.tooltip__header {
   font-size: var(--font-sm);
   font-weight: 700;
   color: var(--text-primary);
@@ -152,7 +152,7 @@
   letter-spacing: 0.025em;
 }
 
-.modern-tooltip__separator {
+.tooltip__separator {
   height: 1px;
   background: linear-gradient(
     90deg,
@@ -163,20 +163,20 @@
   margin: var(--space-2) 0 var(--space-3) 0;
 }
 
-.modern-tooltip__content {
+.tooltip__content {
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
 }
 
-.modern-tooltip__item {
+.tooltip__item {
   display: flex;
   align-items: center;
   gap: var(--space-3);
   padding: var(--space-1) 0;
 }
 
-.modern-tooltip__color-dot {
+.tooltip__color-dot {
   width: 10px;
   height: 10px;
   border-radius: 50%;
@@ -184,14 +184,14 @@
   box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.1);
 }
 
-.modern-tooltip__name {
+.tooltip__name {
   font-size: var(--font-sm);
   color: var(--text-secondary);
   flex: 1;
   font-weight: 500;
 }
 
-.modern-tooltip__value {
+.tooltip__value {
   font-size: var(--font-sm);
   color: var(--text-primary);
   font-weight: 700;
@@ -265,44 +265,44 @@
 
 /* Responsive */
 @media (max-width: 768px) {
-  .modern-area-chart__header {
+  .area-chart__header {
     flex-direction: column;
     align-items: flex-start;
     gap: var(--space-4);
   }
 
-  .modern-area-chart__legend {
+  .area-chart__legend {
     width: 100%;
     justify-content: flex-start;
   }
 
-  .modern-legend-item {
+  .legend-item {
     padding: var(--space-2);
     font-size: var(--font-xs);
   }
 
-  .modern-tooltip {
+  .tooltip {
     min-width: 160px;
     padding: var(--space-3);
   }
 }
 
 @media (max-width: 480px) {
-  .modern-area-chart {
+  .area-chart {
     padding: var(--space-4);
   }
 
-  .modern-area-chart__title {
+  .area-chart__title {
     font-size: var(--font-lg);
   }
 
-  .modern-legend-item {
+  .legend-item {
     flex: 1;
     justify-content: center;
     min-width: 0;
   }
 
-  .modern-legend-item__name {
+  .legend-item__name {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -310,31 +310,31 @@
 }
 
 /* Padding y título */
-.modern-area-chart{ padding: var(--space-5) var(--space-6); }
-.modern-area-chart__title{ font-size: var(--font-lg); }
+.area-chart{ padding: var(--space-5) var(--space-6); }
+.area-chart__title{ font-size: var(--font-lg); }
 
 /* Leyenda en una línea con scroll “silencioso” si desborda */
-.modern-area-chart__legend{
+.area-chart__legend{
   flex-wrap: nowrap;
   overflow-x: auto;
   scrollbar-width: none; -ms-overflow-style: none;
 }
-.modern-area-chart__legend::-webkit-scrollbar{ display:none; }
+.area-chart__legend::-webkit-scrollbar{ display:none; }
 
-.modern-legend-item{
+.legend-item{
   padding: var(--space-1) var(--space-2);
   font-size: var(--font-xs);
   border: 1px solid rgba(255,255,255,.08);
 }
-.modern-legend-item--active{ background: rgba(255,255,255,.08); }
-.modern-legend-item--inactive{ opacity: .55; }
+.legend-item--active{ background: rgba(255,255,255,.08); }
+.legend-item--inactive{ opacity: .55; }
 
 /* Tooltip dark/light */
-.modern-tooltip{ background: rgba(26,32,44,.94); }
-body.light-theme .modern-tooltip{
+.tooltip{ background: rgba(26,32,44,.94); }
+body.light-theme .tooltip{
   background: rgba(255,255,255,.92);
   border-color: rgba(15,23,42,.12);
 }
-body.light-theme .modern-tooltip__header{ color: var(--text-primary); }
-body.light-theme .modern-tooltip__name{ color: var(--text-secondary); }
-body.light-theme .modern-tooltip__value{ color: var(--text-primary); }
+body.light-theme .tooltip__header{ color: var(--text-primary); }
+body.light-theme .tooltip__name{ color: var(--text-secondary); }
+body.light-theme .tooltip__value{ color: var(--text-primary); }

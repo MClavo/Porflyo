@@ -79,14 +79,14 @@ body {
 /* Scrollbar positioning - stays below navbars */
 .dashboard-container,
 .profile-page,
-.modern-dashboard {
+.dashboard {
   height: 100vh;
   overflow-y: auto;
   overflow-x: hidden;
 }
 
 /* For pages with dashboard navbar */
-.modern-dashboard {
+.dashboard {
   padding-top: calc(var(--navbar-height) + var(--dashboard-navbar-height));
   height: 100vh;
   box-sizing: border-box;

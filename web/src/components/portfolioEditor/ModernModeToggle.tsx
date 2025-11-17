@@ -16,22 +16,22 @@ export const ModernModeToggle: React.FC<ModernModeToggleProps> = ({
   onToggle
 }) => {
   return (
-    <div className="modern-mode-toggle">
+    <div className="mode-toggle">
       <button 
-        className="modern-mode-toggle__container"
+        className="mode-toggle__container"
         onClick={onToggle}
         aria-label={`Switch to ${mode === 'edit' ? 'view' : 'edit'} mode`}
       >
         <div 
-          className={`modern-mode-toggle__slider ${mode === 'view' ? 'modern-mode-toggle__slider--view' : ''}`}
+          className={`mode-toggle__slider ${mode === 'view' ? 'mode-toggle__slider--view' : ''}`}
         />
         
-        <div className={`modern-mode-toggle__option ${mode === 'edit' ? 'modern-mode-toggle__option--active' : ''}`}>
+        <div className={`mode-toggle__option ${mode === 'edit' ? 'mode-toggle__option--active' : ''}`}>
           <FiEdit3 size={16} />
           <span>Edit</span>
         </div>
         
-        <div className={`modern-mode-toggle__option ${mode === 'view' ? 'modern-mode-toggle__option--active' : ''}`}>
+        <div className={`mode-toggle__option ${mode === 'view' ? 'mode-toggle__option--active' : ''}`}>
           <FiEye size={16} />
           <span>View</span>
         </div>

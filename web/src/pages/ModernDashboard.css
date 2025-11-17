@@ -1,6 +1,6 @@
 /* Modern Dashboard - Transiciones entre páginas */
 
-.modern-dashboard {
+.dashboard {
   width: 100%;
   min-height: 100vh;
   /* Scroll handling moved to dashboard-theme.css */
@@ -10,14 +10,14 @@
   box-sizing: border-box;
 }
 
-.modern-dashboard__content {
+.dashboard__content {
   width: 100%;
   height: 100%;
   transition: opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   opacity: 1;
 }
 
-.modern-dashboard--transitioning .modern-dashboard__content {
+.dashboard--transitioning .dashboard__content {
   opacity: 0;
   transform: translateX(10px);
 }

@@ -37,15 +37,15 @@ export const ModernPublishButton: React.FC<ModernPublishButtonProps> = ({
 
   return (
     <button
-      className="modern-publish-button"
+      className="publish-button"
       onClick={onPublish}
       disabled={!canPublish}
       aria-label={isPublished ? 'Update portfolio URL and visibility' : 'Publish portfolio'}
     >
-      <div className="modern-publish-button__icon">
-        {isPublishing ? <FiLoader className="modern-publish-button__spinner" /> : <FiUpload size={16} />}
+      <div className="publish-button__icon">
+        {isPublishing ? <FiLoader className="publish-button__spinner" /> : <FiUpload size={16} />}
       </div>
-      <span className="modern-publish-button__text">
+      <span className="publish-button__text">
         {isPublishing ? 'Updating...' : isPublished ? 'Update' : 'Publish'}
       </span>
     </button>

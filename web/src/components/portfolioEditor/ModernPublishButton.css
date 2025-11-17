@@ -1,6 +1,6 @@
 /* ModernPublishButton - Publish/Update button styles */
 
-.modern-publish-button {
+.publish-button {
   background: linear-gradient(
     135deg,
     var(--accent-teal) 0%,
@@ -27,7 +27,7 @@
   justify-content: center;
 }
 
-.modern-publish-button:hover:not(:disabled) {
+.publish-button:hover:not(:disabled) {
   transform: translateY(-2px);
   box-shadow: 
     0 4px 12px rgba(20, 184, 166, 0.4),
@@ -35,7 +35,7 @@
     0 0 20px rgba(20, 184, 166, 0.2);
 }
 
-.modern-publish-button:active:not(:disabled) {
+.publish-button:active:not(:disabled) {
   transform: translateY(-1px);
   box-shadow: 
     0 2px 8px rgba(20, 184, 166, 0.3),
@@ -43,7 +43,7 @@
 }
 
 /* Disabled state */
-.modern-publish-button:disabled {
+.publish-button:disabled {
   background: rgba(156, 163, 175, 0.3);
   color: var(--text-tertiary);
   cursor: not-allowed;
@@ -52,13 +52,13 @@
   text-shadow: none;
 }
 
-.modern-publish-button__icon {
+.publish-button__icon {
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.modern-publish-button__spinner {
+.publish-button__spinner {
   animation: publish-spin 1s linear infinite;
 }
 
@@ -71,13 +71,13 @@
   }
 }
 
-.modern-publish-button__text {
+.publish-button__text {
   font-family: var(--font-sans);
   letter-spacing: 0.02em;
 }
 
 /* Shimmer effect on hover */
-.modern-publish-button::before {
+.publish-button::before {
   content: '';
   position: absolute;
   top: 0;
@@ -94,17 +94,17 @@
   pointer-events: none;
 }
 
-.modern-publish-button:hover:not(:disabled)::before {
+.publish-button:hover:not(:disabled)::before {
   left: 100%;
 }
 
 /* Focus states */
-.modern-publish-button:focus {
+.publish-button:focus {
   outline: 2px solid rgba(255, 255, 255, 0.5);
   outline-offset: 2px;
 }
 
-.modern-publish-button:focus:not(:focus-visible) {
+.publish-button:focus:not(:focus-visible) {
   outline: none;
 }
 
@@ -131,7 +131,7 @@
   }
 }
 
-.modern-publish-button--success {
+.publish-button--success {
   background: linear-gradient(
     135deg,
     var(--status-positive) 0%,
@@ -142,18 +142,18 @@
 
 /* Mobile responsive */
 @media (max-width: 768px) {
-  .modern-publish-button {
+  .publish-button {
     padding: var(--space-2) var(--space-4);
     min-width: 80px;
   }
 
-  .modern-publish-button__text {
+  .publish-button__text {
     font-size: var(--font-xs);
   }
 }
 
 @media (max-width: 480px) {
-  .modern-publish-button {
+  .publish-button {
     width: 100%;
     justify-content: center;
   }
