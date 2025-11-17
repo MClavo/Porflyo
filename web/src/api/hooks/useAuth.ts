@@ -112,10 +112,10 @@ export function useAuth(): AuthUserResult {
     
     // Check current route - only load auth on specific routes during refresh
     const currentPath = window.location.pathname;
-    const isHome = currentPath === '/' || currentPath === '/home';
+    const isRootPage = currentPath === '/';
+    const isHome = currentPath === '/home';
     const isPortfolioRoute = currentPath.startsWith('/portfolios/');
     const isProfileRoute = currentPath === '/profile' || currentPath.startsWith('/profile/');
-    const isRootPage = currentPath === '/';
     
     // Check if this is a page refresh - forces fresh data
     const pageRefresh = isPageRefresh();
@@ -126,9 +126,11 @@ export function useAuth(): AuthUserResult {
     // 3. We're NOT on the root page (landing page should not trigger auth checks)
     // 4. This is a page refresh AND we're on an allowed route (home, portfolios, profile)
     const isAllowedRouteForRefresh = isHome || isPortfolioRoute || isProfileRoute;
-    const shouldFetchAuth = (hasOAuthParams || oauthReturn === 'true') || 
-                          (!isRootPage && !hasCachedUser) ||
-                          (pageRefresh && isAllowedRouteForRefresh);
+    const shouldFetchAuth = !isRootPage && (
+                          (hasOAuthParams || oauthReturn === 'true') || 
+                          (!hasCachedUser) ||
+                          (pageRefresh && isAllowedRouteForRefresh)
+                        );
     
     if (shouldFetchAuth) {
       fetchAuthStatus();
