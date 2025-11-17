@@ -8,7 +8,6 @@ export interface NotificationProps {
 }
 
 export function Notification({ message, type, isVisible, onClose }: NotificationProps) {
-  console.log('Notification render - isVisible:', isVisible, 'message:', message, 'type:', type);
 
   if (!isVisible) return null;
 

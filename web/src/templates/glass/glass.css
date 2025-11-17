@@ -8,6 +8,7 @@
 
 /* Import all modular styles */
 @import './styles/base.css';
+@import './styles/gradient-selector.css';
 @import './styles/user-header.css';
 @import './styles/sections.css';
 @import './styles/items.css';

@@ -105,7 +105,7 @@
   font-weight: 800 !important;
   margin: 0 !important;
   text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3) !important;
-  background: linear-gradient(45deg, #ffffff, #e0e7ff) !important;
+  background: #ffffff !important;
   -webkit-background-clip: text !important;
   -webkit-text-fill-color: transparent !important;
   background-clip: text !important;
