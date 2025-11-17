@@ -9,7 +9,7 @@ import { PortfoliosProvider } from './contexts/PortfoliosContext'
 import { RepositoriesProvider } from './contexts/RepositoriesContext'
 import { SavedSectionsProvider } from './contexts/SavedSectionsContext'
 import { ThemeProvider } from './contexts/theme'
-import Home from './pages/Home.tsx'
+import HomePage from './pages/HomePage.tsx'
 import ModernDashboard from './pages/ModernDashboard'
 import ModernProjects from './pages/ModernProjects'
 import PortfolioEditor from './pages/PortfolioEditor.tsx'
@@ -52,7 +52,7 @@ export function AppWithProviders() {
 
                     <Route path="/home" element={
                         <ProtectedRoute fallback={<Root />}>
-                          <Home />
+                          <HomePage />
                         </ProtectedRoute>
                       } 
                     />

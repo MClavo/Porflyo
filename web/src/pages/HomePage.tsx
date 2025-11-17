@@ -9,7 +9,7 @@ import '../styles/components/buttons.css';
  * Home page component - shows user dashboard for authenticated users
  * Authentication protection is handled by ProtectedRoute wrapper
  */
-export function Home() {
+export function HomePage() {
   const { user, isLoading: userLoading } = useAuthContext();
   const { portfolios, isLoading: portfoliosLoading } = usePortfoliosContext();
   const { handleDelete, isDeleting } = usePortfolioActions();
@@ -39,4 +39,4 @@ export function Home() {
   );
 }
 
-export default Home;
+export default HomePage;
