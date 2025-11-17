@@ -35,11 +35,6 @@
   padding: 0;
 }
 
-/* Add top padding in edit mode to accommodate drag handle */
-.tpl-glass .project-card[data-mode="edit"] .project-card__images {
-  padding-top: 36px;
-}
-
 .tpl-glass .project-card__images .image-container {
   border-radius: 0;
   border: none;

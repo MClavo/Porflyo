@@ -132,6 +132,10 @@ const EditorDndProvider: React.FC<EditorDndProviderProps> = ({
               id={sectionId}
               style={{ 
                 pointerEvents: 'none',
+                minWidth: '350px',
+                maxWidth: '600px',
+                width: 'max-content',
+                backdropFilter: 'blur(4px)',
                 // Force ATS width when using ATS template
                 ...(template === 'ats' ? {
                   width: '1000px',
