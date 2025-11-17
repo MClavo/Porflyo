@@ -8,12 +8,16 @@
   justify-content: center;
   background-color: var(--ats-bg-color);
   color: var(--ats-text-color);
-  font-family: var(--ats-font-family);
+  font-family: var(--ats-font-family) !important;
   font-size: var(--ats-font-size-base);
   line-height: var(--ats-line-height-base);
   min-height: 100vh;
   padding: var(--ats-padding-page);
   box-sizing: border-box;
+}
+
+.tpl-ats * {
+  font-family: var(--ats-font-family) !important;
 }
 
 .tpl-ats .ats-content-wrapper {
