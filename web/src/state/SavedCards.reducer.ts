@@ -8,12 +8,19 @@ const genId = () => crypto.randomUUID();
 
 /**
  * Convert AnyCard to PortfolioSection format for API
+ * Adds createdAt timestamp to the content
  */
-function cardToPortfolioSection(card: AnyCard, sectionType: string): PortfolioSection {
+function cardToPortfolioSection(card: AnyCard, sectionType: string, createdAt: number): PortfolioSection {
+  // Add createdAt to the card content before stringifying
+  const cardWithTimestamp = {
+    ...card,
+    createdAt
+  };
+  
   return {
     sectionType,
     title: "", // Not used for saved cards
-    content: JSON.stringify(card),
+    content: JSON.stringify(cardWithTimestamp),
     media: []
   };
 }
@@ -27,7 +34,8 @@ export async function saveCardToApi(
   originSectionType: string,
   name: string
 ): Promise<import("../api/types").PublicSavedSectionDto> {
-  const section = cardToPortfolioSection(card, originSectionType);
+  const createdAt = Date.now();
+  const section = cardToPortfolioSection(card, originSectionType, createdAt);
   const createDto: SavedSectionCreateDto = {
     name: name.trim() || `${card.type} - ${new Date().toLocaleString()}`,
     section
