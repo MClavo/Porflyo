@@ -6,6 +6,7 @@ import type { PortfolioState } from '../state/Portfolio.types';
 import { PortfolioViewer } from '../components/portfolio';
 import { sendMetricsOnUnload } from '../api/hooks/useMetrics';
 import useMetrics from '../hooks/metrics/useGetMetrics';
+import NotFound from './NotFound';
 import '../styles/PublicPortfolio.css';
 
 
@@ -126,17 +127,15 @@ export default function PublicPortfolio() {
   }
 
   if (loadingState.error || !portfolio) {
-    return (
-      <div className="public-portfolio">
-        <div className="error-container">
-          <h1>Portfolio Not Found</h1>
-          <p>{loadingState.error || 'The requested portfolio could not be found.'}</p>
-          {loadingState.error === 'Portfolio is not published' && (
-            <p>This portfolio is currently private.</p>
-          )}
-        </div>
-      </div>
-    );
+    const errorMessage = loadingState.error === 'Portfolio is not published'
+      ? 'Portfolio Not Available'
+      : 'Portfolio Not Found';
+    
+    const errorDescription = loadingState.error === 'Portfolio is not published'
+      ? 'This portfolio is currently private and cannot be viewed.'
+      : loadingState.error || 'The requested portfolio could not be found.';
+
+    return <NotFound message={errorMessage} description={errorDescription} />;
   }
 
   return (

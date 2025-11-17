@@ -15,6 +15,7 @@ import Projects from './pages/Projects'
 import PortfolioEditor from './pages/PortfolioEditor.tsx'
 import ProfilePage from './pages/ProfilePage.tsx'
 import PublicPortfolio from './pages/PublicPortfolio.tsx'
+import NotFound from './pages/NotFound.tsx'
 import Root from './pages/root.tsx'
 import { NavbarProvider } from './providers/NavbarProvider'
 import { SavedCardsProvider } from './state/SavedCards.context'
@@ -77,6 +78,9 @@ export function AppWithProviders() {
                     
                     <Route path="/dashboard/:portfolioId" element={<Dashboard />} />
                     <Route path="/dashboard/:portfolioId/projects" element={<Projects />} />
+                    
+                    {/* 404 - Catch all unmatched routes */}
+                    <Route path="*" element={<NotFound />} />
                   </Routes>
               </NavbarProvider>
             </SavedCardsProvider>
@@ -91,6 +95,7 @@ export function AppWithProviders() {
 function BackgroundWrapper() {
   const location = useLocation();
   const isPublicPortfolio = location.pathname.startsWith('/p/');
+  
   useEffect(() => {
     // Only add the class when this route is NOT a public portfolio.
     if (isPublicPortfolio) return;
@@ -102,9 +107,11 @@ function BackgroundWrapper() {
     };
   }, [isPublicPortfolio]);
 
+  // Don't show shader background on public portfolio routes
   if (isPublicPortfolio) {
     return null;
   }
+  
   return (
     <div style={{
       position: 'fixed',
