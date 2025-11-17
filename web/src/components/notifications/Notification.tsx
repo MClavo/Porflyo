@@ -1,5 +1,3 @@
-import { useEffect } from 'react';
-
 import './Notification.css';
 
 export interface NotificationProps {
@@ -10,26 +8,12 @@ export interface NotificationProps {
 }
 
 export function Notification({ message, type, isVisible, onClose }: NotificationProps) {
-  useEffect(() => {
-    if (isVisible) {
-      const timer = setTimeout(() => {
-        onClose();
-      }, 4000); // Auto-hide after 4 seconds
-
-      return () => clearTimeout(timer);
-    }
-  }, [isVisible, onClose]);
+  console.log('Notification render - isVisible:', isVisible, 'message:', message, 'type:', type);
 
   if (!isVisible) return null;
 
-  const typeStyles = {
-    success: 'bg-green-50 border-green-200 text-green-800 z-10000',
-    error: 'bg-red-50 border-red-200 text-red-800 z-10000',
-    info: 'bg-blue-50 border-blue-200 text-blue-800 z-10000',
-  };
-
   return (
-    <div className={`notification ${typeStyles[type]}`}>
+    <div className={`notification notification--${type}`}>
       <div className="notification-content">
         <span className="notification-message">{message}</span>
         <button

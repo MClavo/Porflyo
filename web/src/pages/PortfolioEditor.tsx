@@ -32,15 +32,52 @@ export default function PortfolioEditor({
     isVisible: boolean;
   }>({ message: "", type: "success", isVisible: false });
 
+  // Use ref to keep notification timer alive across re-renders
+  const notificationTimerRef = React.useRef<number | null>(null);
+
+  // Debug: Log notification state changes
+  React.useEffect(() => {
+    console.log('PortfolioEditor - notification state changed:', notification);
+  }, [notification]);
+
   // Check if we're in edit mode (has portfolio ID) or new mode
   const isEditMode = location.pathname.includes('/edit');
 
-  const showNotification = (
+  const showNotification = React.useCallback((
     message: string,
     type: "success" | "error" | "info" = "success"
-  ) => setNotification({ message, type, isVisible: true });
-  const hideNotification = () =>
+  ) => {
+    console.log('PortfolioEditor - showNotification called:', { message, type });
+    
+    // Clear any existing timer
+    if (notificationTimerRef.current) {
+      clearTimeout(notificationTimerRef.current);
+    }
+    
+    setNotification({ message, type, isVisible: true });
+    
+    // Set new timer to auto-hide
+    notificationTimerRef.current = setTimeout(() => {
+      setNotification((prev) => ({ ...prev, isVisible: false }));
+    }, 4000);
+  }, []);
+  
+  const hideNotification = React.useCallback(() => {
+    console.log('PortfolioEditor - hideNotification called');
+    if (notificationTimerRef.current) {
+      clearTimeout(notificationTimerRef.current);
+    }
     setNotification((prev) => ({ ...prev, isVisible: false }));
+  }, []);
+  
+  // Cleanup timer on unmount
+  React.useEffect(() => {
+    return () => {
+      if (notificationTimerRef.current) {
+        clearTimeout(notificationTimerRef.current);
+      }
+    };
+  }, []);
 
   const state = usePortfolioEditorState({
     onPortfolioChange,

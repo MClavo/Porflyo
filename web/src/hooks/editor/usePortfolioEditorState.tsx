@@ -24,6 +24,8 @@ export function usePortfolioEditorState({ onPortfolioChange, showNotification }:
   onPortfolioChange?: (p: PortfolioState) => void;
   showNotification: (msg: string, type?: 'success'|'error'|'info') => void;
 }) {
+  console.log('usePortfolioEditorState - showNotification type:', typeof showNotification);
+  
   const { id: portfolioId } = useParams<{ id: string }>();
   const location = useLocation();
   const { user } = useAuthContext();
@@ -124,9 +126,11 @@ export function usePortfolioEditorState({ onPortfolioChange, showNotification }:
   const { savePortfolio, isSaving } = usePortfolioSave();
 
   const handleSavePortfolio = async () => {
+    console.log('handleSavePortfolio called');
     try {
       // First, upload all blob images in the portfolio
       const urlMapping = await processPortfolioImages(portfolio);
+      console.log('Images processed, urlMapping:', urlMapping);
       
       // If there are any blob images, update the portfolio state with S3 URLs
       if (Object.keys(urlMapping).length > 0) {
@@ -161,11 +165,14 @@ export function usePortfolioEditorState({ onPortfolioChange, showNotification }:
       }
 
       // Now save the portfolio with all S3 URLs
+      console.log('About to call savePortfolio');
       const result = await savePortfolio(portfolioToSave, portfolioId);
+      console.log('savePortfolio completed successfully, calling showNotification');
       showNotification('Portfolio saved successfully!', 'success');
       return result;
     } catch (err) {
       console.error('Failed to save portfolio:', err);
+      console.log('Calling showNotification with error');
       showNotification('Failed to save portfolio. Please try again.', 'error');
       throw err;
     }
