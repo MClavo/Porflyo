@@ -1,18 +1,18 @@
 /**
- * ModernEditorSidebar - Flex-based sidebar for portfolio editor
+ * EditorSidebar - Flex-based sidebar for portfolio editor
  */
 
 import React from 'react';
 import { HiOutlineInboxArrowDown } from 'react-icons/hi2';
-import './ModernEditorSidebar.css';
+import './EditorSidebar.css';
 
-export interface ModernEditorSidebarProps {
+export interface EditorSidebarProps {
   isOpen: boolean;
   children: React.ReactNode;
   mode?: 'view' | 'edit';
 }
 
-export const ModernEditorSidebar: React.FC<ModernEditorSidebarProps> = ({
+export const EditorSidebar: React.FC<EditorSidebarProps> = ({
   isOpen,
   children,
   mode = 'view'
@@ -38,4 +38,4 @@ export const ModernEditorSidebar: React.FC<ModernEditorSidebarProps> = ({
   );
 };
 
-export default ModernEditorSidebar;
+export default EditorSidebar;

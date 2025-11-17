@@ -3,14 +3,14 @@ import { FiImage, FiCheck, FiX } from 'react-icons/fi';
 import type { PublicUserDto } from '../../api/types';
 import ProfilePictureUploader from '../media/ProfilePictureUploader';
 
-interface ModernImageUploadProps {
+interface ImageUploadProps {
   user: PublicUserDto;
   onUploadSuccess: () => void;
   onUploadError: (error: string) => void;
   uploadMessage?: { type: 'success' | 'error'; text: string } | null;
 }
 
-export const ModernImageUpload: React.FC<ModernImageUploadProps> = ({
+export const ImageUpload: React.FC<ImageUploadProps> = ({
   user,
   onUploadSuccess,
   onUploadError,
@@ -50,4 +50,4 @@ export const ModernImageUpload: React.FC<ModernImageUploadProps> = ({
   );
 };
 
-export default ModernImageUpload;
+export default ImageUpload;

@@ -1,17 +1,17 @@
 /**
- * ModernPublicToggle - Toggle button for public/private portfolio
+ * PublicToggle - Toggle button for public/private portfolio
  */
 
 import React from 'react';
 import { FiEye, FiEyeOff } from 'react-icons/fi';
-import './ModernPublicToggle.css';
+import './PublicToggle.css';
 
-export interface ModernPublicToggleProps {
+export interface PublicToggleProps {
   isPublished: boolean;
   setIsPublished: (published: boolean) => void;
 }
 
-export const ModernPublicToggle: React.FC<ModernPublicToggleProps> = ({
+export const PublicToggle: React.FC<PublicToggleProps> = ({
   isPublished,
   setIsPublished
 }) => {
@@ -37,4 +37,4 @@ export const ModernPublicToggle: React.FC<ModernPublicToggleProps> = ({
   );
 };
 
-export default ModernPublicToggle;
+export default PublicToggle;

@@ -1,5 +1,5 @@
 /**
- * ModernDashboard - Router para páginas del dashboard moderno
+ * Dashboard - Router para páginas del dashboard o
  */
 
 import { useParams } from 'react-router-dom';
@@ -7,11 +7,11 @@ import { DashboardProvider } from '../contexts/DashboardContext';
 import { MetricsProvider } from '../contexts/MetricsProvider';
 import { useDashboard } from '../hooks/useDashboard';
 import { useHeatmapSlots } from '../hooks/useHeatmapSlots';
-import ModernDashboardLayout from '../components/layout/ModernDashboardLayout';
-import ModernOverview from './ModernOverview';
-import ModernHeatmap from './ModernHeatmap';
-import ModernProjects from './ModernProjects';
-import './ModernDashboard.css';
+import DashboardLayout from '../components/layout/DashboardLayout';
+import Overview from './Overview';
+import Heatmap from './Heatmap';
+import Projects from './Projects';
+import './Dashboard.css';
 
 function DashboardRouter() {
   const { currentPage } = useDashboard();
@@ -20,18 +20,18 @@ function DashboardRouter() {
   const renderCurrentPage = () => {
     switch (currentPage) {
       case 'overview':
-        return <ModernOverview />;
+        return <Overview />;
       case 'heatmap':
-        return <ModernHeatmap selectedSlot={selectedSlot} heatmapMode={heatmapMode} />;
+        return <Heatmap selectedSlot={selectedSlot} heatmapMode={heatmapMode} />;
       case 'projects':
-        return <ModernProjects />;
+        return <Projects />;
       default:
         return null;
     }
   };
 
   return (
-    <ModernDashboardLayout
+    <DashboardLayout
       slotOptions={currentPage === 'heatmap' ? slotOptions : []}
       selectedSlot={currentPage === 'heatmap' ? selectedSlot : ''}
       onSlotChange={currentPage === 'heatmap' ? handleSlotChange : () => {}}
@@ -41,11 +41,11 @@ function DashboardRouter() {
       <div className="dashboard__content">
         {renderCurrentPage()}
       </div>
-    </ModernDashboardLayout>
+    </DashboardLayout>
   );
 }
 
-export default function ModernDashboard() {
+export default function Dashboard() {
   const { portfolioId } = useParams<{ portfolioId: string }>();
   
   if (!portfolioId) {

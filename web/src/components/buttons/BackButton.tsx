@@ -1,5 +1,5 @@
 /**
- * BackButton - Modern back/cancel button component
+ * BackButton -  back/cancel button component
  */
 
 import React from 'react';

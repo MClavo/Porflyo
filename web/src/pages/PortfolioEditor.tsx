@@ -8,7 +8,7 @@ import SectionCard from "../components/sections/SectionCard";
 import { AboutSection } from "../components/sections/AboutSection";
 import type { AboutSectionData } from "../components/sections/AboutSection.types";
 import { SavedCards } from "../components/savedcards/SavedCards";
-import { ModernEditorHeader as EditorHeader, ModernEditorSidebar as EditorSidebar } from "../components/portfolioEditor";
+import { EditorHeader as EditorHeader, EditorSidebar as EditorSidebar } from "../components/portfolioEditor";
 import { usePortfolioEditorState } from "../hooks/editor/usePortfolioEditorState";
 import { useRepositoryFlow } from "../hooks/save/repository/useRepositoryFlow";
 import { useSavedCards } from "../state/SavedCards.hooks";

@@ -1,5 +1,5 @@
 /**
- * ModernOverview - Custom dashboard
+ * Overview - Custom dashboard
  */
 
 
@@ -10,11 +10,11 @@ import { useOverviewData, useTrends } from "../hooks/metrics";
 import { formatMs } from "../lib/format";  
 import { useMetricsStore } from "../state/metrics.store";
 import { latest } from "../lib/dates";
-import { KpiCard, KpiGrid, DashboardHeader, SplitProgressBar, VisitsOverviewCard, ModernAreaChart, NoDataMessage } from "../components/dashboard";
+import { KpiCard, KpiGrid, DashboardHeader, SplitProgressBar, VisitsOverviewCard, AreaChart, NoDataMessage } from "../components/dashboard";
 import { getTimeRangeDays } from "../lib/timeRange";
 import "../styles/dashboard-theme.css";
 
-function ModernOverviewContent() {
+function OverviewContent() {
   const { timeRange } = useDashboard();
   const days = getTimeRangeDays(timeRange);
   
@@ -102,7 +102,7 @@ function ModernOverviewContent() {
   ];
 
   // Debug logging
-  console.log("ModernOverview metrics:", {
+  console.log("Overview metrics:", {
     totalVisits,
     avgSessionMinutes,
     deviceMix,
@@ -198,8 +198,8 @@ function ModernOverviewContent() {
           />
         </KpiGrid>
 
-        {/* Modern Area Chart */}
-        <ModernAreaChart 
+        {/*  Area Chart */}
+        <AreaChart 
           title="Engagement Trends"
           subtitle="Daily metrics overview showing visits, quality interactions, and conversions"
           height={400}
@@ -210,6 +210,6 @@ function ModernOverviewContent() {
   );
 }
 
-export default function ModernOverview() {
-  return <ModernOverviewContent />;
+export default function Overview() {
+  return <OverviewContent />;
 }

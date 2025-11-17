@@ -1,5 +1,5 @@
 /**
- * DashboardNavbar - Navbar moderno con toggle de páginas y rango de tiempo
+ * DashboardNavbar - Navbar o con toggle de páginas y rango de tiempo
  */
 
 import React from 'react';

@@ -1,5 +1,5 @@
 /**
- * ModernDashboardLayout - Layout con navbar fijo para el dashboard moderno
+ * DashboardLayout - Layout con navbar fijo para el dashboard o
  */
 
 import { DashboardNavbar } from '../dashboard';
@@ -8,7 +8,7 @@ import type { SlotOption } from '../ui/SlotSelector';
 import type { HeatmapMode } from '../ui/HeatmapModeToggle';
 import '../../styles/dashboard-theme.css';
 
-interface ModernDashboardLayoutProps {
+interface DashboardLayoutProps {
   children: React.ReactNode;
   // Heatmap slot selection props
   slotOptions?: SlotOption[];
@@ -19,14 +19,14 @@ interface ModernDashboardLayoutProps {
   onHeatmapModeChange?: (mode: HeatmapMode) => void;
 }
 
-export function ModernDashboardLayout({ 
+export function DashboardLayout({ 
   children, 
   slotOptions = [], 
   selectedSlot = '', 
   onSlotChange = () => {},
   heatmapMode = 'raw',
   onHeatmapModeChange = () => {}
-}: ModernDashboardLayoutProps) {
+}: DashboardLayoutProps) {
   const { currentPage, timeRange, setCurrentPage, setTimeRange } = useDashboard();
 
   return (
@@ -52,4 +52,4 @@ export function ModernDashboardLayout({
   );
 }
 
-export default ModernDashboardLayout;
+export default DashboardLayout;

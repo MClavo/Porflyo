@@ -1,4 +1,4 @@
-/* Modern Charts Shared Styles */
+/*  Charts Shared Styles */
 
 /* Tooltip específico para ProjectStackedChart con mejor alineación */
 .project-stacked-tooltip {
@@ -89,7 +89,7 @@
   }
 }
 
-/* Tooltip moderno que sigue al ratón */
+/* Tooltip o que sigue al ratón */
 .tooltip {
   background: var(--card-bg);
   backdrop-filter: blur(12px);

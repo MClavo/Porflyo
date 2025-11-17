@@ -4,7 +4,7 @@
 
 import type { PortfolioState } from '../../state/Portfolio.types';
 import type { SectionState, SectionType } from '../../state/Sections.types';
-import type { CardType, AnyCard } from '../../state/Cards.types';
+import type { AnyCard } from '../../state/Cards.types';
 import type { TemplateKey } from '../../templates/Template.types';
 import type { PublicPortfolioDto, PortfolioCreateDto, PortfolioPatchDto, PortfolioSection, PublicPortfolioView } from '../types/dto';
 import { parseAboutSectionData, serializeAboutSectionData } from '../../components/sections/AboutSection.types';

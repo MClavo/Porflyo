@@ -1,19 +1,19 @@
 /**
- * ModernEditorHeader - Modern header component for portfolio editor
+ * EditorHeader -  header component for portfolio editor
  */
 
 import React from 'react';
 import { type TemplateKey } from '../../templates/Template.types';
-import { ModernModeToggle } from './ModernModeToggle';
-import { ModernTemplateSelector } from './ModernTemplateSelector';
+import { ModeToggle } from './ModeToggle';
+import { TemplateSelector } from './TemplateSelector';
 import { UrlSection } from './UrlSection';
-import { ModernPublicToggle } from './ModernPublicToggle';
-import { ModernSaveButton } from './ModernSaveButton';
-import { ModernPublishButton } from './ModernPublishButton';
+import { PublicToggle } from './PublicToggle';
+import { SaveButton } from './SaveButton';
+import { PublishButton } from './PublishButton';
 import { BackButton } from '../buttons/BackButton';
-import './ModernEditorHeader.css';
+import './EditorHeader.css';
 
-export interface ModernEditorHeaderProps {
+export interface EditorHeaderProps {
   // Title and Save
   portfolioTitle: string;
   onTitleChange: (title: string) => void;
@@ -46,7 +46,7 @@ export interface ModernEditorHeaderProps {
   isEditMode: boolean; // true if /portfolios/{id}/edit, false if /portfolios/new
 }
 
-export const ModernEditorHeader: React.FC<ModernEditorHeaderProps> = ({
+export const EditorHeader: React.FC<EditorHeaderProps> = ({
   portfolioTitle,
   onTitleChange,
   onSave,
@@ -112,14 +112,14 @@ export const ModernEditorHeader: React.FC<ModernEditorHeaderProps> = ({
             />
           </div>
           
-          <ModernTemplateSelector
+          <TemplateSelector
             selectedTemplate={selectedTemplate}
             onSelect={onTemplateSelect}
           />
           
-          <ModernModeToggle mode={mode} onToggle={onModeToggle} />
+          <ModeToggle mode={mode} onToggle={onModeToggle} />
           
-          <ModernSaveButton
+          <SaveButton
             onSave={onSave}
             isSaving={isSaving}
           />
@@ -137,13 +137,13 @@ export const ModernEditorHeader: React.FC<ModernEditorHeaderProps> = ({
               onSlugAvailabilityChange={onSlugAvailabilityChange}
             />
             
-            <ModernPublicToggle
+            <PublicToggle
               isPublished={isPublished || false}
               setIsPublished={setIsPublished || (() => {})}
             />
             
             {onPublish && (
-              <ModernPublishButton
+              <PublishButton
                 onPublish={onPublish}
                 isPublishing={isPublishing || false}
                 isPublished={isPublished || false}
@@ -161,4 +161,4 @@ export const ModernEditorHeader: React.FC<ModernEditorHeaderProps> = ({
   );
 };
 
-export default ModernEditorHeader;
+export default EditorHeader;

@@ -3,13 +3,13 @@ import { FiLink, FiPlus, FiTrash2, FiCheck, FiX } from 'react-icons/fi';
 import type { PublicUserDto } from '../../api/types';
 import { SocialPlatformSelector } from '../ui/SocialPlatformSelector';
 
-interface ModernSocialLinksProps {
+interface SocialLinksProps {
   user: PublicUserDto;
   onSocialsUpdate: (updatedSocials: Record<string, string>) => void;
   isLoading?: boolean;
 }
 
-export const ModernSocialLinks: React.FC<ModernSocialLinksProps> = ({
+export const SocialLinks: React.FC<SocialLinksProps> = ({
   user,
   onSocialsUpdate,
   isLoading = false
@@ -262,4 +262,4 @@ export const ModernSocialLinks: React.FC<ModernSocialLinksProps> = ({
   );
 };
 
-export default ModernSocialLinks;
+export default SocialLinks;

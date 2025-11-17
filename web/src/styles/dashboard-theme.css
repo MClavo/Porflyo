@@ -1,4 +1,4 @@
-/* Dashboard Theme Variables - Dark Modern Professional */
+/* Dashboard Theme Variables - Dark  Professional */
 
 /* Import modular variable files (these define :root variables used across the theme) */
 @import './variables/colors.css';
@@ -17,7 +17,7 @@
 /* The variables are declared in modular files under ./variables/*.css so they can be reused
    and imported by other themes or components. */
 
-/* Custom Scrollbar Styles - Subtle and Modern */
+/* Custom Scrollbar Styles - Subtle and  */
 /* Webkit browsers (Chrome, Safari, Edge) */
 ::-webkit-scrollbar {
   width: var(--scrollbar-width);

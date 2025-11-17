@@ -4,12 +4,12 @@ import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 import type { PublicUserDto } from '../../api/types';
 
-interface ModernProviderInfoProps {
+interface ProviderInfoProps {
   user: PublicUserDto | null;
   isLoading?: boolean;
 }
 
-export const ModernProviderInfo: React.FC<ModernProviderInfoProps> = ({
+export const ProviderInfo: React.FC<ProviderInfoProps> = ({
   user,
   isLoading = false
 }) => {
@@ -83,4 +83,4 @@ export const ModernProviderInfo: React.FC<ModernProviderInfoProps> = ({
   );
 };
 
-export default ModernProviderInfo;
+export default ProviderInfo;

@@ -1,5 +1,5 @@
 /**
- * UrlSection - Modern URL input with status indicators
+ * UrlSection -  URL input with status indicators
  */
 
 import React from 'react';

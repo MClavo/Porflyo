@@ -2,11 +2,11 @@ import React, { useState } from 'react';
 import { useAuthContext } from '../hooks/ui/useAuthContext';
 import type { PublicUserDto } from '../api/types';
 import {
-  ModernProfileHeader,
-  ModernImageUpload,
-  ModernProfileForm,
-  ModernSocialLinks,
-  ModernProviderInfo
+  ProfileHeader,
+  ImageUpload,
+  ProfileForm,
+  SocialLinks,
+  ProviderInfo
 } from '../components/profile';
 
 import '../styles/pages/ProfilePage.css';
@@ -97,30 +97,30 @@ const ProfilePage: React.FC = () => {
     <div className="profile-page">
               <BackButton />
       <div className="profile-content">
-        <ModernProfileHeader user={user} isLoading={userLoading} />
+        <ProfileHeader user={user} isLoading={userLoading} />
         
         {user && (
           <>
-            <ModernImageUpload
+            <ImageUpload
               user={user}
               onUploadSuccess={handleAvatarUploadSuccess}
               onUploadError={handleAvatarUploadError}
               uploadMessage={avatarUploadMessage}
             />
             
-            <ModernProfileForm 
+            <ProfileForm 
               user={user}
               onUserUpdate={handleUserUpdate}
               isLoading={userLoading}
             />
 
-            <ModernSocialLinks
+            <SocialLinks
               user={user}
               onSocialsUpdate={handleSocialsUpdate}
               isLoading={userLoading}
             />
             
-            <ModernProviderInfo user={user} isLoading={userLoading} />
+            <ProviderInfo user={user} isLoading={userLoading} />
           </>
         )}
       </div>

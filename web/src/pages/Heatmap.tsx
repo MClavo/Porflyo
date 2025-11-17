@@ -1,5 +1,5 @@
 /**
- * ModernHeatmap - Dashboard de mapa de calor moderno
+ * Heatmap - Dashboard de mapa de calor o
  */
 
 import { useRef, useEffect, useState, useMemo } from "react";
@@ -15,17 +15,17 @@ import type { HeatmapMode } from "../components/ui/HeatmapModeToggle";
 import "../styles/dashboard-theme.css";
 import "../styles/heatmap.css";
 
-interface ModernHeatmapProps {
+interface HeatmapProps {
   selectedSlot?: string;
   heatmapMode?: HeatmapMode;
 }
 
-interface ModernHeatmapContentProps {
+interface HeatmapContentProps {
   selectedSlot: string;
   heatmapMode: HeatmapMode;
 }
 
-function ModernHeatmapContent({ selectedSlot, heatmapMode }: ModernHeatmapContentProps) {
+function HeatmapContent({ selectedSlot, heatmapMode }: HeatmapContentProps) {
   const portfolioRef = useRef<HTMLDivElement>(null);
   const [isHeatmapReady, setIsHeatmapReady] = useState(false);
 
@@ -42,7 +42,7 @@ function ModernHeatmapContent({ selectedSlot, heatmapMode }: ModernHeatmapConten
     return mapPublicPortfolioDtoToPortfolioState(portfolioDto);
   }, [portfolios, portfolioId]);
 
-  // Obtener datos del backend usando el store como en ModernOverview
+  // Obtener datos del backend usando el store como en Overview
   const { slotByDate, slotIndex, isLoading } = useMetricsStore();
 
   // Check if data is empty (no slots)
@@ -205,10 +205,10 @@ function ModernHeatmapContent({ selectedSlot, heatmapMode }: ModernHeatmapConten
   );
 }
 
-export default function ModernHeatmap({ selectedSlot = 'all', heatmapMode = 'raw' }: ModernHeatmapProps) {
+export default function Heatmap({ selectedSlot = 'all', heatmapMode = 'raw' }: HeatmapProps) {
   return (
     <div className="heatmap-page">
-      <ModernHeatmapContent selectedSlot={selectedSlot} heatmapMode={heatmapMode} />
+      <HeatmapContent selectedSlot={selectedSlot} heatmapMode={heatmapMode} />
     </div>
   );
 }

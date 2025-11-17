@@ -1,19 +1,19 @@
 /**
- * Portfolio Editor Components - Modern components for portfolio editing
+ * Portfolio Editor Components -  components for portfolio editing
  */
 
-export { ModernEditorHeader } from './ModernEditorHeader';
-export { ModernEditorSidebar } from './ModernEditorSidebar';
-export { ModernModeToggle } from './ModernModeToggle';
-export { ModernTemplateSelector } from './ModernTemplateSelector';
+export { EditorHeader as EditorHeader } from './EditorHeader';
+export { EditorSidebar } from './EditorSidebar';
+export { ModeToggle } from './ModeToggle';
+export { TemplateSelector } from './TemplateSelector';
 export { UrlSection } from './UrlSection';
-export { ModernPublicToggle } from './ModernPublicToggle';
-export { ModernSaveButton } from './ModernSaveButton';
-export { ModernPublishButton } from './ModernPublishButton';
+export { PublicToggle } from './PublicToggle';
+export { SaveButton } from './SaveButton';
+export { PublishButton } from './PublishButton';
 
-export type { ModernEditorHeaderProps } from './ModernEditorHeader';
-export type { ModernEditorSidebarProps } from './ModernEditorSidebar';
-export type { ModernModeToggleProps } from './ModernModeToggle';
-export type { ModernTemplateSelectorProps } from './ModernTemplateSelector';
+export type { EditorHeaderProps as EditorHeaderProps } from './EditorHeader';
+export type { EditorSidebarProps } from './EditorSidebar';
+export type { ModeToggleProps } from './ModeToggle';
+export type { TemplateSelectorProps } from './TemplateSelector';
 export type { UrlSectionProps } from './UrlSection';
-export type { ModernPublicToggleProps } from './ModernPublicToggle';
+export type { PublicToggleProps } from './PublicToggle';

@@ -1,5 +1,5 @@
 /**
- * ModernProjects - Modern projects management page
+ * Projects -  projects management page
  */
 
 import { useEffect, useState, useMemo } from "react";
@@ -30,7 +30,7 @@ interface ProjectMetrics {
   consistencyScore: number;
 }
 
-function ModernProjectsContent() {
+function ProjectsContent() {
   const [isReady, setIsReady] = useState(false);
   const { timeRange, getProjectName } = useDashboard();
   const days = getTimeRangeDays(timeRange);
@@ -353,10 +353,10 @@ function ModernProjectsContent() {
   );
 }
 
-export default function ModernProjects() {
+export default function Projects() {
   return (
     <div className="projects-page">
-      <ModernProjectsContent />
+      <ProjectsContent />
     </div>
   );
 }

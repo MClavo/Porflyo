@@ -1,17 +1,17 @@
 /**
- * ModernModeToggle - Spectacular toggle button for edit/view mode
+ * ModeToggle - Spectacular toggle button for edit/view mode
  */
 
 import React from 'react';
 import { FiEdit3, FiEye } from 'react-icons/fi';
-import './ModernModeToggle.css';
+import './ModeToggle.css';
 
-export interface ModernModeToggleProps {
+export interface ModeToggleProps {
   mode: 'edit' | 'view';
   onToggle: () => void;
 }
 
-export const ModernModeToggle: React.FC<ModernModeToggleProps> = ({
+export const ModeToggle: React.FC<ModeToggleProps> = ({
   mode,
   onToggle
 }) => {
@@ -40,4 +40,4 @@ export const ModernModeToggle: React.FC<ModernModeToggleProps> = ({
   );
 };
 
-export default ModernModeToggle;
+export default ModeToggle;

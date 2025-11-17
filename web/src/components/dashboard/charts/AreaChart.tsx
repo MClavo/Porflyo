@@ -1,10 +1,10 @@
 /**
- * ModernAreaChart - Gráfico de área moderno con múltiples métricas
+ * AreaChart - Gráfico de área o con múltiples métricas
  */
 
 import React, { useState } from 'react';
 import {
-  AreaChart,
+  AreaChart as AreaChartRecharts,
   Area,
   XAxis,
   YAxis,
@@ -12,7 +12,7 @@ import {
   Tooltip,
   ResponsiveContainer
 } from 'recharts';
-import './ModernAreaChart.css';
+import './AreaChart.css';
 
 export interface ChartDataPoint {
   date: string;
@@ -26,7 +26,7 @@ export interface ChartMetric {
   unit?: string;
 }
 
-export interface ModernAreaChartProps {
+export interface AreaChartProps {
   title: string;
   subtitle?: string;
   data: ChartDataPoint[];
@@ -101,7 +101,7 @@ const ChartSkeleton: React.FC<{ height: number }> = ({ height }) => (
   </div>
 );
 
-export const ModernAreaChart: React.FC<ModernAreaChartProps> = ({
+export const AreaChart: React.FC<AreaChartProps> = ({
   title,
   subtitle,
   data,
@@ -168,7 +168,7 @@ export const ModernAreaChart: React.FC<ModernAreaChartProps> = ({
 
       <div className="area-chart__container" style={{ height }}>
         <ResponsiveContainer width="100%" height="100%">
-          <AreaChart
+        < AreaChartRecharts
             data={data}
             margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
           >
@@ -257,11 +257,11 @@ export const ModernAreaChart: React.FC<ModernAreaChartProps> = ({
                 />
               )
             ))}
-          </AreaChart>
+          </AreaChartRecharts>
         </ResponsiveContainer>
       </div>
     </div>
   );
 };
 
-export default ModernAreaChart;
+export default AreaChart;

@@ -1,5 +1,5 @@
 .dashboard-content.dashboard-content--no-max {
-  /* Remove the global 1400px cap only when this modifier is present (toggled by ModernHeatmap) */
+  /* Remove the global 1400px cap only when this modifier is present (toggled by Heatmap) */
   max-width: none !important;
   width: auto !important;
   margin: 0 auto; /* keep centered but allow it to expand beyond 1400px */

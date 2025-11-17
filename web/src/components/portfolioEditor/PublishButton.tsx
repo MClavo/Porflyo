@@ -1,12 +1,12 @@
 /**
- * ModernPublishButton - Publish/Update action button
+ * PublishButton - Publish/Update action button
  */
 
 import React from 'react';
 import { FiUpload, FiLoader } from 'react-icons/fi';
-import './ModernPublishButton.css';
+import './PublishButton.css';
 
-export interface ModernPublishButtonProps {
+export interface PublishButtonProps {
   onPublish: () => void;
   isPublishing: boolean;
   isPublished: boolean;
@@ -17,7 +17,7 @@ export interface ModernPublishButtonProps {
   lastVerifiedSlug: string;
 }
 
-export const ModernPublishButton: React.FC<ModernPublishButtonProps> = ({
+export const PublishButton: React.FC<PublishButtonProps> = ({
   onPublish,
   isPublishing,
   isPublished,
@@ -52,4 +52,4 @@ export const ModernPublishButton: React.FC<ModernPublishButtonProps> = ({
   );
 };
 
-export default ModernPublishButton;
+export default PublishButton;

@@ -1,13 +1,13 @@
 /**
- * ModernTemplateSelector - Dropdown for template selection
+ * TemplateSelector - Dropdown for template selection
  */
 
 import React, { useState, useRef, useEffect } from 'react';
 import { FiChevronDown, FiLayout } from 'react-icons/fi';
 import { type TemplateKey, templateList } from '../../templates/Template.types';
-import './ModernTemplateSelector.css';
+import './TemplateSelector.css';
 
-export interface ModernTemplateSelectorProps {
+export interface TemplateSelectorProps {
   selectedTemplate: TemplateKey;
   onSelect: (template: TemplateKey) => void;
 }
@@ -40,7 +40,7 @@ const getTemplateOptions = (): Array<{ value: TemplateKey; label: string; descri
 
 const TEMPLATE_OPTIONS = getTemplateOptions();
 
-export const ModernTemplateSelector: React.FC<ModernTemplateSelectorProps> = ({
+export const TemplateSelector: React.FC<TemplateSelectorProps> = ({
   selectedTemplate,
   onSelect
 }) => {
@@ -112,4 +112,4 @@ export const ModernTemplateSelector: React.FC<ModernTemplateSelectorProps> = ({
   );
 };
 
-export default ModernTemplateSelector;
+export default TemplateSelector;

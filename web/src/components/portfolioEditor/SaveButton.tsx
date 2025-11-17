@@ -1,17 +1,17 @@
 /**
- * ModernSaveButton - Save action button
+ * SaveButton - Save action button
  */
 
 import React from 'react';
 import { FiSave, FiLoader } from 'react-icons/fi';
-import './ModernSaveButton.css';
+import './SaveButton.css';
 
-export interface ModernSaveButtonProps {
+export interface SaveButtonProps {
   onSave: () => void;
   isSaving: boolean;
 }
 
-export const ModernSaveButton: React.FC<ModernSaveButtonProps> = ({
+export const SaveButton: React.FC<SaveButtonProps> = ({
   onSave,
   isSaving
 }) => {
@@ -32,4 +32,4 @@ export const ModernSaveButton: React.FC<ModernSaveButtonProps> = ({
   );
 };
 
-export default ModernSaveButton;
+export default SaveButton;

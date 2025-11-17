@@ -10,8 +10,8 @@ import { RepositoriesProvider } from './contexts/RepositoriesContext'
 import { SavedSectionsProvider } from './contexts/SavedSectionsContext'
 import { ThemeProvider } from './contexts/theme'
 import HomePage from './pages/HomePage.tsx'
-import ModernDashboard from './pages/ModernDashboard'
-import ModernProjects from './pages/ModernProjects'
+import Dashboard from './pages/Dashboard'
+import Projects from './pages/Projects'
 import PortfolioEditor from './pages/PortfolioEditor.tsx'
 import ProfilePage from './pages/ProfilePage.tsx'
 import PublicPortfolio from './pages/PublicPortfolio.tsx'
@@ -75,8 +75,8 @@ export function AppWithProviders() {
                     
                     {/* Metrics Dashboard Routes */}
                     
-                    <Route path="/dashboard/:portfolioId" element={<ModernDashboard />} />
-                    <Route path="/dashboard/:portfolioId/projects" element={<ModernProjects />} />
+                    <Route path="/dashboard/:portfolioId" element={<Dashboard />} />
+                    <Route path="/dashboard/:portfolioId/projects" element={<Projects />} />
                   </Routes>
               </NavbarProvider>
             </SavedCardsProvider>
