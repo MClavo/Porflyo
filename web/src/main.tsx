@@ -16,7 +16,6 @@ import PortfolioEditor from './pages/PortfolioEditor.tsx'
 import ProfilePage from './pages/ProfilePage.tsx'
 import PublicPortfolio from './pages/PublicPortfolio.tsx'
 import Root from './pages/root.tsx'
-import Test from './pages/Test.tsx'
 import { NavbarProvider } from './providers/NavbarProvider'
 import { SavedCardsProvider } from './state/SavedCards.context'
 import './styles/dashboard-theme.css'
@@ -73,7 +72,6 @@ export function AppWithProviders() {
                         <PortfolioEditor />
                       </ProtectedRoute>
                     } />
-                    <Route path="/t" element={<Test />} />
                     
                     {/* Metrics Dashboard Routes */}
                     
