@@ -1,5 +1,5 @@
-import { createRoot } from 'react-dom/client'
 import { useEffect } from 'react'
+import { createRoot } from 'react-dom/client'
 import { BrowserRouter, Route, Routes, useLocation } from 'react-router-dom'
 import { OAuthCallback } from './components/auth/OAuthCallback'
 import { ProtectedRoute } from './components/auth/ProtectedRoute'
@@ -9,9 +9,7 @@ import { PortfoliosProvider } from './contexts/PortfoliosContext'
 import { RepositoriesProvider } from './contexts/RepositoriesContext'
 import { SavedSectionsProvider } from './contexts/SavedSectionsContext'
 import { ThemeProvider } from './contexts/theme'
-import { NavbarProvider } from './providers/NavbarProvider'
 import Home from './pages/Home.tsx'
-import MetricsTest from './pages/MetricsTest.tsx'
 import ModernDashboard from './pages/ModernDashboard'
 import ModernProjects from './pages/ModernProjects'
 import PortfolioEditor from './pages/PortfolioEditor.tsx'
@@ -19,6 +17,7 @@ import ProfilePage from './pages/ProfilePage.tsx'
 import PublicPortfolio from './pages/PublicPortfolio.tsx'
 import Root from './pages/root.tsx'
 import Test from './pages/Test.tsx'
+import { NavbarProvider } from './providers/NavbarProvider'
 import { SavedCardsProvider } from './state/SavedCards.context'
 import './styles/dashboard-theme.css'
 import './styles/modern-dashboard.css'
@@ -30,7 +29,6 @@ import './styles/theme.css'
 createRoot(document.getElementById('root')!).render(
   <BrowserRouter>
     <Routes>
-      <Route path="/metrics-test" element={<MetricsTest />} />
       <Route path="/*" element={<AppWithProviders />} />
     </Routes>
   </BrowserRouter>
@@ -81,7 +79,6 @@ export function AppWithProviders() {
                     
                     <Route path="/dashboard/:portfolioId" element={<ModernDashboard />} />
                     <Route path="/dashboard/:portfolioId/projects" element={<ModernProjects />} />
-                    <Route path='/m-test' element={<MetricsTest />} />
                   </Routes>
               </NavbarProvider>
             </SavedCardsProvider>
