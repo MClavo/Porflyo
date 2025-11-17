@@ -12,10 +12,10 @@
   --ats-border-secondary: #d8d8d8;
   
   /* Typography */
-  --ats-font-family: 'Times New Roman', Times, serif;
+  --ats-font-family:  'arial', sans-serif;
   --ats-font-size-base: 11pt;
   --ats-font-size-name: 24pt;
-  --ats-font-size-section-title: 14pt;
+  --ats-font-size-section-title: 15pt;
   --ats-font-size-contact: 10pt;
   --ats-line-height-base: 1.4;
   
