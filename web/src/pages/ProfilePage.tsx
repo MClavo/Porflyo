@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useAuthContext } from '../hooks/ui/useAuthContext';
+import { useSEO } from '../hooks/useSEO';
 import type { PublicUserDto } from '../api/types';
 import {
   ProfileHeader,
@@ -17,6 +18,13 @@ import { BackButton } from '../components/buttons/BackButton';
 const ProfilePage: React.FC = () => {
   const { user, refetch, setAuthenticatedUser, isLoading: userLoading } = useAuthContext();
   const [avatarUploadMessage, setAvatarUploadMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+
+  // SEO - Block indexing of private profile page
+  useSEO({
+    title: 'Profile Settings - porflyo',
+    description: 'Manage your profile settings',
+    noIndex: true, // Private page - no indexing
+  });
 
   if (!user && !userLoading) {
     return (

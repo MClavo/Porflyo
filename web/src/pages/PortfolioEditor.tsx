@@ -1,5 +1,6 @@
 import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useSEO } from "../hooks/useSEO";
 import { RepositoryDialog } from "../components/dialogs/RepositoryDialog";
 import EditorDndProvider from "../components/dnd/EditorDndProvider";
 import LayoutPreview from "../components/portfolio/LayoutPreview";
@@ -42,6 +43,13 @@ export default function PortfolioEditor({
 
   // Check if we're in edit mode (has portfolio ID) or new mode
   const isEditMode = location.pathname.includes('/edit');
+
+  // SEO - Block indexing of portfolio editor
+  useSEO({
+    title: isEditMode ? 'Edit Portfolio - porflyo' : 'Create Portfolio - porflyo',
+    description: 'Portfolio editor',
+    noIndex: true, // Private page - no indexing
+  });
 
   const showNotification = React.useCallback((
     message: string,

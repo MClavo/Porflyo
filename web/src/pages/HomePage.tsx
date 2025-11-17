@@ -2,6 +2,7 @@ import { useAuthContext } from '../hooks/ui/useAuthContext';
 import { usePortfoliosContext } from '../hooks/ui/usePortfoliosContext';
 import { usePortfolioActions } from '../hooks/ui/usePortfolioActions';
 import { UserProfileCard, PortfoliosSection } from '../components/home';
+import { useSEO } from '../hooks/useSEO';
 import '../styles/pages/HomePage.css';
 import '../styles/components/buttons.css';
 
@@ -13,6 +14,13 @@ export function HomePage() {
   const { user, isLoading: userLoading } = useAuthContext();
   const { portfolios, isLoading: portfoliosLoading } = usePortfoliosContext();
   const { handleDelete, isDeleting } = usePortfolioActions();
+
+  // SEO - Block indexing of private home page
+  useSEO({
+    title: 'My Portfolios - porflyo',
+    description: 'Manage your project portfolios',
+    noIndex: true, // Private page - no indexing
+  });
 
   // Handle delete without confirmation
   const handleDeletePortfolio = async (portfolioId: string) => {

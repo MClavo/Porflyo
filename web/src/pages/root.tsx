@@ -6,10 +6,20 @@ import { TbWorldCheck } from "react-icons/tb";
 import { LoginButton } from "../components/buttons/loginButton";
 import { useAuthContext } from "../hooks/ui/useAuthContext";
 import { ThemeToggle } from "../components/theme";
+import { useSEO } from "../hooks/useSEO";
 
 function Root() {
   const navigate = useNavigate();
   const { isLoading, refetch } = useAuthContext();
+
+  // SEO Configuration for landing page (indexable)
+  useSEO({
+    title: 'porflyo - Create, Publish, and Track Your Project Portfolios',
+    description: 'Build stunning portfolios from your GitHub projects and get detailed analytics on visitor engagement. Connect, create, and share your work with porflyo.',
+    keywords: 'portfolio, github, projects, developer portfolio, analytics, project showcase, github portfolio',
+    canonicalUrl: 'https://porflyo.com/',
+    noIndex: false, // Allow indexing on root
+  });
 
   useEffect(() => {
     const handleOAuthReturn = async () => {

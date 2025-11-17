@@ -7,6 +7,7 @@ import { DashboardProvider } from '../contexts/DashboardContext';
 import { MetricsProvider } from '../contexts/MetricsProvider';
 import { useDashboard } from '../hooks/useDashboard';
 import { useHeatmapSlots } from '../hooks/useHeatmapSlots';
+import { useSEO } from '../hooks/useSEO';
 import DashboardLayout from '../components/layout/DashboardLayout';
 import Overview from './Overview';
 import Heatmap from './Heatmap';
@@ -16,6 +17,13 @@ import './Dashboard.css';
 function DashboardRouter() {
   const { currentPage } = useDashboard();
   const { selectedSlot, slotOptions, handleSlotChange, heatmapMode, handleModeChange } = useHeatmapSlots();
+
+  // SEO - Block indexing of private dashboard
+  useSEO({
+    title: 'Dashboard - porflyo',
+    description: 'Portfolio analytics and metrics',
+    noIndex: true, // Private page - no indexing
+  });
 
   const renderCurrentPage = () => {
     switch (currentPage) {

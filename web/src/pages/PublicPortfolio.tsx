@@ -6,6 +6,7 @@ import type { PortfolioState } from '../state/Portfolio.types';
 import { PortfolioViewer } from '../components/portfolio';
 import { sendMetricsOnUnload } from '../api/hooks/useMetrics';
 import useMetrics from '../hooks/metrics/useGetMetrics';
+import { useSEO } from '../hooks/useSEO';
 import NotFound from './NotFound';
 import '../styles/PublicPortfolio.css';
 
@@ -78,19 +79,15 @@ export default function PublicPortfolio() {
     fetchPortfolio();
   }, [slug]);
 
-  // Set document title
-  useEffect(() => {
-    if (portfolio?.title) {
-      document.title = `${portfolio.title} - Portfolio`;
-    } else {
-      document.title = 'Portfolio';
-    }
-
-    // Cleanup on unmount
-    return () => {
-      document.title = 'React Playground';
-    };
-  }, [portfolio?.title]);
+  // SEO Configuration for public portfolios (NOT indexable)
+  useSEO({
+    title: portfolio?.title 
+      ? `${portfolio.title} - Portfolio | porflyo`
+      : 'Portfolio - porflyo',
+    description: 'View this amazing portfolio created with porflyo - showcasing projects and achievements',
+    keywords: 'portfolio, projects, developer, showcase',
+    noIndex: true, // Block indexing - only root page is indexable
+  });
 
   // Send metrics when user closes tab or navigates away
   useEffect(() => {
