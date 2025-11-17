@@ -30,6 +30,7 @@ interface EditorDndProviderProps {
   sectionsById?: Record<string, { cardsOrder: CardId[] }>; // To determine card section
   onDragStart?: (event: DragStartEvent) => void;
   onDragEnd?: (event: DragEndEvent) => void;
+  onDragOver?: (event: import("@dnd-kit/core").DragOverEvent) => void;
 }
 
 const EditorDndProvider: React.FC<EditorDndProviderProps> = ({
@@ -40,6 +41,7 @@ const EditorDndProvider: React.FC<EditorDndProviderProps> = ({
   sectionsById,
   onDragStart,
   onDragEnd,
+  onDragOver,
   
 }) => {
   const { state: savedCardsState } = useSavedCards();
@@ -136,6 +138,7 @@ const EditorDndProvider: React.FC<EditorDndProviderProps> = ({
       sensors={sensors}
       collisionDetection={pointerWithin}
       onDragStart={handleDragStart}
+      onDragOver={onDragOver}
       onDragEnd={handleDragEnd}
     >
       {children}

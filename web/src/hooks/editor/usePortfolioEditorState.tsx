@@ -104,7 +104,7 @@ export function usePortfolioEditorState({ onPortfolioChange, showNotification }:
 
   const sectionsMap = useMemo(() => portfolio?.sections ?? {}, [portfolio]);
 
-  const { handleDragStart, handleDragEnd } = useEditorDrag({ portfolio, dispatch: dispatch as unknown as React.Dispatch<unknown>, savedCardsState });
+  const { handleDragStart, handleDragOver, handleDragEnd } = useEditorDrag({ portfolio, dispatch: dispatch as unknown as React.Dispatch<unknown>, savedCardsState });
 
   const handleTitleChange = (newTitle: string) => {
     dispatch({ type: 'UPDATE_TITLE', payload: { title: newTitle } });
@@ -242,6 +242,7 @@ export function usePortfolioEditorState({ onPortfolioChange, showNotification }:
     },
     drag: {
       handleDragStart,
+      handleDragOver,
       handleDragEnd,
     },
     // keep dispatch top-level for simple consumers that need to call reducer directly

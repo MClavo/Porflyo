@@ -293,6 +293,8 @@ export default function PortfolioEditor({
           onRemoveCard={(sectionId, cardId) => {
             state.dispatch({ type: 'REMOVE_CARD', payload: { sectionId, cardId } });
           }}
+          previewIndex={s.previewIndex ?? null}
+          previewCard={s.previewCard ?? null}
         />
       );
     }
@@ -365,6 +367,7 @@ export default function PortfolioEditor({
         cardsById={allCardsById as Record<string, unknown>}
         sectionsById={state.data.portfolio.sections}
         onDragStart={state.drag.handleDragStart}
+        onDragOver={state.drag.handleDragOver}
         onDragEnd={state.drag.handleDragEnd}
       >
         <EditorSidebar
