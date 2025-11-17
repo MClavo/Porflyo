@@ -85,6 +85,24 @@ const EditorDndProvider: React.FC<EditorDndProviderProps> = ({
 
   const activeCard = getActiveCard();
 
+  // Determine whether the currently dragged item is a saved card
+  const isSavedCard = activeId ? activeId.toString().startsWith('saved-') : false;
+
+  // Compute overlay style depending on source (saved vs regular).
+  // Saved cards: min 350px, max 600px, fit-content width. Regular cards: inherit.
+  // Template 'ats' forces fixed 1000px width (keeps previous behavior).
+  const overlayStyle: React.CSSProperties = {
+    pointerEvents: 'none',
+    width: isSavedCard ? '600px' : 'inherit',
+    ...(isSavedCard ? { minWidth: '350px', maxWidth: '600px'} : {})
+  };
+  if (template === 'ats') {
+    Object.assign(overlayStyle, {
+      width: '1000px',
+      maxWidth: '1000px',
+      minWidth: '1000px',
+    });
+  }
   // Find which section the active card belongs to for proper styling context
   const getCardSectionId = (cardId: CardId): string | null => {
     if (sectionsById) {
@@ -130,19 +148,7 @@ const EditorDndProvider: React.FC<EditorDndProviderProps> = ({
               className={`drag-overlay tpl-${template} sortable-card`} 
               data-mode={mode}
               id={sectionId}
-              style={{ 
-                pointerEvents: 'none',
-                minWidth: '350px',
-                maxWidth: '600px',
-                width: 'max-content',
-                backdropFilter: 'blur(4px)',
-                // Force ATS width when using ATS template
-                ...(template === 'ats' ? {
-                  width: '1000px',
-                  maxWidth: '1000px',
-                  minWidth: '1000px'
-                } : {})
-              }}
+              style={overlayStyle}
             >
               {/* Show drag handle in edit mode */}
               {mode === "edit" && <DragHandle />}

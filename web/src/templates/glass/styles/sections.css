@@ -5,7 +5,6 @@
 /* Base portfolio section - Uniform style for all sections */
 .portfolio-section {
   background: rgba(255, 255, 255, 0.12);
-  backdrop-filter: blur(15px);
   border-radius: 20px;
   padding: 2rem;
   border: 1px solid rgba(255, 255, 255, 0.25);
@@ -15,7 +14,7 @@
 }
 
 .portfolio-section:hover {
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.15) !important;
   transform: translateY(-2px);
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
 }
