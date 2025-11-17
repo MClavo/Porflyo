@@ -9,7 +9,7 @@
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
-  top: 1.5rem;
+  top: 15px;
   z-index: 10;
   display: flex;
   gap: 0.5rem;
@@ -25,10 +25,10 @@
 }
 
 .glass-gradient-option {
-  width: 28px;
-  height: 28px;
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
-  border: 2px solid transparent;
+  border: -2px solid transparent;
   cursor: pointer;
   transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease, opacity 0.18s ease;
   position: relative;
