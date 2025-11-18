@@ -36,6 +36,7 @@ export const PortfolioCard: React.FC<PortfolioCardProps> = ({
   const navigate = useNavigate();
   const [copied, setCopied] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [isDeletingLocal, setIsDeletingLocal] = useState(false);
 
   const portfolioUrl = portfolio.reservedSlug 
     ? `${window.location.origin}/p/${portfolio.reservedSlug}`
@@ -71,9 +72,16 @@ export const PortfolioCard: React.FC<PortfolioCardProps> = ({
     setShowDeleteDialog(true);
   };
 
-  const handleConfirmDelete = () => {
-    onDelete(portfolio.id);
-    setShowDeleteDialog(false);
+  const handleConfirmDelete = async () => {
+    setIsDeletingLocal(true);
+    try {
+      await onDelete(portfolio.id);
+      setShowDeleteDialog(false);
+    } catch (error) {
+      console.error("Failed to delete portfolio:", error);
+    } finally {
+      setIsDeletingLocal(false);
+    }
   };
 
   const handleCancelDelete = () => {
@@ -156,7 +164,7 @@ export const PortfolioCard: React.FC<PortfolioCardProps> = ({
         onConfirm={handleConfirmDelete}
         onCancel={handleCancelDelete}
         variant="danger"
-        isLoading={isDeleting}
+        isLoading={isDeletingLocal}
       />
     </>
   );
