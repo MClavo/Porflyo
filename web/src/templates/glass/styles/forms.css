@@ -4,7 +4,7 @@
 
 /* Input and form elements - No blur in edit mode */
 /* Exclude inputs inside cards to avoid interfering with card-specific styles */
-.tpl-glass input:not(.job-card-title):not(.job-card-company):not(.job-card-location):not(.education-card-title):not(.education-card-institution):not(.education-card-location):not(.about-section-name):not([class*="-title"]):not([class*="-company"]):not([class*="-location"]),
+/* .tpl-glass input:not(.job-card-title):not(.job-card-company):not(.job-card-location):not(.education-card-title):not(.education-card-institution):not(.education-card-location):not(.about-section-name):not([class*="-title"]):not([class*="-company"]):not([class*="-location"]),
 .tpl-glass textarea:not(.job-card-description):not([class*="-description"]),
 .tpl-glass select:not([class*="date-"]) {
   background: rgba(255, 255, 255, 0.1) !important;
@@ -17,7 +17,7 @@
   transition: all 0.3s ease !important;
   font-family: inherit !important;
   font-size: 1rem !important;
-}
+} */
 
 .tpl-glass input::placeholder,
 .tpl-glass textarea::placeholder {
@@ -43,7 +43,7 @@
   border: 1px solid rgba(255, 255, 255, 0.3) !important;
   border-radius: 8px !important;
   color: #ffffff !important;
-  padding: 0.5rem 1rem !important;
+  padding: 0.5rem 1rem;
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
   font-weight: 600 !important;
