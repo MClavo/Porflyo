@@ -108,7 +108,7 @@ export const VisitsOverviewCard: React.FC<VisitsOverviewCardProps> = ({
           <div className="visits-overview-card__rate-ring">
             <PercentageRing
               value={parsePercentage(qualityVisitRate)}
-              size={56}
+              size={100}
               thickness={6}
               animated={true}
             />
@@ -130,7 +130,7 @@ export const VisitsOverviewCard: React.FC<VisitsOverviewCardProps> = ({
           <div className="visits-overview-card__rate-ring">
             <PercentageRing
               value={parsePercentage(conversionRate)}
-              size={56}
+              size={100}
               thickness={6}
               animated={true}
             />

@@ -81,12 +81,13 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  gap: var(--space-2);
+  /* gap: var(--space-2); */
 }
 
 .kpi-card-main {
   display: flex;
-  align-items: baseline;
+  align-items: center;
+  justify-content: center;
   gap: var(--space-3);
 }
 
@@ -106,6 +107,7 @@
   font-weight: 600;
   margin-bottom: var(--space-2);
   opacity: 0.8;
+  text-align: center;
 }
 
 /* Change Indicator */
@@ -172,19 +174,19 @@
 /* Span por defecto (móvil): full width */
 .kpi-card{ grid-column: 1 / -1; }
 
-/* ≥768px (MD: 6 cols) → 3 cols (dos por fila) */
+/* ≥768px (MD: 6 cols) → 3 cols */
 @media (min-width: 768px){
   .kpi-card{ grid-column: span 3; }
 }
 
-/* ≥1024px (LG: 8 cols) → 4 cols (dos por fila) */
+/* ≥1024px (LG: 8 cols) → 4 cols */
 @media (min-width: 1024px){
-  .kpi-card{ grid-column: span 4; }
+  .kpi-card{ grid-column: span 3; }
 }
 
-/* ≥1280px (XL: 12 cols) → 3 cols (cuatro por fila) */
+/* ≥1280px (XL: 12 cols) → 3 cols */
 @media (min-width: 1280px){
-  .kpi-card{ grid-column: span 3; }
+  .kpi-card{ grid-column: span 1; }
 }
 
 /* Responsive adjustments */

@@ -149,7 +149,7 @@ function OverviewContent() {
           
                   <KpiCard
                     title="Session Duration"
-                    value={isLoading ? "N/A" : (avgSessionMinutes != null ? `${avgSessionMinutes.toFixed(1)}m` : "N/A")}
+                    value={isLoading ? "N/A" : (avgSessionMinutes != null ? `${avgSessionMinutes.toFixed(1)}s` : "N/A")}
                     subtitle="avg length"
                     icon={<FiClock />}
                     color="purple"

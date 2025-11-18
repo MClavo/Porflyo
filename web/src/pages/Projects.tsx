@@ -227,7 +227,7 @@ function ProjectsContent() {
       />
 
       {/* KPI Grid */}
-      <KpiGrid columns={{ base: 1, sm: 2, md: 3, lg: 4, xl: 6 }} gap={6}>
+      <KpiGrid columns={{ base: 1, sm: 2, md: 3, lg: 6, xl: 6 }} gap={6}>
         <KpiCard
           title="Total Interactions"
           value={aggregateKpis.totalProjectInteractions.toLocaleString()}

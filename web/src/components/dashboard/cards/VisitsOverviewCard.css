@@ -58,8 +58,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  flex: 1;
+  /*   flex: 1; */
   padding: var(--space-4) 0;
+  padding-bottom: 35px;
 }
 
 .visits-overview-card__visits {
@@ -107,6 +108,7 @@
 }
 
 .visits-overview-card__rate {
+  padding-top: var(--space-6);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -126,7 +128,7 @@
 }
 
 .visits-overview-card__rate-label {
-  font-size: var(--font-sm);
+  font-size: var(--font-base);
   color: var(--text-secondary);
   font-weight: 600;
   text-align: center;
@@ -232,12 +234,14 @@
 }
 
 @media (min-width: 1280px){                        /* XL: 12 cols → ocupa 6 */
-  .visits-overview-card{ grid-column: span 6; }
+  .visits-overview-card{ 
+    grid-column: span 4;
+    grid-row: span 2; }
 }
 
 /* Reducir altura visual del Overview */
 .visits-overview-card { min-height: 260px; padding-block: var(--space-5); }
-.visits-overview-card__main { padding: var(--space-3) 0; }
+/* .visits-overview-card__main { padding: var(--space-3) 0; } */
 
 /* Cifra principal más dominante pero compacta */
 .visits-overview-card__visits-number{
