@@ -206,6 +206,7 @@ body.light-theme .home-page .react-loading-skeleton{
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: var(--space-4);
+  align-items: stretch;
 }
 
 /* Empty State */
@@ -246,6 +247,7 @@ body.light-theme .home-page .react-loading-skeleton{
   .portfolios-grid {
     grid-template-columns: repeat(3, 1fr);
     gap: var(--space-6);
+    align-items: stretch;
   }
 
   .user-profile-section,
