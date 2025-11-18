@@ -32,8 +32,6 @@ micronaut:
     enabled: true
 
 
-
-
 dynamodb:
   table-name: user-test    
   user-table: user-test    

@@ -124,6 +124,32 @@ Resources:
             Path: /logout
             Method: ANY
 
+  # Metrics Handler Lambda
+  PorflyoMetrics:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./handlers/metrics/build/libs/metrics-0.4-optimized-lambda.zip
+      Handler: com.porflyo.MetricsNativeEntrypoint
+      Runtime: provided.al2023
+      MemorySize: 256
+      Environment:
+        Variables:
+          OAUTH_CLIENT_ID: !Ref OAUTH_CLIENT_ID
+          OAUTH_CLIENT_SECRET: !Ref OAUTH_CLIENT_SECRET
+          OAUTH_REDIRECT_URI: !Ref OAUTH_REDIRECT_URI
+          OAUTH_SCOPE: !Ref OAUTH_SCOPE
+          OAUTH_USER_AGENT: !Ref OAUTH_USER_AGENT
+          JWT_SECRET: !Ref JWT_SECRET
+          JWT_EXPIRATION: !Ref JWT_EXPIRATION
+          FRONTEND_URL: !Ref FRONTEND_URL
+      Events:
+        # Handle metrics requests
+        MetricsApi:
+          Type: HttpApi
+          Properties:
+            PayloadFormatVersion: '2.0'
+            Path: /metrics/{proxy+}
+            Method: ANY
 Outputs:
   PorflyoApiUrl:
     Description: "API Gateway endpoint URL for API Lambda"
