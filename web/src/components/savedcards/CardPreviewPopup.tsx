@@ -4,8 +4,6 @@ import { renderCard } from "../cards/RenderCard";
 import type { SavedCard } from "../../state/SavedCards.types";
 import "./CardPreviewPopup.css";
 
-import.meta.glob('../../templates/**/*.css');
-
 export type CardPreviewPopupProps = {
   savedCard: SavedCard;
   children: React.ReactNode;

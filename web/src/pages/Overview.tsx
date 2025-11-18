@@ -101,21 +101,6 @@ function OverviewContent() {
     { key: 'socialClicks', name: 'Social Clicks', color: 'var(--chart-4, #8B5CF6)' }
   ];
 
-  // Debug logging
-  console.log("Overview metrics:", {
-    totalVisits,
-    avgSessionMinutes,
-    deviceMix,
-    engagementRate,
-    conversionRate,
-    qualityVisitRate,
-    emailCopies,
-    views,
-    visitsChange,
-    engagementChange,
-    chartDataLength: chartData.length
-  });
-
   return (
     <>
 

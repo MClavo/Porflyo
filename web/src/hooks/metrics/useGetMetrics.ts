@@ -110,7 +110,7 @@ export function useMetrics(
       if (socialLink && trackLinks) {
         const classList = Array.from(socialLink.classList);
         const platform = classList.find(c => c !== 'about-social-link') || 'unknown';
-        console.log('Social link click detected:', { platform, href: socialLink.href });
+        
         metricsCollector.recordSocialClick(platform);
         return;
       }

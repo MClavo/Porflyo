@@ -38,7 +38,7 @@ export default function PortfolioEditor({
 
   // Debug: Log notification state changes
   React.useEffect(() => {
-    console.log('PortfolioEditor - notification state changed:', notification);
+    
   }, [notification]);
 
   // Check if we're in edit mode (has portfolio ID) or new mode
@@ -55,7 +55,7 @@ export default function PortfolioEditor({
     message: string,
     type: "success" | "error" | "info" = "success"
   ) => {
-    console.log('PortfolioEditor - showNotification called:', { message, type });
+    
     
     // Clear any existing timer
     if (notificationTimerRef.current) {
@@ -71,7 +71,7 @@ export default function PortfolioEditor({
   }, []);
   
   const hideNotification = React.useCallback(() => {
-    console.log('PortfolioEditor - hideNotification called');
+    
     if (notificationTimerRef.current) {
       clearTimeout(notificationTimerRef.current);
     }

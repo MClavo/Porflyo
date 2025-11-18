@@ -53,14 +53,6 @@ export const ProjectBubbleChart: React.FC<ProjectBubbleChartProps> = ({
   const minSize = sizes.length > 0 ? Math.min(...sizes) : 1;
   const maxSize = sizes.length > 0 ? Math.max(...sizes) : 1;
   const sizeRange = maxSize - minSize || 1; // Avoid division by zero
-  
-  // Debug size values
-  console.log('Size distribution:', {
-    originalSizes: data.map(p => p.size),
-    minSize,
-    maxSize,
-    sizeRange
-  });
 
   // Transform data for bubble chart
   const chartData = data.map((point, index) => {

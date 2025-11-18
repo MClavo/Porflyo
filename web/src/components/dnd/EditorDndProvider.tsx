@@ -19,9 +19,6 @@ import type { TemplateKey } from "../../templates/Template.types";
 import type { Mode } from "../cards/subcomponents/Fields.types";
 import { useSavedCards } from "../../state/SavedCards.hooks";
 
-// Import all template styles
-import.meta.glob('../../templates/**/*.css');
-
 interface EditorDndProviderProps {
   children: React.ReactNode;
   template: TemplateKey;

@@ -15,13 +15,9 @@ export function useSlugManager({ isEditing, existingPortfolio }: UseSlugManagerP
   // Initialize slug when editing existing portfolio
   useEffect(() => {
     if (isEditing && existingPortfolio) {
-      console.log('Initializing slug from portfolio:', {
-        id: existingPortfolio.id,
-        reservedSlug: existingPortfolio.reservedSlug
-      });
       setSlug(existingPortfolio.reservedSlug || '');
     } else if (!isEditing) {
-      console.log('Resetting slug for new portfolio');
+      
       // Clear slug for new portfolio
       setSlug('');
     }
