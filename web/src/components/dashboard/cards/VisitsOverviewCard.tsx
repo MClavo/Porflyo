@@ -83,7 +83,7 @@ export const VisitsOverviewCard: React.FC<VisitsOverviewCardProps> = ({
           <FiUsers />
         </div>
         <div className="visits-overview-card__title">
-          Total Visits Overview
+          Today Visits Overview
         </div>
       </div>
       

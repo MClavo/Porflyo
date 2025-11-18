@@ -147,30 +147,16 @@ function OverviewContent() {
             isLoading={isLoading}
           />
           
-                  <KpiCard
-                    title="Session Duration"
-                    value={isLoading ? "N/A" : (avgSessionMinutes != null ? `${avgSessionMinutes.toFixed(1)}s` : "N/A")}
-                    subtitle="avg length"
-                    icon={<FiClock />}
-                    color="purple"
-                    isLoading={isLoading}
-                  />
-          
-                  <KpiCard
+          <KpiCard
+            title="Session Duration"
+            value={isLoading ? "N/A" : (avgSessionMinutes != null ? `${avgSessionMinutes.toFixed(1)}m` : "N/A")}
+            subtitle="avg length"
+            icon={<FiClock />}
+            color="purple"
+            isLoading={isLoading}
+          />                  <KpiCard
                     title="Time to Interact"
-                    // prefer ttfi from latest engagement series, else heuristic: 0.7 * avgSessionMinutes
-                    value={isLoading ? "N/A" : (() => {
-                      const latestEng = overviewData.engagementSeries.length > 0 ? overviewData.engagementSeries[overviewData.engagementSeries.length - 1] : undefined;
-                      const ttfi = latestEng && (latestEng as { tffiMeanMs?: number }).tffiMeanMs ? (latestEng as { tffiMeanMs?: number }).tffiMeanMs : null;
-                      if (ttfi != null) return formatMs(ttfi);
-                      if (avgSessionMinutes != null) {
-                        // convert minutes to ms
-                        const ms = avgSessionMinutes * 60 * 1000;
-                        return formatMs(ms * 0.7);
-                      }
-                      return "N/A";
-                    })()
-                    }
+                    value={isLoading ? "N/A" : (overviewData.todayKpis?.tffiMeanMs != null ? formatMs(overviewData.todayKpis.tffiMeanMs) : "N/A")}
                     subtitle="first interaction"
                     icon={<FiActivity />}
                     color="orange"

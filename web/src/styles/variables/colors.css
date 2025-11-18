@@ -20,7 +20,7 @@
   /* Additional palette for charts (useful for donuts/bubbles/area) */
   --chart-1: #3B82F6; /* blue */
   --chart-2: #10B981; /* emerald */
-  --chart-3: #F59E0B; /* amber */
+  --chart-3: #dd8e05; /* amber */
   --chart-4: #8B5CF6; /* violet */
   --chart-5: #EF4444; /* red */
   --chart-6: #06B6D4; /* cyan */
@@ -63,7 +63,7 @@
 
 /* Light Theme */
 body.light-theme {
-  --dashboard-bg: #eef3f8;
+  --dashboard-bg: #e0e4e96e;
   --dashboard-bg-secondary: #ffffff;
 
   /* Card Backgrounds and Borders */
