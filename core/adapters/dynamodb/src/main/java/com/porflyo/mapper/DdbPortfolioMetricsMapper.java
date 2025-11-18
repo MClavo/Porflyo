@@ -1,11 +1,9 @@
 package com.porflyo.mapper;
 
-import static com.porflyo.common.DdbKeys.METRICS_DAY_SHARDS;
 import static com.porflyo.common.DdbKeys.METRICS_PK_PREFIX;
-import static com.porflyo.common.DdbKeys.METRICS_SK_PREFIX;
-import static com.porflyo.common.DdbKeys.skTodayMonthShard;
 import static com.porflyo.common.DdbKeys.idFrom;
 import static com.porflyo.common.DdbKeys.pk;
+import static com.porflyo.common.DdbKeys.skTodayMonthShard;
 
 import java.time.LocalDate;
 import java.time.YearMonth;

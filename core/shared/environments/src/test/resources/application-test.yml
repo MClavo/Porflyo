@@ -30,6 +30,10 @@ github:
     oauth-base-url: https://github.com
     timeout: 30
   
+metrics:
+  heatmap-cell-count: 400
+  baseline-window-days: 28
+
 logger:
   levels:
     com.porflyo: DEBUG
