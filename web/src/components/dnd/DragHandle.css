@@ -64,6 +64,7 @@
 
 /* Ensure the drag handle is positioned correctly within sortable cards */
 .sortable-card {
+  height: fit-content;
   position: relative;
 }
 

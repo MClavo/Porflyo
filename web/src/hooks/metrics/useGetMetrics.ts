@@ -127,8 +127,8 @@ export function useMetrics(
       
       if (clickedElement) {
         const classList = clickedElement.classList;
-        const isLiveButton = classList.contains('live');
-        const isCodeButton = classList.contains('code');
+        const isLiveButton = classList.contains('btn-live');
+        const isCodeButton = classList.contains('btn-code');
 
         if (isLiveButton && trackLinks) {
           metricsCollector.recordProjectLinkClick(projectId, (link as HTMLAnchorElement)?.href || 'live');

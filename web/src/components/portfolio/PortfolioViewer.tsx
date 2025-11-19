@@ -47,6 +47,11 @@ export function PortfolioViewer({
         );
         continue; // Skip regular SectionCard rendering
       }
+
+      // Skip sections that have no cards (same logic as PortfolioEditor in view mode)
+      if (!s.cardsOrder || s.cardsOrder.length === 0) {
+        continue;
+      }
       
       sectionsMap[sid] = (
         <SectionCard

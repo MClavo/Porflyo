@@ -122,13 +122,6 @@ export default function GlassLayout({
               <div className="section-content">{sectionsMap.achievements}</div>
             </div>
           )}
-
-          {/* Contact Section - Full width at bottom */}
-          {sectionsMap?.contact && (
-            <div className="portfolio-section" id="contact">
-              <div className="section-content">{sectionsMap.contact}</div>
-            </div>
-          )}
         </div>
       </div>
     </div>
