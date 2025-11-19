@@ -128,11 +128,34 @@ public class DdbMediaCountRepository implements MediaCountRepository{
 
             // Delete if zero to avoid unnecessary writes
             if (newVal <= 0) {
-                current.remove(k);
+                // Prevent deleting SavedSection media here
+                if(!k.contains("svd/")){
+                    current.remove(k);
+                }
+
                 toDelete.add(k);
 
             } else {
                 current.put(k, newVal);
+            }
+        }
+
+        save(userId, current);
+        return toDelete;
+    }
+
+    public List<String> deleteAndReturnSSectionZeros(UserId userId) {
+        Map<String, Integer> current = find(userId);
+        List<String> toDelete = new ArrayList<>();
+
+        for (Map.Entry<String, Integer> entry : current.entrySet()) {
+            String k = entry.getKey();
+            int count = entry.getValue();
+
+            // Only consider SavedSection media keys
+            if (k.contains("svd/") && count <= 0) {
+                current.remove(k);
+                toDelete.add(k);
             }
         }
 

@@ -60,6 +60,9 @@ public class MediaUseCase {
         if (mediaKeys == null || mediaKeys.isEmpty()) return List.of();
 
         List<String> toDelete = mediaCountRepository.decrementAndReturnDeletables(userId, mediaKeys);
+        List<String> toDeleteSSection = mediaCountRepository.deleteAndReturnSSectionZeros(userId);
+
+        toDelete.addAll(toDeleteSSection);
 
         // delete (idempotent if fails)
         for (String key : toDelete) {
