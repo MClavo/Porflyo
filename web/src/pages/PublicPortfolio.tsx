@@ -4,6 +4,7 @@ import { getPublicPortfolioView } from '../api/clients/public.api';
 import { mapPublicPortfolioViewToPortfolioState } from '../api/mappers/portfolio.mappers';
 import type { PortfolioState } from '../state/Portfolio.types';
 import { PortfolioViewer } from '../components/portfolio';
+import { PortfolioBranding } from '../components/portfolio/PortfolioBranding';
 import { sendMetricsOnUnload } from '../api/hooks/useMetrics';
 import useMetrics from '../hooks/metrics/useGetMetrics';
 import { useSEO } from '../hooks/useSEO';
@@ -137,6 +138,7 @@ export default function PublicPortfolio() {
 
   return (
     <div className="public-portfolio" ref={containerRef}>
+      <PortfolioBranding />
       <PortfolioViewer portfolio={portfolio} />
     </div>
   );
