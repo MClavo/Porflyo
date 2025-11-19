@@ -22,7 +22,7 @@ type MonthYearProps = {
  */
 export function Date({
   mode = "view",
-  value = { month: 0, year: 2024 },
+  value = { month: 0, year: 2025 },
   onChange,
   className,
   monthNames = [
@@ -40,7 +40,7 @@ export function Date({
   );
 
   const [localMonth, setLocalMonth] = React.useState<number>(value?.month ?? 0);
-  const [localYear, setLocalYear] = React.useState<number>(value?.year ?? 2024);
+  const [localYear, setLocalYear] = React.useState<number>(value?.year ?? 2025);
   const [yearError, setYearError] = React.useState<string>("");
 
   // Sync with external value changes
