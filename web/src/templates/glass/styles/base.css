@@ -49,3 +49,7 @@
   background: var(--porflyo-glass-gradient);
 
 }
+
+.tpl-glass textarea {
+  resize: none;
+}

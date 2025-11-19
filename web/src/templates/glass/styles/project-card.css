@@ -15,7 +15,8 @@
   width: 100%;
   max-width: 100%;
   min-width: 100%;
-  box-sizing: border-box;
+  flex: 1 1 auto !important;
+  /* box-sizing: border-box; */
   transition: all 0.3s ease;
   overflow: hidden;
   position: relative;
@@ -72,6 +73,7 @@
 .tpl-glass .project-card__content h1,
 .tpl-glass .project-card h3,
 .tpl-glass .github-project-name {
+  flex: 1;
   margin: 0;
   padding: 0;
   font-size: 22px;
@@ -273,7 +275,7 @@
   flex-wrap: wrap;
   gap: 8px;
   margin: 0;
-  padding: 0;
+  padding: 0;  
 }
 
 /* Technologies list - pills styling */

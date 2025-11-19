@@ -129,10 +129,16 @@
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 400px), 1fr));
   gap: 1.5rem;
   justify-content: center;
-  justify-items: center;
+  justify-items: stretch;
   max-width: 1200px;
   margin-left: auto;
   margin-right: auto;
+}
+
+/* When there's only one card, limit its width */
+.tpl-glass #projects .section-cards:has(> :only-child) {
+  grid-template-columns: 1fr;
+  max-width: 600px;
 }
 
 /* Achievements section - 3 column grid */
