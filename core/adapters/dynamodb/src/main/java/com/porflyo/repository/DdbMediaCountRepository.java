@@ -131,6 +131,8 @@ public class DdbMediaCountRepository implements MediaCountRepository{
                 // Prevent deleting SavedSection media here
                 if(!k.contains("svd/")){
                     current.remove(k);
+                } else {
+                    current.put(k, 0); // Keep at zero for SavedSection media
                 }
 
                 toDelete.add(k);
