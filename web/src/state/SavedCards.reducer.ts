@@ -7,8 +7,38 @@ import type { AnyCard } from "./Cards.types";
 const genId = () => crypto.randomUUID();
 
 /**
+ * Extract all media URLs from a card
+ */
+function extractMediaUrls(card: AnyCard): string[] {
+  const mediaUrls: string[] = [];
+  
+  switch (card.type) {
+    case "project":
+      // Projects can have multiple images
+      if (card.data.images && Array.isArray(card.data.images)) {
+        mediaUrls.push(...card.data.images.filter(url => url && url.trim() !== ""));
+      }
+      break;
+    
+    case "certificate":
+      // Certificate cards can have an image
+      if (card.data.image && card.data.image.trim() !== "") {
+        mediaUrls.push(card.data.image);
+      }
+      break;
+    
+    // Other card types (job, education, text, award) don't have media
+    default:
+      break;
+  }
+  
+  return mediaUrls;
+}
+
+/**
  * Convert AnyCard to PortfolioSection format for API
  * Adds createdAt timestamp to the content
+ * Extracts media URLs from the card
  */
 function cardToPortfolioSection(card: AnyCard, sectionType: string, createdAt: number): PortfolioSection {
   // Add createdAt to the card content before stringifying
@@ -17,11 +47,14 @@ function cardToPortfolioSection(card: AnyCard, sectionType: string, createdAt: n
     createdAt
   };
   
+  // Extract media URLs from the card
+  const mediaUrls = extractMediaUrls(card);
+  
   return {
     sectionType,
     title: "", // Not used for saved cards
     content: JSON.stringify(cardWithTimestamp),
-    media: []
+    media: mediaUrls
   };
 }
 
@@ -63,11 +96,11 @@ export const savedCardsReducer = (state: SavedCardsState, action: SavedCardsActi
         const { card, originSectionId, originSectionType, name, apiId } = action.payload;
         const savedCardId = genId();
         
-        // Crear una copia profunda del card
+        // Deep copy the card to avoid mutations
         const cardCopy = {
           ...card,
-          id: genId(), // Nuevo ID para la copia
-          data: JSON.parse(JSON.stringify(card.data)) // Deep copy de los datos
+          id: genId(), // New ID for the copy
+          data: JSON.parse(JSON.stringify(card.data)) // Deep copy of the data
         };
 
         draft.savedCards[savedCardId] = {

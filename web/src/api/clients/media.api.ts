@@ -88,9 +88,11 @@ export const isBlobUrl = (url: string): boolean => {
 
 /**
  * Generate a unique key for an image upload
+ * @param context - 'saved-card' for saved cards (svd/ prefix) or 'portfolio' for portfolio images (ptf/ prefix)
  */
-export const generateImageKey = (): string => {
-  return `card-images/${crypto.randomUUID()}.webp`;
+export const generateImageKey = (context: 'saved-card' | 'portfolio' = 'portfolio'): string => {
+  const prefix = context === 'saved-card' ? 'svd' : 'ptf';
+  return `${prefix}/${crypto.randomUUID()}.webp`;
 };
 
 /**
@@ -168,9 +170,11 @@ const getBlobFromBlobUrl = async (blobUrl: string): Promise<Blob> => {
 /**
  * Upload multiple blob images and return URL mapping
  * @param blobsWithUrls - Array of {blobUrl, blob} pairs. If blob is provided, it will be used directly.
+ * @param context - 'saved-card' for saved cards (svd/ prefix) or 'portfolio' for portfolio images (ptf/ prefix)
  */
 export const uploadBlobImages = async (
-  blobsWithUrls: Array<{ blobUrl: string; blob?: Blob }>
+  blobsWithUrls: Array<{ blobUrl: string; blob?: Blob }>,
+  context: 'saved-card' | 'portfolio' = 'portfolio'
 ): Promise<Record<string, string>> => {
   if (blobsWithUrls.length === 0) {
     return {};
@@ -186,7 +190,7 @@ export const uploadBlobImages = async (
       // Use provided blob or fetch from blob URL
       const blobToUpload = blob || await getBlobFromBlobUrl(blobUrl);
       
-      const key = generateImageKey();
+      const key = generateImageKey(context);
       const md5 = await calculateMD5(blobToUpload);
       
       uploadRequests.push({

@@ -48,7 +48,8 @@ export const useMedia = () => {
 
     // Upload all blob images and get the URL mapping
     const urlMapping = await uploadBlobImages(
-      blobUrls.map(blobUrl => ({ blobUrl }))
+      blobUrls.map(blobUrl => ({ blobUrl })),
+      'saved-card'
     );
 
     // Create a deep copy of the card to avoid mutating the original
@@ -135,7 +136,8 @@ export const useMedia = () => {
 
     // Upload all blob images in batch and get the URL mapping
     const urlMapping = await uploadBlobImages(
-      blobUrls.map(blobUrl => ({ blobUrl }))
+      blobUrls.map(blobUrl => ({ blobUrl })),
+      'portfolio'
     );
 
     return urlMapping;
