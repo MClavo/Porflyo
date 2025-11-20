@@ -121,15 +121,22 @@ export function usePortfoliosManager(user: PublicUserDto | null, authIsLoading =
 
     // Check current route - only load portfolios on specific routes
     const currentPath = window.location.pathname;
-    const isHome = currentPath === '/' || currentPath === '/home';
+    const isRootPage = currentPath === '/';
+    const isHome = currentPath === '/home';
     const isPortfolioRoute = currentPath.startsWith('/portfolios/');
     const isProfileRoute = currentPath === '/profile' || currentPath.startsWith('/profile/');
     const isPublicPortfolio = currentPath.startsWith('/p/');
     
+    // Never load portfolios on root page, public portfolios, or non-allowed routes
+    if (isRootPage || isPublicPortfolio) {
+      setIsLoading(false);
+      return;
+    }
+    
     // Only load portfolios on allowed routes
     const isAllowedRoute = isHome || isPortfolioRoute || isProfileRoute;
     
-    if (!isAllowedRoute || isPublicPortfolio) {
+    if (!isAllowedRoute) {
       setIsLoading(false);
       return;
     }

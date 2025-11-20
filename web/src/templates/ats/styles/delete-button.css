@@ -1,0 +1,47 @@
+/* ============================================
+   DELETE CARD BUTTON - ATS Template
+   ============================================ */
+
+/* Override delete button styles for ATS template */
+.tpl-ats .delete-card-button {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 20px;
+  height: 20px;
+  background: rgba(0, 0, 0, 0.03);
+  border: none;
+  border-left: 1px solid var(--ats-border-secondary);
+  border-bottom: 1px solid var(--ats-border-secondary);
+  color: rgba(0, 0, 0, 0.4);
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: none;
+  border-radius: 0;
+  flex-shrink: 0;
+  z-index: 1000;
+  font-size: 16px;
+  line-height: 1;
+  font-weight: 400;
+}
+
+.tpl-ats .delete-card-button:hover {
+  color: var(--ats-bg-color);
+  background: var(--status-negative);
+
+  transform: none;
+}
+
+.tpl-ats .delete-card-button:active {
+  background: rgba(0, 0, 0, 0.08);
+  color: #000000;
+  transform: none;
+}
+
+/* Ensure button is properly positioned within sortable card */
+.tpl-ats .sortable-card[data-mode="edit"] {
+  position: relative;
+}

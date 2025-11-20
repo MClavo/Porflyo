@@ -85,7 +85,7 @@
   left: 0;
   right: 0;
   z-index: 100;
-  background: var(--dashboard-bg);
+  background: var(--dashboard-bg-secondary);
   border: 1px solid var(--card-border);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-xl);

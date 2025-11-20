@@ -11,7 +11,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 10005; /* Above everything else including drag overlays */
+  z-index: 10005; /* Above drag overlays and other dialogs, below notifications (15000) */
   animation: fadeIn 0.2s ease-out;
 }
 

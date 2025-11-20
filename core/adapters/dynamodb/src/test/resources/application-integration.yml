@@ -23,6 +23,9 @@ quota:
   max-saved-sections: 10
   max-portfolios: 3
 
+metrics:
+  heatmap-cell-count: 400
+  baseline-window-days: 28
 
 logger:
   levels:

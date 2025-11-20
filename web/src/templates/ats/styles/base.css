@@ -1,0 +1,31 @@
+/* ============================================
+   BASE STYLES - ATS Template
+   ============================================ */
+
+.tpl-ats {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  background-color: var(--ats-bg-color);
+  color: var(--ats-text-color);
+  font-family: var(--ats-font-family) !important;
+  font-size: var(--ats-font-size-base);
+  line-height: var(--ats-line-height-base);
+  min-height: 100vh;
+  padding: var(--ats-padding-page);
+  box-sizing: border-box;
+}
+
+.tpl-ats * {
+  font-family: var(--ats-font-family) !important;
+}
+
+.tpl-ats .ats-content-wrapper {
+  width: var(--ats-container-width);
+  max-width: 100%;
+  background-color: var(--ats-bg-color);
+}
+
+.tpl-ats textarea {
+  resize: none !important;
+}

@@ -37,6 +37,8 @@ dependencies {
     testAnnotationProcessor("org.projectlombok:lombok:1.18.38")
     
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
+
+    testRuntimeOnly project(':shared:environments')
 }
 
 micronaut {

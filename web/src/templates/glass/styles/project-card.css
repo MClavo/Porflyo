@@ -1,0 +1,523 @@
+/* ============================================
+   PROJECT CARDS - Glass style
+   ============================================ */
+
+.tpl-glass .project-card,
+.tpl-glass .item-project,
+.tpl-glass .item-githubProject {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 12px;
+  padding: 0;
+  width: 100%;
+  max-width: 100%;
+  min-width: 100%;
+  flex: 1 1 auto !important;
+  /* box-sizing: border-box; */
+  transition: all 0.3s ease;
+  overflow: hidden;
+  position: relative;
+}
+
+.tpl-glass .project-card:hover,
+.tpl-glass .item-githubProject:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* Images section - full width at top */
+.tpl-glass .project-card__images {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.tpl-glass .project-card__images .image-container {
+  border-radius: 0;
+  border: none;
+  box-shadow: none;
+  background: transparent;
+  background-color: rgba(255, 255, 255, 0.08);
+}
+
+.tpl-glass .project-card__images img {
+  width: 100%;
+  height: calc(var(--current-card-width, 100%) * 0.56);
+  max-height: 300px;
+  object-fit: cover;
+  display: block;
+  border-radius: 0;
+}
+
+.tpl-glass .project-card__images .image-placeholder {
+  width: auto !important;
+  height: 200px;
+}
+
+/* Content section with padding */
+.tpl-glass .project-card__content {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Project title */
+.tpl-glass .project-card__content .title,
+.tpl-glass .project-card__content h1,
+.tpl-glass .project-card h3,
+.tpl-glass .github-project-name {
+  flex: 1;
+  margin: 0;
+  padding: 0;
+  font-size: 22px;
+  font-weight: 700;
+  color: #ffffff;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  line-height: 1.3;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.tpl-glass .project-card__content input.title {
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font-size: 22px;
+  font-weight: 700;
+  color: #ffffff;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  line-height: 1.3;
+  box-sizing: border-box;
+  transition: background 0.15s ease;
+}
+
+.tpl-glass .project-card__content input.title:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+  padding: 2px 4px;
+  margin: -2px -4px;
+}
+
+.tpl-glass .project-card__content input.title:focus {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  padding: 2px 4px;
+  margin: -2px -4px;
+  outline: none;
+}
+
+/* Description text */
+.tpl-glass .project-card__content .text,
+.tpl-glass .project-card__content p,
+.tpl-glass .project-card .project-description,
+.tpl-glass .github-project-description {
+  margin: 0;
+  padding: 0;
+  font-size: 15px;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.85);
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.tpl-glass .project-card__content textarea.text {
+  width: 100%;
+  min-height: 80px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  padding: 8px 12px;
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.9);
+  resize: none;
+  box-sizing: border-box;
+  transition: all 0.2s ease;
+}
+
+.tpl-glass .project-card__content textarea.text:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.tpl-glass .project-card__content textarea.text:focus {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.35);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
+}
+
+.tpl-glass .project-card__content textarea.text::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+/* Highlights section - bullet points */
+.tpl-glass .project-card__highlights {
+  margin: 0;
+  padding: 0;
+}
+
+.tpl-glass .project-card__highlights .bullet-text {
+  margin: 0;
+  padding: 0;
+  padding-left: 22px;
+  list-style-type: disc;
+  color: rgba(255, 255, 255, 0.88);
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.tpl-glass .project-card__highlights .bullet-text li {
+  margin-bottom: 6px;
+  padding-left: 0;
+  color: rgba(255, 255, 255, 0.88);
+}
+
+.tpl-glass .project-card__highlights .bullet-text li::before {
+  display: none;
+}
+
+.tpl-glass .project-card__highlights .bullet-text li::marker {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.tpl-glass .project-card__highlights textarea.bullet-text {
+  width: 100%;
+  min-height: 80px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  padding: 8px 12px;
+  margin: 0;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 14px;
+  line-height: 1.7;
+  resize: none;
+  box-sizing: border-box;
+  transition: all 0.2s ease;
+}
+
+.tpl-glass .project-card__highlights textarea.bullet-text:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.tpl-glass .project-card__highlights textarea.bullet-text:focus {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.35);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
+}
+
+.tpl-glass .project-card__highlights textarea.bullet-text::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+/* Technologies section */
+.tpl-glass .project-card__technologies {
+  padding: 0;
+  margin: 0;
+}
+
+.tpl-glass .project-card__technologies .technologies-title {
+  margin: 0 0 8px 0;
+  padding: 0;
+  color: rgba(255, 255, 255, 0.95);
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.tpl-glass .project-card__technologies input.technologies-title {
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0 0 8px 0;
+  color: rgba(255, 255, 255, 0.95);
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.3;
+  box-sizing: border-box;
+  transition: background 0.15s ease;
+}
+
+.tpl-glass .project-card__technologies input.technologies-title:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+  padding: 2px 4px;
+  margin: -2px -4px 6px -4px;
+}
+
+.tpl-glass .project-card__technologies input.technologies-title:focus {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  padding: 2px 4px;
+  margin: -2px -4px 6px -4px;
+  outline: none;
+}
+
+.tpl-glass .project-card__technologies .technologies,
+.tpl-glass .project-card .project-tech,
+.tpl-glass .github-project-topics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+  padding: 0;  
+}
+
+/* Technologies list - pills styling */
+.tpl-glass .project-card__technologies .list li,
+.tpl-glass .tech-badge,
+.tpl-glass .github-project-topic {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.15s ease;
+}
+
+.tpl-glass .project-card__technologies .list li:hover {
+  background: rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 255, 255, 0.35);
+}
+
+/* Edit mode - items with input and delete button */
+.tpl-glass .project-card__technologies .list[data-mode="edit"] .list-item-edit {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 6px 4px 12px;
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 12px;
+}
+
+.tpl-glass .project-card__technologies .list[data-mode="edit"] .list-item-edit:hover {
+  background: rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 255, 255, 0.35);
+}
+
+.tpl-glass .technologies .list-item-edit input.list-element {
+  background: transparent;
+  border: none;
+  padding: 2px 4px;
+  margin: 0;
+  color: white;
+  font-size: 13px !important;
+  font-weight: 500;
+  width: auto;
+  min-width: 60px;
+  max-width: 150px;
+}
+
+.tpl-glass .project-card__technologies .list-element:focus {
+  outline: none;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
+
+.tpl-glass .project-card__technologies .icon-btn {
+  background: rgba(255, 255, 255, 0.15);
+  border: none;
+  padding: 2px 6px;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: all 0.15s ease;
+}
+
+.tpl-glass .project-card__technologies .icon-btn:hover {
+  background: rgba(255, 100, 100, 0.3);
+  color: rgba(255, 150, 150, 1);
+}
+
+.tpl-glass .project-card__technologies .btn-add {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 12px;
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px dashed rgba(255, 255, 255, 0.35);
+  border-radius: 12px;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.tpl-glass .project-card__technologies .btn-add:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.45);
+  color: white;
+}
+
+/* Stats section */
+.tpl-glass .project-card__stats {
+  margin: 0;
+  padding: 0;
+}
+
+.tpl-glass .project-card__stats .stats {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.tpl-glass .project-card__stats .stat {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.tpl-glass .project-card__stats .stat-icon {
+  font-size: 18px;
+  color: rgba(255, 200, 100, 0.9);
+}
+
+.tpl-glass .project-card__stats .stat-value {
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.95);
+}
+
+/* URL inputs - edit mode */
+.tpl-glass .project-card__urls {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 0;
+  margin: 0;
+}
+
+.tpl-glass .project-card__urls .url-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.tpl-glass .project-card__urls .url-label {
+  margin: 0;
+  padding: 0;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.tpl-glass .project-card__urls .url-input {
+  width: 100%;
+  padding: 8px 12px;
+  margin: 0;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 13px;
+  box-sizing: border-box;
+  transition: all 0.2s ease;
+}
+
+.tpl-glass .project-card__urls .url-input:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.tpl-glass .project-card__urls .url-input:focus {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.35);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
+}
+
+.tpl-glass .project-card__urls .url-input::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+/* Footer buttons - view mode */
+.tpl-glass .project-card__footer,
+.tpl-glass .project-links,
+.tpl-glass .github-project-links {
+  display: flex;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  padding-top: 1.5rem;
+}
+
+/* Make content area expand to fill card and use column flex so
+   footer can be pushed to the bottom with margin-top:auto */
+.tpl-glass .project-card__content {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  padding: 1.5rem;
+  box-sizing: border-box;
+}
+
+/* Push footer to the bottom of the content area */
+.tpl-glass .project-card__content .project-card__footer,
+.tpl-glass .project-card__footer {
+  margin-top: auto;
+  width: 100%;
+}
+
+
+.tpl-glass .project-card__footer .btn,
+.tpl-glass .project-link,
+.tpl-glass .github-project-link {
+  flex: 1;
+  display: inline-block;
+  background: rgba(255, 255, 255, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  color: white;
+  padding: 10px 20px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+  cursor: pointer;
+}
+
+.tpl-glass .project-card__footer .btn:hover:not(:disabled),
+.tpl-glass .project-link:hover,
+.tpl-glass .github-project-link:hover {
+  background: rgba(255, 255, 255, 0.35);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.tpl-glass .project-card__footer .btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.tpl-glass .project-card__footer .btn-full {
+  flex: 1;
+  width: 100%;
+}
+
+.tpl-glass .list-item-add {
+  padding: 0 !important;
+}

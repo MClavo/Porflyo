@@ -1,0 +1,105 @@
+/* ============================================
+   DRAG HANDLE - ATS Template
+   ============================================ */
+
+/* Override default drag handle styles for ATS template */
+.tpl-ats .drag-handle {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.03);
+  border-bottom: 1px solid var(--ats-border-secondary);
+  cursor: grab;
+  z-index: 15;
+  transition: none;
+  border-radius: 0;
+  backdrop-filter: none;
+}
+
+.tpl-ats .drag-handle:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.tpl-ats .drag-handle:active {
+  cursor: grabbing;
+  background: rgba(0, 0, 0, 0.08);
+}
+
+.tpl-ats .drag-handle__grip {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 3px;
+  padding: 2px;
+  pointer-events: none;
+}
+
+.tpl-ats .drag-handle__dot {
+  width: 3px;
+  height: 3px;
+  background-color: rgba(0, 0, 0, 0.3);
+  border-radius: 50%;
+  transition: none;
+}
+
+.tpl-ats .drag-handle:hover .drag-handle__dot {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.tpl-ats .drag-handle:active .drag-handle__dot {
+  background-color: rgba(0, 0, 0, 0.6);
+}
+
+/* Reduce padding for ATS template cards in edit mode */
+.tpl-ats .sortable-card[data-mode="edit"] .project-card,
+.tpl-ats .sortable-card[data-mode="edit"] .job-card,
+.tpl-ats .sortable-card[data-mode="edit"] .education-card,
+.tpl-ats .sortable-card[data-mode="edit"] .text-card,
+.tpl-ats .sortable-card[data-mode="edit"] .award-card,
+.tpl-ats .sortable-card[data-mode="edit"] .certificate-card {
+  padding-top: 24px !important;
+}
+
+/* Ensure drag overlay maintains ATS styling */
+.tpl-ats .drag-overlay.sortable-card[data-mode="edit"] .project-card,
+.tpl-ats .drag-overlay.sortable-card[data-mode="edit"] .job-card,
+.tpl-ats .drag-overlay.sortable-card[data-mode="edit"] .education-card,
+.tpl-ats .drag-overlay.sortable-card[data-mode="edit"] .text-card,
+.tpl-ats .drag-overlay.sortable-card[data-mode="edit"] .award-card,
+.tpl-ats .drag-overlay.sortable-card[data-mode="edit"] .certificate-card {
+  padding-top: 24px !important;
+}
+
+/* Keep overlay handle visible and styled */
+.tpl-ats .drag-overlay.sortable-card .drag-handle {
+  opacity: 1;
+  pointer-events: none;
+  background: rgba(0, 0, 0, 0.08);
+  border-bottom: 1px solid var(--ats-border-color);
+}
+
+/* Dragging state styles for ATS */
+.tpl-ats .sortable-card.dragging {
+  opacity: 0.3 !important;
+  border: 1px dashed var(--ats-border-color) !important;
+}
+
+.tpl-ats .sortable-card.not-dragging {
+  opacity: 1 !important;
+}
+
+/* Remove glassmorphism effects in ATS template */
+.tpl-ats .drag-overlay.sortable-card {
+  background: var(--ats-bg-color) !important;
+  backdrop-filter: none !important;
+  border: 1px solid var(--ats-border-color) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
+  /* Force ATS container width for drag overlay */
+  width: var(--ats-container-width) !important;
+  max-width: var(--ats-container-width) !important;
+  min-width: var(--ats-container-width) !important;
+}

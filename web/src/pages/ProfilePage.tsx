@@ -1,20 +1,30 @@
 import React, { useState } from 'react';
 import { useAuthContext } from '../hooks/ui/useAuthContext';
+import { useSEO } from '../hooks/useSEO';
 import type { PublicUserDto } from '../api/types';
 import {
-  ModernProfileHeader,
-  ModernImageUpload,
-  ModernProfileForm,
-  ModernSocialLinks,
-  ModernProviderInfo
+  ProfileHeader,
+  ImageUpload,
+  ProfileForm,
+  SocialLinks,
+  ProviderInfo
 } from '../components/profile';
 
 import '../styles/pages/ProfilePage.css';
 import '../styles/components/buttons.css';
 
+import { BackButton } from '../components/buttons/BackButton';
+
 const ProfilePage: React.FC = () => {
   const { user, refetch, setAuthenticatedUser, isLoading: userLoading } = useAuthContext();
   const [avatarUploadMessage, setAvatarUploadMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+
+  // SEO - Block indexing of private profile page
+  useSEO({
+    title: 'Profile Settings - porflyo',
+    description: 'Manage your profile settings',
+    noIndex: true, // Private page - no indexing
+  });
 
   if (!user && !userLoading) {
     return (
@@ -93,31 +103,32 @@ const ProfilePage: React.FC = () => {
 
   return (
     <div className="profile-page">
+              <BackButton />
       <div className="profile-content">
-        <ModernProfileHeader user={user} isLoading={userLoading} />
+        <ProfileHeader user={user} isLoading={userLoading} />
         
         {user && (
           <>
-            <ModernImageUpload
+            <ImageUpload
               user={user}
               onUploadSuccess={handleAvatarUploadSuccess}
               onUploadError={handleAvatarUploadError}
               uploadMessage={avatarUploadMessage}
             />
             
-            <ModernProfileForm 
+            <ProfileForm 
               user={user}
               onUserUpdate={handleUserUpdate}
               isLoading={userLoading}
             />
 
-            <ModernSocialLinks
+            <SocialLinks
               user={user}
               onSocialsUpdate={handleSocialsUpdate}
               isLoading={userLoading}
             />
             
-            <ModernProviderInfo user={user} isLoading={userLoading} />
+            <ProviderInfo user={user} isLoading={userLoading} />
           </>
         )}
       </div>

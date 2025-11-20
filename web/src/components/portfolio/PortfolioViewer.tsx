@@ -8,9 +8,6 @@ import type { AboutSectionData } from '../sections/AboutSection.types';
 import LayoutPreview from './LayoutPreview';
 import './PortfolioViewer.css';
 
-import '../../templates/template1/template1.css';
-import '../../templates/template2/template2.css';
-
 interface PortfolioViewerProps {
   portfolio: PortfolioState;
 }
@@ -49,6 +46,11 @@ export function PortfolioViewer({
           />
         );
         continue; // Skip regular SectionCard rendering
+      }
+
+      // Skip sections that have no cards (same logic as PortfolioEditor in view mode)
+      if (!s.cardsOrder || s.cardsOrder.length === 0) {
+        continue;
       }
       
       sectionsMap[sid] = (

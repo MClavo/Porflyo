@@ -38,11 +38,12 @@
 }
 
 /* Color variants */
-.kpi-card--blue::before { background: var(--accent-blue); }
-.kpi-card--green::before { background: var(--accent-green); }
-.kpi-card--purple::before { background: var(--accent-purple); }
-.kpi-card--orange::before { background: var(--accent-orange); }
-.kpi-card--pink::before { background: var(--accent-pink); }
+.kpi-card::before{ display:none; }
+.kpi-card--blue::before,
+.kpi-card--green::before,
+.kpi-card--purple::before,
+.kpi-card--orange::before,
+.kpi-card--pink::before { display:none; }
 
 /* Card Header */
 .kpi-card-header {
@@ -80,12 +81,13 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  gap: var(--space-2);
+  /* gap: var(--space-2); */
 }
 
 .kpi-card-main {
   display: flex;
-  align-items: baseline;
+  align-items: center;
+  justify-content: center;
   gap: var(--space-3);
 }
 
@@ -105,6 +107,7 @@
   font-weight: 600;
   margin-bottom: var(--space-2);
   opacity: 0.8;
+  text-align: center;
 }
 
 /* Change Indicator */
@@ -155,20 +158,39 @@
 
 /* Loading skeleton adjustments */
 .kpi-card .react-loading-skeleton {
-  --base-color: #374151;
-  --highlight-color: #4b5563;
+  --base-color: var(--skeleton-base-color);
+  --highlight-color: var(--skeleton-highlight-color);
   --animation-direction: normal;
-  --animation-duration: 1.5s;
+  --animation-duration: var(--skeleton-animation-duration);
 }
 
-/* Global skeleton configuration for dark theme */
+/* Global skeleton configuration */
 .react-loading-skeleton {
-  --base-color: #374151;
-  --highlight-color: #4b5563;
+  --base-color: var(--skeleton-base-color);
+  --highlight-color: var(--skeleton-highlight-color);
+  --animation-duration: var(--skeleton-animation-duration);
+}
+
+/* Span por defecto (móvil): full width */
+.kpi-card{ grid-column: 1 / -1; }
+
+/* ≥768px (MD: 6 cols) → 3 cols */
+@media (min-width: 768px){
+  .kpi-card{ grid-column: span 3; }
+}
+
+/* ≥1024px (LG: 8 cols) → 4 cols */
+@media (min-width: 1024px){
+  .kpi-card{ grid-column: span 3; }
+}
+
+/* ≥1280px (XL: 12 cols) → 3 cols */
+@media (min-width: 1280px){
+  .kpi-card{ grid-column: span 1; }
 }
 
 /* Responsive adjustments */
-@media (max-width: 768px) {
+/* @media (max-width: 768px) {
   .kpi-card {
     padding: var(--space-4);
     min-height: 100px;
@@ -182,8 +204,8 @@
     margin-bottom: var(--space-3);
   }
 }
-
-@media (max-width: 480px) {
+ */
+/* @media (max-width: 480px) {
   .kpi-card {
     padding: var(--space-3);
     min-height: 90px;
@@ -192,4 +214,5 @@
   .kpi-card-value {
     font-size: var(--font-xl);
   }
-}
+} */
+

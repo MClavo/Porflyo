@@ -44,11 +44,15 @@ s3:
   secret-key: test
   expiration: 5
   region: us-east-1
-  bucket-name: porflyo-porflyo-media-test
+  bucket-name: porflyo-media-test
 
 quota:
   max-saved-sections: 10
   max-portfolios: 3
+
+metrics:
+  heatmap-cell-count: 400
+  baseline-window-days: 28
 
 # Custom OAuth Configuration (using environment variables)
 oauth:
@@ -78,9 +82,9 @@ frontend:
 # Logging Configuration
 logger:
   levels:
-    com.porflyo: DEBUG
-    io.micronaut.http: DEBUG
-    root: INFO 
+    com.porflyo: ERROR
+    io.micronaut.http: ERROR
+    root: ERROR
     # Removed redirect section that was causing conflicts
     
   http:

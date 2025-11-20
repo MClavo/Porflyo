@@ -1,5 +1,5 @@
 /**
- * TimeRangeToggle - Control moderno para seleccionar rango de tiempo
+ * TimeRangeToggle - Control o para seleccionar rango de tiempo
  * Now uses the unified ToggleSelector component
  */
 

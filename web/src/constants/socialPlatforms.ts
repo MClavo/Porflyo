@@ -42,6 +42,25 @@ export const SOCIAL_PLATFORMS: SocialPlatform[] = [
   { id: 'youtube', name: 'YouTube', icon: React.createElement(FiYoutube, { size: 16 }), color: '#ff0000' },
 ].sort((a, b) => a.name.localeCompare(b.name));
 
-export const getSocialPlatform = (id: string): SocialPlatform | undefined => {
-  return SOCIAL_PLATFORMS.find(platform => platform.id.toLowerCase() === id.toLowerCase());
+export const getSocialPlatform = (id: string, isDark?: boolean): SocialPlatform | undefined => {
+  const platform = SOCIAL_PLATFORMS.find(platform => platform.id.toLowerCase() === id.toLowerCase());
+  if (!platform) return undefined;
+
+  // For GitHub, apply color based on theme: when isDark === true -> keep original color,
+  // when isDark === false -> use black. If isDark is not provided, try to infer from
+  // document.body class ('light-theme' means not dark). Default to dark if unable to detect.
+  if (platform.id.toLowerCase() === 'github') {
+    let dark = isDark;
+    if (typeof dark === 'undefined') {
+      if (typeof document !== 'undefined' && document.body) {
+        dark = !document.body.classList.contains('light-theme');
+      } else {
+        dark = true;
+      }
+    }
+
+    return { ...platform, color: dark ? platform.color : '#000000' };
+  }
+
+  return platform;
 };

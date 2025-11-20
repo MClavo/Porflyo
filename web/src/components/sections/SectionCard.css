@@ -23,7 +23,7 @@
 
 /* Card drag hover effects - removed cursor styles since drag handle manages this now */
 .sortable-card {
-  width: fit-content;
+  width: auto;
   transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
 }
 
@@ -43,9 +43,34 @@
   box-shadow: none;
 }
 
+/* Smooth reposition transitions for cards when placeholder appears */
+.section-cards > * {
+  transition: transform 180ms ease, margin 180ms ease, opacity 120ms ease;
+}
+
+.section-cards .card-placeholder {
+  transition: height 180ms ease, opacity 120ms ease, margin 180ms ease;
+}
+
 /* Drop zone indicators */
 .section-cards.drop-target {
   background-color: rgba(59, 130, 246, 0.1);
   border: 2px dashed rgba(59, 130, 246, 0.5);
   border-radius: 8px;
+}
+
+/* Placeholder inserted during drag-over to indicate insertion position */
+.card-placeholder {
+  display: block;
+  margin: 8px 0;
+  pointer-events: none; /* prevent interaction with placeholder */
+}
+
+.card-placeholder-inner {
+  opacity: 0.5;
+  filter: saturate(0.95);
+}
+
+.card-placeholder-inner .drag-handle {
+  display: none; /* hide drag handle on placeholder */
 }

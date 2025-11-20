@@ -5,7 +5,7 @@ import { mapPortfolioStateToCreateDto, mapPortfolioStateToPatchDto } from '../..
 import { usePortfoliosContext } from '../ui/usePortfoliosContext';
 
 export interface UsePortfolioSaveResult {
-  savePortfolio: (portfolio: PortfolioState, portfolioId?: string, description?: string) => Promise<void>;
+  savePortfolio: (portfolio: PortfolioState, portfolioId?: string, description?: string) => Promise<{ portfolioId: string }>;
   isSaving: boolean;
   error: string | null;
 }
@@ -26,7 +26,7 @@ export function usePortfolioSave(): UsePortfolioSaveResult {
     portfolio: PortfolioState, 
     portfolioId?: string, 
     description?: string
-  ): Promise<void> => {
+  ): Promise<{ portfolioId: string }> => {
     try {
       setIsSaving(true);
       setError(null);
@@ -37,12 +37,14 @@ export function usePortfolioSave(): UsePortfolioSaveResult {
         const updatedPortfolio = await patchMutation.mutate({ id: portfolioId, patch: patchDto });
         // Update global state
         updatePortfolio(updatedPortfolio);
+        return { portfolioId };
       } else {
         // Create new portfolio
         const createDto = mapPortfolioStateToCreateDto(portfolio, description || '');
         const newPortfolio = await createMutation.mutate(createDto);
         // Add to global state
         addPortfolio(newPortfolio);
+        return { portfolioId: newPortfolio.id };
       }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to save portfolio';

@@ -1,4 +1,4 @@
-import type { DragEndEvent } from "@dnd-kit/core";
+import type { DragEndEvent, DragOverEvent } from "@dnd-kit/core";
 import type { PortfolioState } from "../../state/Portfolio.types";
 import type { Action } from "../../state/Portfolio.actions";
 import type { SavedCardsState } from "../../state/SavedCards.types";
@@ -16,8 +16,70 @@ export function createDragHandlers(args: {
     // no op for now
   };
 
+  const handleDragOver = (event: DragOverEvent) => {
+    const { active, over } = event;
+
+    // clear previews if nothing relevant
+    if (!over || !active) {
+      // clear all previews
+      for (const sectionId of Object.keys(portfolio.sections || {})) {
+        dispatch({ type: "SET_DRAG_PREVIEW", payload: { sectionId, index: null, previewCard: null } });
+      }
+      return;
+    }
+
+    const activeIdStr = String(active.id);
+    const overIdStr = String(over.id);
+    const savedCardId = activeIdStr.startsWith("saved-") ? activeIdStr.replace("saved-", "") : null;
+    const savedCard = savedCardId ? savedCardsState.savedCards?.[savedCardId] : null;
+
+    // Only handle previews for saved cards being dragged in
+    if (!activeIdStr.startsWith("saved-")) {
+      // if internal drag, clear previews
+      for (const sectionId of Object.keys(portfolio.sections || {})) {
+        dispatch({ type: "SET_DRAG_PREVIEW", payload: { sectionId, index: null, previewCard: null } });
+      }
+      return;
+    }
+
+    // Find the section that contains the overId (either card id or section id)
+    if (!portfolio?.sections) return;
+
+    for (const [sectionId, section] of Object.entries(portfolio.sections)) {
+      const s = section as SectionState;
+
+      // Only show preview if this section accepts the saved card type
+      const acceptsSaved = savedCard ? s.allowedTypes.includes(savedCard.card.type) : false;
+      if (!acceptsSaved) {
+        // clear preview for this section
+        dispatch({ type: "SET_DRAG_PREVIEW", payload: { sectionId, index: null, previewCard: null } });
+        continue;
+      }
+
+      if (overIdStr === sectionId) {
+        // over the empty area of the section -> place at end
+        dispatch({ type: "SET_DRAG_PREVIEW", payload: { sectionId, index: s.cardsOrder.length, previewCard: savedCard?.card ?? null } });
+        continue;
+      }
+
+      const cardIndex = s.cardsOrder.indexOf(overIdStr);
+      if (cardIndex !== -1) {
+        // Show insertion before the card we are over
+        dispatch({ type: "SET_DRAG_PREVIEW", payload: { sectionId, index: cardIndex, previewCard: savedCard?.card ?? null } });
+      } else {
+        // clear preview for this section
+        dispatch({ type: "SET_DRAG_PREVIEW", payload: { sectionId, index: null, previewCard: null } });
+      }
+    }
+  };
+
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
+
+    // Clear any transient previews for all sections
+      for (const sectionId of Object.keys(portfolio.sections || {})) {
+        dispatch({ type: "SET_DRAG_PREVIEW", payload: { sectionId, index: null, previewCard: null } });
+      }
 
     if (!over || active.id === over.id) return;
 
@@ -64,7 +126,13 @@ export function createDragHandlers(args: {
 
         // Create new card pre-populated with saved card data
         const initialData = JSON.parse(JSON.stringify(savedCard.card.data));
-        dispatch({ type: "ADD_CARD", payload: { sectionId, cardType: savedCard.card.type, initialData } });
+        // If there is a preview index for this section, insert at that position
+        const insertIndex = (s as SectionState).previewIndex ?? null;
+        if (typeof insertIndex === 'number') {
+          dispatch({ type: "ADD_CARD", payload: { sectionId, cardType: savedCard.card.type, initialData, index: insertIndex } });
+        } else {
+          dispatch({ type: "ADD_CARD", payload: { sectionId, cardType: savedCard.card.type, initialData } });
+        }
 
         return true;
       }
@@ -94,5 +162,5 @@ export function createDragHandlers(args: {
     tryHandleReorderWithinSection();
   };
 
-  return { handleDragStart, handleDragEnd };
+  return { handleDragStart, handleDragOver, handleDragEnd };
 }

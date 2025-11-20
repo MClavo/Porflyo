@@ -1,4 +1,4 @@
-.text {
+.space-button .text {
   translate: 2% -6%;
   letter-spacing: 0.01ch;
   color: hsl(0 0% calc(60% + (var(--active) * 26%)));
@@ -6,7 +6,7 @@
   padding: 0 34px;
   font-weight: 600;
 }
-.text::before {
+.space-button .text::before {
   content: "";
   position: absolute;
   top: -290%;
@@ -21,7 +21,7 @@
   animation-delay: 1s;
   display: none;
 }
-.text::after {
+.space-button .text::after {
   content: "";
   display: none;
   position: absolute;
@@ -36,6 +36,12 @@
 }
 .space-button:hover .text::before,
 .space-button:hover .text::after {
+  display: block;
+}
+
+/* Show shooting stars when pressed */
+.space-button.pressed .text::before,
+.space-button.pressed .text::after {
   display: block;
 }
 .galaxy::before {
@@ -215,8 +221,46 @@
   background: var(--bg);
 }
 
+/* Pressed state - maintains the active style */
+.space-button.pressed {
+  scale: 1;
+  --active: 1;
+  --play-state: running;
+  --bg: radial-gradient(
+        120% 120% at 126% 126%,
+        hsl(245 calc(var(--active) * 97%) 98% / calc(var(--active) * 0.9)) 40%,
+        transparent 50%
+      )
+      calc(100px - (var(--active) * 100px)) 0 / 100% 100% no-repeat,
+    radial-gradient(
+        120% 120% at 120% 120%,
+        hsl(245 calc(var(--active) * 97%) 70% / calc(var(--active) * 1)) 30%,
+        transparent 70%
+      )
+      calc(100px - (var(--active) * 100px)) 0 / 100% 100% no-repeat,
+    hsl(245 calc(var(--active) * 100%) calc(12% - (var(--active) * 8%)));
+  box-shadow:
+    0 0 calc(var(--active) * 6em) calc(var(--active) * 3em)
+      hsl(245 97% 61% / 0.5),
+    0 0.05em 0 0
+      hsl(245 calc(var(--active) * 97%) calc((var(--active) * 50%) + 30%)) inset,
+    0 -0.05em 0 0 hsl(245 calc(var(--active) * 97%) calc(var(--active) * 10%)) inset;
+  background: var(--bg);
+}
+
 /* Apply wobble animation on active button */
 .space-button:active .text {
+  font-weight: 300;
+  animation:
+    wobble 0.6s ease-in-out infinite,
+    blurMove 1.5s ease-in-out infinite;
+  text-shadow:
+    5px 5px 20px rgba(255, 255, 255, 0.8),
+    10px 10px 30px rgba(255, 0, 255, 0.6);
+}
+
+/* Apply wobble animation on pressed button */
+.space-button.pressed .text {
   font-weight: 300;
   animation:
     wobble 0.6s ease-in-out infinite,
@@ -263,6 +307,13 @@
   animation: circling 2s linear infinite; /* Animation for circling effect */
 }
 .galaxy:active::after {
+  animation: circling 1.5s linear infinite; /* Animation for circling effect */
+}
+
+.space-button.pressed .galaxy::before {
+  animation: circling 2s linear infinite; /* Animation for circling effect */
+}
+.space-button.pressed .galaxy::after {
   animation: circling 1.5s linear infinite; /* Animation for circling effect */
 }
 
@@ -343,6 +394,12 @@
 }
 
 .space-button:is(:hover, :focus-visible) {
+  --active: 1;
+  --play-state: running;
+}
+
+/* Maintain active state when pressed */
+.space-button.pressed {
   --active: 1;
   --play-state: running;
 }

@@ -28,7 +28,7 @@ public final class DdbKeys {
     public static final String METRICS_PK_PREFIX = "P#";
     public static final String METRICS_SK_PREFIX = "M#";
     public static final String METRICS_SLOT_SK_PREFIX = "S#";
-    public static final int METRICS_DAY_COUNT = 11;  // 3 slots to cover all days in month (31/3=10.33 -> 11)  
+    public static final int METRICS_DAY_SHARDS = 3;  // 3 slots to cover all days in month (31/3=10.33 -> 11)  
     public static final int METRICS_SLOT_COUNT = 10;
 
 
@@ -53,15 +53,22 @@ public final class DdbKeys {
         return key.substring(prefix.length());
     }
 
-    public static String skTodayMonthShard(){
-        // Calculate today's Shard SK
-        LocalDate today = LocalDate.now();
-        int dayOfMonth = today.getDayOfMonth();
-        int slot = (dayOfMonth - 1) / (31 / METRICS_DAY_COUNT);
-        
-        // Format SK as M#yyyy-MM#Shard
-        String monthYear = today.format(DateTimeFormatter.ofPattern("yyyy-MM"));
-        return String.format("%s%s#%d", METRICS_SK_PREFIX, monthYear, slot);
+    public static String skTodayMonthShard(LocalDate date) {
+        int dayOfMonth = date.getDayOfMonth();      // 1..28/29/30/31
+        int daysInMonth = date.lengthOfMonth();     // 28/29/30/31
+
+        // Scale the day to the range 0..(METRICS_DAY_SHARDS-1)
+        int slot = (int) ((long) (dayOfMonth - 1) * METRICS_DAY_SHARDS / daysInMonth);
+
+        // Defensive check just in case (although mathematically unnecessary)
+        if (slot < 0) {
+            slot = 0;
+        } else if (slot >= METRICS_DAY_SHARDS) {
+            slot = METRICS_DAY_SHARDS - 1;
+        }
+
+        String monthYear = date.format(DateTimeFormatter.ofPattern("yyyy-MM"));
+        return METRICS_SK_PREFIX + monthYear + "#" + slot;
     }
 
     public static String skTodaySlot() {

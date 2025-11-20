@@ -1,21 +1,64 @@
-/* Title styles extracted from ProjectCard.css to be reused by other cards */
+/* Title styles - Base styles that are consistent between view and edit modes */
+
 .title,
-.card-title {
+.card-title,
+h1.title,
+h1.card-title {
   position: relative;
   margin: 0;
+  padding: 0;
   color: var(--title-color, #FAFAFA);
-  z-index: 20;
-  font-size: 32px;
-  text-shadow: 0 1px 2px rgba(0,0,0,0.6);
   font-family: "Oxanium", sans-serif;
+  font-size: 32px;
   font-weight: 500;
+  line-height: 1.2;
   letter-spacing: 1px;
-  margin-top: 12px;
-  margin-bottom: var(--title-bottom-margin, 12px);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+  z-index: 20;
+}
+
+/* Edit mode - input styled to match h1 exactly */
+input.title,
+input.card-title {
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  padding: 2px 6px;
+  margin: -2px -6px;
+  color: var(--title-color, #FAFAFA);
+  font-family: "Oxanium", sans-serif;
+  font-size: 32px;
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: 1px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+  transition: background 0.15s ease;
+  box-sizing: border-box;
+}
+
+input.title:hover,
+input.card-title:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+input.title:focus,
+input.card-title:focus {
+  outline: none;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 1px 5px;
 }
 
 /* Smaller heading variant used inside job cards */
 .job-card-title,
-.card-title.small {
+.card-title.small,
+h2.title,
+h2.card-title {
+  font-size: 28px;
+}
+
+input.job-card-title,
+input.card-title.small {
   font-size: 28px;
 }

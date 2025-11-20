@@ -1,0 +1,132 @@
+
+/* Notification styles */
+.notification {
+  position: absolute;
+  top: 80px;
+  right: 24px;
+  max-width: 400px;
+  width: 400px;
+  height: 1000px;
+  padding: var(--space-4);
+  border: 1px solid;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  z-index: 15000; /* Above everything else: dialogs (10005), modals (10002), navbar (1000) */
+  animation: slideIn 0.3s ease-out;
+  pointer-events: auto;
+  backdrop-filter: blur(12px);
+  font-family: var(--font-sans);
+}
+
+.notification-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.notification-message {
+  font-size: var(--font-sm);
+  font-weight: 600;
+  flex: 1;
+  line-height: 1.5;
+}
+
+.notification-close {
+  background: none;
+  border: none;
+  font-size: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  color: inherit;
+  opacity: 0.7;
+  transition: opacity var(--transition-fast);
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+}
+
+.notification-close:hover {
+  opacity: 1;
+  background: rgba(0, 0, 0, 0.1);
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(120%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Success notification */
+.notification--success {
+  background: linear-gradient(135deg, 
+    rgba(16, 185, 129, 0.15),
+    rgba(16, 185, 129, 0.08)
+  );
+  border-color: var(--status-positive);
+  color: var(--text-primary);
+}
+
+.notification--success .notification-message {
+  color: var(--status-positive);
+}
+
+/* Error notification */
+.notification--error {
+  background: linear-gradient(135deg, 
+    rgba(239, 68, 68, 0.15),
+    rgba(239, 68, 68, 0.08)
+  );
+  border-color: var(--status-negative);
+  color: var(--text-primary);
+}
+
+.notification--error .notification-message {
+  color: var(--status-negative);
+}
+
+/* Info notification */
+.notification--info {
+  background: linear-gradient(135deg, 
+    rgba(59, 130, 246, 0.15),
+    rgba(59, 130, 246, 0.08)
+  );
+  border-color: var(--accent-blue);
+  color: var(--text-primary);
+}
+
+.notification--info .notification-message {
+  color: var(--accent-blue);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .notification {
+    top: 70px;
+    right: 16px;
+    left: 16px;
+    max-width: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .notification {
+    top: 60px;
+    right: 12px;
+    left: 12px;
+    padding: var(--space-3);
+  }
+  
+  .notification-message {
+    font-size: var(--font-xs);
+  }
+}

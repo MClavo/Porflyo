@@ -17,7 +17,7 @@
   cursor: grab;
   z-index: 15;
   transition: all 0.2s ease;
-  border-radius: 4px;
+  border-radius: 12px 12px 4px 4px;
   backdrop-filter: blur(4px);
 }
 
@@ -64,6 +64,7 @@
 
 /* Ensure the drag handle is positioned correctly within sortable cards */
 .sortable-card {
+  height: fit-content;
   position: relative;
 }
 
@@ -82,8 +83,10 @@
 .sortable-card[data-mode="edit"] .job-card,
 .sortable-card[data-mode="edit"] .education-card,
 .sortable-card[data-mode="edit"] .text-card,
-.sortable-card[data-mode="edit"] .about-card {
-  padding-top: calc(36px + var(--card-padding, 20px));
+.sortable-card[data-mode="edit"] .about-card,
+.sortable-card[data-mode="edit"] .award-card,
+.sortable-card[data-mode="edit"] .certificate-card {
+  padding-top: calc(36px + var(--card-padding, 20px)) !important;
 }
 
 /* Ensure the drag handle respects the card's border radius */
@@ -91,7 +94,9 @@
 .sortable-card[data-mode="edit"] .job-card,
 .sortable-card[data-mode="edit"] .education-card,
 .sortable-card[data-mode="edit"] .text-card,
-.sortable-card[data-mode="edit"] .about-card {
+.sortable-card[data-mode="edit"] .about-card,
+.sortable-card[data-mode="edit"] .award-card,
+.sortable-card[data-mode="edit"] .certificate-card {
   overflow: visible;
 }
 
@@ -103,7 +108,7 @@
   /* Remove any background - only show the card */
   background: transparent !important;
   /* Fit content size */
-  width: fit-content;
+  /* width: fit-content; */
   min-width: 0;
   max-width: none;
   /* Remove any padding/margin that might cut off content */
@@ -122,8 +127,14 @@
 .drag-overlay.sortable-card[data-mode="edit"] .job-card,
 .drag-overlay.sortable-card[data-mode="edit"] .education-card,
 .drag-overlay.sortable-card[data-mode="edit"] .text-card,
-.drag-overlay.sortable-card[data-mode="edit"] .about-card {
+.drag-overlay.sortable-card[data-mode="edit"] .about-card,
+.drag-overlay.sortable-card[data-mode="edit"] .award-card {
   padding-top: calc(36px + var(--card-padding, 20px));
+}
+
+/* Certificate card handles padding differently (via image section) */
+.drag-overlay.sortable-card[data-mode="edit"] .certificate-card {
+  padding-top: 0;
 }
 
 /* Show drag handle correctly positioned in overlay */

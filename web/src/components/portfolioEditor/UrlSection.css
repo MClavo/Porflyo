@@ -1,0 +1,220 @@
+/* UrlSection - URL input with animated status */
+
+.url-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 220px;
+}
+
+.url-section__container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: var(--card-bg);
+  border: 2px solid var(--card-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  backdrop-filter: blur(8px);
+  transition: all var(--transition-fast);
+}
+
+.url-section__container:focus-within {
+  border-color: var(--accent-blue);
+  box-shadow: 
+    0 0 0 3px rgba(59, 130, 246, 0.1),
+    0 2px 8px rgba(59, 130, 246, 0.2);
+}
+
+.url-section__prefix {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-3) var(--space-3) var(--space-4);
+  background: var(--card-bg-hover);
+  border-right: 1px solid var(--card-border);
+  color: var(--text-secondary);
+  font-size: var(--font-sm);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.url-section__input {
+  flex: 1;
+  background: none;
+  border: none;
+  padding: var(--space-3) var(--space-2);
+  color: var(--text-primary);
+  font-size: var(--font-sm);
+  font-weight: 500;
+  outline: none;
+  font-family: var(--font-mono, 'Courier New', monospace);
+}
+
+.url-section__input::placeholder {
+  color: var(--text-tertiary);
+  font-style: italic;
+}
+
+.url-section__status {
+  padding: var(--space-3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+}
+
+.url-section__status-icon {
+  transition: all var(--transition-fast);
+}
+
+.url-section__status-icon--loading {
+  color: var(--accent-blue);
+  animation: spin 1s linear infinite;
+}
+
+.url-section__status-icon--success {
+  color: var(--status-positive);
+}
+
+.url-section__status-icon--error {
+  color: var(--status-negative);
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.url-section__status-text {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 20px;
+}
+
+.url-section__status-label {
+  font-size: var(--font-xs);
+  font-weight: 500;
+  transition: all var(--transition-fast);
+  text-align: center;
+  letter-spacing: 0.02em;
+}
+
+/* Status-based styling */
+.url-section--checking .url-section__container {
+  border-color: var(--accent-blue);
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+}
+
+.url-section--checking .url-section__status-label {
+  color: var(--accent-blue);
+  animation: pulse-text 1.5s ease-in-out infinite;
+}
+
+.url-section--available .url-section__container {
+  border-color: var(--status-positive);
+  box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.1);
+}
+
+.url-section--available .url-section__status-label {
+  color: var(--status-positive);
+}
+
+.url-section--taken .url-section__container {
+  border-color: var(--status-negative);
+  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.1);
+}
+
+.url-section--taken .url-section__status-label {
+  color: var(--status-negative);
+}
+
+.url-section--current .url-section__container {
+  border-color: var(--text-secondary);
+}
+
+.url-section--current .url-section__status-label {
+  color: var(--text-secondary);
+}
+
+@keyframes pulse-text {
+  0%, 100% {
+    opacity: 0.8;
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.02);
+  }
+}
+
+/* Hover effects */
+.url-section__container:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--accent-blue);
+}
+
+/* Shimmer effect for loading */
+.url-section--checking .url-section__container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(59, 130, 246, 0.1),
+    transparent
+  );
+  animation: shimmer 2s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes shimmer {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .url-section {
+    min-width: 180px;
+  }
+
+  .url-section__prefix span {
+    display: none;
+  }
+
+  .url-section__prefix {
+    padding: var(--space-2) var(--space-3);
+  }
+
+  .url-section__input {
+    padding: var(--space-2);
+    font-size: var(--font-xs);
+  }
+}
+
+@media (max-width: 480px) {
+  .url-section {
+    min-width: 150px;
+  }
+
+  .url-section__status-text {
+    min-height: 16px;
+  }
+
+  .url-section__status-label {
+    font-size: var(--font-xs);
+  }
+}

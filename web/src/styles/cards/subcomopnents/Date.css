@@ -14,6 +14,11 @@
   align-items: flex-start;
 }
 
+/* Hide year input when Present is selected */
+.date-edit.date-present .date-year-container {
+  display: none;
+}
+
 /* Month dropdown */
 .date-month-select {
   padding: 0.5rem 0.75rem;

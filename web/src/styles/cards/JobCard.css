@@ -100,7 +100,7 @@
 
 .job-card-dates .date-year-input {
   /* Dynamic width - adjust to 4 digits */
-  width: 3ch; /* ch = width of "0" character, 4ch for "2024" */
+  /* width: 3ch; */ /* ch = width of "0" character, 4ch for "2024" */
   min-width: 3ch;
   max-width: 4ch;
   text-align: left;

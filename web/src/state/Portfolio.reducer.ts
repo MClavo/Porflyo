@@ -59,7 +59,14 @@ export const portfolioReducer = (state: PortfolioState, action: Action): Portfol
         }
 
         s.cardsById[id] = card;
-        s.cardsOrder.push(id);
+        // Allow insert at specific index when provided (used for dropping saved cards at a position)
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const idx = (action.payload as any).index;
+        if (typeof idx === 'number' && idx >= 0 && idx <= s.cardsOrder.length) {
+          s.cardsOrder.splice(idx, 0, id);
+        } else {
+          s.cardsOrder.push(id);
+        }
         return;
       }
 
@@ -82,6 +89,17 @@ export const portfolioReducer = (state: PortfolioState, action: Action): Portfol
         if (from < 0 || to < 0 || from >= arr.length || to >= arr.length) return;
         const [item] = arr.splice(from, 1);
         arr.splice(to, 0, item);
+        return;
+      }
+
+      case "SET_DRAG_PREVIEW": {
+        const { sectionId, index } = action.payload;
+        const s = draft.sections[sectionId];
+        if (!s) return;
+        // Store a transient preview index and optionally the preview card
+        s.previewIndex = typeof index === 'number' ? index : null;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        s.previewCard = (action.payload as any).previewCard ?? null;
         return;
       }
 

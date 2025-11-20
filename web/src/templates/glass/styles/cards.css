@@ -66,3 +66,105 @@
   outline: none !important;
   box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1) !important;
 }
+
+
+.tpl-glass .delete-card-button:hover {
+  color: white !important; /* Soft red color on hover */
+  background: #ef444498 !important;
+  border: 2px solid #ef4444 !important;
+  transform: none !important;
+}
+
+/* ============================================
+   DATE COMPONENT STYLES - Glass Template
+   ============================================ */
+
+/* Month dropdown styling */
+.tpl-glass .date-month-select {
+  background: rgba(255, 255, 255, 0.1) !important;
+  border: 1px solid rgba(255, 255, 255, 0.25) !important;
+  color: #ffffff !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+}
+
+.tpl-glass .date-month-select:hover {
+  background: rgba(255, 255, 255, 0.15) !important;
+  border-color: rgba(255, 255, 255, 0.4) !important;
+}
+
+.tpl-glass .date-month-select:focus {
+  background: rgba(255, 255, 255, 0.15) !important;
+  border-color: rgba(255, 255, 255, 0.4) !important;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1) !important;
+}
+
+
+
+.tpl-glass .date-month-select option{
+  background: #ffffff !important;
+  color: #000000 !important;
+  padding: 0.5rem !important;
+  border: none !important;
+}
+
+/* Present option with distinct styling */
+.tpl-glass .date-month-select option.date-present-option {
+  font-weight: 600 !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3) !important;
+}
+
+
+
+/* Year input styling */
+.tpl-glass .date-year-input {
+  background: rgba(255, 255, 255, 0.1) !important;
+  border: 1px solid rgba(255, 255, 255, 0.25) !important;
+  color: #ffffff !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+}
+
+.tpl-glass .date-year-input:hover {
+  background: rgba(255, 255, 255, 0.15) !important;
+  border-color: rgba(255, 255, 255, 0.4) !important;
+}
+
+.tpl-glass .date-year-input:focus {
+  background: rgba(255, 255, 255, 0.15) !important;
+  border-color: rgba(255, 255, 255, 0.4) !important;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1) !important;
+}
+
+.tpl-glass .date-year-input::placeholder {
+  color: rgba(255, 255, 255, 0.5) !important;
+}
+
+/* Error state for year input */
+.tpl-glass .date-year-input.error {
+  border-color: rgba(239, 68, 68, 0.6) !important;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2) !important;
+}
+
+.tpl-glass .date-year-input.error:focus {
+  border-color: rgba(239, 68, 68, 0.8) !important;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.3) !important;
+}
+
+/* Error message styling */
+.tpl-glass .date-error {
+  color: rgba(254, 202, 202, 1) !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) !important;
+  font-weight: 500 !important;
+}
+
+/* View mode date text */
+.tpl-glass .date-view {
+  color: rgba(255, 255, 255, 0.9) !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) !important;
+}
+
+.tpl-glass .date-view.date-present {
+  font-weight: 600 !important;
+  color: #ffffff !important;
+}

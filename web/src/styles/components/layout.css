@@ -1,6 +1,6 @@
 /* Layout components */
 .app-container {
-  /* Same as modern.css: subtract root padding to avoid global scroll. */
+  /* Same as .css: subtract root padding to avoid global scroll. */
   min-height: calc(100vh - 4rem);
   background: linear-gradient(135deg, var(--surface) 0%, var(--background) 100%);
 }

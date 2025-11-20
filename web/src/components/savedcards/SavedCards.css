@@ -1,4 +1,4 @@
-/* Modern SavedCards Container - Dark Theme */
+/*  SavedCards Container - Dark Theme */
 
 .saved-cards-container {
   display: flex;
@@ -14,7 +14,7 @@
   min-height: 200px;
   border: 2px dashed var(--card-border);
   border-radius: var(--radius-lg);
-  background: rgba(31, 41, 55, 0.3);
+  background: var(--card-bg-hover);
   padding: var(--space-3);
   overflow-y: auto;
   transition: all var(--transition-normal);

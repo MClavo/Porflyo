@@ -15,7 +15,7 @@ export type SavedCardProps = {
   template?: string; // Add template prop
 };
 
-export function SavedCardComponent({ savedCard, onRemove, mode, template = "template1" }: SavedCardProps) {
+export function SavedCardComponent({ savedCard, onRemove, mode, template = "ats" }: SavedCardProps) {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 

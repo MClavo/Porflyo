@@ -1,5 +1,5 @@
-import { ProjectCard, JobCard, EducationCard, TextCard, AboutCard } from './index';
-import type { AnyCard, ProjectCardSaved, JobCardSaved, EducationCardSaved, TextCardSaved, AboutCardSaved } from '../../state/Cards.types';
+import { ProjectCard, JobCard, EducationCard, TextCard, AboutCard, CertificateCard, AwardCard } from './index';
+import type { AnyCard, ProjectCardSaved, JobCardSaved, EducationCardSaved, TextCardSaved, AboutCardSaved, CertificateCardSaved, AwardCardSaved } from '../../state/Cards.types';
 import type { Mode } from './subcomponents';
 import type { CardId } from '../../state/Sections.types';
 
@@ -25,6 +25,10 @@ export function renderCard(
       return <TextCard key={cardId} mode={mode} {...(data as TextCardSaved)} onPatch={onPatch} />;
     case 'about':
       return <AboutCard key={cardId} mode={mode} data={data as AboutCardSaved} onPatch={onPatch} />;
+    case 'certificate':
+      return <CertificateCard key={cardId} mode={mode} {...(data as CertificateCardSaved)} onPatch={onPatch} />;
+    case 'award':
+      return <AwardCard key={cardId} mode={mode} {...(data as AwardCardSaved)} onPatch={onPatch} />;
     default:
       return null;
   }

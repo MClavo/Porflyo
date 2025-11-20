@@ -5,7 +5,7 @@
 import React, { useMemo } from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 import type { TooltipProps } from './types';
-import './modern-charts.css';
+import './charts.css';
 
 interface ProjectDonutChartProps {
   data: Array<{
@@ -63,19 +63,19 @@ export const ProjectDonutChart: React.FC<ProjectDonutChartProps> = ({
       const data = payload[0].payload as typeof chartData[0];
       
       return (
-        <div className="modern-tooltip">
-          <div className="modern-tooltip__header">
+        <div className="tooltip">
+          <div className="tooltip__header">
             {data.name}
           </div>
-          <div className="modern-tooltip__separator"></div>
-          <div className="modern-tooltip__content">
-            <div className="modern-tooltip__item">
+          <div className="tooltip__separator"></div>
+          <div className="tooltip__content">
+            <div className="tooltip__item">
               <div 
-                className="modern-tooltip__color-dot"
+                className="tooltip__color-dot"
                 style={{ backgroundColor: data.fill }}
               ></div>
-              <span className="modern-tooltip__name">Interactions</span>
-              <span className="modern-tooltip__value">
+              <span className="tooltip__name">Interactions</span>
+              <span className="tooltip__value">
                 {data.value.toLocaleString()}
               </span>
             </div>

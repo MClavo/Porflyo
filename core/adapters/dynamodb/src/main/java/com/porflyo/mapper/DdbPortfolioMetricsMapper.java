@@ -1,10 +1,9 @@
 package com.porflyo.mapper;
 
 import static com.porflyo.common.DdbKeys.METRICS_PK_PREFIX;
-import static com.porflyo.common.DdbKeys.METRICS_SK_PREFIX;
-import static com.porflyo.common.DdbKeys.METRICS_DAY_COUNT;
 import static com.porflyo.common.DdbKeys.idFrom;
 import static com.porflyo.common.DdbKeys.pk;
+import static com.porflyo.common.DdbKeys.skTodayMonthShard;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
@@ -21,28 +20,15 @@ import com.porflyo.common.DdbKeys;
 import com.porflyo.model.ids.PortfolioId;
 import com.porflyo.model.metrics.Devices;
 import com.porflyo.model.metrics.Engagement;
+import com.porflyo.model.metrics.InteractionMetrics;
 import com.porflyo.model.metrics.PortfolioMetrics;
 import com.porflyo.model.metrics.ProjectMetrics;
-import com.porflyo.model.metrics.InteractionMetrics;
 
 public final class DdbPortfolioMetricsMapper {
     
     private DdbPortfolioMetricsMapper() {}
 
     private static final String VERSION = "1";
-
-    /**
-     * Generate a sort key for a specific date using the same logic as skTodayMonthShard but for any date
-     */
-    private static String generateSortKey(LocalDate date) {
-        int dayOfMonth = date.getDayOfMonth();
-        int slot = (dayOfMonth - 1) / (31 / METRICS_DAY_COUNT);
-        
-        // Format SK as M#yyyy-MM#Shard
-        String monthYear = date.format(DateTimeFormatter.ofPattern("yyyy-MM"));
-        
-        return String.format("%s%s#%d", METRICS_SK_PREFIX, monthYear, slot);
-    }
 
     // ────────────────────────── Domain -> ITEM ──────────────────────────
 
@@ -67,7 +53,8 @@ public final class DdbPortfolioMetricsMapper {
 
         // KEY
         item.setPK(pk(METRICS_PK_PREFIX, portfolioId));
-        item.setSK(generateSortKey(domain.get(0).date()));
+
+        item.setSK(skTodayMonthShard(domain.get(0).date()));
         
         // ATTRIBUTES
         item.setVersion(VERSION);

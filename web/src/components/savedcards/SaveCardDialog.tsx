@@ -46,6 +46,15 @@ export function SaveCardDialog({
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         return (card.data as any).title || `Text from ${sectionType}`;
       }
+      case "certificate": {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        return (card.data as any).title || `Certificate from ${sectionType}`;
+      }
+      case "award": {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const awardData = card.data as any;
+        return `${awardData.category || "Award"} - ${awardData.event || "Event"}`;
+      }
       default:
         return `Card from ${sectionType}`;
     }
