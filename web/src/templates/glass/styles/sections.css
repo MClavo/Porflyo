@@ -5,7 +5,6 @@
 /* Base portfolio section - Uniform style for all sections */
 .portfolio-section {
   background: rgba(255, 255, 255, 0.12);
-  backdrop-filter: blur(15px);
   border-radius: 20px;
   padding: 2rem;
   border: 1px solid rgba(255, 255, 255, 0.25);
@@ -15,7 +14,7 @@
 }
 
 .portfolio-section:hover {
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.15) !important;
   transform: translateY(-2px);
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
 }
@@ -120,7 +119,36 @@
 .tpl-glass #education .section-cards {
   grid-template-columns: 1fr;
   gap: 1.25rem;
-  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Projects section - Centered grid with consistent spacing */
+.tpl-glass #projects .section-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 400px), 1fr));
+  gap: 1.5rem;
+  justify-content: center;
+  justify-items: stretch;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* When there's only one card, limit its width */
+.tpl-glass #projects .section-cards:has(> :only-child) {
+  grid-template-columns: 1fr;
+  max-width: 600px;
+}
+
+/* Achievements section - 3 column grid */
+.tpl-glass #achievements .section-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 200px));
+  gap: 1.5rem;
+  justify-content: center;
+  justify-items: stretch;
+  max-width: 1200px;
   margin-left: auto;
   margin-right: auto;
 }

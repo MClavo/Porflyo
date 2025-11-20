@@ -27,6 +27,13 @@
   min-width: 0; /* Prevents flex overflow */
 }
 
+.tpl-glass .about-section-container:hover {
+  transition: all 0.3s ease;
+  background: rgba(255, 255, 255, 0.15) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+}
+
 /* Profile image container */
 .tpl-glass .about-card .about-profile-image {
   /* Transform to user-avatar styling */
@@ -194,7 +201,7 @@
 }
 
 /* Social link platform-specific hover colors */
-.tpl-glass .about-card .about-social-link[href*="linkedin"]:hover {
+/* .tpl-glass .about-card .about-social-link[href*="linkedin"]:hover {
   background: linear-gradient(45deg, #0077b5, #00a0dc);
   border-color: #0077b5;
 }
@@ -213,7 +220,7 @@
 .tpl-glass .about-card .about-social-link[href*="twitter"]:hover {
   background: linear-gradient(45deg, #1da1f2, #4db8f5);
   border-color: #1da1f2;
-}
+} */
 
 /* Description */
 .tpl-glass .about-card .about-description {

@@ -1,13 +1,8 @@
 
 body {
-  min-height: 100vh;
-  display: flex;
-  justify-content: center; /* center the page content horizontally */
-  align-items: flex-start; /* keep content at the top */
-  /* padding: 2rem 1rem; */
   box-sizing: border-box;
-
 }
+
 
 .test .project-card {
   

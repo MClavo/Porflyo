@@ -66,6 +66,10 @@
   max-width: 100%;
 }
 
+.image-cropper-content img {
+    pointer-events: none;
+}
+
 .image-cropper-actions {
   padding: 1.5rem;
   border-top: 1px solid var(--card-border);

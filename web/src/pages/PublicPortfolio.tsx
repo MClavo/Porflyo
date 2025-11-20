@@ -4,13 +4,13 @@ import { getPublicPortfolioView } from '../api/clients/public.api';
 import { mapPublicPortfolioViewToPortfolioState } from '../api/mappers/portfolio.mappers';
 import type { PortfolioState } from '../state/Portfolio.types';
 import { PortfolioViewer } from '../components/portfolio';
+import { PortfolioBranding } from '../components/portfolio/PortfolioBranding';
 import { sendMetricsOnUnload } from '../api/hooks/useMetrics';
 import useMetrics from '../hooks/metrics/useGetMetrics';
+import { useSEO } from '../hooks/useSEO';
+import NotFound from './NotFound';
 import '../styles/PublicPortfolio.css';
 
-// Import template CSS files
-import '../templates/template1/template1.css';
-import '../templates/template2/template2.css';
 
 interface LoadingState {
   isLoading: boolean;
@@ -80,19 +80,15 @@ export default function PublicPortfolio() {
     fetchPortfolio();
   }, [slug]);
 
-  // Set document title
-  useEffect(() => {
-    if (portfolio?.title) {
-      document.title = `${portfolio.title} - Portfolio`;
-    } else {
-      document.title = 'Portfolio';
-    }
-
-    // Cleanup on unmount
-    return () => {
-      document.title = 'React Playground';
-    };
-  }, [portfolio?.title]);
+  // SEO Configuration for public portfolios (NOT indexable)
+  useSEO({
+    title: portfolio?.title 
+      ? `${portfolio.title} - Portfolio | porflyo`
+      : 'Portfolio - porflyo',
+    description: 'View this amazing portfolio created with porflyo - showcasing projects and achievements',
+    keywords: 'portfolio, projects, developer, showcase',
+    noIndex: true, // Block indexing - only root page is indexable
+  });
 
   // Send metrics when user closes tab or navigates away
   useEffect(() => {
@@ -129,21 +125,20 @@ export default function PublicPortfolio() {
   }
 
   if (loadingState.error || !portfolio) {
-    return (
-      <div className="public-portfolio">
-        <div className="error-container">
-          <h1>Portfolio Not Found</h1>
-          <p>{loadingState.error || 'The requested portfolio could not be found.'}</p>
-          {loadingState.error === 'Portfolio is not published' && (
-            <p>This portfolio is currently private.</p>
-          )}
-        </div>
-      </div>
-    );
+    const errorMessage = loadingState.error === 'Portfolio is not published'
+      ? 'Portfolio Not Available'
+      : 'Portfolio Not Found';
+    
+    const errorDescription = loadingState.error === 'Portfolio is not published'
+      ? 'This portfolio is currently private and cannot be viewed.'
+      : loadingState.error || 'The requested portfolio could not be found.';
+
+    return <NotFound message={errorMessage} description={errorDescription} />;
   }
 
   return (
     <div className="public-portfolio" ref={containerRef}>
+      <PortfolioBranding />
       <PortfolioViewer portfolio={portfolio} />
     </div>
   );

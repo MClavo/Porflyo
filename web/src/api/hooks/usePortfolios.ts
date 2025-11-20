@@ -80,7 +80,6 @@ export function usePortfolio(id: string): UsePortfolioResult {
       setLoading(true);
       setError(null);
       const data = await getPortfolio(id);
-      console.log('Raw data from getPortfolio:', data);
       
       // Handle case where backend returns array instead of single object
       const portfolioData = Array.isArray(data) ? data[0] : data;

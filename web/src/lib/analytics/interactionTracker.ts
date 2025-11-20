@@ -182,7 +182,7 @@ class InteractionTracker {
 
   // Record any interaction
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  private recordInteraction(projectId: string, type: InteractionEvent['type']) {
+  private recordInteraction(projectId: string, _type: InteractionEvent['type']) {
     const now = Date.now();
     let data = this.projectData.get(projectId);
 

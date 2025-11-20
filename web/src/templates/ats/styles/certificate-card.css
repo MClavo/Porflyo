@@ -1,0 +1,207 @@
+/* ============================================
+   CERTIFICATE CARD - ATS Template
+   ============================================ */
+
+/* Base card - no visible borders or background */
+.tpl-ats .certificate-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 0;
+  background: none;
+  border: none;
+  border-radius: 0;
+  transition: none;
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+  min-width: 100%;
+  box-sizing: border-box;
+  overflow: visible;
+  box-shadow: none;
+  margin-bottom: 12px;
+}
+
+.tpl-ats .certificate-card:hover {
+  box-shadow: none;
+}
+
+.tpl-ats .certificate-card[data-mode="edit"] {
+  border: none;
+  background: none;
+}
+
+/* Hide image section completely in ATS template */
+.tpl-ats .certificate-card__image {
+  display: none;
+}
+
+/* Content Section - single line layout */
+.tpl-ats .certificate-card__content {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 16px;
+  padding: 0;
+  width: 100%;
+}
+
+/* Header with Title and Date - override to maintain flex layout */
+.tpl-ats .certificate-card__header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 16px;
+  width: 100%;
+  margin-bottom: 0;
+}
+
+/* Certificate Title - bold, takes available space */
+.tpl-ats .certificate-card__title {
+  flex: 1;
+  font-size: 12pt;
+  font-weight: 700;
+  color: var(--ats-text-color);
+  line-height: var(--ats-line-height-base);
+  margin: 0;
+  padding: 0;
+  width: auto;
+  max-width: calc(100% - 120px); /* Leave space for date */
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  font-family: var(--ats-font-family);
+  text-shadow: none;
+  -webkit-text-fill-color: var(--ats-text-color);
+  -webkit-background-clip: unset;
+  background-clip: unset;
+  background: none;
+}
+
+.tpl-ats input.certificate-card__title,
+.tpl-ats h1.certificate-card__title,
+.tpl-ats h2.certificate-card__title,
+.tpl-ats h3.certificate-card__title {
+  flex: 1;
+  max-width: calc(100% - 120px); /* Leave space for date */
+  font-size: 12pt;
+  font-weight: 700;
+  color: var(--ats-text-color);
+  line-height: var(--ats-line-height-base);
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  outline: none;
+  box-sizing: border-box;
+  font-family: var(--ats-font-family);
+  text-shadow: none;
+  -webkit-text-fill-color: var(--ats-text-color);
+  -webkit-background-clip: unset;
+  background-clip: unset;
+}
+
+.tpl-ats .certificate-card__title-wrapper {
+  flex: 1;
+  max-width: calc(100% - 120px); /* Leave space for date */
+}
+
+.tpl-ats .certificate-card[data-mode="edit"] input.certificate-card__title:focus {
+  outline: none;
+  background: rgba(0, 0, 0, 0.1);
+  padding-bottom: 2px;
+}
+
+/* Date - aligned to the right */
+.tpl-ats .certificate-card__date {
+  flex-shrink: 0;
+  font-size: var(--ats-font-size-base);
+  color: var(--ats-text-color);
+  font-weight: 400;
+  margin: 0;
+  padding: 0;
+  width: auto;
+  white-space: nowrap;
+  font-family: var(--ats-font-family);
+}
+
+/* Date component styling */
+.tpl-ats .certificate-card__date .date-view {
+  font-size: var(--ats-font-size-base);
+  color: var(--ats-text-color);
+  white-space: nowrap;
+  font-family: var(--ats-font-family);
+}
+
+.tpl-ats .certificate-card__date .date-edit {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.tpl-ats .certificate-card__date .date-month-select,
+.tpl-ats .certificate-card__date .date-year-input {
+  font-size: var(--ats-font-size-base);
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  background: none;
+  color: var(--ats-text-color);
+  font-family: var(--ats-font-family);
+  font-weight: 400;
+  height: auto;
+  line-height: 1;
+}
+
+.tpl-ats .certificate-card__date .date-month-select {
+  width: fit-content;
+  min-width: 0;
+  max-width: none;
+  cursor: pointer;
+  -webkit-appearance: menulist;
+  -moz-appearance: menulist;
+  appearance: menulist;
+  padding-right: 0;
+}
+
+.tpl-ats .certificate-card__date .date-year-input {
+  /* width: 3ch; */
+  /* min-width: 3ch; */
+  max-width: 4ch;
+  text-align: left;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+.tpl-ats .certificate-card__date .date-month-select:focus,
+.tpl-ats .certificate-card__date .date-year-input:focus {
+  outline: none;
+  background: rgba(0, 0, 0, 0.02);
+  border-bottom: 1px solid var(--ats-border-color);
+}
+
+.tpl-ats .award-card__description{
+  margin-bottom: 0;
+}
+
+
+/* URL Input - hide in ATS template */
+.tpl-ats .certificate-card__url {
+  display: none;
+}
+
+/* Footer button - hide in ATS template */
+.tpl-ats .certificate-card__footer {
+  display: none;
+}
+
+/* Remove all default styling */
+.tpl-ats .certificate-card input,
+.tpl-ats .certificate-card textarea,
+.tpl-ats .certificate-card p {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}

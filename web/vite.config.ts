@@ -16,6 +16,18 @@ export default defineConfig({
       'react-dom': 'preact/compat',
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'preact-vendor': ['preact', 'preact/compat', 'preact/hooks'],
+          'dnd-vendor': ['@dnd-kit/core', '@dnd-kit/sortable', '@dnd-kit/utilities'],
+          'router-vendor': ['react-router-dom'],
+          'chart-vendor': ['recharts'],
+        }
+      }
+    }
+  },
   server: {
     proxy: {
       // API routes with credentials

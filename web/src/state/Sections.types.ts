@@ -27,6 +27,10 @@ export type SectionState = {
   allowedTypes: CardType[];
   cardsById: Record<CardId, AnyCard>;
   cardsOrder: CardId[];
+  // Optional transient preview index used during drag-over to show insertion position
+  previewIndex?: number | null;
+  // Optional transient preview card used during drag-over to render exact preview
+  previewCard?: AnyCard | null;
   
   // Special field for sections without cards (e.g., 'about')
   // Contains parsed structured data instead of card list

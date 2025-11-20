@@ -77,19 +77,22 @@ export const ProjectRankingCard: React.FC<ProjectRankingCardProps> = ({
             key={project.projectId}
             style={{
               display: 'flex',
-              alignItems: 'center',
-              padding: 'var(--space-3)',
+              alignItems: 'stretch',
+              padding: 'var(--space-4)',
               borderRadius: 'var(--radius-md)',
               background: index < 3 ? 'rgba(59, 130, 246, 0.05)' : 'var(--dashboard-bg-secondary)',
               border: '1px solid var(--card-border)',
-              transition: 'all 0.2s ease'
+              transition: 'all 0.2s ease',
+              gap: 'var(--space-4)'
             }}
           >
             {/* Rank */}
             <div style={{ 
-              minWidth: '40px',
-              textAlign: 'center',
-              fontSize: index < 3 ? 'var(--font-lg)' : 'var(--font-base)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              minWidth: '48px',
+              fontSize: index < 3 ? 'var(--font-xl)' : 'var(--font-lg)',
               fontWeight: 600,
               color: getRankColor(index)
             }}>
@@ -97,69 +100,108 @@ export const ProjectRankingCard: React.FC<ProjectRankingCardProps> = ({
             </div>
 
             {/* Project Info */}
-            <div style={{ flex: 1, marginLeft: 'var(--space-3)' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)', marginBottom: 'var(--space-1)' }}>
+            <div style={{ 
+              flex: 1,
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 'var(--space-2)' 
+            }}>
+              {/* Project Name */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
                 <span style={{ 
                   color: 'var(--text-primary)', 
                   fontWeight: 600,
-                  fontSize: 'var(--font-sm)'
+                  fontSize: 'var(--font-lg)',
+                  lineHeight: 1.2
                 }}>
                   {project.projectName || `Project ${project.projectId}`}
                 </span>
                 <FiTrendingUp size={14} color="var(--accent-green)" />
               </div>
               
-              <div style={{ display: 'flex', gap: 'var(--space-4)', marginBottom: 'var(--space-1)' }}>
+              {/* Views Row */}
+              <div style={{ 
+                display: 'grid', 
+                gridTemplateColumns: '1fr 1fr',
+                gap: 'var(--space-3)',
+                alignItems: 'center'
+              }}>
                 <span style={{ 
                   color: 'var(--text-secondary)', 
-                  fontSize: 'var(--font-xs)',
+                  fontSize: 'var(--font-sm)',
                   display: 'flex',
                   alignItems: 'center',
                   gap: 'var(--space-1)'
                 }}>
                   <FiCode size={12} />
-                  {project.totalCodeViews}
+                  <span>{project.totalCodeViews} code</span>
                 </span>
                 <span style={{ 
                   color: 'var(--text-secondary)', 
-                  fontSize: 'var(--font-xs)',
+                  fontSize: 'var(--font-sm)',
                   display: 'flex',
                   alignItems: 'center',
                   gap: 'var(--space-1)'
                 }}>
                   <FiExternalLink size={12} />
-                  {project.totalLiveViews}
+                  <span>{project.totalLiveViews} live</span>
                 </span>
               </div>
 
+              {/* Metrics Row */}
               <div style={{ 
-                fontSize: 'var(--font-xs)', 
-                color: 'var(--text-secondary)',
-                display: 'flex',
-                justifyContent: 'space-between'
+                display: 'grid',
+                gridTemplateColumns: '1fr 1fr',
+                gap: 'var(--space-3)',
+                fontSize: 'var(--font-sm)', 
+                color: 'var(--text-secondary)'
               }}>
-                <span>Social Conv: {(project.interactionRate * 100).toFixed(1)}%</span>
-                <span>Social Reach: {project.totalExposures.toLocaleString()}</span>
+                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                  <span style={{ color: 'var(--text-tertiary)', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                    Social Conv
+                  </span>
+                  <span style={{ color: 'var(--text-secondary)', fontWeight: 500 }}>
+                    {(project.interactionRate * 100).toFixed(1)}%
+                  </span>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                  <span style={{ color: 'var(--text-tertiary)', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                    Social Reach
+                  </span>
+                  <span style={{ color: 'var(--text-secondary)', fontWeight: 500 }}>
+                    {project.totalExposures.toLocaleString()}
+                  </span>
+                </div>
               </div>
             </div>
 
             {/* Total Interactions */}
             <div style={{ 
-              textAlign: 'right',
-              minWidth: '60px'
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap : 'var(--space-1)',
+              justifyContent: 'center',
+              minWidth: '80px',
+              paddingLeft: 'var(--space-3)',
+              borderLeft: '1px solid var(--card-border)'
             }}>
               <div style={{ 
                 color: 'var(--text-primary)', 
-                fontWeight: 600,
-                fontSize: 'var(--font-base)'
+                fontWeight: 700,
+                fontSize: 'var(--font-xl)',
+                lineHeight: 1.2
               }}>
                 {project.totalInteractions.toLocaleString()}
               </div>
               <div style={{ 
-                color: 'var(--text-secondary)', 
-                fontSize: 'var(--font-xs)'
+                color: 'var(--text-tertiary)', 
+                fontSize: '10px',
+                textTransform: 'uppercase',
+                letterSpacing: '0.5px',
+                marginTop: '2px'
               }}>
-                interactions
+                total
               </div>
             </div>
           </div>

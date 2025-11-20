@@ -51,15 +51,15 @@ export function List({
   };
 
   return (
-    <ul className={`list ${className ?? ""}`}>
+    <ul className={`list ${className ?? ""}`} data-mode={mode}>
       {mode === "edit" ? (
         <>
           {local.map((t, i) => (
-            <li key={i}>
+            <li key={i} className="list-item-edit">
               <input
                 className="list-element"
                 value={t}
-                placeholder="introduce"
+                placeholder="Add item"
                 onChange={(e) => update(i, e.target.value)}
               />
               <button
@@ -67,16 +67,19 @@ export function List({
                 className="icon-btn"
                 onClick={() => remove(i)}
                 aria-label="Remove"
+                title="Remove"
               >
-                x
+                ×
               </button>
             </li>
           ))}
-          <li>
-            <button className="btn tertiary" type="button" onClick={add}>
-              + Add technology
-            </button>
-          </li>
+          {local.length < maxItems && (
+            <li className="list-item-add">
+              <button className="btn-add" type="button" onClick={add}>
+                + Add
+              </button>
+            </li>
+          )}
           {error && <li className="field-error">{error}</li>}
         </>
       ) : (

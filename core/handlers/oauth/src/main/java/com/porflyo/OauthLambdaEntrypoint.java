@@ -118,7 +118,7 @@ public class OauthLambdaEntrypoint extends MicronautRequestHandler<APIGatewayV2H
             String code = LambdaHttpUtils.extractQueryParameter(input, "code");
             log.debug("Extracted OAuth code");
 
-            String frontend = frontendConfig.url();
+            String frontend = frontendConfig.url() + "/home";
             long expiration = jwtConfig.expiration();
 
             if(code == null || code.trim().isEmpty()) {

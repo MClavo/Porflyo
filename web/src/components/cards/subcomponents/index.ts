@@ -1,5 +1,6 @@
 import '../../../styles/cards/subcomopnents/Title.css';
 import '../../../styles/cards/subcomopnents/Text.css';
+import '../../../styles/cards/subcomopnents/BulletText.css';
 import '../../../styles/cards/subcomopnents/List.css';
 import '../../../styles/cards/subcomopnents/Images.css';
 import '../../../styles/cards/subcomopnents/Date.css';

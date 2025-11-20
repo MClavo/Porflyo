@@ -1,8 +1,11 @@
 /* Public Portfolio - Simplified styles */
 .public-portfolio {
-  min-height: 100vh;
+  height: 100vh;
   width: 100%;
   display: block;
+  overflow-y: auto;
+  overflow-x: hidden;
+  position: relative;
 }
 
 .loading-container {

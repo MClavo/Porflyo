@@ -21,7 +21,7 @@ export function SavedCards({
   mode, 
   onSave,
   onRemove,
-  template = "template1"
+  template = "ats"
 }: SavedCardsProps) {
   const [pendingCard, setPendingCard] = useState<{
     card: AnyCard;

@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { FiGlobe, FiChevronDown, FiCheck } from 'react-icons/fi';
-import { SOCIAL_PLATFORMS } from '../../constants/socialPlatforms';
+import { SOCIAL_PLATFORMS, getSocialPlatform } from '../../constants/socialPlatforms';
+import { useTheme } from '../../contexts/theme/useTheme';
 import './SocialPlatformSelector.css';
 
 interface SocialPlatformSelectorProps {
@@ -19,11 +20,16 @@ export const SocialPlatformSelector: React.FC<SocialPlatformSelectorProps> = ({
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
+  const { isDark } = useTheme();
+
   const availablePlatforms = SOCIAL_PLATFORMS.filter(
     platform => !excludePlatforms.includes(platform.id)
   );
 
-  const selectedPlatformData = SOCIAL_PLATFORMS.find(p => p.id === selectedPlatform);
+  // Get platform data with color adjusted for theme when applicable
+  const selectedPlatformData = selectedPlatform
+    ? getSocialPlatform(selectedPlatform, isDark) || SOCIAL_PLATFORMS.find(p => p.id === selectedPlatform)
+    : undefined;
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -90,19 +96,24 @@ export const SocialPlatformSelector: React.FC<SocialPlatformSelectorProps> = ({
       {isOpen && (
         <div className="selector-dropdown">
           <div className="dropdown-content">
-            {availablePlatforms.map((platform, index) => (
+              {availablePlatforms.map((platform, index) => (
               <React.Fragment key={platform.id}>
                 <button
                   type="button"
                   className={`platform-option ${selectedPlatform === platform.id ? 'selected' : ''}`}
                   onClick={() => handleSelect(platform.id)}
                 >
-                  <span 
-                    className="platform-icon" 
-                    style={{ color: platform.color }}
-                  >
-                    {platform.icon}
-                  </span>
+                  {(() => {
+                    const p = getSocialPlatform(platform.id, isDark) || platform;
+                    return (
+                      <span 
+                        className="platform-icon" 
+                        style={{ color: p.color }}
+                      >
+                        {p.icon}
+                      </span>
+                    );
+                  })()}
                   <span className="platform-name">{platform.name}</span>
                   {selectedPlatform === platform.id && (
                     <span className="selected-indicator">

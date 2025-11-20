@@ -35,8 +35,16 @@ const SortableCard: React.FC<SortableCardProps> = ({
     // This effect ensures the component re-renders when isDragging changes
   }, [isDragging, id]);
 
+  // Custom transform that excludes scale to prevent size changes during drag
+  const customTransform = transform ? {
+    x: transform.x,
+    y: transform.y,
+    scaleX: 1, // Always 1 to prevent scaling
+    scaleY: 1, // Always 1 to prevent scaling
+  } : null;
+
   const style: React.CSSProperties = {
-    transform: CSS.Transform.toString(transform),
+    transform: CSS.Transform.toString(customTransform),
     transition: isDragging ? "none" : (transition as string | undefined),
     zIndex: isDragging ? 1 : "auto", // Lower z-index for placeholder
   } as React.CSSProperties;

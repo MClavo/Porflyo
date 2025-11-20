@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import ImageCropper from './ImageCropper.tsx';
-import { uploadProfilePicture } from './mediaService';
+import { uploadProfilePicture } from '../../api/clients/media.api';
 
 interface ProfilePictureUploaderProps {
   currentUser: {

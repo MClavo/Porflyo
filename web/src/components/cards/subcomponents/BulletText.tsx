@@ -16,7 +16,7 @@ export function BulletText({
   placeholder = "Add responsibilities (one per line)...",
   maxLength = 500,
   required,
-  rows = 4,
+  rows = 1,
 }: BaseFieldProps) {
   const schema = React.useMemo(
     () =>
@@ -49,34 +49,22 @@ export function BulletText({
 
   if (mode === "edit") {
     return (
-      <div className={`${className ?? "bullet-text"}-wrapper`} style={{ position: 'relative' }}>
-        <TextareaAutosize
-          className={className ?? "bullet-text"}
-          placeholder={placeholder}
-          value={local}
-          maxLength={maxLength}
-          minRows={rows}
-          required={required}
-          aria-label="Bullet Text"
-          aria-error={!!error}
-          onChange={(e) => handleChange(e.target.value)}
-          style={{
-            fontFamily: 'inherit',
-            fontSize: 'inherit',
-            lineHeight: 'inherit',
-          }}
-        />
-        {local && bullets.length > 0 && (
-          <div style={{
-            fontSize: '11px',
-            color: '#999',
-            marginTop: '4px',
-            fontStyle: 'italic'
-          }}>
-            {bullets.length} bullet point{bullets.length !== 1 ? 's' : ''}
-          </div>
-        )}
-      </div>
+      <TextareaAutosize
+        className={className ?? "bullet-text"}
+        placeholder={placeholder}
+        value={local}
+        maxLength={maxLength}
+        minRows={rows}
+        required={required}
+        aria-label="Bullet Text"
+        aria-error={!!error}
+        onChange={(e) => handleChange(e.target.value)}
+        style={{
+          fontFamily: 'inherit',
+          fontSize: 'inherit',
+          lineHeight: 'inherit',
+        }}
+      />
     );
   }
 

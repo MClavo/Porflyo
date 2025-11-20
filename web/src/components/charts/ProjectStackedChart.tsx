@@ -4,7 +4,7 @@
 
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import type { TooltipProps, LegendProps } from './types';
-import './modern-charts.css';
+import './charts.css';
 
 interface ProjectStackedChartProps {
   data: Array<{
@@ -102,21 +102,21 @@ export const ProjectStackedChart: React.FC<ProjectStackedChartProps> = ({
 
       return (
         <div className="project-stacked-tooltip">
-          <div className="modern-tooltip__header" style={{ color: projectColor, fontWeight: '600' }}>
+          <div className="tooltip__header" style={{ color: projectColor, fontWeight: '600' }}>
             {label}
           </div>
-          <div className="modern-tooltip__separator"></div>
-          <div className="modern-tooltip__content">
-            <div className="modern-tooltip__item">
-              <span className="modern-tooltip__name">Views</span>
-              <span className="modern-tooltip__value">{total.toLocaleString()}</span>
+          <div className="tooltip__separator"></div>
+          <div className="tooltip__content">
+            <div className="tooltip__item">
+              <span className="tooltip__name">Views</span>
+              <span className="tooltip__value">{total.toLocaleString()}</span>
             </div>
 
             {liveEntry && (
-              <div className="modern-tooltip__item">
-                <span className="modern-tooltip__name">Live</span>
+              <div className="tooltip__item">
+                <span className="tooltip__name">Live</span>
                 <span
-                  className="modern-tooltip__value"
+                  className="tooltip__value"
                   style={{ color: String(liveEntry.color) }}
                 >
                   {liveEntry.value.toLocaleString()}
@@ -125,10 +125,10 @@ export const ProjectStackedChart: React.FC<ProjectStackedChartProps> = ({
             )}
 
             {codeEntry && (
-              <div className="modern-tooltip__item">
-                <span className="modern-tooltip__name">Code</span>
+              <div className="tooltip__item">
+                <span className="tooltip__name">Code</span>
                 <span
-                  className="modern-tooltip__value"
+                  className="tooltip__value"
                   style={{ color: String(codeEntry.color) }}
                 >
                   {codeEntry.value.toLocaleString()}
@@ -144,10 +144,10 @@ export const ProjectStackedChart: React.FC<ProjectStackedChartProps> = ({
 
   const CustomLegend = ({ payload }: LegendProps) => {
     return (
-      <div className="modern-chart-legend" style={{ gap: 'var(--space-4)' }}>
+      <div className="chart-legend" style={{ gap: 'var(--space-4)' }}>
         {payload?.map((entry, index) => (
-          <div key={index} className="modern-legend-item">
-            <div className="modern-legend-square" style={{
+          <div key={index} className="legend-item">
+            <div className="legend-square" style={{
               backgroundColor: entry.color
             }} />
             {entry.value}

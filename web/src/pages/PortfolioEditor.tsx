@@ -1,5 +1,6 @@
 import React from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useSEO } from "../hooks/useSEO";
 import { RepositoryDialog } from "../components/dialogs/RepositoryDialog";
 import EditorDndProvider from "../components/dnd/EditorDndProvider";
 import LayoutPreview from "../components/portfolio/LayoutPreview";
@@ -8,11 +9,12 @@ import SectionCard from "../components/sections/SectionCard";
 import { AboutSection } from "../components/sections/AboutSection";
 import type { AboutSectionData } from "../components/sections/AboutSection.types";
 import { SavedCards } from "../components/savedcards/SavedCards";
-import { ModernEditorHeader as EditorHeader, ModernEditorSidebar as EditorSidebar } from "../components/portfolioEditor";
+import { EditorHeader as EditorHeader, EditorSidebar as EditorSidebar } from "../components/portfolioEditor";
 import { usePortfolioEditorState } from "../hooks/editor/usePortfolioEditorState";
 import { useRepositoryFlow } from "../hooks/save/repository/useRepositoryFlow";
 import { useSavedCards } from "../state/SavedCards.hooks";
 import { useSavedSectionsContext } from "../hooks/ui/useSavedSectionsContext";
+import { useMedia } from "../api/hooks/useMedia";
 import { type TemplateKey } from "../templates/Template.types";
 import type { CardType, CardPatchByType } from "../state/Cards.types";
 import type { PortfolioState } from "../state/Portfolio.types";
@@ -24,21 +26,66 @@ export default function PortfolioEditor({
   onPortfolioChange,
 }: { onPortfolioChange?: (p: PortfolioState) => void } = {}) {
   const location = useLocation();
+  const navigate = useNavigate();
   const [notification, setNotification] = React.useState<{
     message: string;
     type: "success" | "error" | "info";
     isVisible: boolean;
   }>({ message: "", type: "success", isVisible: false });
 
+  // Use ref to keep notification timer alive across re-renders
+  const notificationTimerRef = React.useRef<number | null>(null);
+
+  // Debug: Log notification state changes
+  React.useEffect(() => {
+    
+  }, [notification]);
+
   // Check if we're in edit mode (has portfolio ID) or new mode
   const isEditMode = location.pathname.includes('/edit');
 
-  const showNotification = (
+  // SEO - Block indexing of portfolio editor
+  useSEO({
+    title: isEditMode ? 'Edit Portfolio - porflyo' : 'Create Portfolio - porflyo',
+    description: 'Portfolio editor',
+    noIndex: true, // Private page - no indexing
+  });
+
+  const showNotification = React.useCallback((
     message: string,
     type: "success" | "error" | "info" = "success"
-  ) => setNotification({ message, type, isVisible: true });
-  const hideNotification = () =>
+  ) => {
+    
+    
+    // Clear any existing timer
+    if (notificationTimerRef.current) {
+      clearTimeout(notificationTimerRef.current);
+    }
+    
+    setNotification({ message, type, isVisible: true });
+    
+    // Set new timer to auto-hide
+    notificationTimerRef.current = setTimeout(() => {
+      setNotification((prev) => ({ ...prev, isVisible: false }));
+    }, 4000);
+  }, []);
+  
+  const hideNotification = React.useCallback(() => {
+    
+    if (notificationTimerRef.current) {
+      clearTimeout(notificationTimerRef.current);
+    }
     setNotification((prev) => ({ ...prev, isVisible: false }));
+  }, []);
+  
+  // Cleanup timer on unmount
+  React.useEffect(() => {
+    return () => {
+      if (notificationTimerRef.current) {
+        clearTimeout(notificationTimerRef.current);
+      }
+    };
+  }, []);
 
   const state = usePortfolioEditorState({
     onPortfolioChange,
@@ -59,6 +106,9 @@ export default function PortfolioEditor({
   // Saved sections from API
   const savedSectionsContext = useSavedSectionsContext();
 
+  // Media hook for uploading images
+  const { processCardImages } = useMedia();
+
   // Track if we've loaded saved sections to avoid reloading
   const hasLoadedSavedSections = React.useRef(false);
 
@@ -77,13 +127,26 @@ export default function PortfolioEditor({
   // Saved cards handlers
   const handleSaveCard = async (card: AnyCard, originSectionId: string, originSectionType: string, name: string) => {
     try {
-      const savedSection = await savedCardsContext.saveCard(card, originSectionId, originSectionType, name);
+      // First, upload any blob images and get the card with updated S3 URLs
+      const { card: cardWithUploadedImages, urlMapping } = await processCardImages(card);
+      
+      // Update the portfolio state with new URLs (replaces blobs in all cards)
+      if (Object.keys(urlMapping).length > 0) {
+        state.dispatch({
+          type: 'REPLACE_IMAGE_URLS',
+          payload: { urlMapping }
+        });
+      }
+      
+      // Now save the card with the S3 URLs
+      const savedSection = await savedCardsContext.saveCard(cardWithUploadedImages, originSectionId, originSectionType, name);
       
       // Also add to saved sections context
       savedSectionsContext.addSection(savedSection);
       
       showNotification("Card saved successfully", "success");
-    } catch {
+    } catch (error) {
+      console.error("Error saving card:", error);
       showNotification("Failed to save card", "error");
     }
   };
@@ -135,6 +198,20 @@ export default function PortfolioEditor({
     }
   };
 
+  // Wrapper for save that handles navigation after creating a new portfolio
+  const handleSaveWithNavigation = async () => {
+    try {
+      const result = await state.actions.handleSavePortfolio();
+      // If we're creating a new portfolio (not in edit mode), redirect to edit page
+      if (!isEditMode && result?.portfolioId) {
+        navigate(`/portfolios/${result.portfolioId}/edit`);
+      }
+    } catch (err) {
+      // Error is already handled in handleSavePortfolio
+      console.error('Save failed:', err);
+    }
+  };
+
   // Build runtime structures similar to previous implementation
   const sectionsMap: Record<string, React.ReactNode> = {};
   const allCardsById: Record<string, unknown> = {};
@@ -171,6 +248,11 @@ export default function PortfolioEditor({
           />
         );
         continue; // Skip regular SectionCard rendering
+      }
+
+      // In view mode, skip sections that have no cards
+      if (state.ui.mode === 'view' && (!s.cardsOrder || s.cardsOrder.length === 0)) {
+        continue;
       }
 
       // Regular sections with cards
@@ -211,6 +293,8 @@ export default function PortfolioEditor({
           onRemoveCard={(sectionId, cardId) => {
             state.dispatch({ type: 'REMOVE_CARD', payload: { sectionId, cardId } });
           }}
+          previewIndex={s.previewIndex ?? null}
+          previewCard={s.previewCard ?? null}
         />
       );
     }
@@ -253,7 +337,7 @@ export default function PortfolioEditor({
       <EditorHeader
         portfolioTitle={state.data.portfolio.title}
         onTitleChange={state.actions.handleTitleChange}
-        onSave={state.actions.handleSavePortfolio}
+        onSave={handleSaveWithNavigation}
         isSaving={state.actions.isSaving}
         mode={state.ui.mode}
         onModeToggle={state.ui.toggleMode}
@@ -267,10 +351,12 @@ export default function PortfolioEditor({
         isSlugAvailable={state.slug.isSlugAvailable}
         isCheckingSlug={state.slug.isCheckingSlug}
         onSlugAvailabilityChange={(available: boolean) => state.slug.handleSlugAvailabilityChange(available, false)}
+        lastVerifiedSlug={state.slug.lastVerifiedSlug}
         isPublished={state.publication.isPublished}
         setIsPublished={state.publication.setIsPublished}
         onPublish={state.publication.handlePublishClick}
         isPublishing={state.publication.isPublishing}
+        hasChanges={state.publication.hasChanges}
         isEditMode={isEditMode}
       />
 
@@ -281,6 +367,7 @@ export default function PortfolioEditor({
         cardsById={allCardsById as Record<string, unknown>}
         sectionsById={state.data.portfolio.sections}
         onDragStart={state.drag.handleDragStart}
+        onDragOver={state.drag.handleDragOver}
         onDragEnd={state.drag.handleDragEnd}
       >
         <EditorSidebar
