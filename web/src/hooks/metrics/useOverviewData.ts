@@ -14,6 +14,7 @@ export interface OverviewData {
     avgSessionMinutes: number | null; // in minutes
     // optional backward-compat aliases (ms/min conversions are handled by hooks)
     avgSessionMs?: number | null;
+    tffiMeanMs?: number | null; // time to first interaction in ms
     deviceMix: { desktop: number; mobile: number } | null; // fractions 0..1
     qualityVisitRatePct: number | null; // fraction 0..1
     emailConversionPct: number | null; // fraction 0..1
@@ -146,11 +147,17 @@ export function useOverviewData(rangeDays: number = 30): OverviewData {
         ttfi: latestEntry.zScores.ttfi
       } : null;
 
+      // Calculate tffiMeanMs: prefer derived.tffiMeanMs, else compute from raw
+      const tffiMeanMs = derived?.tffiMeanMs != null 
+        ? derived.tffiMeanMs 
+        : (raw.tffiCount > 0 ? (raw.tffiSumMs / raw.tffiCount) : null);
+
       return {
         totalViews,
         avgSessionMinutes,
         // backward-compatible fields used elsewhere in the app
         avgSessionMs: avgSessionMinutes != null ? Math.round(avgSessionMinutes * 60 * 1000) : null,
+        tffiMeanMs,
         deviceMix,
         qualityVisitRatePct,
         emailConversionPct,

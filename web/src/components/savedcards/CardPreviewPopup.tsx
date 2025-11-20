@@ -4,15 +4,13 @@ import { renderCard } from "../cards/RenderCard";
 import type { SavedCard } from "../../state/SavedCards.types";
 import "./CardPreviewPopup.css";
 
-import.meta.glob('../../templates/**/*.css');
-
 export type CardPreviewPopupProps = {
   savedCard: SavedCard;
   children: React.ReactNode;
   template?: string; // Add template prop to receive current template
 };
 
-export function CardPreviewPopup({ savedCard, children, template = "template1" }: CardPreviewPopupProps) {
+export function CardPreviewPopup({ savedCard, children, template = "ats" }: CardPreviewPopupProps) {
   const [isVisible, setIsVisible] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 

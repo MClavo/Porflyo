@@ -2,7 +2,7 @@
  * Utility to detect if this is a page refresh vs navigation
  * 
  * This function uses multiple strategies to detect a page refresh:
- * 1. performance.navigation.type (modern browsers)
+ * 1. performance.navigation.type ( browsers)
  * 2. sessionStorage flag (fallback)
  * 
  * Uses a global session flag and ensures refresh is only detected once per session.
@@ -16,7 +16,7 @@ let initialCheckComplete = false;
 export function isPageRefresh(): boolean {
   // During the initial mount cycle, allow all hooks to detect refresh
   if (!initialCheckComplete) {
-    // Check if performance.navigation is available (modern browsers)
+    // Check if performance.navigation is available ( browsers)
     if (typeof performance !== 'undefined' && performance.navigation) {
       const isRefresh = performance.navigation.type === performance.navigation.TYPE_RELOAD;
       

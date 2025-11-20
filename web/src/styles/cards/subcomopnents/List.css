@@ -1,83 +1,165 @@
-/* Technologies / list styles extracted from ProjectCard.css and made reusable */
-.list {
+/* Technologies / list styles - Consistent between view and edit modes */
+
+.list,
+ul.list {
+  position: relative;
+  margin: 0;
   padding: 0;
-  padding-top: 12px;
   list-style: none;
   display: flex;
-  gap: 10px;
+  gap: 8px;
   flex-wrap: wrap;
   align-items: center;
-  row-gap: 10px;
-  /* keep the UL structurally positioned but avoid creating a stacking context
-    so its children (li) can be stacked above the global drag overlay */
-  position: relative;
+  row-gap: 8px;
+  z-index: 20;
 }
 
 .list h2 {
   width: 100%;
+  margin: 0;
+  padding: 0;
   font-size: 18px;
-  margin: 0 0 8px 0;
+  font-weight: 500;
   color: var(--title-color, #FAFAFA);
-  font-weight: 300;
 }
 
+/* View mode - simple pills */
 .list li {
   display: inline-flex;
   flex-direction: row;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   width: fit-content;
   box-sizing: border-box;
+  margin: 0;
+  padding: 6px 12px;
   color: var(--description-color, #f8f8ffea);
-  padding: 6px 10px;
-  border-radius: 12px;
   background: rgba(255, 255, 255, 0.1);
-  font-size: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 16px;
+  font-size: 13px;
+  font-weight: 400;
+  transition: all 0.15s ease;
   position: relative;
-  z-index: 20; /* keep list items above the overlay */
+  z-index: 20;
 }
 
 .list li:hover {
-  background: rgba(255, 255, 255, 0.2);
-  cursor: pointer;
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.15);
 }
 
-/* Inputs and icon buttons used inside the list */
+/* Edit mode - items with input and delete button, but maintain pill style */
+
+.list[data-mode="edit"] .list-item-edit {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 4px;
+  width: fit-content !important;
+  box-sizing: border-box;
+  padding: 4px 6px 4px 12px;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 16px;
+  transition: all 0.15s ease;
+}
+
+.list[data-mode="edit"] .list-item-edit:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Input inside list item - seamless integration */
 .list-element {
   background: transparent;
   border: none;
-  padding: 4px 6px;
-  color: inherit;
+  padding: 2px 4px;
+  margin: 0;
+  color: var(--description-color, #f8f8ffea);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 400;
   width: auto;
-  font: inherit;
+  min-width: 60px;
+  max-width: 150px;
   box-sizing: border-box;
   position: relative;
   z-index: 20;
 }
 
+.list-element:focus {
+  outline: none;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 4px;
+}
+
+.list-element::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 12px;
+}
+
+/* Delete button - compact and subtle */
 .icon-btn {
-  background: transparent;
+  background: rgba(255, 255, 255, 0.1);
   border: none;
-  color: var(--description-color, #f8f8ffea);
+  margin: 0;
+  padding: 2px 6px;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 16px;
+  line-height: 1;
   cursor: pointer;
-  padding: 4px 6px;
-  border-radius: 6px;
+  border-radius: 12px;
   position: relative;
   z-index: 20;
+  transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-/* Special handling for the "Add" button item to make it full width inside edit lists */
-.list > li.btn-row {
-  order: 1;
-  flex-basis: 100%;
-  width: 100%;
-  align-self: flex-start;
-  margin-top: 6px;
-  display: block;
+.icon-btn:hover {
+  background: rgba(255, 100, 100, 0.3);
+  color: rgba(255, 150, 150, 1);
 }
 
-/* Fallback using :last-child if :has() isn't supported by the browser */
-.list > li:last-child > .btn {
-  display: block;
+/* Add button - styled as a pill */
+.list-item-add {
+  padding: 0;
+  background: transparent;
+  border: none;
+}
+
+.btn-add {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 6px 12px;
+  margin: 0;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px dashed rgba(255, 255, 255, 0.25);
+  border-radius: 16px;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 13px;
+  font-weight: 400;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-add:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.35);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* Error message */
+.field-error {
   width: 100%;
+  padding: 4px 8px;
+  background: rgba(255, 100, 100, 0.15);
+  border: 1px solid rgba(255, 100, 100, 0.3);
+  border-radius: 6px;
+  color: rgba(255, 150, 150, 1);
+  font-size: 12px;
 }

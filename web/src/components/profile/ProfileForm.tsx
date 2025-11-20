@@ -1,166 +1,183 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import type { PublicUserDto, PartialUserDto } from '../../api/types';
-import { patchUser } from '../../api/clients/user.api';
-import SocialsSection from './SocialsSection';
+import React, { useState, useEffect } from 'react';
+import { FiUser, FiMail, FiFileText, FiCheck, FiX } from 'react-icons/fi';
+import type { PublicUserDto } from '../../api/types';
 
 interface ProfileFormProps {
   user: PublicUserDto;
-  onUserUpdate: (user: PublicUserDto) => void;
+  onUserUpdate: (updatedUser: PublicUserDto) => void;
+  isLoading?: boolean;
 }
 
-export const ProfileForm: React.FC<ProfileFormProps> = ({ user, onUserUpdate }) => {
-  const navigate = useNavigate();
+export const ProfileForm: React.FC<ProfileFormProps> = ({
+  user,
+  onUserUpdate,
+  isLoading = false
+}) => {
   const [formData, setFormData] = useState({
-    name: user?.name || '',
-    email: user?.email || '',
-    description: user?.description || '',
-    socials: user?.socials || {}
+    name: user.name,
+    email: user.email,
+    description: user.description
   });
-  const [saving, setSaving] = useState(false);
-  const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveMessage, setSaveMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const [hasChanges, setHasChanges] = useState(false);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
+  useEffect(() => {
+    const hasChanges = 
+      formData.name !== user.name ||
+      formData.email !== user.email ||
+      formData.description !== user.description;
+    setHasChanges(hasChanges);
+  }, [formData, user]);
 
-  const handleSocialsChange = (socials: Record<string, string>) => {
-    setFormData(prev => ({
-      ...prev,
-      socials
-    }));
+  const handleInputChange = (field: keyof typeof formData, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+    // Clear any existing messages when user starts typing
+    if (saveMessage) {
+      setSaveMessage(null);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSaving(true);
-    setMessage(null);
+    
+    if (!hasChanges) {
+      setSaveMessage({ type: 'error', text: 'No changes to save' });
+      return;
+    }
+
+    setIsSaving(true);
+    setSaveMessage(null);
 
     try {
-      // Only send fields that have changed
-      const changes: PartialUserDto = {};
+      const response = await fetch('/api/user', {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+        credentials: 'include'
+      });
 
-      if (formData.name !== user.name) {
-        changes.name = formData.name;
+      if (!response.ok) {
+        throw new Error('Failed to update profile');
       }
 
-      if (formData.email !== user.email) {
-        changes.email = formData.email;
-      }
-
-      if (formData.description !== user.description) {
-        changes.description = formData.description;
-      }
-
-      // Check if socials changed
-      const socialsChanged = JSON.stringify(formData.socials) !== JSON.stringify(user.socials);
-      if (socialsChanged) {
-        changes.socials = formData.socials;
-      }
-
-      if (Object.keys(changes).length === 0) {
-        setMessage({ type: 'success', text: 'No changes to save' });
-        setSaving(false);
-        return;
-      }
-
-      const updatedUser = await patchUser(changes);
+      const updatedUser = await response.json();
       onUserUpdate(updatedUser);
-      setMessage({ type: 'success', text: 'Profile updated successfully' });
+      setSaveMessage({ type: 'success', text: 'Profile updated successfully!' });
       
-      // Redirect to home after a short delay
+      // Clear success message after 3 seconds
       setTimeout(() => {
-        navigate('/home');
-      }, 2000);
-      
+        setSaveMessage(null);
+      }, 3000);
     } catch (error) {
-      setMessage({ 
+      setSaveMessage({ 
         type: 'error', 
-        text: error instanceof Error ? error.message : 'Error updating profile' 
+        text: error instanceof Error ? error.message : 'Failed to update profile' 
       });
     } finally {
-      setSaving(false);
+      setIsSaving(false);
     }
   };
 
+  const handleReset = () => {
+    setFormData({
+      name: user.name,
+      email: user.email,
+      description: user.description
+    });
+    setSaveMessage(null);
+  };
+
   return (
-    <div className="card">
-      <div className="card-header">
-        <h2 className="card-title">Personal Information</h2>
-        <p className="card-description">Modify your personal information visible on your profile</p>
+    <div className="profile-section">
+      <div className="profile-section-header">
+        <FiUser className="profile-section-icon" />
+        <div>
+          <h3 className="profile-section-title">Personal Information</h3>
+          <p className="profile-section-description">
+            Update your personal details and preferences
+          </p>
+        </div>
       </div>
 
-      {message && (
-        <div className={message.type === 'success' ? 'success' : 'error'}>
-          {message.text}
+      {saveMessage && (
+        <div className={`status-message status-${saveMessage.type}`}>
+          {saveMessage.type === 'success' ? <FiCheck size={16} /> : <FiX size={16} />}
+          {saveMessage.text}
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="profile-form">
-        <div className="form-group">
-          <label htmlFor="name" className="form-label">Name</label>
-          <input
-            type="text"
-            id="name"
-            name="name"
-            value={formData.name}
-            onChange={handleInputChange}
-            className="form-input"
-            required
-          />
+      <form onSubmit={handleSubmit} className="profile-form-grid">
+        <div className="profile-form-row">
+          <div className="profile-field">
+            <label className="profile-field-label">
+              <FiUser size={14} />
+              Full Name
+              <span className="profile-field-required">*</span>
+            </label>
+            <input
+              type="text"
+              value={formData.name}
+              onChange={(e) => handleInputChange('name', e.target.value)}
+              className="profile-field-input"
+              placeholder="Enter your full name"
+              required
+              disabled={isLoading || isSaving}
+            />
+          </div>
+
+          <div className="profile-field">
+            <label className="profile-field-label">
+              <FiMail size={14} />
+              Email Address
+              <span className="profile-field-required">*</span>
+            </label>
+            <input
+              type="email"
+              value={formData.email}
+              onChange={(e) => handleInputChange('email', e.target.value)}
+              className="profile-field-input"
+              placeholder="Enter your email address"
+              required
+              disabled={isLoading || isSaving}
+            />
+          </div>
         </div>
 
-        <div className="form-group">
-          <label htmlFor="email" className="form-label">Email</label>
-          <input
-            type="email"
-            id="email"
-            name="email"
-            value={formData.email}
-            onChange={handleInputChange}
-            className="form-input"
-            required
-          />
-        </div>
-
-        <div className="form-group">
-          <label htmlFor="description" className="form-label">Description</label>
+        <div className="profile-field">
+          <label className="profile-field-label">
+            <FiFileText size={14} />
+            Bio / Description
+          </label>
           <textarea
-            id="description"
-            name="description"
             value={formData.description}
-            onChange={handleInputChange}
-            className="form-input"
-            rows={3}
+            onChange={(e) => handleInputChange('description', e.target.value)}
+            className="profile-field-input profile-field-textarea"
             placeholder="Tell us about yourself..."
+            rows={4}
+            disabled={isLoading || isSaving}
           />
         </div>
 
-        <SocialsSection 
-          socials={formData.socials}
-          onChange={handleSocialsChange}
-        />
-
-        <div className="flex gap-4">
+        <div className="profile-actions">
+          {hasChanges && (
+            <button
+              type="button"
+              onClick={handleReset}
+              className="btn btn-outline"
+              disabled={isSaving}
+            >
+              Cancel
+            </button>
+          )}
           <button
             type="submit"
-            className="btn"
-            disabled={saving}
+            className="btn btn-primary"
+            disabled={!hasChanges || isSaving || isLoading}
           >
-            {saving ? 'Saving...' : 'Save Changes'}
-          </button>
-          
-          <button
-            type="button"
-            onClick={() => navigate('/home')}
-            className="btn-outline btn"
-            disabled={saving}
-          >
-            Cancel
+            {isSaving ? 'Saving...' : 'Save Changes'}
           </button>
         </div>
       </form>

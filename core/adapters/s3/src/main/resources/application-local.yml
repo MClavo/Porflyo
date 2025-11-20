@@ -33,3 +33,7 @@ logger:
     com.porflyo: DEBUG
     io.micronaut.http: DEBUG
     root: INFO
+
+metrics:
+  heatmap-cell-count: 400
+  baseline-window-days: 28

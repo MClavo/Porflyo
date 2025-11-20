@@ -1,0 +1,196 @@
+/* ============================================
+   ABOUT SECTION
+   ============================================ */
+
+.tpl-ats .about-section-container {
+  margin-bottom: var(--ats-section-spacing);
+  background: none;
+  backdrop-filter: none;
+  border-radius: 0;
+  padding: 0;
+  border: none;
+  box-shadow: none;
+  text-align: center;
+}
+
+.tpl-ats .about-section-info {
+  display: block;
+}
+
+.tpl-ats .about-section-top {
+  display: block;
+  margin-bottom: var(--ats-element-spacing);
+}
+
+/* Hide avatar in ATS template */
+.tpl-ats .about-section-avatar {
+  display: none;
+}
+
+.tpl-ats .about-section-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: center;
+}
+
+/* Name - Large and bold */
+.tpl-ats .about-section-name,
+.tpl-ats .about-section-name h1,
+.tpl-ats .about-section-name h2,
+.tpl-ats .about-section-name h3 {
+  font-size: var(--ats-font-size-name) !important;
+  font-weight: 700 !important;
+  margin: 0 !important;
+  text-shadow: none !important;
+  background: none !important;
+  -webkit-background-clip: unset !important;
+  -webkit-text-fill-color: var(--ats-text-color) !important;
+  background-clip: unset !important;
+  color: var(--ats-text-color) !important;
+  padding: 0 !important;
+  line-height: 1.2 !important;
+  border: none !important;
+  outline: none !important;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-family: var(--ats-font-family);
+}
+
+.tpl-ats .about-section-name-wrapper,
+.tpl-ats .about-section-name-wrapper input {
+  font-size: var(--ats-font-size-name) !important;
+  font-weight: 700 !important;
+/*   margin: 0 !important; */
+  text-shadow: none !important;
+  color: var(--ats-text-color) !important;
+  background: none !important;
+  -webkit-text-fill-color: var(--ats-text-color) !important;
+  padding: 0 !important;
+  line-height: 1.2 !important;
+  border: none !important;
+  outline: none !important;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  text-align: center;
+  width: 100% !important;
+  min-width: unset !important;
+  max-width: 100% !important;
+  font-family: var(--ats-font-family) !important;
+}
+
+.tpl-ats .about-section-name-wrapper input:focus {
+  background: rgba(0, 0, 0, 0.02) !important;
+  border-radius: 0 !important;
+  padding: 4px 8px !important;
+}
+
+/* Email and contact */
+.tpl-ats .about-section-contact {
+  margin-bottom: 4px;
+}
+
+.tpl-ats .about-contact-link {
+  color: var(--ats-text-color);
+  text-decoration: none;
+  font-size: var(--ats-font-size-contact);
+  font-weight: 400;
+  transition: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tpl-ats .about-contact-link:hover {
+  color: var(--ats-text-color);
+  text-decoration: underline;
+  transform: none;
+}
+
+/* Social links - inline separated by | */
+.tpl-ats .about-social-links {
+  display: flex;
+  gap: 0;
+  flex-wrap: wrap;
+  margin-top: 4px;
+  justify-content: center;
+  align-items: center;
+}
+
+.tpl-ats .about-social-link {
+  padding: 0 8px;
+  background: none;
+  color: var(--ats-text-color);
+  text-decoration: none;
+  border-radius: 0;
+  font-size: var(--ats-font-size-contact);
+  font-weight: 400;
+  transition: none;
+  border: none;
+  backdrop-filter: none;
+  position: relative;
+}
+
+.tpl-ats .about-social-link:not(:last-child)::after {
+  content: '|';
+  position: absolute;
+  right: 0;
+  color: var(--ats-text-muted);
+}
+
+.tpl-ats .about-social-link:hover {
+  background: none;
+  transform: none;
+  box-shadow: none;
+  text-decoration: underline;
+}
+
+/* Remove platform-specific colors */
+.tpl-ats .about-social-link.linkedin:hover,
+.tpl-ats .about-social-link.github:hover,
+.tpl-ats .about-social-link.website:hover,
+.tpl-ats .about-social-link.twitter:hover {
+  background: none;
+  border-color: transparent;
+  color: var(--ats-text-color);
+}
+
+/* Description */
+.tpl-ats .about-section-description {
+  margin: 12px 0 0 0;
+  width: 100%;
+  text-align: left;
+}
+
+.tpl-ats .about-description-text,
+.tpl-ats textarea.about-description-text,
+.tpl-ats div.about-description-text {
+  width: 100% !important;
+  font-size: var(--ats-font-size-base) !important;
+  line-height: var(--ats-line-height-base) !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  min-height: auto !important;
+  background: none !important;
+  border: none !important;
+  color: var(--ats-text-color) !important;
+  height: fit-content !important;
+  /* resize: none !important; */
+  transition: none !important;
+  font-family: var(--ats-font-family) !important;
+  margin: 0 !important;
+  box-sizing: border-box !important;
+  text-align: left !important;
+}
+
+.tpl-ats .about-description-text textarea::placeholder {
+  color: var(--ats-text-muted) !important;
+}
+
+.tpl-ats .about-description-text textarea:focus {
+  outline: none !important;
+  border: 1px solid var(--ats-border-color) !important;
+  background: rgba(0, 0, 0, 0.01) !important;
+  box-shadow: none !important;
+  padding: 8px !important;
+}

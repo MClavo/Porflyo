@@ -1,7 +1,7 @@
 /* Import Syncopate font for navbar logo */
 @import url('https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700&display=swap');
 
-/* Navbar Styles - Modern fixed navigation */
+/* Navbar Styles -  fixed navigation */
 
 .navbar {
   position: fixed;
@@ -28,7 +28,7 @@
   box-sizing: border-box;
 }
 
-/* Separator - Modern gradient line */
+/* Separator -  gradient line */
 .navbar::after {
   content: '';
   position: absolute;
@@ -71,7 +71,7 @@
   }
 }
 
-/* Logo Button - Same style as Root page h1 with modern enhancements */
+/* Logo Button - Same style as Root page h1 with  enhancements */
 .navbar-logo {
   background: none;
   border: none;
@@ -109,7 +109,7 @@
 }
 
 .navbar-logo:hover {
-  color: var(--nivo-1);
+  color: var(--space1, #00ADB5);
   transform: scale(1.05);
   background: rgba(0, 173, 181, 0.05);
 }
@@ -131,7 +131,7 @@
   gap: var(--space-4);
 }
 
-/* Logout Button - Modern style with enhanced effects */
+/* Logout Button -  style with enhanced effects */
 .navbar-logout {
   background: rgba(239, 68, 68, 0.08);
   border: 1px solid rgba(239, 68, 68, 0.2);

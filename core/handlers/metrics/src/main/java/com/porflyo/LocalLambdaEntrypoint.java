@@ -32,7 +32,12 @@ public class LocalLambdaEntrypoint extends MicronautRequestHandler<APIGatewayV2H
      @Override
     public APIGatewayV2HTTPResponse execute(APIGatewayV2HTTPEvent input) {
         String httpMethod = LambdaHttpUtils.getMethod(input);
+        String path = input.getRawPath();
         
+        // Handle edge case where path might be null or empty
+        if (path == null || path.isEmpty() || path.equals("/")) {
+            return LambdaHttpUtils.createErrorResponse(404, "Not Found");
+        }
 
         if(httpMethod.equals("get")){
             String token = LambdaHttpUtils.extractCookieValue(input, "session");

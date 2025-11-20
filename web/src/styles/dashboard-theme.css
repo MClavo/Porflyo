@@ -1,4 +1,4 @@
-/* Dashboard Theme Variables - Dark Modern Professional */
+/* Dashboard Theme Variables - Dark  Professional */
 
 /* Import modular variable files (these define :root variables used across the theme) */
 @import './variables/colors.css';
@@ -14,28 +14,90 @@
   letter-spacing: normal !important;
 }
 
-/* Forzar scrollbar siempre visible para evitar layout shift */
+/* The variables are declared in modular files under ./variables/*.css so they can be reused
+   and imported by other themes or components. */
+
+/* Custom Scrollbar Styles - Subtle and  */
+/* Webkit browsers (Chrome, Safari, Edge) */
+::-webkit-scrollbar {
+  width: var(--scrollbar-width);
+  height: var(--scrollbar-height);
+}
+
+::-webkit-scrollbar-track {
+  background: var(--scrollbar-track-bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb-bg);
+  border-radius: var(--scrollbar-thumb-radius);
+  transition: background 0.2s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-bg-hover);
+}
+
+/* Remove scrollbar buttons/arrows */
+::-webkit-scrollbar-button {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb-bg) var(--scrollbar-track-bg);
+}
+
+/* Light theme scrollbar */
+body.light-theme ::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb-bg);
+}
+
+body.light-theme ::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-bg-hover);
+}
+
+body.light-theme * {
+  scrollbar-color: var(--scrollbar-thumb-bg) var(--scrollbar-track-bg);
+}
+
+/* Ensure scrollbar doesn't cause layout shift */
 html {
-  overflow-y: scroll;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 body {
-  /* Asegurar que no haya movimientos horizontales */
   overflow-x: hidden;
-  /* Mantener scrollbar reservado (soporte moderno) */
-  scrollbar-gutter: stable;
+  margin: 0;
+  padding: 0;
 }
 
-/* Fallback para navegadores que no soportan scrollbar-gutter */
-@supports not (scrollbar-gutter: stable) {
-  body {
-    /* Forzar scrollbar vertical siempre */
-    overflow-y: scroll;
-  }
+/* Scrollbar positioning - stays below navbars */
+.dashboard-container,
+.profile-page,
+.dashboard {
+  height: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
-/* The variables are declared in modular files under ./variables/*.css so they can be reused
-   and imported by other themes or components. */
+/* For pages with dashboard navbar */
+.dashboard {
+  padding-top: calc(var(--navbar-height) + var(--dashboard-navbar-height));
+  height: 100vh;
+  box-sizing: border-box;
+}
+
+/* For profile page with only main navbar */
+.profile-page {
+  padding-top: var(--navbar-height);
+  height: 100vh;
+  box-sizing: border-box;
+}
 
 /* Base Dashboard Styles */
 html, body {
@@ -43,6 +105,7 @@ html, body {
   margin: 0;
   padding: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+  height: 100%;
 }
 
 #root {
@@ -94,4 +157,13 @@ html, body {
     padding: var(--space-3);
     padding-top: calc(var(--space-3) + 52px + var(--dashboard-navbar-height)); /* Main navbar (52px) + dashboard navbar */
   }
+}
+
+/* When shader is active make dashboard backgrounds transparent so shader shows through */
+body.has-shader html,
+body.has-shader body,
+body.has-shader #root,
+body.has-shader .dashboard-container,
+body.has-shader .dashboard-content {
+  background: transparent !important;
 }

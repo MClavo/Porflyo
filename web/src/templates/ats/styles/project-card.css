@@ -1,0 +1,432 @@
+/* ============================================
+   PROJECT CARD - ATS Template
+   ============================================ */
+
+/* Base card - no visible borders or background */
+.tpl-ats .project-card {
+  background: none;
+  border: none;
+  border-radius: 0;
+  padding: 0;
+  margin-bottom: 12px;
+  min-width: 100%;
+  max-width: 100%;
+  width: 100%;
+  min-height: auto;
+  box-sizing: border-box;
+  font-family: var(--ats-font-family);
+  color: var(--ats-text-color);
+  box-shadow: none;
+  overflow: visible;
+}
+
+/* Hide images section completely in ATS template */
+.tpl-ats .project-card__images {
+  display: none;
+}
+
+/* Content section - no padding on sides */
+.tpl-ats .project-card__content {
+  padding: 0;
+  gap: 4px;
+  flex: 1;
+}
+
+/* Project title - bold and slightly larger */
+.tpl-ats .project-card__content .title,
+.tpl-ats .project-card__content h1 {
+  margin: 0;
+  padding: 0;
+  color: var(--ats-text-color);
+  font-family: var(--ats-font-family);
+  font-size: 12pt;
+  font-weight: 700;
+  line-height: var(--ats-line-height-base);
+  letter-spacing: 0;
+  text-shadow: none;
+  -webkit-text-fill-color: var(--ats-text-color);
+  -webkit-background-clip: unset;
+  background-clip: unset;
+  background: none;
+}
+
+/* Edit mode - input styled as title */
+.tpl-ats .project-card[data-mode="edit"] .project-card__content input.title {
+  width: 100%;
+  background: none;
+  border: none;
+  border-radius: 0;
+  padding: 0;
+  margin: 0;
+  color: var(--ats-text-color);
+  font-family: var(--ats-font-family);
+  font-size: 12pt;
+  font-weight: 700;
+  line-height: var(--ats-line-height-base);
+  letter-spacing: 0;
+  text-shadow: none;
+  transition: none;
+}
+
+.tpl-ats .project-card[data-mode="edit"] .project-card__content input.title:hover {
+  background: rgba(0, 0, 0, 0.02);
+}
+
+.tpl-ats .project-card[data-mode="edit"] .project-card__content input.title:focus {
+  outline: none;
+  background: rgba(0, 0, 0, 0.02);
+  border-bottom: 1px solid var(--ats-border-color);
+  padding-bottom: 2px;
+  margin: 0;
+}
+
+/* Description text */
+.tpl-ats .project-card__content .text,
+.tpl-ats .project-card__content p {
+  margin: 0;
+  padding: 0;
+  color: var(--ats-text-color);
+  font-size: var(--ats-font-size-base);
+  line-height: var(--ats-line-height-base);
+  text-align: left;
+  white-space: pre-wrap;
+  font-family: var(--ats-font-family);
+}
+
+/* Edit mode - textarea styled as p */
+.tpl-ats .project-card[data-mode="edit"] .project-card__content textarea.text {
+  width: 100%;
+  background: none;
+  border: none;
+  border-radius: 0;
+  padding: 4px 8px;
+  margin: 0px;
+  color: var(--ats-text-color);
+  font-family: var(--ats-font-family);
+  font-size: var(--ats-font-size-base);
+  line-height: var(--ats-line-height-base);
+  text-align: left;
+  resize: none;
+  min-height: auto;
+  transition: none;
+}
+
+.tpl-ats .project-card[data-mode="edit"] .project-card__content textarea.text:hover {
+  background: rgba(0, 0, 0, 0.02);
+}
+
+.tpl-ats .project-card[data-mode="edit"] .project-card__content textarea.text:focus {
+  outline: none;
+  background: rgba(0, 0, 0, 0.01);
+  border: 1px solid var(--ats-border-color);
+  padding: 3px 7px;
+  margin: 0px;
+}
+
+/* Highlights section - bullet points */
+.tpl-ats .project-card__highlights {
+  margin: 0;
+  padding: 0;
+}
+
+/* View mode bullet list */
+.tpl-ats .project-card__highlights .bullet-text {
+  margin: 0;
+  padding: 0;
+  padding-left: 20px;
+  list-style-type: disc;
+  font-family: var(--ats-font-family);
+}
+
+.tpl-ats .project-card__highlights .bullet-text li {
+  position: relative;
+  padding-left: 0;
+  margin-bottom: 2px;
+  color: var(--ats-text-color);
+  font-size: var(--ats-font-size-base);
+  line-height: var(--ats-line-height-base);
+}
+
+.tpl-ats .project-card__highlights .bullet-text li:last-child {
+  margin-bottom: 0;
+}
+
+.tpl-ats .project-card__highlights .bullet-text li::before {
+  display: none;
+}
+
+.tpl-ats .project-card__highlights .bullet-text li::marker {
+  color: var(--ats-text-color);
+}
+
+/* Edit mode textarea for highlights */
+.tpl-ats .project-card[data-mode="edit"] .project-card__highlights textarea.bullet-text {
+  width: 100%;
+  min-height: 60px;
+  padding: 4px 8px;
+  margin: 0px;
+  background: none;
+  border: none;
+  border-radius: 0;
+  color: var(--ats-text-color);
+  font-family: var(--ats-font-family);
+  font-size: var(--ats-font-size-base);
+  line-height: var(--ats-line-height-base);
+  text-align: left;
+  resize: none;
+  transition: none;
+}
+
+.tpl-ats .project-card[data-mode="edit"] .project-card__highlights textarea.bullet-text:hover {
+  background: rgba(0, 0, 0, 0.02);
+}
+
+.tpl-ats .project-card[data-mode="edit"] .project-card__highlights textarea.bullet-text:focus {
+  outline: none;
+  background: rgba(0, 0, 0, 0.01);
+  border: 1px solid var(--ats-border-color);
+  padding: 3px 7px;
+  margin: 0px;
+}
+
+/* Technologies section */
+.tpl-ats .project-card__technologies {
+  padding: 0;
+  padding-top: 4px;
+  border-top: none;
+}
+
+.tpl-ats .project-card__technologies .technologies-title {
+  margin: 0 0 2px 0;
+  padding: 0;
+  color: var(--ats-text-color);
+  font-family: var(--ats-font-family);
+  font-size: var(--ats-font-size-base);
+  font-weight: 700;
+  line-height: var(--ats-line-height-base);
+}
+
+/* Edit mode input for tech title */
+.tpl-ats .project-card[data-mode="edit"] .project-card__technologies input.technologies-title {
+  width: 100%;
+  background: none;
+  border: none;
+  border-radius: 0;
+  padding: 0;
+  margin: 0 0 2px 0;
+  color: var(--ats-text-color);
+  font-family: var(--ats-font-family);
+  font-size: var(--ats-font-size-base);
+  font-weight: 700;
+  line-height: var(--ats-line-height-base);
+  transition: none;
+}
+
+.tpl-ats .project-card[data-mode="edit"] .project-card__technologies input.technologies-title:hover {
+  background: rgba(0, 0, 0, 0.02);
+}
+
+.tpl-ats .project-card[data-mode="edit"] .project-card__technologies input.technologies-title:focus {
+  outline: none;
+  background: rgba(0, 0, 0, 0.02);
+  border-bottom: 1px solid var(--ats-border-color);
+  padding-bottom: 1px;
+}
+
+.tpl-ats .project-card__technologies .technologies {
+  margin: 0;
+  padding: 0;
+}
+
+/* Technologies list styling */
+.tpl-ats .project-card__technologies .list-element{
+  display: inline;
+  margin: 0;
+  padding: 0;
+  font-size: var(--ats-font-size-base);
+  line-height: var(--ats-line-height-base);
+  color: var(--ats-text-color) !important;
+  border: 2px solid var(--ats-border-color);
+  padding-left: 4px;
+  font-family: var(--ats-font-family);
+}
+
+.tpl-ats .project-card__technologies li {
+    display: inline;
+  margin: 0;
+  padding: 0;
+  font-size: var(--ats-font-size-base);
+  line-height: var(--ats-line-height-base);
+  color: var(--ats-text-color) !important;
+  border: none;
+  padding-left: 4px;
+  font-family: var(--ats-font-family);
+}
+
+
+.tpl-ats .list-item-edit .icon-btn {
+  color: var(--ats-text-color);
+  text-align: center;
+  vertical-align: middle;
+  padding-bottom: 5px;
+  padding-left: 5px;
+}
+
+.tpl-ats .list[data-mode="edit"] .list-item-edit{
+  padding: 0;
+}
+
+.tpl-ats .list-item-add .btn-add {
+    display: inline;
+  margin: 0;
+  padding: 8px;
+  padding-top: 2px;
+  padding-bottom: 2px;
+  font-size: var(--ats-font-size-base);
+  line-height: var(--ats-line-height-base);
+  color: var(--ats-text-color) !important;
+  border: 2px solid var(--ats-border-color);
+  font-family: var(--ats-font-family);
+}
+
+.tpl-ats .list-item-add {
+  padding: 0;
+}
+
+.tpl-ats .project-card__technologies .list-item {
+  display: inline;
+  margin: 0;
+  padding: 0;
+  font-size: var(--ats-font-size-base);
+  color: var(--ats-text-color);
+}
+
+.tpl-ats .project-card__technologies .list-element {
+  border-radius: 6px;
+}
+
+.tpl-ats .project-card__technologies li:not(:last-child)::after {
+  content: ', ';
+}
+
+
+/* Stats section - hide completely in ATS */
+.tpl-ats .project-card__stats {
+  display: none;
+}
+
+/* ============================================
+   URL INPUTS - Edit Mode
+   ============================================ */
+
+.tpl-ats .project-card__urls {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 0;
+  /* margin-top: 8px; */
+}
+
+.tpl-ats .project-card__urls .url-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.tpl-ats .project-card__urls .url-label {
+  margin: 0;
+  padding: 0;
+  color: var(--ats-text-color);
+  font-family: var(--ats-font-family);
+  font-size: 10pt;
+  font-weight: 600;
+  line-height: var(--ats-line-height-base);
+}
+
+.tpl-ats .project-card__urls .url-input {
+  width: 100%;
+  padding: 4px 8px;
+  margin: 0;
+  background: rgba(0, 0, 0, 0.02);
+  border: none;
+  border-radius: 0;
+  color: var(--ats-text-color);
+  font-family: var(--ats-font-family);
+  font-size: var(--ats-font-size-base);
+  line-height: var(--ats-line-height-base);
+  box-sizing: border-box;
+  transition: none;
+}
+
+.tpl-ats .project-card__urls .url-input:hover {
+  background: rgba(0, 0, 0, 0.03);
+}
+
+.tpl-ats .project-card__urls .url-input:focus {
+  outline: none;
+  background: rgba(0, 0, 0, 0.02);
+  border-bottom: 1px solid var(--ats-border-color);
+  padding-bottom: 3px;
+}
+
+.tpl-ats .project-card__urls .url-input::placeholder {
+  color: rgba(0, 0, 0, 0.4);
+  font-style: italic;
+}
+
+/* ============================================
+   FOOTER BUTTONS - View Mode
+   ============================================ */
+
+.tpl-ats .project-card__footer {
+  display: flex;
+  gap: 12px;
+  /* margin-top: 8px; */
+  padding: 0;
+}
+
+.tpl-ats .project-card__footer .btn {
+  flex: 1;
+  padding: 6px 12px;
+  margin: 0;
+  background: none;
+  border: none;
+  border-radius: 0;
+  color: var(--ats-text-color);
+  font-family: var(--ats-font-family);
+  font-size: 10pt;
+  font-weight: 600;
+  line-height: var(--ats-line-height-base);
+  text-align: center;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+  transition: none;
+  box-sizing: border-box;
+  box-shadow: none;
+}
+
+.tpl-ats .project-card__footer .btn:hover:not(:disabled) {
+  background: rgba(0, 0, 0, 0.03);
+  text-decoration: underline;
+}
+
+.tpl-ats .project-card__footer .btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  text-decoration: none;
+}
+
+.tpl-ats .project-card__footer .btn-full {
+  flex: 1;
+  width: 100%;
+}
+
+/* Remove all transitions and effects */
+.tpl-ats .project-card input,
+.tpl-ats .project-card textarea,
+.tpl-ats .project-card p {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}

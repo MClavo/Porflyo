@@ -1,10 +1,11 @@
 import React from "react";
-import { Title, Text, List, Images, Stats } from "./subcomponents/index";
+import { Title, Text, BulletText, List, Images, Stats } from "./subcomponents/index";
 import type { Mode } from "./subcomponents/index";
 
 export type ProjectCardSaved = {
   title: string;
   description: string;
+  highlights?: string;
   technologies: string[];
   images: string[];
   techTitle: string;
@@ -20,6 +21,7 @@ interface ProjectCardProps {
   images: string[];
   title: string;
   description: string;
+  highlights?: string;
   techTitle: string;
   technologies?: string[];
   // Repository fields
@@ -37,6 +39,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   images = [],
   title,
   description,
+  highlights = "",
   techTitle = "Technologies:",
   technologies = [],
   repoId,
@@ -79,106 +82,133 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
     >
       {/* render injected children (e.g. delete button) */}
       {children}
-      {(images.length > 0 || mode === "edit") && (
-        <Images
-          mode={mode}
-          images={images}
-          maxImages={3}
-          onChange={(next) => onPatch?.({ images: next })}
-        />
-      )}
-
-      {/* <img src={image} alt={titleState} /> */}
-      <Title
-        mode={mode}
-        value={title}
-        required
-        maxLength={60}
-        onChange={(v) => onPatch?.({ title: v })}
-      />
-
-      <Text
-        mode={mode}
-        value={description}
-        maxLength={300}
-        onChange={(v) => onPatch?.({ description: v })}
-      />
-
-      {(technologies.length > 0 || mode === "edit") && (
-        <>
-          <Title 
+      
+      {/* Images container - isolated for independent padding control */}
+      <div className="project-card__images">
+        {(images.length > 0 || mode === "edit") && (
+          <Images
             mode={mode}
-            value={techTitle}
-            className="technologies-title  top-border"
-            maxLength={20}
-            onChange={(v) => onPatch?.({ techTitle: v })}
+            images={images}
+            maxImages={3}
+            onChange={(next) => onPatch?.({ images: next })}
           />
-
-          <List
-            mode={mode}
-            items={technologies}
-            className="technologies"
-            maxItems={10}
-            onChange={(next) => onPatch?.({ technologies: next })}
-          />
-        </>
-      )}
-
-      {/* Repository Stats */}
-      {((stars && stars > 0) || (forks && forks > 0) || mode === "edit") && (
-        <Stats
-          mode={mode}
-          stars={stars}
-          forks={forks}
-          className="top-border"
-        />
-      )}
-
-      {/* Repository URLs - only show in edit mode */}
-      {mode === "edit" && (
-        <div className="url-inputs top-border">
-          <div className="url-input-group">
-            <label className="url-label">Live Demo URL:</label>
-            <input
-              type="url"
-              value={liveUrl || ""}
-              placeholder="https://your-project.com"
-              onChange={(e) => onPatch?.({ liveUrl: e.target.value || undefined })}
-              className="url-input"
-            />
-          </div>
-          <div className="url-input-group">
-            <label className="url-label">Repository URL:</label>
-            <input
-              type="url"
-              value={repoUrl || ""}
-              placeholder="https://github.com/user/repo"
-              onChange={(e) => onPatch?.({ repoUrl: e.target.value || undefined })}
-              className="url-input"
-            />
-          </div>
-        </div>
-      )}
-
-      <div className="footer top-border">
-        {liveUrl ? (
-          <a href={liveUrl} target="_blank" rel="noopener noreferrer" className="btn live">
-            Live
-          </a>
-        ) : (
-          <button className="btn live" type="button" disabled={mode === "view"}>
-            {mode === "edit" ? "No Live URL" : "Live"}
-          </button>
         )}
-        
-        {repoUrl ? (
-          <a href={repoUrl} target="_blank" rel="noopener noreferrer" className="btn code">
-            Source Code
-          </a>
-        ) : (
-          <button className="btn code" type="button" disabled={mode === "view"}>
-            {mode === "edit" ? "No Repo URL" : "Source Code"}
-          </button>
+      </div>
+
+      {/* Content container - all non-image content */}
+      <div className="project-card__content">
+        <Title
+          mode={mode}
+          value={title}
+          required
+          maxLength={60}
+          onChange={(v) => onPatch?.({ title: v })}
+        />
+
+        <Text
+          mode={mode}
+          value={description}
+          maxLength={300}
+          onChange={(v) => onPatch?.({ description: v })}
+        />
+
+        {/* Highlights / Key points */}
+        {(highlights || mode === "edit") && (
+          <div className="project-card__highlights">
+            <BulletText
+              mode={mode}
+              value={highlights}
+              placeholder="Add key highlights (one per line)..."
+              maxLength={500}
+              onChange={(v) => onPatch?.({ highlights: v })}
+            />
+          </div>
+        )}
+
+        {(technologies.length > 0 || mode === "edit") && (
+          <div className="project-card__technologies">
+            <Title 
+              mode={mode}
+              value={techTitle}
+              className="technologies-title"
+              maxLength={20}
+              onChange={(v) => onPatch?.({ techTitle: v })}
+            />
+
+            <List
+              mode={mode}
+              items={technologies}
+              className="technologies"
+              maxItems={10}
+              onChange={(next) => onPatch?.({ technologies: next })}
+            />
+          </div>
+        )}
+
+        {/* Repository Stats */}
+        {((stars && stars > 0) || (forks && forks > 0) || mode === "edit") && (
+          <div className="project-card__stats">
+            <Stats
+              stars={stars}
+              forks={forks}
+            />
+          </div>
+        )}
+
+        {/* Repository URLs - only show in edit mode */}
+        {mode === "edit" && (
+          <div className="project-card__urls">
+            <div className="url-input-group">
+              <label className="url-label">Live Demo URL:</label>
+              <input
+                type="url"
+                value={liveUrl || ""}
+                placeholder="https://your-project.com"
+                onChange={(e) => onPatch?.({ liveUrl: e.target.value || undefined })}
+                className="url-input"
+              />
+            </div>
+            <div className="url-input-group">
+              <label className="url-label">Repository URL:</label>
+              <input
+                type="url"
+                value={repoUrl || ""}
+                placeholder="https://github.com/user/repo"
+                onChange={(e) => onPatch?.({ repoUrl: e.target.value || undefined })}
+                className="url-input"
+              />
+            </div>
+          </div>
+        )}
+
+        {/* Footer buttons - only show in view mode */}
+        {mode === "view" && (
+          <div className="project-card__footer">
+            {liveUrl && (
+              <a href={liveUrl} target="_blank" rel="noopener noreferrer" className="btn btn-live">
+                Live Demo
+              </a>
+            )}
+            
+            {repoUrl ? (
+              <a 
+                href={repoUrl} 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className={`btn btn-code ${!liveUrl ? 'btn-full' : ''}`}
+              >
+                Source Code
+              </a>
+            ) : (
+              <button 
+                className={`btn btn-code ${!liveUrl ? 'btn-full' : ''}`} 
+                type="button" 
+                disabled
+              >
+                Source Code
+              </button>
+            )}
+          </div>
         )}
       </div>
     </div>

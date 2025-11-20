@@ -4,7 +4,7 @@
 
 /* Input and form elements - No blur in edit mode */
 /* Exclude inputs inside cards to avoid interfering with card-specific styles */
-.tpl-glass input:not(.job-card-title):not(.job-card-company):not(.job-card-location):not(.education-card-title):not(.education-card-institution):not(.education-card-location):not(.about-section-name):not([class*="-title"]):not([class*="-company"]):not([class*="-location"]),
+/* .tpl-glass input:not(.job-card-title):not(.job-card-company):not(.job-card-location):not(.education-card-title):not(.education-card-institution):not(.education-card-location):not(.about-section-name):not([class*="-title"]):not([class*="-company"]):not([class*="-location"]),
 .tpl-glass textarea:not(.job-card-description):not([class*="-description"]),
 .tpl-glass select:not([class*="date-"]) {
   background: rgba(255, 255, 255, 0.1) !important;
@@ -17,7 +17,7 @@
   transition: all 0.3s ease !important;
   font-family: inherit !important;
   font-size: 1rem !important;
-}
+} */
 
 .tpl-glass input::placeholder,
 .tpl-glass textarea::placeholder {
@@ -33,13 +33,17 @@
   box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1) !important;
 }
 
+.tpl-glass .add-card-option {
+  color: #414345 !important;
+}
+
 /* Buttons - Clean styling */
 .tpl-glass button {
   background: rgba(255, 255, 255, 0.2) !important;
   border: 1px solid rgba(255, 255, 255, 0.3) !important;
   border-radius: 8px !important;
   color: #ffffff !important;
-  padding: 0.5rem 1rem !important;
+  padding: 0.5rem 1rem;
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
   font-weight: 600 !important;
@@ -48,16 +52,26 @@
   cursor: pointer !important;
 }
 
+.tpl-glass .nav-button {
+  border-radius: 50px !important;
+  background: rgba(255, 255, 255, 0.5) !important;
+  color : #ffffff !important;
+  padding: 0px !important;
+  
+}
+
 .tpl-glass button:hover {
   background: rgba(255, 255, 255, 0.3) !important;
   border-color: rgba(255, 255, 255, 0.4) !important;
-  transform: translateY(-1px) !important;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
 }
 
-.tpl-glass button:active {
-  transform: translateY(0) !important;
+.tpl-glass .nav-button button:hover {
+  border-radius: 50px !important;
+  transform: none !important;
 }
+
+
 
 /* Links - Clean, readable */
 .tpl-glass a {

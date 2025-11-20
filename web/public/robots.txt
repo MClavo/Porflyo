@@ -1,0 +1,18 @@
+# robots.txt for poRflyo
+# Only allow crawling of the root landing page
+
+User-agent: *
+# Allow ONLY root page
+Allow: /$
+
+# Disallow all other pages
+Disallow: /p/
+Disallow: /home
+Disallow: /profile
+Disallow: /portfolios/
+Disallow: /dashboard/
+Disallow: /auth/
+Disallow: /api/
+
+# Sitemap location
+Sitemap: https://porflyo.com/sitemap.xml

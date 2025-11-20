@@ -7,6 +7,8 @@ import type {
   EducationCardSaved,
   TextCardSaved,
   AboutCardSaved,
+  CertificateCardSaved,
+  AwardCardSaved,
 } from "./Cards.types";
 
 export const cardFactoriesFromDto = {
@@ -78,5 +80,23 @@ export const cardFactories: Record<CardType, () => AnyCard> = {
       email: undefined,
       socials: undefined,
     } satisfies AboutCardSaved,
+  }),
+  certificate: () => ({
+    type: "certificate",
+    data: {
+      title: "",
+      date: { month: 1, year: new Date().getFullYear() },
+      image: undefined,
+      certificateUrl: undefined,
+    } satisfies CertificateCardSaved,
+  }),
+  award: () => ({
+    type: "award",
+    data: {
+      event: "",
+      category: "",
+      date: { month: 1, year: new Date().getFullYear() },
+      description: "",
+    } satisfies AwardCardSaved,
   }),
 };

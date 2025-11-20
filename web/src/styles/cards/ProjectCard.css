@@ -1,204 +1,452 @@
-:root{
-  --card-padding: 20px;
-  --title-bottom-margin: 12px;
-  --title-color: #FAFAFA;
-  --description-color: #f8f8ffea;
-  --card-min-width: 360px;
-  /* Make card width responsive: clamp(min, preferred, max) */
-  --card-width: 500px;
-  --card-min-height: 600px;
-  /* --current-card-width will be kept in sync by the component (px value). */
-}
+/* ============================================================================
+   ProjectCard - Base Styles
+   These styles are theme-independent and consistent between view/edit modes
+   ============================================================================ */
 
-
-.project-card {
-  border: 1px solid #ccc;
-  background: rgba(57, 57, 62, 0.848);
-  border-radius: 8px;
-
-  width: var(--card-width);
-  min-width: var(--card-min-width);
-  /* max-width: 500px; */
-  overflow: hidden;
-  height: auto;
-  min-height: var(--card-min-height);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  font-family: "Poppins", sans-serif;
-  font-weight: 300;
-  font-style: normal;
-
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-self: stretch; /* allow the card to stretch to the tallest sibling */
-  /* justify-content: center; */
-  padding: var(--card-padding);
-  padding-top: 0;
-  box-sizing: border-box;
+:root {
+  /* Card dimensions */
+  --project-card-width: 500px;
+  --project-card-min-width: 360px;
+  --project-card-min-height: 600px;
   
-  /* Definir la variable personalizada con el ancho actual de la tarjeta */
+  /* Spacing */
+  --project-card-padding: 20px;
+  --project-card-section-gap: 20px;
+  
+  /* Typography */
+  --project-card-title-size: 32px;
+  --project-card-title-line-height: 1.2;
+  --project-card-text-size: 16px;
+  --project-card-text-line-height: 1.5;
+  --project-card-small-text-size: 14px;
+  
+  /* Colors - consistent across modes */
+  --project-card-title-color: #FAFAFA;
+  --project-card-text-color: #f8f8ffea;
+  --project-card-bg: rgba(57, 57, 62, 0.848);
+  --project-card-border: #ccc;
+  
+  /* Dynamic card width (set by ResizeObserver) */
   --current-card-width: 100%;
 }
 
-/* Keep only structural and card-level styles here. Subcomponent styles moved to subcomopnents/*.css */
+/* ============================================================================
+   Main Card Container
+   ============================================================================ */
 
 .project-card {
-  border: 1px solid #ccc;
-  background: rgba(57, 57, 62, 0.848);
-  border-radius: 8px;
-  width: var(--card-width);
-  min-width: var(--card-min-width);
-  overflow: hidden;
-  height: auto;
-  min-height: var(--card-min-height);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  font-family: "Poppins", sans-serif;
-  font-weight: 300;
+  /* Layout */
   position: relative;
   display: flex;
   flex-direction: column;
   align-self: stretch;
-  padding: var(--card-padding);
-  padding-top: 0;
   box-sizing: border-box;
-  --current-card-width: 100%;
+  
+  /* Dimensions */
+  width: var(--project-card-width);
+  min-width: var(--project-card-min-width);
+  min-height: var(--project-card-min-height);
+  height: auto;
+  
+  /* Styling */
+  background: var(--project-card-bg);
+  border: 1px solid var(--project-card-border);
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  
+  /* Typography base */
+  font-family: "Poppins", sans-serif;
+  font-weight: 300;
+  font-style: normal;
+  color: var(--project-card-text-color);
 }
 
-.project-card .top-border {
-  border-top: 1px solid rgba(255, 255, 255, 0.2);
-  position: relative;
-  margin-top: 24px;
-}
+/* ============================================================================
+   Images Section - Isolated for independent padding
+   ============================================================================ */
 
-.project-card .footer {
+.project-card__images {
+  /* No padding - images touch card edges */
   position: relative;
-  align-self: baseline;
-  width: 100%;
-  padding-top: 12px;
-  display: flex;
-  gap: 10px;
-  z-index: 10;
-  margin-top: auto; /* Ensures the footer is pushed to the bottom */
-}
-
-.project-card .images{
-  /* Expand to the card edges by cancelling the horizontal padding */
-  position: relative;
-  margin: 0 calc(-1 * var(--card-padding));
+  margin: 0;
   padding: 0;
-  width: calc(100% + (2 * var(--card-padding)));
-  left: 0;
-  right: 0;
+  width: 100%;
 }
 
-/* Images sizing: use the measured --current-card-width (set by the component)
-   so images get the same width as the card. Give them a uniform height
-   using a ratio of the width. Adjust the ratio as needed. */
-.project-card .images img {
+.project-card__images .images {
+  position: relative;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+}
+
+/* Make images uniform size using current card width */
+.project-card__images .images img {
   display: block;
-  width: var(--current-card-width, 100%);
-  /* Make all images have the same height. We choose 0.56 (16:9) as an
-     example; change to desired ratio or a fixed px value. */
+  width: 100%;
+  max-width: var(--current-card-width);  /* 16:9 aspect ratio - adjust as needed */
   height: calc(var(--current-card-width, 100%) * 0.56);
   object-fit: cover;
 }
 
-.project-card .btn {
-  background: rgba(255, 255, 255, 0.1);
-  border: none;
-  padding: 8px 16px;
-  border-radius: 8px;
-  color: var(--description-color);
-  font-size: 14px;
-  cursor: pointer;
-  transition: background 0.3s ease;
-  width: 100%;
+/* ============================================================================
+   Content Section - All non-image content
+   ============================================================================ */
+
+.project-card__content {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--project-card-section-gap);
+  padding: var(--project-card-padding);
+  flex: 1;
 }
 
-.project-card .btn:hover { background: rgba(255, 255, 255, 0.2); }
+/* ============================================================================
+   Title Styles - Consistent between view and edit
+   ============================================================================ */
 
-/* Edit-mode generic inputs: keep simple shared affordances here */
-.project-card[data-mode="edit"] input,
-.project-card[data-mode="edit"] textarea {
-  border: none;
-  border-radius: 8px;
+.project-card__content .title,
+.project-card__content h1 {
   margin: 0;
-  background: rgba(178, 212, 229, 0.18);
+  padding: 0;
+  color: var(--project-card-title-color);
+  font-family: "Oxanium", sans-serif;
+  font-size: var(--project-card-title-size);
+  font-weight: 500;
+  line-height: var(--project-card-title-line-height);
+  letter-spacing: 1px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
 }
 
-.project-card[data-mode="edit"] textarea { font: inherit; }
+/* Edit mode - input styled as h1 */
+.project-card[data-mode="edit"] .project-card__content input.title {
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  padding: 4px 8px;
+  margin: -4px -8px;
+  color: var(--project-card-title-color);
+  font-family: "Oxanium", sans-serif;
+  font-size: var(--project-card-title-size);
+  font-weight: 500;
+  line-height: var(--project-card-title-line-height);
+  letter-spacing: 1px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+  transition: background 0.2s ease;
+}
 
-.project-card[data-mode="edit"] :focus{ outline: dashed 2px #bababaa4; }
+.project-card[data-mode="edit"] .project-card__content input.title:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
 
-.project-card .technologies-title {
+.project-card[data-mode="edit"] .project-card__content input.title:focus {
+  outline: none;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 3px 7px;
+  margin: -4px -8px;
+}
+
+/* ============================================================================
+   Description Text - Consistent between view and edit
+   ============================================================================ */
+
+.project-card__content .text,
+.project-card__content p {
+  margin: 0;
   padding: 0;
+  color: var(--project-card-text-color);
+  font-size: var(--project-card-text-size);
+  line-height: var(--project-card-text-line-height);
+  text-align: left;
+  white-space: pre-wrap;
+}
+
+/* Edit mode - textarea styled as p */
+.project-card[data-mode="edit"] .project-card__content textarea.text {
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  padding: 4px 8px;
+  margin: -4px -8px;
+  color: var(--project-card-text-color);
+  font-family: inherit;
+  font-size: var(--project-card-text-size);
+  line-height: var(--project-card-text-line-height);
+  text-align: left;
+  resize: none;
+  min-height: auto;
+  transition: background 0.2s ease;
+}
+
+.project-card[data-mode="edit"] .project-card__content textarea.text:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.project-card[data-mode="edit"] .project-card__content textarea.text:focus {
+  outline: none;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 3px 7px;
+  margin: -4px -8px;
+}
+
+/* ============================================================================
+   Highlights Section (BulletText)
+   ============================================================================ */
+
+.project-card__highlights {
+  position: relative;
+  margin: 0;
+  padding-top: 0px;
+}
+
+/* View mode bullet list */
+.project-card__highlights .bullet-text {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.project-card__highlights .bullet-text li {
+  position: relative;
+  padding-left: 16px;
+  margin-bottom: 0px;
+  color: var(--project-card-text-color);
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+
+.project-card__highlights .bullet-text li:last-child {
   margin-bottom: 0;
-  padding-bottom: 0;
-  bottom: 0;
-  padding-top: 16px;
-  top: 4px;
-  
-  color: var(--title-color, #FAFAFA);
-  font-size: 24px;
+}
+
+.project-card__highlights .bullet-text li::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  color: rgba(255, 255, 255, 0.6);
+  font-weight: bold;
+}
+
+/* Edit mode textarea - styled to match view */
+.project-card[data-mode="edit"] .project-card__highlights textarea.bullet-text {
+  width: 100%;
+  min-height: auto;
+  padding: 4px 8px;
+  margin: -4px -8px;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  color: var(--project-card-text-color);
+  font-family: inherit;
+  font-size: 15px;
+  line-height: 1.6;
+  text-align: left;
+  resize: none;
+  transition: background 0.2s ease;
+}
+
+.project-card[data-mode="edit"] textarea.text{
+  width: 100%;
+  min-height: auto;
+  padding: 4px 8px;
+  margin: -4px -8px;
+  background: transparent !important ;
+  padding-left: 4px !important;
+}
+
+.project-card[data-mode="edit"] .project-card__highlights textarea.bullet-text:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.project-card[data-mode="edit"] .project-card__highlights textarea.bullet-text:focus {
+  outline: none;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 3px 7px;
+  margin: -4px -8px;
+}
+
+/* ============================================================================
+   Technologies Section
+   ============================================================================ */
+
+.project-card__technologies {
+  position: relative;
+  padding-top: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.project-card__technologies .technologies-title {
+  margin: 0 0 12px 0;
+  padding: 0;
+  color: var(--project-card-title-color);
+  font-family: "Poppins", sans-serif;
+  font-size: 20px;
   font-weight: 500;
   line-height: 1.2;
+}
+
+/* Edit mode input for tech title */
+.project-card[data-mode="edit"] .project-card__technologies input.technologies-title {
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  padding: 2px 6px;
+  margin: 0 -6px 12px -6px;
+  color: var(--project-card-title-color);
+  font-family: "Poppins", sans-serif;
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 1.2;
+  transition: background 0.2s ease;
+}
+
+.project-card[data-mode="edit"] .project-card__technologies input.technologies-title:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.project-card[data-mode="edit"] .project-card__technologies input.technologies-title:focus {
+  outline: none;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 1px 5px;
+}
+
+.project-card__technologies .technologies {
+  margin: 0;
+  padding: 0;
+}
+
+/* ============================================================================
+   Stats Section
+   ============================================================================ */
+
+.project-card__stats {
   position: relative;
-  z-index: 20;
+  padding-top: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
 }
 
-.project-card .technologies{
-  top: 0;
-  padding-top:0;
-  margin-top: 16px;
+.project-card__stats .stats {
+  margin: 0;
 }
 
-/* URL inputs for edit mode */
-.project-card .url-inputs {
-  padding: 16px 0;
+/* ============================================================================
+   URL Inputs (Edit mode only)
+   ============================================================================ */
+
+.project-card__urls {
+  position: relative;
+  padding-top: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
 
-.project-card .url-input-group {
+.project-card__urls .url-input-group {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
 }
 
-.project-card .url-label {
+.project-card__urls .url-label {
   color: rgba(255, 255, 255, 0.9);
-  font-size: 14px;
+  font-size: var(--project-card-small-text-size);
   font-weight: 500;
+  margin: 0;
 }
 
-.project-card .url-input {
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 6px;
+.project-card__urls .url-input {
+  width: 100%;
   padding: 8px 12px;
-  color: white;
-  font-size: 14px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 6px;
+  color: var(--project-card-text-color);
+  font-size: var(--project-card-small-text-size);
   font-family: inherit;
   transition: all 0.2s ease;
+  box-sizing: border-box;
 }
 
-.project-card .url-input:focus {
+.project-card__urls .url-input:focus {
   outline: none;
-  border-color: rgba(255, 255, 255, 0.4);
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.3);
 }
 
-.project-card .url-input::placeholder {
-  color: rgba(255, 255, 255, 0.5);
+.project-card__urls .url-input::placeholder {
+  color: rgba(255, 255, 255, 0.4);
 }
 
-/* Disabled button styles */
-.project-card .btn:disabled {
+/* ============================================================================
+   Footer - Action Buttons (only in view mode)
+   ============================================================================ */
+
+.project-card__footer {
+  position: relative;
+  width: 100%;
+  margin-top: auto;
+  padding-top: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+  display: flex;
+  gap: 12px;
+  z-index: 10;
+}
+
+.project-card__footer .btn {
+  flex: 1;
+  padding: 10px 20px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 6px;
+  color: var(--project-card-text-color);
+  font-size: var(--project-card-small-text-size);
+  font-weight: 500;
+  font-family: inherit;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.project-card__footer .btn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+.project-card__footer .btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
 
-.project-card .btn:disabled:hover {
-  background: inherit;
+/* Full width button when there's only source code (no live URL) */
+.project-card__footer .btn-full {
+  flex: 1;
+  width: 100%;
+}
+
+/* ============================================================================
+   Responsive Adjustments
+   ============================================================================ */
+
+@media (max-width: 768px) {
+  :root {
+    --project-card-padding: 16px;
+    --project-card-section-gap: 16px;
+    --project-card-title-size: 28px;
+    --project-card-text-size: 15px;
+  }
 }

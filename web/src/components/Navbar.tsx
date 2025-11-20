@@ -15,12 +15,14 @@ export const Navbar: React.FC = () => {
 
   const handleLogout = async () => {
     try {
+      // Perform any client-side logout cleanup from the auth context
       await logout();
-      navigate('/');
     } catch (error) {
       console.error('Error during logout:', error);
-      // Even if logout fails, redirect to home
-      navigate('/');
+    } finally {
+      // Always redirect to the server-side logout route to clear session
+      // and show the logged-out UI
+      window.location.href = '/logout';
     }
   };
 

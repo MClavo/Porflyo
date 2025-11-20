@@ -45,6 +45,10 @@ interface SectionCardProps {
 /*   onMoveCard?: (sectionId: SectionId, from: number, to: number) => void;
   onDragStart?: (event: DragStartEvent) => void;
   onDragEnd?: (event: DragEndEvent) => void; */
+  // Optional transient preview index shown during drag-over
+  previewIndex?: number | null;
+  // Optional transient preview card used to render exact preview
+  previewCard?: AnyCard | null;
 }
 
 const SectionCard: React.FC<SectionCardProps> = ({
@@ -60,6 +64,8 @@ const SectionCard: React.FC<SectionCardProps> = ({
   onCardPatch,
   onAddCard,
   onRemoveCard,
+  previewIndex = null,
+  previewCard = null,
 }) => {
   const sectionType = "section-" + type;
 
@@ -73,11 +79,25 @@ const SectionCard: React.FC<SectionCardProps> = ({
   });
 
   function renderCards() {
-    return cardsOrder.map((cardId) => {
-      const card = cardsById[cardId];
-      if (!card) return null;
+    const nodes: React.ReactNode[] = [];
+    for (let i = 0; i < cardsOrder.length; i++) {
+      if (previewIndex !== null && previewIndex === i) {
+        nodes.push(
+          <div key={`placeholder-${i}`} className="card-placeholder">
+            {previewCard ? (
+              <div className="card-placeholder-inner">
+                {renderCard(previewCard, mode, (`preview-${i}` as CardId), () => {})}
+              </div>
+            ) : null}
+          </div>
+        );
+      }
 
-      return (
+      const cardId = cardsOrder[i];
+      const card = cardsById[cardId];
+      if (!card) continue;
+
+      nodes.push(
         <SortableCard
           key={cardId}
           id={cardId}
@@ -87,7 +107,21 @@ const SectionCard: React.FC<SectionCardProps> = ({
           onRemove={() => onRemoveCard?.(id, cardId)}
         />
       );
-    });
+    }
+
+    if (previewIndex !== null && previewIndex === cardsOrder.length) {
+      nodes.push(
+        <div key={`placeholder-end`} className="card-placeholder">
+          {previewCard ? (
+            <div className="card-placeholder-inner">
+              {renderCard(previewCard, mode, (`preview-end` as CardId), () => {})}
+            </div>
+          ) : null}
+        </div>
+      );
+    }
+
+    return nodes;
   }
 
   if (mode === "view") {

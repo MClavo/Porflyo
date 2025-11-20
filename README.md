@@ -33,6 +33,10 @@ https://www.porflyo.com
 - Zero Server Management  
   The backend runs on AWS Lambda, meaning no servers to maintain, patch, or scale manually.
 
+## AWS
+
+[![AWS Architecture](media/aws.jpg)](docs/aws-architecture.png)
+
 ## Architecture Overview
 
 The backend follows a Hexagonal Architecture (Ports & Adapters):

@@ -1,99 +1,96 @@
-/* Colors - grouped variables for the dashboard theme */
 :root {
-  /* Dark Theme (default) */
-  /* Backgrounds */
-  --dashboard-bg: #0a0e16;      /* 212939 */
+  --dashboard-bg: #0a0e16;
   --dashboard-bg-secondary: #111827;
-  --dashboard-obsidian: #1a202c;
-
-  /* Card Colors */
-  --card-bg: linear-gradient(135deg, #1f2937 0%, #111827 100%);
-  --card-bg-hover: linear-gradient(135deg, #374151 0%, #1f2937 100%);
-  --card-border: #374151;
-  --card-border-hover: #4b5563;
-
-  /* Text Colors */
-  --text-primary: #ffffff;
-  --text-secondary: #9ca3af;
-  --text-muted: #6b7280;
-
-  /* Value Colors */
-  --value-primary: #ffffff;
-  --value-secondary: #f3f4f6;
 
   /* Status Colors */
   --status-positive: #10b981;
   --status-negative: #ef4444;
   --status-neutral: #6b7280;
 
-  /* Accent Colors (main palette) */
+  /* Accent Colors */
   --accent-blue: #3b82f6;
+  --accent-blue-600: #2563eb;
   --accent-purple: #8b5cf6;
+  --accent-purple-600: #6d28d9;
   --accent-orange: #f59e0b;
   --accent-pink: #ec4899;
   --accent-green: #10b981;
+  --accent-teal: #14b8a6;
 
   /* Additional palette for charts (useful for donuts/bubbles/area) */
   --chart-1: #3B82F6; /* blue */
   --chart-2: #10B981; /* emerald */
-  --chart-3: #F59E0B; /* amber */
+  --chart-3: #dd8e05; /* amber */
   --chart-4: #8B5CF6; /* violet */
   --chart-5: #EF4444; /* red */
   --chart-6: #06B6D4; /* cyan */
   --chart-7: #84CC16; /* lime */
   --chart-8: #F97316; /* orange */
 
-  /* Additional utility colors used across charts/components */
-  --white: #ffffff;
-  --gray-100: #eeeeee;
-  --muted-border: #e2e8f0; /* used in tooltips and light borders */
+  --tint-light: rgba(59,130,246,.10); 
+  --tint-dark:  rgba(124,58,237,.12);  
 
-  /* Nivo calendar palette (kept as separate names for clarity) */
-  --nivo-1: #61cdbb;
-  --nivo-2: #97e3d5;
-  --nivo-3: #e8c1a0;
-  --nivo-4: #f47560;
-  
-  /* Additional blue used in some legacy styles */
-  --blue-600: #3182ce;
+  /* Card Backgrounds and Borders */
+  --card-bg: linear-gradient(180deg, rgba(17,24,39,0.72), rgba(17,24,39,0.60));
+  --card-bg-hover: linear-gradient(180deg, rgba(31,41,55,0.78), rgba(17,24,39,0.66));
+  --card-bg-hover-contrast: linear-gradient(180deg, rgba(51,61,75,0.78), rgba(41,51,65,0.66));
+  --card-bg-extra: linear-gradient(180deg, rgba(17,24,39,0.86), rgba(9,17,24,0.78));
+  --card-border: rgba(148,163,184,.16);
+  --card-border-hover: rgba(148,163,184,.28);
 
-  /* Page-level utility colors / aliases */
-  --dashboard-bg-primary: var(--dashboard-bg);
-  --overlay-weak: rgba(0,0,0,0.1);
-  --color-error-text: #ff6b6b; /* soft error */
+  /* Text */
+  --text-primary: #e5e7eb;
+  --text-secondary: #cbd5e1;
+  --text-muted: #94a3b8;
+
+  --shadow-md: 0 8px 28px -10px rgba(0,0,0,.45);
+  --shadow-lg: 0 16px 48px -12px rgba(0,0,0,.55);
+
+  /* Scrollbar */
+  --scrollbar-width: 8px;
+  --scrollbar-height: 8px;
+  --scrollbar-track-bg: transparent;
+  --scrollbar-thumb-bg: rgba(148, 163, 184, 0.2);
+  --scrollbar-thumb-bg-hover: rgba(148, 163, 184, 0.4);
+  --scrollbar-thumb-radius: 4px;
+
+  /* Skeleton Loading */
+  --skeleton-base-color: #374151;
+  --skeleton-highlight-color: #4b5563;
+  --skeleton-animation-duration: 1.5s;
 }
+
 
 /* Light Theme */
 body.light-theme {
-  /* Backgrounds */
-  --dashboard-bg: #f8fafc;
+  --dashboard-bg: #e0e4e96e;
   --dashboard-bg-secondary: #ffffff;
-  --dashboard-obsidian: #f1f5f9;
 
-  /* Card Colors */
-  --card-bg: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
-  --card-bg-hover: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
-  --card-border: #e2e8f0;
-  --card-border-hover: #cbd5e1;
+  /* Card Backgrounds and Borders */
+  --card-bg: linear-gradient(180deg, rgba(255,255,255,0.70), rgba(255,255,255,0.58));
+  --card-bg-hover: linear-gradient(180deg, rgba(255,255,255,0.78), rgba(255,255,255,0.64));
+  --card-bg-hover-contrast: linear-gradient(180deg, rgba(215,215,215,0.78), rgba(205,205,205,0.64));
+  --card-bg-extra: linear-gradient(180deg, rgba(255,255,255,0.86), rgba(255,255,255,0.78));
+  --card-border: rgba(15,23,42,.08);
+  --card-border-hover: rgba(15,23,42,.14);
 
-  /* Text Colors */
-  --text-primary: #1a202c;
-  --text-secondary: #4a5568;
-  --text-muted: #718096;
+  /* Text */
+  --text-primary: #252c32;
+  --text-secondary: #3d444f;
+  --text-muted: #64748b;
 
-  /* Value Colors */
-  --value-primary: #1a202c;
-  --value-secondary: #2d3748;
+  --tint-light: rgba(59,130,246,.12);
+  --tint-dark:  rgba(124,58,237,.10);
 
-  /* Status Colors remain the same for good contrast */
-  --status-positive: #10b981;
-  --status-negative: #ef4444;
-  --status-neutral: #6b7280;
+  --shadow-md: 0 10px 28px -14px rgba(16,38,63,.25);
+  --shadow-lg: 0 18px 54px -18px rgba(16,38,63,.30);
 
-  /* Page-level utility colors / aliases */
-  --dashboard-bg-primary: var(--dashboard-bg);
-  --overlay-weak: rgba(0,0,0,0.05);
-  --color-error-text: #e53e3e;
+  /* Scrollbar */
+  --scrollbar-thumb-bg: rgba(255, 255, 255, 0.4);
+  --scrollbar-thumb-bg-hover: rgba(255, 255, 255, 0.3);
+
+  /* Skeleton Loading */
+  --skeleton-base-color: #e2e8f0;
+  --skeleton-highlight-color: #f1f5f9;
+  --skeleton-animation-duration: 1.5s;
 }
-
-/* Dark Theme explicit class - uses root defaults */

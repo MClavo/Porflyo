@@ -104,8 +104,8 @@
   font-size: 3rem !important;
   font-weight: 800 !important;
   margin: 0 !important;
-  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3) !important;
-  background: linear-gradient(45deg, #ffffff, #e0e7ff) !important;
+  /* text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3) !important; */
+  background: #ffffff !important;
   -webkit-background-clip: text !important;
   -webkit-text-fill-color: transparent !important;
   background-clip: text !important;
@@ -122,7 +122,7 @@
   font-size: 3rem !important;
   font-weight: 800 !important;
   margin: 0 !important;
-  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3) !important;
+  /* text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3) !important; */
   /* Solid white color instead of gradient */
   color: #ffffff !important;
   background: none !important;
@@ -228,12 +228,12 @@
 }
 
 .tpl-glass .about-social-link:hover {
-  background: rgba(255, 255, 255, 0.3);
+  background: var(--porflyo-glass-gradient);
   transform: translateY(-3px);
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
 }
 
-.tpl-glass .about-social-link.linkedin:hover {
+/* .tpl-glass .about-social-link.linkedin:hover {
   background: linear-gradient(45deg, #0077b5, #00a0dc);
   border-color: #0077b5;
 }
@@ -251,7 +251,7 @@
 .tpl-glass .about-social-link.twitter:hover {
   background: linear-gradient(45deg, #1da1f2, #4db8f5);
   border-color: #1da1f2;
-}
+} */
 
 /* Responsive design - EXACT same as user-header */
 @media (max-width: 768px) {

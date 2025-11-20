@@ -1,18 +1,23 @@
-/* Profile Page Styles - Modern Design */
+/* Profile Page Styles -  Design */
 
 .profile-page {
   background: var(--dashboard-bg);
   min-height: 100vh;
   color: var(--text-primary);
   font-family: var(--font-sans);
-  /* Add padding-top to account for fixed navbar */
-  padding-top: var(--navbar-height);
+  /* Removed padding-top, handled by dashboard-theme.css */
+  overflow-y: auto;
+  overflow-x: hidden;
+  position: relative;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .profile-content {
   max-width: 1000px;
   margin: 0 auto;
   padding: var(--space-8);
+  padding-top: var(--space-8);
   display: flex;
   flex-direction: column;
   gap: var(--space-8);
@@ -54,10 +59,26 @@
   box-shadow: var(--shadow-lg);
 }
 
+.profile-page .back-button {
+  position: fixed;
+  top: calc(var(--navbar-height) + var(--space-8));
+  left: calc((100vw - 1000px) / 2 - var(--space-6) - 100px);
+  z-index: 100;
+}
+
+/* Ajuste para pantallas medianas donde el contenido aún está centrado pero más cerca del borde */
+@media (max-width: 1200px) {
+  .profile-page .back-button {
+    left: var(--space-6);
+  }
+}
+
 .profile-header-content {
   display: flex;
   align-items: center;
   gap: var(--space-6);
+  flex-wrap: wrap;
+  position: relative;
 }
 
 .profile-header-avatar {
@@ -183,7 +204,7 @@
 
 .profile-field-input {
   padding: var(--space-3) var(--space-4);
-  background: rgba(55, 65, 81, 0.5);
+  background: var(--card-bg);
   border: 1px solid var(--card-border);
   border-radius: var(--radius-md);
   color: var(--text-primary);
@@ -195,7 +216,7 @@
 
 .profile-field-input:focus {
   border-color: var(--accent-blue);
-  background: rgba(55, 65, 81, 0.8);
+  background: var(--card-bg-hover);
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
@@ -281,11 +302,11 @@
 
 .social-input {
   flex: 1;
-  padding: var(--space-2) var(--space-3);
-  background: rgba(55, 65, 81, 0.5);
+  padding: var(--space-3);
+  background: var(--card-bg);
   border: 1px solid var(--card-border);
   border-left: none;
-  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  border-radius: var(--radius-md) var(--radius-md);
   color: var(--text-primary);
   font-size: var(--font-sm);
   outline: none;
@@ -294,7 +315,7 @@
 
 .social-input:focus {
   border-color: var(--accent-blue);
-  background: rgba(55, 65, 81, 0.8);
+  background: var(--card-bg-hover);
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
@@ -516,6 +537,13 @@
 
 /* Responsive Design */
 @media (max-width: 768px) {
+  .profile-page .back-button {
+    position: fixed;
+    top: calc(var(--navbar-height) + var(--space-6));
+    left: var(--space-4);
+    z-index: 100;
+  }
+
   .profile-content {
     padding: var(--space-6);
     gap: var(--space-6);
@@ -565,6 +593,11 @@
 }
 
 @media (max-width: 480px) {
+  .profile-page .back-button {
+    top: calc(var(--navbar-height) + var(--space-4));
+    left: var(--space-3);
+  }
+
   .profile-content {
     padding: var(--space-4);
   }

@@ -1,5 +1,5 @@
 /**
- * DashboardContext - Estado compartido del dashboard moderno
+ * DashboardContext - Estado compartido del dashboard o
  */
 
 import { createContext, useState, useEffect } from 'react';

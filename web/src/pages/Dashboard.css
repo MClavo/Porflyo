@@ -1,0 +1,54 @@
+/*  Dashboard - Transiciones entre páginas */
+
+.dashboard {
+  width: 100%;
+  min-height: 100vh;
+  /* Scroll handling moved to dashboard-theme.css */
+  overflow-y: auto;
+  overflow-x: hidden;
+  position: relative;
+  box-sizing: border-box;
+}
+
+.dashboard__content {
+  width: 100%;
+  height: 100%;
+  transition: opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  opacity: 1;
+}
+
+.dashboard--transitioning .dashboard__content {
+  opacity: 0;
+  transform: translateX(10px);
+}
+
+/* Smooth page transitions */
+@keyframes page-fade-in {
+  from {
+    opacity: 0;
+    transform: translateX(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes page-fade-out {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+}
+
+.page-transition-enter {
+  animation: page-fade-in 0.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.page-transition-exit {
+  animation: page-fade-out 0.15s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
