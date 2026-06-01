@@ -1,0 +1,72 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Resources:
+  S3Bucket:
+    Type: "AWS::S3::Bucket"
+    Properties:
+      BucketName: "www.porflyo.com"
+      BucketEncryption: 
+        ServerSideEncryptionConfiguration: 
+          - 
+            ServerSideEncryptionByDefault: 
+              SSEAlgorithm: "AES256"
+            BucketKeyEnabled: true
+      OwnershipControls: 
+        Rules: 
+          - 
+            ObjectOwnership: "BucketOwnerEnforced"
+      PublicAccessBlockConfiguration: 
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+
+  S3Bucket2:
+    Type: "AWS::S3::Bucket"
+    Properties:
+      BucketName: "porflyo-media"
+      BucketEncryption: 
+        ServerSideEncryptionConfiguration: 
+          - 
+            ServerSideEncryptionByDefault: 
+              SSEAlgorithm: "AES256"
+            BucketKeyEnabled: true
+      CorsConfiguration: 
+        CorsRules: 
+          - 
+            AllowedHeaders: 
+              - "*"
+            AllowedMethods: 
+              - "PUT"
+              - "GET"
+              - "HEAD"
+            AllowedOrigins: 
+              - !Sub "https://${S3Bucket}"
+      OwnershipControls: 
+        Rules: 
+          - 
+            ObjectOwnership: "BucketOwnerEnforced"
+      PublicAccessBlockConfiguration: 
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+
+  S3Bucket3:
+    Type: "AWS::S3::Bucket"
+    Properties:
+      BucketName: "porflyo-redirect-dummy"
+      BucketEncryption: 
+          ServerSideEncryptionConfiguration: 
+            - 
+              ServerSideEncryptionByDefault: 
+                SSEAlgorithm: "AES256"
+              BucketKeyEnabled: true
+      OwnershipControls: 
+        Rules: 
+          - 
+            ObjectOwnership: "BucketOwnerEnforced"
+      PublicAccessBlockConfiguration: 
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true

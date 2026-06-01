@@ -1,0 +1,243 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Resources:
+  CloudFrontDistribution:
+    Type: "AWS::CloudFront::Distribution"
+    Properties:
+      DistributionConfig:
+        Aliases:
+          - "www.porflyo.com"
+        Origins:
+          - ConnectionAttempts: 3
+            ConnectionTimeout: 10
+            DomainName: !Sub "www.porflyo.com.s3.${AWS::Region}.amazonaws.com"
+            Id: !Sub "www.porflyo.com.s3.${AWS::Region}.amazonaws.com"
+            OriginPath: ""
+            S3OriginConfig:
+              OriginAccessIdentity: ""
+          - ConnectionAttempts: 3
+            ConnectionTimeout: 10
+            CustomOriginConfig:
+              HTTPPort: 80
+              HTTPSPort: 443
+              OriginKeepaliveTimeout: 5
+              OriginProtocolPolicy: "https-only"
+              OriginReadTimeout: 30
+              OriginSSLProtocols:
+                - "TLSv1.2"
+            DomainName: !Sub "egn9h0k6ye.execute-api.${AWS::Region}.amazonaws.com"
+            Id: "api-gw-origin"
+            OriginPath: ""
+          - ConnectionAttempts: 3
+            ConnectionTimeout: 10
+            DomainName: !Sub "www.porflyo.com.s3.${AWS::Region}.amazonaws.com"
+            Id: !Sub "www.porflyo.com.s3.${AWS::Region}.amazonaws.com-mf024qjgudz"
+            OriginPath: ""
+            S3OriginConfig:
+              OriginAccessIdentity: ""
+        DefaultCacheBehavior:
+          AllowedMethods:
+            - "HEAD"
+            - "GET"
+          CachedMethods:
+            - "HEAD"
+            - "GET"
+          Compress: true
+          CachePolicyId: "658327ea-f89d-4fab-a63d-7e88639e58f6"
+          SmoothStreaming: false
+          TargetOriginId: !Sub "www.porflyo.com.s3.${AWS::Region}.amazonaws.com"
+          ViewerProtocolPolicy: "redirect-to-https"
+        CacheBehaviors:
+          - AllowedMethods:
+              - "HEAD"
+              - "DELETE"
+              - "POST"
+              - "GET"
+              - "OPTIONS"
+              - "PUT"
+              - "PATCH"
+            Compress: true
+            CachePolicyId: "4135ea2d-6df8-44a3-9df3-4b5a84be39ad"
+            OriginRequestPolicyId: "b689b0a8-53d0-40ab-baf2-68738e2966ac"
+            PathPattern: "/oauth/*"
+            SmoothStreaming: false
+            TargetOriginId: "api-gw-origin"
+            ViewerProtocolPolicy: "redirect-to-https"
+          - AllowedMethods:
+              - "HEAD"
+              - "DELETE"
+              - "POST"
+              - "GET"
+              - "OPTIONS"
+              - "PUT"
+              - "PATCH"
+            Compress: true
+            CachePolicyId: "4135ea2d-6df8-44a3-9df3-4b5a84be39ad"
+            OriginRequestPolicyId: "b689b0a8-53d0-40ab-baf2-68738e2966ac"
+            PathPattern: "/api/*"
+            SmoothStreaming: false
+            TargetOriginId: "api-gw-origin"
+            ViewerProtocolPolicy: "redirect-to-https"
+          - AllowedMethods:
+              - "HEAD"
+              - "DELETE"
+              - "POST"
+              - "GET"
+              - "OPTIONS"
+              - "PUT"
+              - "PATCH"
+            Compress: true
+            CachePolicyId: "4135ea2d-6df8-44a3-9df3-4b5a84be39ad"
+            OriginRequestPolicyId: "b689b0a8-53d0-40ab-baf2-68738e2966ac"
+            PathPattern: "/public/*"
+            SmoothStreaming: false
+            TargetOriginId: "api-gw-origin"
+            ViewerProtocolPolicy: "redirect-to-https"
+          - AllowedMethods:
+              - "HEAD"
+              - "GET"
+              - "OPTIONS"
+            Compress: true
+            CachePolicyId: "4135ea2d-6df8-44a3-9df3-4b5a84be39ad"
+            OriginRequestPolicyId: "b689b0a8-53d0-40ab-baf2-68738e2966ac"
+            PathPattern: "/auth"
+            SmoothStreaming: false
+            TargetOriginId: "api-gw-origin"
+            ViewerProtocolPolicy: "redirect-to-https"
+          - AllowedMethods:
+              - "HEAD"
+              - "GET"
+              - "OPTIONS"
+            Compress: true
+            CachePolicyId: "4135ea2d-6df8-44a3-9df3-4b5a84be39ad"
+            OriginRequestPolicyId: "b689b0a8-53d0-40ab-baf2-68738e2966ac"
+            PathPattern: "/logout"
+            SmoothStreaming: false
+            TargetOriginId: "api-gw-origin"
+            ViewerProtocolPolicy: "redirect-to-https"
+          - AllowedMethods:
+              - "HEAD"
+              - "DELETE"
+              - "POST"
+              - "GET"
+              - "OPTIONS"
+              - "PUT"
+              - "PATCH"
+            Compress: true
+            CachePolicyId: "4135ea2d-6df8-44a3-9df3-4b5a84be39ad"
+            OriginRequestPolicyId: "b689b0a8-53d0-40ab-baf2-68738e2966ac"
+            PathPattern: "/metrics/*"
+            SmoothStreaming: false
+            TargetOriginId: "api-gw-origin"
+            ViewerProtocolPolicy: "redirect-to-https"
+        CustomErrorResponses:
+          - ErrorCode: 403
+            ResponsePagePath: "/index.html"
+            ResponseCode: "200"
+            ErrorCachingMinTTL: 0
+          - ErrorCode: 404
+            ResponsePagePath: "/index.html"
+            ResponseCode: "200"
+            ErrorCachingMinTTL: 0
+        Comment: ""
+        PriceClass: "PriceClass_All"
+        Enabled: true
+        ViewerCertificate:
+          AcmCertificateArn: !Sub "arn:aws:acm:${AWS::Region}:${AWS::AccountId}:certificate/1845afe1-97ea-4584-81c3-66d4a069f0c7"
+          CloudFrontDefaultCertificate: false
+          MinimumProtocolVersion: "TLSv1.2_2021"
+          SslSupportMethod: "sni-only"
+        Restrictions:
+          GeoRestriction:
+            RestrictionType: "none"
+        HttpVersion: "http2"
+        DefaultRootObject: "index.html"
+        IPV6Enabled: true
+
+  CloudFrontDistribution2:
+    Type: "AWS::CloudFront::Distribution"
+    Properties:
+      DistributionConfig:
+        Aliases:
+          - "porflyo.com"
+        Origins:
+          - ConnectionAttempts: 3
+            ConnectionTimeout: 10
+            DomainName: !Sub "porflyo-redirect-dummy.s3.${AWS::Region}.amazonaws.com"
+            Id: !Sub "porflyo-redirect-dummy.s3.${AWS::Region}.amazonaws.com-mf034b162nc"
+            OriginPath: ""
+            S3OriginConfig:
+              OriginAccessIdentity: ""
+        DefaultCacheBehavior:
+          AllowedMethods:
+            - "HEAD"
+            - "GET"
+          CachedMethods:
+            - "HEAD"
+            - "GET"
+          Compress: true
+          CachePolicyId: "658327ea-f89d-4fab-a63d-7e88639e58f6"
+          FunctionAssociations:
+            - EventType: "viewer-request"
+              FunctionARN: !Sub "arn:aws:cloudfront::${AWS::AccountId}:function/porflyo-redirect-to-www"
+            - EventType: "viewer-response"
+              FunctionARN: !Sub "arn:aws:cloudfront::${AWS::AccountId}:function/porflyo-redirect-to-www"
+          SmoothStreaming: false
+          TargetOriginId: !Sub "porflyo-redirect-dummy.s3.${AWS::Region}.amazonaws.com-mf034b162nc"
+          ViewerProtocolPolicy: "redirect-to-https"
+        Comment: ""
+        PriceClass: "PriceClass_All"
+        Enabled: true
+        ViewerCertificate:
+          AcmCertificateArn: !Sub "arn:aws:acm:${AWS::Region}:${AWS::AccountId}:certificate/1845afe1-97ea-4584-81c3-66d4a069f0c7"
+          CloudFrontDefaultCertificate: false
+          MinimumProtocolVersion: "TLSv1.2_2021"
+          SslSupportMethod: "sni-only"
+        Restrictions:
+          GeoRestriction:
+            RestrictionType: "none"
+        HttpVersion: "http2"
+        DefaultRootObject: ""
+        IPV6Enabled: true
+
+  CloudFrontDistribution3:
+    Type: "AWS::CloudFront::Distribution"
+    Properties:
+      DistributionConfig:
+        Aliases:
+          - "media.porflyo.com"
+        Origins:
+          - ConnectionAttempts: 3
+            ConnectionTimeout: 10
+            DomainName: "porflyo-media-test.s3.amazonaws.com"
+            Id: "porflyo-media-test.s3.amazonaws.com-mf2nx5a9hme"
+            OriginPath: ""
+            S3OriginConfig:
+              OriginAccessIdentity: ""
+        DefaultCacheBehavior:
+          AllowedMethods:
+            - "HEAD"
+            - "GET"
+            - "OPTIONS"
+          CachedMethods:
+            - "HEAD"
+            - "GET"
+          Compress: true
+          CachePolicyId: "4135ea2d-6df8-44a3-9df3-4b5a84be39ad"
+          OriginRequestPolicyId: "b689b0a8-53d0-40ab-baf2-68738e2966ac"
+          SmoothStreaming: false
+          TargetOriginId: "porflyo-media-test.s3.amazonaws.com-mf2nx5a9hme"
+          ViewerProtocolPolicy: "redirect-to-https"
+        Comment: ""
+        PriceClass: "PriceClass_All"
+        Enabled: true
+        ViewerCertificate:
+          AcmCertificateArn: !Sub "arn:aws:acm:${AWS::Region}:${AWS::AccountId}:certificate/1845afe1-97ea-4584-81c3-66d4a069f0c7"
+          CloudFrontDefaultCertificate: false
+          MinimumProtocolVersion: "TLSv1.2_2021"
+          SslSupportMethod: "sni-only"
+        Restrictions:
+          GeoRestriction:
+            RestrictionType: "none"
+        HttpVersion: "http2"
+        DefaultRootObject: ""
+        IPV6Enabled: true

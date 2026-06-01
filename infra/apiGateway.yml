@@ -1,0 +1,121 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Resources:
+  ApiGatewayV2Route:
+    Type: "AWS::ApiGatewayV2::Route"
+    Properties:
+      ApiId: !Ref ApiGatewayV2Api
+      ApiKeyRequired: false
+      AuthorizationType: "NONE"
+      RouteKey: "ANY /public/{proxy+}"
+      Target: !Sub "integrations/${ApiGatewayV2Integration}"
+
+  ApiGatewayV2Route2:
+    Type: "AWS::ApiGatewayV2::Route"
+    Properties:
+      ApiId: !Ref ApiGatewayV2Api
+      ApiKeyRequired: false
+      AuthorizationType: "NONE"
+      RouteKey: "ANY /metrics/{proxy+}"
+      Target: !Sub "integrations/${ApiGatewayV2Integration4}"
+
+  ApiGatewayV2Route3:
+    Type: "AWS::ApiGatewayV2::Route"
+    Properties:
+      ApiId: !Ref ApiGatewayV2Api
+      ApiKeyRequired: false
+      AuthorizationType: "NONE"
+      RouteKey: "GET /logout"
+      Target: !Sub "integrations/${ApiGatewayV2Integration2}"
+
+  ApiGatewayV2Route4:
+    Type: "AWS::ApiGatewayV2::Route"
+    Properties:
+      ApiId: !Ref ApiGatewayV2Api
+      ApiKeyRequired: false
+      AuthorizationType: "NONE"
+      RouteKey: "ANY /api/{proxy+}"
+      Target: !Sub "integrations/${ApiGatewayV2Integration}"
+
+  ApiGatewayV2Route5:
+    Type: "AWS::ApiGatewayV2::Route"
+    Properties:
+      ApiId: !Ref ApiGatewayV2Api
+      ApiKeyRequired: false
+      AuthorizationType: "NONE"
+      RouteKey: "GET /auth"
+      Target: !Sub "integrations/${ApiGatewayV2Integration2}"
+
+  ApiGatewayV2Route6:
+    Type: "AWS::ApiGatewayV2::Route"
+    Properties:
+      ApiId: !Ref ApiGatewayV2Api
+      ApiKeyRequired: false
+      AuthorizationType: "NONE"
+      RouteKey: "ANY /oauth/{proxy+}"
+      Target: !Sub "integrations/${ApiGatewayV2Integration3}"
+
+  ApiGatewayV2Api:
+    Type: "AWS::ApiGatewayV2::Api"
+    Properties:
+      ApiKeySelectionExpression: "$request.header.x-api-key"
+      ProtocolType: "HTTP"
+      RouteSelectionExpression: "$request.method $request.path"
+      CorsConfiguration:
+        AllowCredentials: true
+        AllowHeaders:
+          - "content-type"
+          - "authorization"
+          - "x-requested-with"
+          - "accept"
+          - "origin"
+          - "session"
+        AllowMethods:
+          - "*"
+        AllowOrigins:
+          - "https://www.porflyo.com"
+        MaxAge: 600
+      DisableExecuteApiEndpoint: false
+
+  ApiGatewayV2Integration:
+    Type: "AWS::ApiGatewayV2::Integration"
+    Properties:
+      ApiId: !Ref ApiGatewayV2Api
+      ConnectionType: "INTERNET"
+      IntegrationMethod: "POST"
+      IntegrationType: "AWS_PROXY"
+      IntegrationUri: !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:api-native"
+      TimeoutInMillis: 30000
+      PayloadFormatVersion: "2.0"
+
+  ApiGatewayV2Integration2:
+    Type: "AWS::ApiGatewayV2::Integration"
+    Properties:
+      ApiId: !Ref ApiGatewayV2Api
+      ConnectionType: "INTERNET"
+      IntegrationMethod: "POST"
+      IntegrationType: "AWS_PROXY"
+      IntegrationUri: !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:authentication-native"
+      TimeoutInMillis: 30000
+      PayloadFormatVersion: "2.0"
+
+  ApiGatewayV2Integration3:
+    Type: "AWS::ApiGatewayV2::Integration"
+    Properties:
+      ApiId: !Ref ApiGatewayV2Api
+      ConnectionType: "INTERNET"
+      IntegrationMethod: "POST"
+      IntegrationType: "AWS_PROXY"
+      IntegrationUri: !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:oauth-native"
+      TimeoutInMillis: 30000
+      PayloadFormatVersion: "2.0"
+
+  ApiGatewayV2Integration4:
+    Type: "AWS::ApiGatewayV2::Integration"
+    Properties:
+      ApiId: !Ref ApiGatewayV2Api
+      ConnectionType: "INTERNET"
+      IntegrationMethod: "POST"
+      IntegrationType: "AWS_PROXY"
+      IntegrationUri: !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:metrics-native"
+      TimeoutInMillis: 30000
+      PayloadFormatVersion: "2.0"
