@@ -14,6 +14,25 @@ Porflyo is a serverless platform for creating and publishing personal developer 
 
 The project started as a final degree project, but the implementation is intentionally closer to a production-style backend than to a toy CRUD: it uses a hexagonal architecture, independent Lambda handlers, DynamoDB access patterns designed around cost constraints, infrastructure as code, local AWS emulation, and a testing strategy based on ports and adapters.
 
+
+<h2 align="center">Interactive Editor</h2>
+<p align="center">
+  <img height="600" alt="Editor" src="https://github.com/user-attachments/assets/16fb7a47-2b88-4507-93c3-726f5b0e1707" />
+
+</p>
+
+<h2 align="center">Heatmap and Daily Metrics</h2>
+<p align="center">
+  <img height="400"alt="Heatmap" src="https://github.com/user-attachments/assets/b39c933c-5c82-4436-b747-969a1ac60471" />
+  <img  height="400" alt="Metrics" src="https://github.com/user-attachments/assets/6fb4b055-633a-475a-b57e-054316b0162a" />
+</p>
+
+<h2 align="center">Drag and Drop</h2>
+<p align="center">
+  <img  height="400" alt="Hover preview" src="https://github.com/user-attachments/assets/6172ed34-de71-4f3f-96cb-ac0c0d286967" />
+  <img  height="400" alt="Drag and drop" src="https://github.com/user-attachments/assets/cf5fafcf-7694-4302-b911-ac70511720f0" />
+</p>
+<h2 align="center">AWS Architecture</h2>
 <p align="center">
   <img src="media/aws.jpg" alt="Porflyo AWS serverless architecture" width="900" />
 </p>
