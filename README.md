@@ -23,14 +23,15 @@ The project started as a final degree project, but the implementation is intenti
 
 <h2 align="center">Heatmap and Daily Metrics</h2>
 <p align="center">
-  <img height="400"alt="Heatmap" src="https://github.com/user-attachments/assets/b39c933c-5c82-4436-b747-969a1ac60471" />
-  <img  height="400" alt="Metrics" src="https://github.com/user-attachments/assets/6fb4b055-633a-475a-b57e-054316b0162a" />
+  <img height="300"alt="Heatmap" src="https://github.com/user-attachments/assets/b39c933c-5c82-4436-b747-969a1ac60471" />
+  <img height="300" alt="Metrics" src="https://github.com/user-attachments/assets/9dd75c2a-623f-4879-9133-d028d9e8a8ff" />
+
 </p>
 
 <h2 align="center">Drag and Drop</h2>
 <p align="center">
-  <img  height="400" alt="Hover preview" src="https://github.com/user-attachments/assets/6172ed34-de71-4f3f-96cb-ac0c0d286967" />
-  <img  height="400" alt="Drag and drop" src="https://github.com/user-attachments/assets/cf5fafcf-7694-4302-b911-ac70511720f0" />
+  <img  height="300" alt="Hover preview" src="https://github.com/user-attachments/assets/6172ed34-de71-4f3f-96cb-ac0c0d286967" />
+  <img  height="300" alt="Drag and drop" src="https://github.com/user-attachments/assets/cf5fafcf-7694-4302-b911-ac70511720f0" />
 </p>
 <h2 align="center">AWS Architecture</h2>
 <p align="center">
